@@ -1,0 +1,10 @@
+{
+  "sessionId": 1,
+  "sessionToken": "demo-token",
+  "packageId": 1,
+  "tableId": 1,
+  "tableNumber": "A01",
+  "sessionStatus": "ACTIVE",
+  "adultCount": 2,
+  "childCount": 1
+}
