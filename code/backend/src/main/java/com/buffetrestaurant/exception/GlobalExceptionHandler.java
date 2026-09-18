@@ -1,6 +1,7 @@
 package com.buffetrestaurant.exception;
 
 import com.buffetrestaurant.dto.response.ErrorResponse;
+import com.buffetrestaurant.ordering.OrderingException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
@@ -13,6 +14,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(OrderingException.class)
+    public ResponseEntity<ErrorResponse> handleOrdering(OrderingException exception, HttpServletRequest request) {
+        return build(exception.status(), exception.getMessage(), request.getRequestURI());
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(
             MethodArgumentNotValidException exception,
