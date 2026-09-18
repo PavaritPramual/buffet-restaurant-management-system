@@ -1,0 +1,26 @@
+# Operating systems and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Java and Maven
+code/backend/target/
+*.log
+
+# Node and Vite
+code/frontend/node_modules/
+code/frontend/dist/
+code/frontend/.vite/
+
+# Test and coverage output
+coverage/
+test/reports/*
+!test/reports/.gitkeep
+
