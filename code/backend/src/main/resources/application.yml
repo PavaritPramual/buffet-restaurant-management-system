@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: buffet-restaurant-backend
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: false
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+server:
+  port: ${SERVER_PORT:8080}
