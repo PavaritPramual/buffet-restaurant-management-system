@@ -43,4 +43,14 @@ class OrderingControllerTest {
                 .andExpect(header().string("Location", "/api/v1/orders/7"))
                 .andExpect(jsonPath("$.status").value("RECEIVED"));
     }
+
+    @Test
+    void postMenuItem_whenImageUrlUsesUnsupportedScheme_returns400() throws Exception {
+        mvc.perform(post("/api/v1/menu-items")
+                .contentType("application/json")
+                .content("{\"categoryId\":1,\"name\":\"Soup\",\"available\":true,"
+                        + "\"packageIds\":[1],\"imageUrl\":\"javascript:alert(1)\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
+    }
 }

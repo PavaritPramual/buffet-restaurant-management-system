@@ -28,9 +28,9 @@ public class DemoOrderingStore implements Catalog, Sessions, Orders {
     public DemoOrderingStore() {
         Category main = saveCategory(null, "อาหารหลัก");
         Category drinks = saveCategory(null, "เครื่องดื่ม");
-        saveItem(new MenuItem(null, main.id(), "หมูสไลซ์", true, Set.of(1L)));
-        saveItem(new MenuItem(null, main.id(), "ผักรวม", true, Set.of(1L)));
-        saveItem(new MenuItem(null, drinks.id(), "ชาเย็น", true, Set.of(1L)));
+        saveItem(new MenuItem(null, main.id(), "หมูสไลซ์", true, Set.of(1L), null));
+        saveItem(new MenuItem(null, main.id(), "ผักรวม", true, Set.of(1L), null));
+        saveItem(new MenuItem(null, drinks.id(), "ชาเย็น", true, Set.of(1L), null));
     }
 
     public List<Category> categories() { return categories.values().stream().sorted(Comparator.comparing(Category::id)).toList(); }
@@ -46,7 +46,7 @@ public class DemoOrderingStore implements Catalog, Sessions, Orders {
     public Optional<MenuItem> item(long id) { return Optional.ofNullable(items.get(id)); }
     public MenuItem saveItem(MenuItem item) {
         long key = item.id() == null ? itemIds.incrementAndGet() : item.id();
-        MenuItem value = new MenuItem(key, item.categoryId(), item.name(), item.available(), Set.copyOf(item.packageIds()));
+        MenuItem value = new MenuItem(key, item.categoryId(), item.name(), item.available(), Set.copyOf(item.packageIds()), item.imageUrl());
         items.put(key, value);
         return value;
     }

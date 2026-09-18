@@ -1,16 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { getCategories, getMenu, getOrders, placeOrder } from './api'
+import { getApiError, getCategories, getMenu, getOrders, placeOrder } from './api'
 import type { Category, MenuItem, Order } from './api'
 import './ordering.css'
-
-function errorMessage(error: unknown) {
-  if (typeof error === 'object' && error && 'response' in error) {
-    const response = (error as { response?: { data?: { message?: string } } }).response
-    if (response?.data?.message) return response.data.message
-  }
-  return 'เชื่อมต่อไม่สำเร็จ กรุณาลองอีกครั้ง'
-}
 
 export default function CustomerOrderingPage() {
   const { sessionId: rawId } = useParams()
@@ -37,7 +29,7 @@ export default function CustomerOrderingPage() {
         setOrders(nextOrders)
         setError('')
       })
-      .catch((cause) => { if (active) setError(errorMessage(cause)) })
+      .catch((cause) => { if (active) setError(getApiError(cause)) })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
   }, [sessionId, invalidSession])
@@ -67,7 +59,7 @@ export default function CustomerOrderingPage() {
       setCart({})
       setNotice(`ส่งคำสั่งซื้อ #${created.orderId} แล้ว`)
     } catch (cause) {
-      setError(errorMessage(cause))
+      setError(getApiError(cause))
     } finally {
       setSubmitting(false)
     }
@@ -77,7 +69,7 @@ export default function CustomerOrderingPage() {
     try {
       setOrders(await getOrders(sessionId))
       setError('')
-    } catch (cause) { setError(errorMessage(cause)) }
+    } catch (cause) { setError(getApiError(cause)) }
   }
 
   return (
@@ -98,7 +90,10 @@ export default function CustomerOrderingPage() {
         {visibleMenu.length === 0 ? <p className="ordering-state">ยังไม่มีเมนูในหมวดนี้</p> :
           <section className="ordering-grid" aria-label="เมนูอาหาร">
             {visibleMenu.map((item) => <article key={item.id} className="ordering-card">
-              <div><span className="ordering-item-label">เมนู #{item.id}</span><h2>{item.name}</h2></div>
+              <div>
+                {item.imageUrl && <img className="ordering-item-image" src={item.imageUrl} alt={item.name} loading="lazy" />}
+                <span className="ordering-item-label">เมนู #{item.id}</span><h2>{item.name}</h2>
+              </div>
               <div className="ordering-stepper">
                 <button aria-label={`ลด ${item.name}`} onClick={() => changeQuantity(item.id, -1)} disabled={!cart[item.id]}>−</button>
                 <span aria-live="polite">{cart[item.id] ?? 0}</span>

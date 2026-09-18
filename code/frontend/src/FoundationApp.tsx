@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import { API_BASE_URL } from './api/client'
 import CustomerOrderingPage from './features/ordering/CustomerOrderingPage'
+import MenuAdminPage from './features/ordering/MenuAdminPage'
 
 function FoundationReadyPage() {
   return (
@@ -34,6 +35,7 @@ export default function FoundationApp() {
   return (
     <Routes>
       <Route path="/customer/sessions/:sessionId" element={<CustomerOrderingPage />} />
+      {import.meta.env.DEV && <Route path="/admin/menu" element={<MenuAdminPage />} />}
       <Route path="*" element={<FoundationReadyPage />} />
     </Routes>
   )

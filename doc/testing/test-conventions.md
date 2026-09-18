@@ -18,6 +18,6 @@ Cover success, invalid input, unavailable menu item, item outside package, inact
 
 ## Data isolation and review
 
-Never run automated tests against the team's shared Supabase data. Integration tests need a dedicated disposable database/schema; migrations must run against that isolated target. Do not commit credentials. Before a PR, run the backend test suite and frontend lint/build, report the results, and link the acceptance criteria. The reviewer checks both happy and failure paths.
+Never run automated tests against the team's shared Supabase data. Integration tests need a dedicated disposable database/schema; migrations must run against that isolated target. Do not commit credentials. Before a PR, run the backend test suite and frontend test/lint/build, report the results, and link the acceptance criteria. The reviewer checks both happy and failure paths. Frontend feature tests use Vitest and Testing Library to assert user-visible behavior and API calls.
 
 The feature owner performs module tests. Pairwise API/database tests belong at the integration checkpoint after both sides have working implementations. The SQA owner tracks requirements against tests and reviews the final test report; they do not write every module's tests.

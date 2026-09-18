@@ -22,8 +22,8 @@ class OrderingServiceTest {
     @Test
     void menu_whenSessionIsActive_returnsOnlyPackageItems() {
         assertEquals(3, service.menu(1).size());
-        service.saveItem(null, new MenuItemRequest(1L, "Other package", true, java.util.Set.of(2L)));
-        service.saveItem(null, new MenuItemRequest(1L, "Unavailable", false, java.util.Set.of(1L)));
+        service.saveItem(null, new MenuItemRequest(1L, "Other package", true, java.util.Set.of(2L), null));
+        service.saveItem(null, new MenuItemRequest(1L, "Unavailable", false, java.util.Set.of(1L), null));
         assertEquals(3, service.menu(1).size());
     }
 
@@ -40,7 +40,7 @@ class OrderingServiceTest {
 
     @Test
     void place_whenItemOutsidePackage_rejectsWithoutSaving() {
-        MenuItem other = service.saveItem(null, new MenuItemRequest(1L, "Other", true, java.util.Set.of(2L)));
+        MenuItem other = service.saveItem(null, new MenuItemRequest(1L, "Other", true, java.util.Set.of(2L), null));
         OrderingException error = assertThrows(OrderingException.class, () ->
                 service.place(1, new PlaceOrderRequest(List.of(new OrderItemRequest(other.id(), 1)))));
         assertEquals(HttpStatus.BAD_REQUEST, error.status());
@@ -70,5 +70,14 @@ class OrderingServiceTest {
         PageResponse<MenuItem> page = service.items(1, 1, "name,asc");
         assertEquals(3, page.totalElements());
         assertEquals(1, page.content().size());
+    }
+
+    @Test
+    void saveItem_whenImageUrlProvided_returnsItForCustomerMenu() {
+        MenuItem saved = service.saveItem(null, new MenuItemRequest(1L, "Soup", true,
+                java.util.Set.of(1L), "https://example.com/soup.jpg"));
+        assertEquals("https://example.com/soup.jpg", service.item(saved.id()).imageUrl());
+        assertTrue(service.menu(1).stream().anyMatch(item ->
+                item.id().equals(saved.id()) && "https://example.com/soup.jpg".equals(item.imageUrl())));
     }
 }

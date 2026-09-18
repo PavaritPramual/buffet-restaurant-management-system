@@ -53,7 +53,7 @@ public class OrderingService {
         if (id != null) item(id);
         category(request.categoryId());
         return catalog.saveItem(new MenuItem(id, request.categoryId(), request.name().trim(),
-                request.available(), Set.copyOf(request.packageIds())));
+                request.available(), Set.copyOf(request.packageIds()), request.imageUrl()));
     }
     public void deleteItem(long id) {
         item(id);
