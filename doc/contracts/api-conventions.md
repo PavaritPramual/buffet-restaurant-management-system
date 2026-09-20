@@ -64,6 +64,12 @@ Java enum ต้องถูก serialize เป็น **UPPERCASE string** เ�
 
 ยืนยันแล้วโดย `SharedEnumSerializationTest` (Jackson `ObjectMapper` reject ทั้ง unknown และ lowercase enum ด้วย exception) และ `EnumErrorResponseTest` (controller คืน `400` พร้อม `ErrorResponse` ตามรูปแบบหัวข้อ 6)
 
+### 2.3 ห้ามสร้าง Enum ซ้ำกับ Shared Enum
+
+* ก่อนสร้าง enum ใหม่ ทุก Module ต้องตรวจสอบ `shared-contracts.md` ก่อนเสมอ
+* Enum ที่มีความหมายร่วมกันข้าม Module (เช่น `OrderStatus`, `PaymentMethod`, `UserRole`) ต้องอ้างอิงจาก Shared Enum เดียวกัน ห้าม Module ใด Module หนึ่งประกาศ enum ซ้ำหรือคล้ายกันขึ้นมาเอง
+* หากจำเป็นต้องเพิ่มค่าใหม่ใน enum ที่เป็น shared ต้องแก้ที่ต้นทาง (`shared-contracts.md`) และแจ้งทุก Module ที่เกี่ยวข้อง
+
 ### 2.4 ค่า Shared Enum ปัจจุบัน
 
 อ้างอิงตรงจาก `doc/contracts/shared-contracts.md`, backend `domain/enums/*.java` และ frontend `contracts/shared.ts` (สามแหล่งตรงกัน):
@@ -78,12 +84,6 @@ Java enum ต้องถูก serialize เป็น **UPPERCASE string** เ�
 | `UserRole` | `SERVICE_STAFF`, `KITCHEN_STAFF`, `SUPERVISOR`, `MANAGER` |
 
 Entity ทุกตัวต้องใช้ `@Enumerated(EnumType.STRING)` เท่านั้น ห้ามใช้ `EnumType.ORDINAL` (ตามที่ระบุไว้ท้าย `shared-contracts.md`)
-
-### 2.3 ห้ามสร้าง Enum ซ้ำกับ Shared Enum
-
-* ก่อนสร้าง enum ใหม่ ทุก Module ต้องตรวจสอบ `shared-contracts.md` ก่อนเสมอ
-* Enum ที่มีความหมายร่วมกันข้าม Module (เช่น `OrderStatus`, `PaymentMethod`, `UserRole`) ต้องอ้างอิงจาก Shared Enum เดียวกัน ห้าม Module ใด Module หนึ่งประกาศ enum ซ้ำหรือคล้ายกันขึ้นมาเอง
-* หากจำเป็นต้องเพิ่มค่าใหม่ใน enum ที่เป็น shared ต้องแก้ที่ต้นทาง (`shared-contracts.md`) และแจ้งทุก Module ที่เกี่ยวข้อง
 
 ---
 
@@ -129,7 +129,7 @@ YYYY-MM-DDTHH:mm:ssXXX
 | Create | `201 Created` | คืนค่า resource ที่สร้างพร้อม `Location` header (ถ้ามี) |
 | Read (single) | `200 OK` | ถ้าไม่พบ resource → `404 Not Found` |
 | Read (list) | `200 OK` | คืน array ว่างถ้าไม่มีข้อมูล ไม่ใช่ 404 |
-| Update | `200 OK` (คืนค่า resource ที่อัปเดตแล้ว) หรือ `204 No Content` (ถ้าไม่คืน body) | ต้องตกลงรูปแบบเดียวกันทั้ง Module |
+| Update | `200 OK` พร้อมคืน resource ที่อัปเดตแล้ว | มาตรฐานเดียวของทีม — ทุก Module ต้องคืน resource ฉบับล่าสุดใน body เสมอ ห้ามคืน `204 No Content` สำหรับ Update |
 | Delete | `204 No Content` | ถ้า resource ไม่พบ → `404 Not Found` |
 | Validation Error | `400 Bad Request` | ใช้ `ErrorResponse` ตามรูปแบบด้านล่าง |
 
@@ -140,6 +140,8 @@ YYYY-MM-DDTHH:mm:ssXXX
 * `404 Not Found` — ไม่พบ resource
 * `409 Conflict` — ข้อมูลขัดแย้ง (เช่น ซ้ำ unique key)
 * `500 Internal Server Error` — ข้อผิดพลาดฝั่ง server (ไม่ควรเกิดขึ้นจาก validation)
+
+> **สถานะการ implement ปัจจุบัน:** `GlobalExceptionHandler.java` ตอนนี้มี handler จริงเฉพาะ `400 Bad Request` (validation error และ malformed/unreadable body) กับ `500 Internal Server Error` (catch-all `Exception`) เท่านั้น **ยังไม่มี handler สำหรับ `401`, `403`, `404`, `409`** — Module ที่ต้องใช้ status เหล่านี้ (เช่น resource not found, สิทธิ์ไม่พอ, ข้อมูลซ้ำ) ต้องเพิ่ม exception + handler ของตัวเองใน `GlobalExceptionHandler` พร้อมเขียน test ยืนยันรูปแบบ `ErrorResponse` ก่อน จึงจะถือว่า contract นี้ใช้ได้ครบสำหรับ status code นั้นๆ
 
 ---
 
@@ -178,6 +180,8 @@ public record ErrorResponse(
 | `path` | string | endpoint ที่เกิด error |
 
 > **หมายเหตุ:** โครงสร้างปัจจุบันไม่มี field แยกรายฟิลด์ (เช่น `fieldErrors`) — ทุก validation error ทั้งหมดถูกรวมไว้ใน `message` เดียว ถ้า Module ใดต้องการ field-level detail เพิ่มเติม ต้องเสนอแก้ `ErrorResponse.java` และแจ้งทุก Module ก่อน ไม่ใช่เพิ่มเองใน DTO เฉพาะจุด
+
+> **หมายเหตุความครบถ้วน:** `ErrorResponse` shape ด้านบนคือ contract ที่ยืนยันแล้วจริงสำหรับ error ที่ `GlobalExceptionHandler` จัดการอยู่ปัจจุบัน (400, 500) เท่านั้น สำหรับ `401`, `403`, `404`, `409` ให้ implement handler ใหม่ใน `GlobalExceptionHandler` ที่คืน `ErrorResponse` shape เดียวกันนี้ พร้อม unit test ยืนยัน ก่อนถือว่า Module นั้นปฏิบัติตาม contract ฉบับนี้ครบถ้วน
 
 ---
 
@@ -263,5 +267,5 @@ Response `400 Bad Request`
 
 - [x] ตัวอย่าง request/response อ่านแล้วนำไปใช้ได้ทันที — อิงจาก `OrderFulfillmentContext` จริงใน `shared-contracts.md` และ `shared.ts` โดยตรง
 - [x] ค่า enum ตรงกับ backend และ frontend — ตรวจสอบกับ `domain/enums/*.java` และ `contracts/shared.ts` แล้ว (ทั้งสองฝั่งตรงกัน)
-- [x] ไม่มี contract ที่ขัดกับ `shared-contracts.md` — แก้ `ErrorResponse` ให้ตรงกับ `dto/response/ErrorResponse.java` จริง, แก้ base path เป็น `/api/v1`, และแก้ type inconsistency ที่ reviewer พบ (`orderId` เป็น `number` ทุกจุด, `tableNumber` เป็น `string` ทุกจุด ตามที่ `shared-contracts.md` กำหนด)
+- [x] ไม่มี contract ที่ขัดกับ `shared-contracts.md` — แก้ `ErrorResponse` ให้ตรงกับ `dto/response/ErrorResponse.java` จริง, แก้ base path เป็น `/api/v1`, แก้ type inconsistency (`orderId` เป็น `number` ทุกจุด, `tableNumber` เป็น `string` ทุกจุด), จัดลำดับหัวข้อ 2.3/2.4 ให้ถูก, ฟันธง Update = `200 OK` เป็นมาตรฐานเดียว, และระบุชัดว่า `401/403/404/409` handler ยังไม่ implement จริง ต้องเพิ่ม handler+test ก่อนถือว่าใช้ contract สมบูรณ์
 - [ ] ปวริศช์และ Feature Owner อย่างน้อย 1 คน review — ยังไม่ผ่าน รอ PR review
