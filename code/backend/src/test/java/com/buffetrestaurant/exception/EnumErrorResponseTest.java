@@ -52,6 +52,17 @@ class EnumErrorResponseTest {
                 .andExpect(jsonPath("$.timestamp").exists());
     }
 
+    @Test
+    void dataIntegrityViolationReturnsStandardConflict() throws Exception {
+        mockMvc.perform(post("/api/v1/test/integrity-violation"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.error").value("Conflict"))
+                .andExpect(jsonPath("$.message").value("Database constraint violation: duplicate or conflicting resource"))
+                .andExpect(jsonPath("$.path").value("/api/v1/test/integrity-violation"))
+                .andExpect(jsonPath("$.timestamp").exists());
+    }
+
     @RestController
     @RequestMapping("/api/v1/test")
     static class ProbeController {
@@ -63,6 +74,11 @@ class EnumErrorResponseTest {
         @GetMapping("/enum-param")
         OrderStatus probeParam(@RequestParam("status") OrderStatus status) {
             return status;
+        }
+
+        @PostMapping("/integrity-violation")
+        void throwDataIntegrityViolation() {
+            throw new org.springframework.dao.DataIntegrityViolationException("duplicate key value violates unique constraint");
         }
     }
 

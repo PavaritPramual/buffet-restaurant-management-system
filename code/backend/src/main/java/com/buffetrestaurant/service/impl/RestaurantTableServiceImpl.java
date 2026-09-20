@@ -12,6 +12,7 @@ import com.buffetrestaurant.mapper.TableMapper;
 import com.buffetrestaurant.repository.RestaurantTableRepository;
 import com.buffetrestaurant.service.RestaurantTableService;
 import java.util.List;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,9 +51,13 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
             throw new DuplicateResourceException("Table number '" + request.tableNumber() + "' already exists");
         }
 
-        RestaurantTable table = tableMapper.toEntity(request);
-        RestaurantTable saved = tableRepository.save(table);
-        return tableMapper.toResponse(saved);
+        try {
+            RestaurantTable table = tableMapper.toEntity(request);
+            RestaurantTable saved = tableRepository.saveAndFlush(table);
+            return tableMapper.toResponse(saved);
+        } catch (DataIntegrityViolationException ex) {
+            throw new DuplicateResourceException("Table number '" + request.tableNumber() + "' already exists");
+        }
     }
 
     @Override
@@ -64,11 +69,15 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
             throw new DuplicateResourceException("Table number '" + request.tableNumber() + "' is already in use by another table");
         }
 
-        table.setTableNumber(request.tableNumber());
-        table.setCapacity(request.capacity());
+        try {
+            table.setTableNumber(request.tableNumber());
+            table.setCapacity(request.capacity());
 
-        RestaurantTable updated = tableRepository.save(table);
-        return tableMapper.toResponse(updated);
+            RestaurantTable updated = tableRepository.saveAndFlush(table);
+            return tableMapper.toResponse(updated);
+        } catch (DataIntegrityViolationException ex) {
+            throw new DuplicateResourceException("Table number '" + request.tableNumber() + "' is already in use by another table");
+        }
     }
 
     @Override

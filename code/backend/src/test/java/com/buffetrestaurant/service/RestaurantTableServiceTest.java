@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @ExtendWith(MockitoExtension.class)
 class RestaurantTableServiceTest {
@@ -108,7 +109,7 @@ class RestaurantTableServiceTest {
         when(tableRepository.existsByTableNumber("T01")).thenReturn(false);
 
         RestaurantTable saved = new RestaurantTable(1L, "T01", 4, TableStatus.AVAILABLE);
-        when(tableRepository.save(any(RestaurantTable.class))).thenReturn(saved);
+        when(tableRepository.saveAndFlush(any(RestaurantTable.class))).thenReturn(saved);
 
         // When
         TableResponse result = tableService.createTable(request);
@@ -118,7 +119,7 @@ class RestaurantTableServiceTest {
         assertThat(result.tableNumber()).isEqualTo("T01");
         assertThat(result.capacity()).isEqualTo(4);
         assertThat(result.status()).isEqualTo(TableStatus.AVAILABLE);
-        verify(tableRepository).save(any(RestaurantTable.class));
+        verify(tableRepository).saveAndFlush(any(RestaurantTable.class));
     }
 
     @Test
@@ -131,7 +132,21 @@ class RestaurantTableServiceTest {
         assertThatThrownBy(() -> tableService.createTable(request))
                 .isInstanceOf(DuplicateResourceException.class)
                 .hasMessageContaining("Table number 'T01' already exists");
-        verify(tableRepository, never()).save(any(RestaurantTable.class));
+        verify(tableRepository, never()).saveAndFlush(any(RestaurantTable.class));
+    }
+
+    @Test
+    void createTable_whenDatabaseConstraintViolationOccurs_throwsDuplicateResourceException() {
+        // Given
+        CreateTableRequest request = new CreateTableRequest("T01", 4);
+        when(tableRepository.existsByTableNumber("T01")).thenReturn(false);
+        when(tableRepository.saveAndFlush(any(RestaurantTable.class)))
+                .thenThrow(new DataIntegrityViolationException("duplicate key value violates unique constraint"));
+
+        // When & Then
+        assertThatThrownBy(() -> tableService.createTable(request))
+                .isInstanceOf(DuplicateResourceException.class)
+                .hasMessageContaining("Table number 'T01' already exists");
     }
 
     @Test
@@ -142,7 +157,7 @@ class RestaurantTableServiceTest {
         when(tableRepository.existsByTableNumberAndIdNot("T01-NEW", 1L)).thenReturn(false);
 
         RestaurantTable updated = new RestaurantTable(1L, "T01-NEW", 6, TableStatus.AVAILABLE);
-        when(tableRepository.save(existing)).thenReturn(updated);
+        when(tableRepository.saveAndFlush(existing)).thenReturn(updated);
 
         UpdateTableRequest request = new UpdateTableRequest("T01-NEW", 6);
 
@@ -152,7 +167,7 @@ class RestaurantTableServiceTest {
         // Then
         assertThat(result.tableNumber()).isEqualTo("T01-NEW");
         assertThat(result.capacity()).isEqualTo(6);
-        verify(tableRepository).save(existing);
+        verify(tableRepository).saveAndFlush(existing);
     }
 
     @Test
@@ -180,7 +195,24 @@ class RestaurantTableServiceTest {
         assertThatThrownBy(() -> tableService.updateTable(1L, request))
                 .isInstanceOf(DuplicateResourceException.class)
                 .hasMessageContaining("Table number 'T02' is already in use by another table");
-        verify(tableRepository, never()).save(any(RestaurantTable.class));
+        verify(tableRepository, never()).saveAndFlush(any(RestaurantTable.class));
+    }
+
+    @Test
+    void updateTable_whenDatabaseConstraintViolationOccurs_throwsDuplicateResourceException() {
+        // Given
+        RestaurantTable existing = new RestaurantTable(1L, "T01", 4, TableStatus.AVAILABLE);
+        when(tableRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(tableRepository.existsByTableNumberAndIdNot("T02", 1L)).thenReturn(false);
+        when(tableRepository.saveAndFlush(existing))
+                .thenThrow(new DataIntegrityViolationException("duplicate key value violates unique constraint"));
+
+        UpdateTableRequest request = new UpdateTableRequest("T02", 6);
+
+        // When & Then
+        assertThatThrownBy(() -> tableService.updateTable(1L, request))
+                .isInstanceOf(DuplicateResourceException.class)
+                .hasMessageContaining("Table number 'T02' is already in use by another table");
     }
 
     @Test

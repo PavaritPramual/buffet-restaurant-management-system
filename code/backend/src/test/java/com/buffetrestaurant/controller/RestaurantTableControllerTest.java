@@ -26,6 +26,7 @@ import com.buffetrestaurant.service.RestaurantTableService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -157,6 +158,22 @@ class RestaurantTableControllerTest {
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.error").value("Conflict"))
                 .andExpect(jsonPath("$.message").value("Table number 'T01' already exists"))
+                .andExpect(jsonPath("$.path").value("/api/v1/tables"));
+    }
+
+    @Test
+    void createTable_whenDataIntegrityViolationOccurs_returns409AndErrorResponse() throws Exception {
+        CreateTableRequest request = new CreateTableRequest("T01", 4);
+        when(tableService.createTable(any(CreateTableRequest.class)))
+                .thenThrow(new DataIntegrityViolationException("unique constraint violated"));
+
+        mockMvc.perform(post("/api/v1/tables")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.error").value("Conflict"))
+                .andExpect(jsonPath("$.message").value("Database constraint violation: duplicate or conflicting resource"))
                 .andExpect(jsonPath("$.path").value("/api/v1/tables"));
     }
 
