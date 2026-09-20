@@ -76,7 +76,34 @@ SUPABASE_DB_USERNAME=postgres.your-project-ref
 SUPABASE_DB_PASSWORD=change-me
 ```
 
-Spring Data JPA, Flyway และ datasource configuration จะเพิ่มผ่าน PR ของ Database Owner
+Backend โหลดค่าฐานข้อมูลจาก `code/backend/.env` ผ่าน Spring config import แบบ optional
+และบังคับ SSL ด้วย `sslmode=require` จึงไม่ต้องใส่ secret ใน `application.yml`
+
+### Database migration convention
+
+- ไฟล์ migration อยู่ที่ `code/backend/src/main/resources/db/migration/`
+- ใช้ชื่อ `V<ลำดับ>__<คำอธิบายสั้นแบบ snake_case>.sql` เช่น `V1__baseline.sql`
+- migration ที่ apply แล้วห้ามแก้ไข ให้เพิ่ม version ใหม่แทน
+- ใช้ schema `public` และให้ Flyway เป็นผู้จัดการ schema; JPA ใช้ `ddl-auto: validate`
+- `V1__baseline.sql` เป็น migration เปล่าสำหรับยืนยันการทำงานของ Flyway เท่านั้น
+	ไม่สร้างตารางของ Table, Order, Billing หรือโมดูลอื่น
+
+หลังใส่ค่าจริงใน `.env` ให้รันจาก `code/backend`:
+
+```bash
+mvnw.cmd spring-boot:run
+```
+
+จากนั้นตรวจใน Supabase SQL Editor:
+
+```sql
+select installed_rank, version, description, success
+from public.flyway_schema_history
+order by installed_rank;
+```
+
+ควรพบแถว `1 | baseline | true` ซึ่งยืนยันว่าเกิดตาราง `flyway_schema_history`
+โดยไม่ต้องมีตาราง business ใด ๆ ใน migration นี้
 
 ## Shared Contracts
 
