@@ -117,8 +117,10 @@ Frontend ใช้ Vite development server
 ### Environment
 
 - `SERVER_PORT`: พอร์ต backend ภายใน container กำหนดเป็น `8080`
-- `CORS_ALLOWED_ORIGINS`: origin ที่ backend อนุญาต กำหนดเป็น `http://localhost:5173`
+- `CORS_ALLOWED_ORIGINS`: origin ที่ backend อนุญาต เปลี่ยนได้ผ่าน `code/backend/.env` หากไม่กำหนดจะใช้ `http://localhost:5173` เป็นค่าเริ่มต้นจาก Java
 - `VITE_API_BASE_URL`: URL ที่ browser ใช้เรียก API กำหนดเป็น `http://localhost:8080/api/v1`
+
+หลังเปลี่ยนค่าใน `code/backend/.env` ให้รัน `docker compose up -d --force-recreate backend` เพื่อให้ backend รับค่าใหม่
 
 Compose อ่าน `code/backend/.env` ถ้ามี และส่งค่าเข้า backend ตอนรัน
 ใช้ `.env.example` เป็นตัวอย่าง ห้าม commit `.env` หรือใส่ secrets ใน Dockerfile
