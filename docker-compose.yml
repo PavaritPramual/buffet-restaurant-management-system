@@ -1,0 +1,20 @@
+services:
+  backend:
+    build:
+      context: ./code/backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - path: ./code/backend/.env
+        required: false
+    environment:
+      SERVER_PORT: "8080"
+  frontend:
+    build:
+      context: ./code/frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: "http://localhost:8080/api/v1"
+    depends_on:
+      - backend
