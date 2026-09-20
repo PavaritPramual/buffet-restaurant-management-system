@@ -76,6 +76,17 @@ class RestaurantTableControllerTest {
     }
 
     @Test
+    void getAllTables_whenInvalidStatusQueryParam_returns400AndErrorResponse() throws Exception {
+        mockMvc.perform(get("/api/v1/tables").param("status", "invalid"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message").value("Invalid value 'invalid' for parameter 'status'"))
+                .andExpect(jsonPath("$.path").value("/api/v1/tables"))
+                .andExpect(jsonPath("$.timestamp").exists());
+    }
+
+    @Test
     void getTableById_whenTableExists_returns200AndTableResponse() throws Exception {
         TableResponse response = new TableResponse(1L, "T01", 4, TableStatus.AVAILABLE);
         when(tableService.getTableById(1L)).thenReturn(response);

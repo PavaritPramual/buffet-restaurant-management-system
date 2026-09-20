@@ -49,6 +49,17 @@ class RestaurantTableIntegrationTest {
     }
 
     @Test
+    void getAllTables_whenInvalidStatusQueryParam_returns400AndErrorResponse() throws Exception {
+        mockMvc.perform(get("/api/v1/tables").param("status", "invalid"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message").value("Invalid value 'invalid' for parameter 'status'"))
+                .andExpect(jsonPath("$.path").value("/api/v1/tables"))
+                .andExpect(jsonPath("$.timestamp").exists());
+    }
+
+    @Test
     void createTable_whenValid_persistsAndReturns201() throws Exception {
         CreateTableRequest request = new CreateTableRequest("INT-01", 4);
 
