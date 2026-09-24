@@ -1,9 +1,9 @@
 import { apiClient } from '../../api/client'
 import type { OrderStatus } from '../../contracts/shared'
 
-export interface MenuItem { id: number; categoryId: number; categoryName: string; name: string; available: boolean; packageIds: number[]; imageUrl: string | null }
+export interface MenuItem { id: number; categoryId: number; categoryName: string; name: string; description: string | null; available: boolean; packageIds: number[]; imageUrl: string | null }
 export interface Category { id: number; name: string }
-export interface MenuItemInput { categoryId: number; name: string; available: boolean; packageIds: number[]; imageUrl: string | null }
+export interface MenuItemInput { categoryId: number; name: string; description: string | null; available: boolean; packageIds: number[]; imageUrl: string | null }
 export interface Order { orderId: number; sessionId: number; tableNumber: string; items: { menuItemId: number; name: string; quantity: number }[]; status: OrderStatus; createdAt: string }
 export interface PageResult<T> { content: T[]; page: number; size: number; totalElements: number; totalPages: number }
 

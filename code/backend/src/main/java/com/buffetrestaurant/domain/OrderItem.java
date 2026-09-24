@@ -24,11 +24,14 @@ public class OrderItem {
     @Column(name = "menu_item_id", nullable = false)
     private Long menuItemId;
 
-    @Column(name = "item_name", nullable = false, length = 120)
+    @Column(name = "item_name", nullable = false, length = 100)
     private String itemName;
 
     @Column(nullable = false)
     private int quantity;
+
+    @Column(length = 255)
+    private String note;
 
     protected OrderItem() {}
 
@@ -37,9 +40,11 @@ public class OrderItem {
         this.menuItemId = menuItemId;
         this.itemName = itemName;
         this.quantity = quantity;
+        this.note = null;
     }
 
     public Long getMenuItemId() { return menuItemId; }
     public String getItemName() { return itemName; }
     public int getQuantity() { return quantity; }
+    public String getNote() { return note; }
 }

@@ -15,8 +15,9 @@ Date: 24 September 2026
 
 | Check | Result |
 |---|---|
-| Backend test suite | 61 passed, 0 failed |
+| Backend test suite | 62 passed, 0 failed |
 | Ordering integration tests | 11 passed, including production-safe disablement, session-scoped order access, persistence, session/package rules and pagination |
+| Flyway V1/V2 → V3 upgrade test | Passed |
 | Frontend component tests | 4 passed, 0 failed |
 | Frontend lint | Passed |
 | Frontend production build | Passed |

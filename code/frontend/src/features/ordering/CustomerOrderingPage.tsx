@@ -73,7 +73,7 @@ export default function CustomerOrderingPage() {
       {visibleMenu.length === 0 ? <EmptyState title="ยังไม่มีเมนูในหมวดนี้" description="ลองเลือกหมวดอื่นหรือสอบถามพนักงานได้ค่ะ" /> : <section className="menu-grid" aria-label="เมนูอาหาร">
         {visibleMenu.map((item) => <Card key={item.id} className="menu-card">
           {item.imageUrl ? <img src={item.imageUrl} alt={item.name} loading="lazy" /> : <div className="menu-image-placeholder" aria-hidden="true">🍽️</div>}
-          <div className="menu-card-body"><small>{item.categoryName}</small><h2>{item.name}</h2>
+          <div className="menu-card-body"><small>{item.categoryName}</small><h2>{item.name}</h2>{item.description && <p className="menu-description">{item.description}</p>}
             <div className="quantity-stepper"><Button variant="secondary" aria-label={`ลด ${item.name}`} onClick={() => changeQuantity(item.id, -1)} disabled={!cart[item.id]}>−</Button><span aria-live="polite">{cart[item.id] ?? 0}</span><Button aria-label={`เพิ่ม ${item.name}`} onClick={() => changeQuantity(item.id, 1)}>+</Button></div>
           </div>
         </Card>)}

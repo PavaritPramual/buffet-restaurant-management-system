@@ -17,7 +17,8 @@ public class OrderingMapper {
 
     public MenuItemResponse toResponse(MenuItem item) {
         return new MenuItemResponse(item.getId(), item.getCategory().getId(), item.getCategory().getName(),
-                item.getName(), item.isAvailable(), new LinkedHashSet<>(item.getPackageIds()), item.getImageUrl());
+                item.getName(), item.getDescription(), item.isAvailable(),
+                new LinkedHashSet<>(item.getPackageIds()), item.getImageUrl());
     }
 
     public OrderResponse toResponse(CustomerOrder order) {

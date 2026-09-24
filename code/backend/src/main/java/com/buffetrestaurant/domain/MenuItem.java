@@ -25,8 +25,11 @@ public class MenuItem {
     @JoinColumn(name = "category_id", nullable = false)
     private MenuCategory category;
 
-    @Column(nullable = false, unique = true, length = 120)
+    @Column(nullable = false, length = 100)
     private String name;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @Column(nullable = false)
     private boolean available;
@@ -35,18 +38,24 @@ public class MenuItem {
     private String imageUrl;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "menu_item_packages", joinColumns = @JoinColumn(name = "menu_item_id"))
+    @CollectionTable(name = "package_menu_items", joinColumns = @JoinColumn(name = "menu_item_id"))
     @Column(name = "package_id", nullable = false)
     private Set<Long> packageIds = new LinkedHashSet<>();
 
     protected MenuItem() {}
 
-    public MenuItem(MenuCategory category, String name, boolean available, String imageUrl, Set<Long> packageIds) {
+    public MenuItem(MenuCategory category, String name, String description, boolean available,
+                    String imageUrl, Set<Long> packageIds) {
         this.category = category;
         this.name = name;
+        this.description = description;
         this.available = available;
         this.imageUrl = imageUrl;
         this.packageIds = new LinkedHashSet<>(packageIds);
+    }
+
+    public MenuItem(MenuCategory category, String name, boolean available, String imageUrl, Set<Long> packageIds) {
+        this(category, name, null, available, imageUrl, packageIds);
     }
 
     public Long getId() { return id; }
@@ -54,6 +63,8 @@ public class MenuItem {
     public void setCategory(MenuCategory category) { this.category = category; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
     public boolean isAvailable() { return available; }
     public void setAvailable(boolean available) { this.available = available; }
     public String getImageUrl() { return imageUrl; }

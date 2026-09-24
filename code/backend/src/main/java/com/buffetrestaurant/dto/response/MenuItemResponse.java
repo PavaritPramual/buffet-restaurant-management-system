@@ -7,6 +7,7 @@ public record MenuItemResponse(
         Long categoryId,
         String categoryName,
         String name,
+        String description,
         boolean available,
         Set<Long> packageIds,
         String imageUrl

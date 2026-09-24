@@ -24,13 +24,14 @@ describe('CustomerOrderingPage', () => {
   })
 
   it('shows menu images and creates an order with duplicate-submit protection', async () => {
-    vi.mocked(api.getMenu).mockResolvedValue([{ id: 10, categoryId: 1, categoryName: 'ของทอด', name: 'ไก่ทอด', available: true, packageIds: [1], imageUrl: '/images/chicken.jpg' }])
+    vi.mocked(api.getMenu).mockResolvedValue([{ id: 10, categoryId: 1, categoryName: 'ของทอด', name: 'ไก่ทอด', description: 'ทอดใหม่ทุกจาน', available: true, packageIds: [1], imageUrl: '/images/chicken.jpg' }])
     vi.mocked(api.getCategories).mockResolvedValue([{ id: 1, name: 'ของทอด' }])
     vi.mocked(api.getOrders).mockResolvedValue([])
     vi.mocked(api.placeOrder).mockResolvedValue({ orderId: 7, sessionId: 1, tableNumber: 'T01', status: 'RECEIVED', createdAt: '2026-09-24T10:00:00+07:00', items: [{ menuItemId: 10, name: 'ไก่ทอด', quantity: 1 }] })
     renderPage()
     const image = await screen.findByRole('img', { name: 'ไก่ทอด' })
     expect(image.getAttribute('src')).toBe('/images/chicken.jpg')
+    expect(screen.getByText('ทอดใหม่ทุกจาน')).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'เพิ่ม ไก่ทอด' }))
     fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสั่ง' }))
     fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))

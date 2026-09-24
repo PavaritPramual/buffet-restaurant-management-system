@@ -17,13 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "customer_orders")
+@Table(name = "orders")
 public class CustomerOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "dining_session_id", nullable = false)
+    @Column(name = "session_id", nullable = false)
     private Long sessionId;
 
     @Column(name = "table_number", nullable = false, length = 20)

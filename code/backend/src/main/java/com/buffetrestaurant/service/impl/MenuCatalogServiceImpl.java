@@ -83,7 +83,8 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
     public MenuItemResponse createMenuItem(MenuItemRequest request) {
         String name = request.name().trim();
         if (itemRepository.existsByNameIgnoreCase(name)) throw new DuplicateResourceException("Menu item already exists: " + name);
-        MenuItem item = new MenuItem(requireCategory(request.categoryId()), name, request.available(), clean(request.imageUrl()), request.packageIds());
+        MenuItem item = new MenuItem(requireCategory(request.categoryId()), name, clean(request.description()),
+                request.available(), clean(request.imageUrl()), request.packageIds());
         return mapper.toResponse(itemRepository.save(item));
     }
 
@@ -94,6 +95,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
         if (itemRepository.existsByNameIgnoreCaseAndIdNot(name, id)) throw new DuplicateResourceException("Menu item already exists: " + name);
         item.setCategory(requireCategory(request.categoryId()));
         item.setName(name);
+        item.setDescription(clean(request.description()));
         item.setAvailable(request.available());
         item.setImageUrl(clean(request.imageUrl()));
         item.setPackageIds(request.packageIds());

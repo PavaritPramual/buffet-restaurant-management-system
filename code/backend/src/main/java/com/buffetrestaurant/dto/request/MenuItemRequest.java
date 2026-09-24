@@ -10,7 +10,8 @@ import java.util.Set;
 
 public record MenuItemRequest(
         @NotNull @Positive Long categoryId,
-        @NotBlank @Size(max = 120) String name,
+        @NotBlank @Size(max = 100) String name,
+        String description,
         boolean available,
         @NotEmpty Set<@Positive Long> packageIds,
         @Size(max = 500)
