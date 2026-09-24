@@ -12,6 +12,7 @@ Thumbs.db
 
 # Java and Maven
 code/backend/target/
+code/backend/.m2-cache/
 *.log
 
 # Node and Vite
@@ -23,4 +24,3 @@ code/frontend/.vite/
 coverage/
 test/reports/*
 !test/reports/.gitkeep
-

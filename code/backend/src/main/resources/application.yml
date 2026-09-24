@@ -29,3 +29,8 @@ springdoc:
 
 server:
   port: ${SERVER_PORT:8080}
+
+app:
+  ordering:
+    # Replace with the DiningSession adapter when the Session module is integrated.
+    session-provider: ${ORDERING_SESSION_PROVIDER:fixture}
