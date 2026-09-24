@@ -1,0 +1,3 @@
+app:
+  ordering:
+    session-provider: fixture

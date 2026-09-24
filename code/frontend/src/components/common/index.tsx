@@ -1,6 +1,4 @@
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from 'react'
-import type { OrderStatus } from '../../contracts/shared'
-
 export function Button({ variant = 'primary', size = 'md', loading = false, children, disabled, className = '', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'danger' | 'ghost'; size?: 'sm' | 'md' | 'lg'; loading?: boolean }) {
   return <button className={`ui-button ${variant} ${size} ${className}`} disabled={disabled || loading} {...props}>{loading ? 'กำลังดำเนินการ…' : children}</button>
 }
@@ -10,8 +8,10 @@ export function TextField({ label, error, ...props }: InputHTMLAttributes<HTMLIn
 export function SelectField({ label, children, ...props }: SelectHTMLAttributes<HTMLSelectElement> & { label: string; children: ReactNode }) {
   return <label className="ui-field"><span>{label}</span><select {...props}>{children}</select></label>
 }
-const statusLabels: Record<OrderStatus, string> = { RECEIVED: 'รับออเดอร์แล้ว', PREPARING: 'กำลังเตรียม', READY: 'พร้อมเสิร์ฟ', SERVED: 'เสิร์ฟแล้ว' }
-export function StatusBadge({ status }: { status: OrderStatus }) { return <span className={`ui-badge status-${status.toLowerCase()}`}>{statusLabels[status]}</span> }
+export type StatusBadgeTone = 'neutral' | 'info' | 'warning' | 'success' | 'danger'
+export function StatusBadge({ children, tone = 'neutral' }: { children: ReactNode; tone?: StatusBadgeTone }) {
+  return <span className={`ui-badge tone-${tone}`}>{children}</span>
+}
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) { return <section className={`ui-card ${className}`}>{children}</section> }
 export function PageHeader({ eyebrow, title, description, action }: { eyebrow?: string; title: string; description?: string; action?: ReactNode }) {
   return <header className="ui-page-header"><div>{eyebrow && <span>{eyebrow}</span>}<h1>{title}</h1>{description && <p>{description}</p>}</div>{action}</header>

@@ -3,7 +3,16 @@ import { useParams } from 'react-router-dom'
 import { Button, Card, ConfirmDialog, EmptyState, ErrorAlert, LoadingState, PageHeader, StatusBadge } from '../../components/common'
 import { getApiError, getCategories, getMenu, getOrders, placeOrder } from './api'
 import type { Category, MenuItem, Order } from './api'
+import type { OrderStatus } from '../../contracts/shared'
+import type { StatusBadgeTone } from '../../components/common'
 import './ordering.css'
+
+const orderStatusPresentation: Record<OrderStatus, { label: string; tone: StatusBadgeTone }> = {
+  RECEIVED: { label: 'รับออเดอร์แล้ว', tone: 'info' },
+  PREPARING: { label: 'กำลังเตรียม', tone: 'warning' },
+  READY: { label: 'พร้อมเสิร์ฟ', tone: 'success' },
+  SERVED: { label: 'เสิร์ฟแล้ว', tone: 'success' },
+}
 
 export default function CustomerOrderingPage() {
   const { sessionId: rawId } = useParams()
@@ -71,7 +80,7 @@ export default function CustomerOrderingPage() {
       </section>}
       <Card className="cart-card"><div><h2>ตะกร้าอาหาร</h2><p>{count ? `${count} รายการ · ${cartItems.map((item) => `${item.name} × ${item.quantity}`).join(', ')}` : 'ยังไม่ได้เลือกเมนู'}</p></div><Button size="lg" disabled={!count} onClick={() => setConfirming(true)}>ยืนยันการสั่ง</Button></Card>
       <section className="order-history"><div className="section-title"><div><h2>สถานะคำสั่งซื้อ</h2><p>ติดตามรายการที่ส่งเข้าครัวแล้ว</p></div><Button variant="secondary" onClick={refreshOrders}>อัปเดต</Button></div>
-        {orders.length === 0 ? <EmptyState title="ยังไม่มีคำสั่งซื้อ" /> : <div className="order-list">{orders.map((order) => <Card key={order.orderId} className="order-card"><div><strong>คำสั่งซื้อ #{order.orderId}</strong><p>{order.items.map((item) => `${item.name} × ${item.quantity}`).join(', ')}</p></div><StatusBadge status={order.status} /></Card>)}</div>}
+        {orders.length === 0 ? <EmptyState title="ยังไม่มีคำสั่งซื้อ" /> : <div className="order-list">{orders.map((order) => <Card key={order.orderId} className="order-card"><div><strong>คำสั่งซื้อ #{order.orderId}</strong><p>{order.items.map((item) => `${item.name} × ${item.quantity}`).join(', ')}</p></div><StatusBadge tone={orderStatusPresentation[order.status].tone}>{orderStatusPresentation[order.status].label}</StatusBadge></Card>)}</div>}
       </section>
     </>)}
     <ConfirmDialog open={confirming} title="ยืนยันการสั่งอาหาร" description={`ส่ง ${count} รายการเข้าครัว เมื่อยืนยันแล้วจะติดตามสถานะได้ด้านล่าง`} busy={submitting} onCancel={() => setConfirming(false)} onConfirm={() => void submit()} />

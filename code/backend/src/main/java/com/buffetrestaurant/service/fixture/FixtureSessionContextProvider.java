@@ -4,10 +4,12 @@ import com.buffetrestaurant.domain.enums.DiningSessionStatus;
 import com.buffetrestaurant.exception.ResourceNotFoundException;
 import com.buffetrestaurant.service.SessionContextProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(name = "app.ordering.session-provider", havingValue = "fixture", matchIfMissing = true)
+@Profile({"local", "test"})
+@ConditionalOnProperty(name = "app.ordering.session-provider", havingValue = "fixture")
 public class FixtureSessionContextProvider implements SessionContextProvider {
     @Override
     public SessionContextSnapshot requireSession(Long sessionId) {

@@ -15,16 +15,16 @@ Date: 24 September 2026
 
 | Check | Result |
 |---|---|
-| Backend test suite | 56 passed, 0 failed |
-| Ordering integration tests | 6 passed, including persistence, session/package rules and pagination |
-| Frontend component tests | 3 passed, 0 failed |
+| Backend test suite | 58 passed, 0 failed |
+| Ordering integration tests | 8 passed, including production-safe disablement, persistence, session/package rules and pagination |
+| Frontend component tests | 4 passed, 0 failed |
 | Frontend lint | Passed |
 | Frontend production build | Passed |
 
 ## Integration dependencies
 
-- Replace fixture `SessionContextProvider` with the DiningSession implementation.
+- Replace the production-disabled `SessionContextProvider` with the DiningSession implementation. The fixture is restricted to `local` and `test` profiles.
 - Let Sarun review and consume `OrderFulfillmentContext` for Kitchen status transitions.
 - Protect `/admin/menu` with the Authentication implementation.
 - Connect the Billing request flow after its contract is ready.
-- Have Methus review migration V3 before it is applied to the shared Supabase project.
+- Have Methus review migrations V3 and V4 before they are applied to the shared Supabase project. V4 enables RLS and revokes direct access from `anon` and `authenticated`.

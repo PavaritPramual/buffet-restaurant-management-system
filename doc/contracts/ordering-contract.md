@@ -21,6 +21,10 @@ Menu item input includes `categoryId`, `name`, `available`, `packageIds`, and op
 
 ## Integration seams
 
-Menu categories, menu items, package access, orders and order items use JPA persistence and Flyway `V3__create_menu_and_order_tables.sql`. `SessionContextProvider` isolates the remaining Session integration. The fixture adapter exposes active session 1 and completed session 2 for module development; the Dining Session owner replaces this bean during pairwise integration.
+Menu categories, menu items, package access, orders and order items use JPA persistence and Flyway `V3__create_menu_and_order_tables.sql`. `SessionContextProvider` isolates the remaining Session integration. Customer ordering returns `503 Service Unavailable` by default until the real Dining Session adapter is configured. The fixture adapter exposes active session 1 and completed session 2 only under the `local` or `test` profile.
+
+Run locally with `--spring.profiles.active=local`. Never enable the fixture profile in a deployed environment.
+
+PostgreSQL migration `V4__restrict_menu_and_order_access.sql` enables RLS and removes direct table and sequence privileges from Supabase `anon` and `authenticated` roles. Application access continues through the backend database role; Methus must still review the migration before shared deployment.
 
 The customer page is `/customer/sessions/{id}` and calls the shared Axios client through `VITE_API_BASE_URL`. QR token validation, customer access control, staff authorization for menu CRUD, fulfillment status updates, billing, and real Session lookup belong to the respective owners at integration. These endpoints must be secured before deployment. API/JSON changes require ศรัณย์'s review, shared entity changes require ปวริศช์'s review, and migrations require เมธัส's review.
