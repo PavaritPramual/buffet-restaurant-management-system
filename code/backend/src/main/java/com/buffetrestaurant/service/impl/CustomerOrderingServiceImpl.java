@@ -67,8 +67,9 @@ public class CustomerOrderingServiceImpl implements CustomerOrderingService {
         return orderRepository.findBySessionIdOrderByCreatedAtDesc(sessionId).stream().map(mapper::toResponse).toList();
     }
 
-    public OrderResponse getOrder(Long orderId) {
-        return mapper.toResponse(orderRepository.findById(orderId)
+    public OrderResponse getOrder(Long sessionId, Long orderId) {
+        sessionProvider.requireSession(sessionId);
+        return mapper.toResponse(orderRepository.findByIdAndSessionId(orderId, sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId)));
     }
 

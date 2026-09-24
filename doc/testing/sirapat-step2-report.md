@@ -15,8 +15,8 @@ Date: 24 September 2026
 
 | Check | Result |
 |---|---|
-| Backend test suite | 58 passed, 0 failed |
-| Ordering integration tests | 8 passed, including production-safe disablement, persistence, session/package rules and pagination |
+| Backend test suite | 61 passed, 0 failed |
+| Ordering integration tests | 11 passed, including production-safe disablement, session-scoped order access, persistence, session/package rules and pagination |
 | Frontend component tests | 4 passed, 0 failed |
 | Frontend lint | Passed |
 | Frontend production build | Passed |

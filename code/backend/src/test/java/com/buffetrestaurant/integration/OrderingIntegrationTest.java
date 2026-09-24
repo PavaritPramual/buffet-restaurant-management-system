@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.buffetrestaurant.domain.MenuCategory;
 import com.buffetrestaurant.domain.MenuItem;
+import com.buffetrestaurant.domain.CustomerOrder;
 import com.buffetrestaurant.domain.enums.OrderStatus;
 import com.buffetrestaurant.repository.CustomerOrderRepository;
 import com.buffetrestaurant.repository.MenuCategoryRepository;
@@ -59,6 +60,31 @@ class OrderingIntegrationTest {
 
         assertThat(orderRepository.findAll()).singleElement()
                 .extracting(order -> order.getStatus()).isEqualTo(OrderStatus.RECEIVED);
+    }
+
+    @Test
+    void getOrder_whenOrderBelongsToSession_returnsOrder() throws Exception {
+        MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวผัด", true, null, Set.of(1L)));
+        CustomerOrder order = new CustomerOrder(1L, "T01");
+        order.addItem(item.getId(), item.getName(), 1);
+        order = orderRepository.save(order);
+
+        mockMvc.perform(get("/api/v1/dining-sessions/1/orders/" + order.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orderId").value(order.getId()))
+                .andExpect(jsonPath("$.sessionId").value(1));
+    }
+
+    @Test
+    void getOrder_whenOrderBelongsToAnotherSession_returns404WithoutDisclosure() throws Exception {
+        MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวผัด", true, null, Set.of(1L)));
+        CustomerOrder order = new CustomerOrder(1L, "T01");
+        order.addItem(item.getId(), item.getName(), 1);
+        order = orderRepository.save(order);
+
+        mockMvc.perform(get("/api/v1/dining-sessions/2/orders/" + order.getId()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Order not found with id: " + order.getId()));
     }
 
     @Test

@@ -25,4 +25,13 @@ class OrderingDisabledIntegrationTest {
                         "Customer ordering is unavailable until Dining Session verification is configured"
                 ));
     }
+
+    @Test
+    void getOrder_whenSessionVerificationIsNotIntegrated_returns503BeforeLookup() throws Exception {
+        mockMvc.perform(get("/api/v1/dining-sessions/1/orders/1"))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.message").value(
+                        "Customer ordering is unavailable until Dining Session verification is configured"
+                ));
+    }
 }

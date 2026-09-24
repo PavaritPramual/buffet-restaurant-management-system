@@ -13,7 +13,7 @@ Owner: ศิระพัทธ์. This module consumes `SessionContext` from t
 | GET | `/api/v1/dining-sessions/{id}/menu` | Available items in the active session's package |
 | POST | `/api/v1/dining-sessions/{id}/orders` | 201 with Order, initial status `RECEIVED` |
 | GET | `/api/v1/dining-sessions/{id}/orders` | Orders for a session |
-| GET | `/api/v1/orders/{id}` | Order summary and current status |
+| GET | `/api/v1/dining-sessions/{sessionId}/orders/{orderId}` | Order summary after session validation; cross-session access returns 404 |
 
 Order request: `{"items":[{"menuItemId":1,"quantity":2}]}`. Quantity must be positive; duplicate item IDs, unavailable items, items outside the package, and inactive sessions are rejected. The saved order snapshots the item's name and table number. Errors use the shared `ErrorResponse` fields. The Order response matches `OrderFulfillmentContext`: `orderId`, `sessionId`, `tableNumber`, `items`, `status`, and `createdAt`.
 

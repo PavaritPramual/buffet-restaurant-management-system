@@ -9,5 +9,5 @@ public interface CustomerOrderingService {
     List<MenuItemResponse> getMenu(Long sessionId);
     OrderResponse placeOrder(Long sessionId, PlaceOrderRequest request);
     List<OrderResponse> getOrders(Long sessionId);
-    OrderResponse getOrder(Long orderId);
+    OrderResponse getOrder(Long sessionId, Long orderId);
 }

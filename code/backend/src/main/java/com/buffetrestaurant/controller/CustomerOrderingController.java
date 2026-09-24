@@ -34,12 +34,15 @@ public class CustomerOrderingController {
     public ResponseEntity<OrderResponse> place(@PathVariable Long sessionId,
                                                @Valid @RequestBody PlaceOrderRequest request) {
         OrderResponse created = service.placeOrder(sessionId, request);
-        return ResponseEntity.created(URI.create(ApiPaths.API_V1 + "/orders/" + created.orderId())).body(created);
+        return ResponseEntity.created(URI.create(ApiPaths.API_V1 + "/dining-sessions/" + sessionId
+                + "/orders/" + created.orderId())).body(created);
     }
 
     @GetMapping("/dining-sessions/{sessionId}/orders")
     public List<OrderResponse> orders(@PathVariable Long sessionId) { return service.getOrders(sessionId); }
 
-    @GetMapping("/orders/{orderId}")
-    public OrderResponse order(@PathVariable Long orderId) { return service.getOrder(orderId); }
+    @GetMapping("/dining-sessions/{sessionId}/orders/{orderId}")
+    public OrderResponse order(@PathVariable Long sessionId, @PathVariable Long orderId) {
+        return service.getOrder(sessionId, orderId);
+    }
 }
