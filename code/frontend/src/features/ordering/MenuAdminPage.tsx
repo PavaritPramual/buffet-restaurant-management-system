@@ -20,7 +20,9 @@ export default function MenuAdminPage() {
   const load = useCallback(async (currentPage: number) => {
     const [nextCategories, nextPackages, nextItems] = await Promise.all([getCategories(), getBuffetPackages(true), getMenuItems(currentPage)])
     setCategories(nextCategories); setPackages(nextPackages); setItems(nextItems.content); setTotal(nextItems.totalElements); setTotalPages(nextItems.totalPages)
-    setItemDraft((current) => current.categoryId || !nextCategories.length ? current : { ...current, categoryId: nextCategories[0].id })
+    setItemDraft((current) => nextCategories.some((category) => category.id === current.categoryId)
+      ? current
+      : { ...current, categoryId: nextCategories[0]?.id ?? 0 })
   }, [])
   // Loading server data is the synchronization purpose of this effect.
   // oxlint-disable-next-line react/set-state-in-effect
@@ -36,7 +38,20 @@ export default function MenuAdminPage() {
   }
   function editItem(item: MenuItem) { setEditingItem(item.id); setItemDraft({ categoryId: item.categoryId, name: item.name, description: item.description ?? '', available: item.available, packageIds: item.packageIds, imageUrl: item.imageUrl ?? '' }); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   function togglePackage(packageId: number) { setItemDraft((current) => ({ ...current, packageIds: current.packageIds.includes(packageId) ? current.packageIds.filter((id) => id !== packageId) : [...current.packageIds, packageId] })) }
-  async function confirmDelete() { if (!deleteTarget) return; await run(async () => { const deletingLastItemOnPage = deleteTarget.kind === 'item' && items.length === 1 && page > 0; if (deleteTarget.kind === 'category') await deleteCategory(deleteTarget.id); else await deleteMenuItem(deleteTarget.id); setDeleteTarget(null); if (deletingLastItemOnPage) { setLoading(true); setPage(page - 1) } else await load(page); setNotice('ลบข้อมูลแล้ว') }) }
+  async function confirmDelete() { if (!deleteTarget) return; await run(async () => {
+    const target = deleteTarget
+    const deletingLastItemOnPage = target.kind === 'item' && items.length === 1 && page > 0
+    if (target.kind === 'category') {
+      await deleteCategory(target.id)
+      if (editingCategory === target.id) { setEditingCategory(null); setCategoryName('') }
+    } else {
+      await deleteMenuItem(target.id)
+      if (editingItem === target.id) { setEditingItem(null); setItemDraft({ ...emptyItem, categoryId: categories[0]?.id ?? 0 }) }
+    }
+    setDeleteTarget(null)
+    if (deletingLastItemOnPage) { setLoading(true); setPage(page - 1) } else await load(page)
+    setNotice('ลบข้อมูลแล้ว')
+  }) }
 
   return <main className="ordering-page admin-page"><PageHeader eyebrow="Admin · Menu Catalog" title="จัดการเมนูอาหาร" description="ข้อมูลถูกบันทึกในฐานข้อมูลและนำไปใช้กับหน้าสั่งอาหารของลูกค้า" />
     {error && <ErrorAlert message={error} />}{notice && <div className="ordering-notice" role="status">{notice}</div>}

@@ -64,10 +64,33 @@ describe('MenuAdminPage', () => {
     await screen.findByText('หน้า 2 / 2')
     const menuRow = screen.getByText('ไก่ทอด').closest('tr')
     expect(menuRow).not.toBeNull()
+    window.scrollTo = vi.fn()
+    fireEvent.click(within(menuRow!).getByRole('button', { name: 'แก้ไข' }))
+    expect(screen.getByRole('heading', { name: 'แก้ไขเมนู' })).toBeTruthy()
     fireEvent.click(within(menuRow!).getByRole('button', { name: 'ลบ' }))
     fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))
 
     expect(await screen.findByText('หน้า 1 / 1')).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'เพิ่มเมนู' })).toBeTruthy()
     expect(api.deleteMenuItem).toHaveBeenCalledWith(10)
+  })
+
+  it('selects a remaining category and clears category editing after deletion', async () => {
+    let categories = [category, { id: 4, name: 'เครื่องดื่ม' }]
+    vi.mocked(api.getCategories).mockImplementation(async () => categories)
+    vi.mocked(api.getBuffetPackages).mockResolvedValue([buffetPackage])
+    vi.mocked(api.getMenuItems).mockResolvedValue({ content: [], page: 0, size: 10, totalElements: 0, totalPages: 0 })
+    vi.mocked(api.deleteCategory).mockImplementation(async () => { categories = [{ id: 4, name: 'เครื่องดื่ม' }] })
+
+    render(<MenuAdminPage />)
+    const categoryRow = (await screen.findByText('ของทอด', { selector: 'span' })).closest('li')
+    expect(categoryRow).not.toBeNull()
+    fireEvent.click(within(categoryRow!).getByRole('button', { name: 'แก้ไข' }))
+    fireEvent.click(within(categoryRow!).getByRole('button', { name: 'ลบ' }))
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))
+
+    await waitFor(() => expect((screen.getByLabelText('หมวดหมู่') as HTMLSelectElement).value).toBe('4'))
+    expect((screen.getByLabelText('ชื่อหมวดหมู่') as HTMLInputElement).value).toBe('')
+    expect(screen.getByRole('button', { name: 'เพิ่มหมวดหมู่' })).toBeTruthy()
   })
 })

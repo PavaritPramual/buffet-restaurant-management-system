@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Button, Card, ConfirmDialog, EmptyState, ErrorAlert, LoadingState, PageHeader, StatusBadge } from '../../components/common'
-import { getApiError, getCategories, getMenu, getOrders, placeOrder } from './api'
-import type { Category, MenuItem, Order } from './api'
+import { getApiError, getMenu, getOrders, placeOrder } from './api'
+import type { MenuItem, Order } from './api'
 import type { OrderStatus } from '../../contracts/shared'
 import type { StatusBadgeTone } from '../../components/common'
 import './ordering.css'
@@ -19,7 +19,6 @@ export default function CustomerOrderingPage() {
   const sessionId = Number(rawId)
   const invalidSession = !Number.isSafeInteger(sessionId) || sessionId < 1
   const [menu, setMenu] = useState<MenuItem[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
   const [orders, setOrders] = useState<Order[]>([])
   const [cart, setCart] = useState<Record<number, number>>({})
   const [category, setCategory] = useState<number | 'all'>('all')
@@ -32,14 +31,15 @@ export default function CustomerOrderingPage() {
   useEffect(() => {
     if (invalidSession) return
     let active = true
-    Promise.all([getMenu(sessionId), getCategories(), getOrders(sessionId)])
-      .then(([nextMenu, nextCategories, nextOrders]) => { if (active) { setMenu(nextMenu); setCategories(nextCategories); setOrders(nextOrders); setError('') } })
+    Promise.all([getMenu(sessionId), getOrders(sessionId)])
+      .then(([nextMenu, nextOrders]) => { if (active) { setMenu(nextMenu); setOrders(nextOrders); setError('') } })
       .catch((cause) => { if (active) setError(getApiError(cause)) })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
   }, [sessionId, invalidSession])
 
   const visibleMenu = category === 'all' ? menu : menu.filter((item) => item.categoryId === category)
+  const categories = useMemo(() => Array.from(new Map(menu.map((item) => [item.categoryId, { id: item.categoryId, name: item.categoryName }])).values()), [menu])
   const cartItems = useMemo(() => menu.filter((item) => cart[item.id]).map((item) => ({ ...item, quantity: cart[item.id] })), [menu, cart])
   const count = cartItems.reduce((sum, item) => sum + item.quantity, 0)
   const changeQuantity = (id: number, amount: number) => setCart((current) => {

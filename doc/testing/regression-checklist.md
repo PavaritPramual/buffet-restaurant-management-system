@@ -8,7 +8,7 @@ Run this list for changes to Menu, Ordering, Session contracts, API conventions,
 - [ ] Customer can add/remove quantities, submit once, and see a `RECEIVED` order.
 - [ ] Loading, empty, and API error states explain what happened without browser alerts.
 - [ ] Customer layout remains usable at roughly 360px width and at desktop width.
-- [ ] Category and item create/edit/delete work; deleting a category with items returns a clear error.
+- [ ] Category and item create/edit/delete work; deleting a category with items returns a clear error; an item with order history is retained and directs staff to mark it unavailable.
 - [ ] Pagination and sorting give stable results when there are more items than one page.
 - [ ] Optional menu image appears when set, while a menu without an image still renders cleanly.
 - [ ] Unknown or lowercase shared enum values still return 400 with `ErrorResponse`.

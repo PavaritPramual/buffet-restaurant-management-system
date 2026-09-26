@@ -3,6 +3,7 @@ package com.buffetrestaurant.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -104,6 +105,7 @@ class OrderingIntegrationTest {
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1}]}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Menu item is unavailable: ของหมด"));
+        assertThat(orderRepository.count()).isZero();
     }
 
     @Test
@@ -114,6 +116,7 @@ class OrderingIntegrationTest {
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1}]}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Menu item is not included in this package: พรีเมียม"));
+        assertThat(orderRepository.count()).isZero();
     }
 
     @Test
@@ -135,6 +138,55 @@ class OrderingIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("items[0].quantity: must be greater than 0"));
         assertThat(orderRepository.count()).isZero();
+    }
+
+    @Test
+    void placeOrder_whenQuantityIsNegative_returns400WithoutSavingOrder() throws Exception {
+        MenuItem item = itemRepository.save(new MenuItem(category, "ชาไทย", true, null, Set.of(1L)));
+        mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":-1}]}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("items[0].quantity: must be greater than 0"));
+        assertThat(orderRepository.count()).isZero();
+    }
+
+    @Test
+    void placeOrder_whenDuplicateMenuItemIds_returns400WithoutSavingOrder() throws Exception {
+        MenuItem item = itemRepository.save(new MenuItem(category, "ชาไทย", true, null, Set.of(1L)));
+        mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1},"
+                                + "{\"menuItemId\":" + item.getId() + ",\"quantity\":2}]}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Duplicate menu item in order: " + item.getId()));
+        assertThat(orderRepository.count()).isZero();
+    }
+
+    @Test
+    void deleteMenuItem_whenItemHasOrderHistory_returns400AndKeepsHistory() throws Exception {
+        MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวผัด", true, null, Set.of(1L)));
+        CustomerOrder order = new CustomerOrder(1L, "T01");
+        order.addItem(item.getId(), item.getName(), 1);
+        orderRepository.saveAndFlush(order);
+
+        mockMvc.perform(delete("/api/v1/menu-items/" + item.getId()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(
+                        "Cannot delete a menu item with order history; mark it unavailable instead"));
+
+        assertThat(itemRepository.existsById(item.getId())).isTrue();
+        assertThat(orderRepository.count()).isOne();
+    }
+
+    @Test
+    void deleteMenuItem_whenItemHasNoOrderHistory_returns204() throws Exception {
+        MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวผัด", true, null, Set.of(1L)));
+
+        mockMvc.perform(delete("/api/v1/menu-items/" + item.getId()))
+                .andExpect(status().isNoContent());
+
+        assertThat(itemRepository.existsById(item.getId())).isFalse();
     }
 
     @Test

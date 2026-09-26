@@ -14,6 +14,7 @@ import com.buffetrestaurant.mapper.OrderingMapper;
 import com.buffetrestaurant.repository.BuffetPackageRepository;
 import com.buffetrestaurant.repository.MenuCategoryRepository;
 import com.buffetrestaurant.repository.MenuItemRepository;
+import com.buffetrestaurant.repository.OrderItemRepository;
 import com.buffetrestaurant.service.MenuCatalogService;
 import java.util.List;
 import java.util.Set;
@@ -31,13 +32,16 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
     private final MenuCategoryRepository categoryRepository;
     private final MenuItemRepository itemRepository;
     private final BuffetPackageRepository packageRepository;
+    private final OrderItemRepository orderItemRepository;
     private final OrderingMapper mapper;
 
     public MenuCatalogServiceImpl(MenuCategoryRepository categoryRepository, MenuItemRepository itemRepository,
-                                  BuffetPackageRepository packageRepository, OrderingMapper mapper) {
+                                  BuffetPackageRepository packageRepository, OrderItemRepository orderItemRepository,
+                                  OrderingMapper mapper) {
         this.categoryRepository = categoryRepository;
         this.itemRepository = itemRepository;
         this.packageRepository = packageRepository;
+        this.orderItemRepository = orderItemRepository;
         this.mapper = mapper;
     }
 
@@ -109,7 +113,13 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
     }
 
     @Transactional
-    public void deleteMenuItem(Long id) { itemRepository.delete(requireItem(id)); }
+    public void deleteMenuItem(Long id) {
+        MenuItem item = requireItem(id);
+        if (orderItemRepository.existsByMenuItemId(id)) {
+            throw new BusinessRuleException("Cannot delete a menu item with order history; mark it unavailable instead");
+        }
+        itemRepository.delete(item);
+    }
 
     private MenuCategory requireCategory(Long id) {
         return categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Menu category not found with id: " + id));

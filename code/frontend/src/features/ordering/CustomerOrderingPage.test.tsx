@@ -25,7 +25,6 @@ describe('CustomerOrderingPage', () => {
 
   it('shows menu images and creates an order with duplicate-submit protection', async () => {
     vi.mocked(api.getMenu).mockResolvedValue([{ id: 10, categoryId: 1, categoryName: 'ของทอด', name: 'ไก่ทอด', description: 'ทอดใหม่ทุกจาน', available: true, packageIds: [1], imageUrl: '/images/chicken.jpg' }])
-    vi.mocked(api.getCategories).mockResolvedValue([{ id: 1, name: 'ของทอด' }])
     vi.mocked(api.getOrders).mockResolvedValue([])
     vi.mocked(api.placeOrder).mockResolvedValue({ orderId: 7, sessionId: 1, tableNumber: 'T01', status: 'RECEIVED', createdAt: '2026-09-24T10:00:00+07:00', items: [{ menuItemId: 10, name: 'ไก่ทอด', quantity: 1 }] })
     renderPage()
@@ -39,11 +38,12 @@ describe('CustomerOrderingPage', () => {
     fireEvent.click(confirmButton)
     await waitFor(() => expect(api.placeOrder).toHaveBeenCalledWith(1, [{ menuItemId: 10, quantity: 1 }]))
     expect(api.placeOrder).toHaveBeenCalledTimes(1)
+    expect(api.getCategories).not.toHaveBeenCalled()
     expect(await screen.findByText('รับออเดอร์แล้ว')).toBeTruthy()
   })
 
   it('shows an actionable empty state when no menu is available', async () => {
-    vi.mocked(api.getMenu).mockResolvedValue([]); vi.mocked(api.getCategories).mockResolvedValue([]); vi.mocked(api.getOrders).mockResolvedValue([])
+    vi.mocked(api.getMenu).mockResolvedValue([]); vi.mocked(api.getOrders).mockResolvedValue([])
     renderPage()
     expect(await screen.findByText('ยังไม่มีเมนูในหมวดนี้')).toBeTruthy()
     expect(screen.getByText('ลองเลือกหมวดอื่นหรือสอบถามพนักงานได้ค่ะ')).toBeTruthy()

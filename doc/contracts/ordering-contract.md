@@ -19,6 +19,8 @@ Order request: `{"items":[{"menuItemId":1,"quantity":2}]}`. Quantity must be pos
 
 Menu item input includes `categoryId`, `name`, optional `description`, `available`, `packageIds`, and optional `imageUrl`. The URL may use HTTP(S) or an absolute site path. The frontend displays an image only when `imageUrl` is set. Image files themselves are hosted elsewhere; this module stores only the URL. The admin page is `/admin/menu` and supports category/item CRUD and ten-item pagination; Auth must protect it during integration.
 
+A menu item without order history may be deleted. A menu item referenced by `order_items` keeps its history and deletion returns `400 Bad Request` with `Cannot delete a menu item with order history; mark it unavailable instead`; staff should set `available=false` to close sales for that item.
+
 ## Integration seams
 
 Menu categories, menu items, package access, orders and order items use JPA persistence and Flyway `V4__create_menu_and_order_tables.sql`, after the Package/Soup V3 migration. `SessionContextProvider` isolates the remaining Session integration. Customer ordering returns `503 Service Unavailable` by default until the real Dining Session adapter is configured. The fixture adapter exposes active session 1 and completed session 2 only under the `local` or `test` profile.
