@@ -1,10 +1,10 @@
 # Sirapat Step 2 module report
 
-Date: 24 September 2026
+Date: 26 September 2026
 
 ## Delivered
 
-- Persistent MenuCategory, MenuItem, Order and OrderItem with Flyway V3.
+- Persistent MenuCategory, MenuItem, Order and OrderItem with Flyway V4 after Package/Soup V3.
 - Menu/category CRUD, pagination and sorting.
 - Session/package menu filtering and validated order creation with initial `RECEIVED` status.
 - Customer mobile ordering, cart confirmation and order status UI.
@@ -15,9 +15,10 @@ Date: 24 September 2026
 
 | Check | Result |
 |---|---|
-| Backend test suite | 62 passed, 0 failed |
+| Backend test suite | 69 passed, 0 failed |
 | Ordering integration tests | 11 passed, including production-safe disablement, session-scoped order access, persistence, session/package rules and pagination |
-| Flyway V1/V2 → V3 upgrade test | Passed |
+| Flyway V1–V3 → V4 upgrade test | Passed |
+| PostgreSQL 16 V1–V5 migration | Passed; RLS enabled on all five Menu/Order tables and `anon`/`authenticated` table and sequence access revoked |
 | Frontend component tests | 4 passed, 0 failed |
 | Frontend lint | Passed |
 | Frontend production build | Passed |
@@ -28,4 +29,4 @@ Date: 24 September 2026
 - Let Sarun review and consume `OrderFulfillmentContext` for Kitchen status transitions.
 - Protect `/admin/menu` with the Authentication implementation.
 - Connect the Billing request flow after its contract is ready.
-- Have Methus review migrations V3 and V4 before they are applied to the shared Supabase project. V4 enables RLS and revokes direct access from `anon` and `authenticated`.
+- Have Methus review migrations V4 and V5 before they are applied to the shared Supabase project. V5 enables RLS and revokes direct access from `anon` and `authenticated`.

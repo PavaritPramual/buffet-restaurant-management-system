@@ -13,6 +13,7 @@ Thumbs.db
 # Java and Maven
 code/backend/target/
 code/backend/.m2-cache/
+code/backend/.m2/
 *.log
 
 # Node and Vite

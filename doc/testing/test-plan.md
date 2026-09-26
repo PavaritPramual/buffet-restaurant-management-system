@@ -11,7 +11,7 @@ Unit tests cover business rules without network or database. Controller tests co
 ## Environments and data
 
 - Local module development: JPA/Flyway persistence with fixture SessionContext (active session 1, package 1; completed session 2).
-- Automated backend tests: isolated H2 database in PostgreSQL mode with migrations V1–V3 applied from scratch. No shared Supabase project.
+- Automated backend tests: isolated H2 database in PostgreSQL mode with migrations V1–V4 applied from scratch. No shared Supabase project.
 - Pairwise persistence tests: dedicated disposable database/schema; never use the team's shared project for destructive automated tests.
 - Cross-module payload examples: `test/fixtures/` and `doc/contracts/shared-contracts.md`.
 

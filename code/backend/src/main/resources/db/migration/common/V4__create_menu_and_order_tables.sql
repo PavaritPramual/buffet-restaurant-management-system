@@ -18,6 +18,8 @@ CREATE TABLE package_menu_items (
     package_id BIGINT NOT NULL,
     menu_item_id BIGINT NOT NULL,
     PRIMARY KEY (package_id, menu_item_id),
+    CONSTRAINT fk_pmi_package FOREIGN KEY (package_id)
+        REFERENCES buffet_packages(id) ON DELETE CASCADE,
     CONSTRAINT fk_pmi_menu_item FOREIGN KEY (menu_item_id)
         REFERENCES menu_items(id) ON DELETE CASCADE
 );

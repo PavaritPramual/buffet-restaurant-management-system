@@ -1,14 +1,14 @@
 # Menu and Ordering schema delta
 
-Date: 24 September 2026
+Date: 26 September 2026
 
-Scope: PR #11, Flyway V3/V4 and matching JPA mappings
+Scope: replacement Menu/Ordering PR, Flyway V4/V5 and matching JPA mappings
 
 Design baseline: Notion ER Diagram and Data Dictionary & Migration
 
-The shared Supabase project was reported at Flyway V1 when this reconciliation started. V3 had not been applied there, so PR #11 updates V3 in place. If another environment has already applied the previous V3 checksum, stop and use a forward migration instead.
+The shared Supabase project is at Flyway V1/V2. Package/Soup owns V3 in PR #12. This branch is stacked on that PR so Menu/Ordering can be developed and tested as V4/V5 now. Do not deploy V4/V5 to shared Supabase until V3 is merged and applied.
 
-## Decisions applied in PR #11
+## Decisions carried into the replacement PR
 
 | Area | Previous implementation | Baseline / updated implementation | Reason |
 |---|---|---|---|
@@ -31,19 +31,18 @@ The shared Supabase project was reported at Flyway V1 when this reconciliation s
 | `TIMESTAMP WITH TIME ZONE` for `orders.created_at` | Shared contract requires ISO-8601 with timezone | Update Data Dictionary from `TIMESTAMP` if approved |
 | Positive quantity check and supporting indexes | Enforce an existing business rule and query paths at database level | Add constraints/indexes to canonical design |
 
-## Blocked external foreign keys
+## External foreign-key staging
 
-V3 cannot add these constraints while the referenced owner tables are absent from `develop`:
+V4 adds the package FK because the V3 Package/Soup migration is present in its migration chain:
 
-- `package_menu_items.package_id` → `buffet_packages.id`
-- `orders.session_id` → `dining_sessions.id`
+- `package_menu_items.package_id` → `buffet_packages.id` with `ON DELETE CASCADE`
 
-After the Buffet Package and Dining Session migrations merge, Methus must reserve a forward migration version that adds both constraints. Pavarit must confirm the final table/column names and delete behavior before that migration is written. PR #11 remains blocked from final merge until the team accepts this staged dependency or the referenced migrations land first.
+The Dining Session table is reserved for V6 and does not exist when V4 runs, so `orders.session_id` cannot receive its canonical FK in V4. Pavarit and Methus must add `orders.session_id` → `dining_sessions.id` with the agreed delete behavior in V6 or a later reserved forward migration. This deferred constraint must be confirmed before the replacement PR merges.
 
 ## Verification and reviewers
 
-- Empty test database: Spring integration suite migrates V1 → V3 and validates JPA.
-- Upgrade test database: `MenuOrderingMigrationTest` migrates V1/V2 first, then applies V3.
+- Empty test database: Spring integration suite migrates V1 → V4 and validates JPA.
+- Upgrade test database: `MenuOrderingMigrationTest` migrates V1–V3 first, then applies V4.
 - Methus: review migration ordering, constraints and Supabase execution.
 - Pavarit: approve schema extensions and external FK dependency.
 - Sarun: approve Order item/name/note impact on `OrderFulfillmentContext`.

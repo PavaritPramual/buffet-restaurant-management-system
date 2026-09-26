@@ -11,21 +11,21 @@ class MenuOrderingMigrationTest {
             "jdbc:h2:mem:menu_ordering_upgrade;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1";
 
     @Test
-    void migrate_whenDatabaseAlreadyHasV1AndV2_appliesV3Successfully() {
-        Flyway throughV2 = Flyway.configure()
+    void migrate_whenDatabaseAlreadyHasPackageCatalogV3_appliesMenuOrderingV4Successfully() {
+        Flyway throughV3 = Flyway.configure()
                 .dataSource(URL, "sa", "")
-                .locations("classpath:db/migration/common")
-                .target(MigrationVersion.fromVersion("2"))
+                .locations("classpath:db/migration/common", "classpath:db/migration/h2")
+                .target(MigrationVersion.fromVersion("3"))
                 .load();
-        throughV2.migrate();
-        assertThat(throughV2.info().current().getVersion().getVersion()).isEqualTo("2");
+        throughV3.migrate();
+        assertThat(throughV3.info().current().getVersion().getVersion()).isEqualTo("3");
 
         Flyway latest = Flyway.configure()
                 .dataSource(URL, "sa", "")
-                .locations("classpath:db/migration/common")
+                .locations("classpath:db/migration/common", "classpath:db/migration/h2")
                 .load();
         latest.migrate();
 
-        assertThat(latest.info().current().getVersion().getVersion()).isEqualTo("3");
+        assertThat(latest.info().current().getVersion().getVersion()).isEqualTo("4");
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,7 @@ class OrderingIntegrationTest {
     @Autowired private MenuCategoryRepository categoryRepository;
     @Autowired private MenuItemRepository itemRepository;
     @Autowired private CustomerOrderRepository orderRepository;
+    @Autowired private JdbcTemplate jdbcTemplate;
 
     private MenuCategory category;
 
@@ -41,6 +43,13 @@ class OrderingIntegrationTest {
         orderRepository.deleteAll();
         itemRepository.deleteAll();
         categoryRepository.deleteAll();
+        jdbcTemplate.update("DELETE FROM buffet_packages");
+        jdbcTemplate.update(
+                "INSERT INTO buffet_packages (id, name, price, description, active) VALUES (?, ?, ?, ?, ?)",
+                1L, "Standard", 299, null, true);
+        jdbcTemplate.update(
+                "INSERT INTO buffet_packages (id, name, price, description, active) VALUES (?, ?, ?, ?, ?)",
+                2L, "Premium", 499, null, true);
         category = categoryRepository.save(new MenuCategory("อาหารจานหลัก"));
     }
 

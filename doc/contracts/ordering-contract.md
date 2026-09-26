@@ -21,11 +21,11 @@ Menu item input includes `categoryId`, `name`, optional `description`, `availabl
 
 ## Integration seams
 
-Menu categories, menu items, package access, orders and order items use JPA persistence and Flyway `V3__create_menu_and_order_tables.sql`. `SessionContextProvider` isolates the remaining Session integration. Customer ordering returns `503 Service Unavailable` by default until the real Dining Session adapter is configured. The fixture adapter exposes active session 1 and completed session 2 only under the `local` or `test` profile.
+Menu categories, menu items, package access, orders and order items use JPA persistence and Flyway `V4__create_menu_and_order_tables.sql`, after the Package/Soup V3 migration. `SessionContextProvider` isolates the remaining Session integration. Customer ordering returns `503 Service Unavailable` by default until the real Dining Session adapter is configured. The fixture adapter exposes active session 1 and completed session 2 only under the `local` or `test` profile.
 
 Run locally with `--spring.profiles.active=local`. Never enable the fixture profile in a deployed environment.
 
-PostgreSQL migration `V4__restrict_menu_and_order_access.sql` enables RLS and removes direct table and sequence privileges from Supabase `anon` and `authenticated` roles. Application access continues through the backend database role; Methus must still review the migration before shared deployment.
+PostgreSQL migration `V5__restrict_menu_and_order_access.sql` enables RLS and removes direct table and sequence privileges from Supabase `anon` and `authenticated` roles. Application access continues through the backend database role; Methus must still review the migration before shared deployment.
 
 Schema reconciliation decisions, extensions and blocked external foreign keys are recorded in `doc/database/menu-ordering-schema-delta.md`.
 
