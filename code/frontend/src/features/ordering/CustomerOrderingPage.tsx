@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Button, Card, ConfirmDialog, EmptyState, ErrorAlert, LoadingState, PageHeader, StatusBadge } from '../../components/common'
-import { getApiError, getMenu, getOrders, placeOrder } from './api'
-import type { MenuItem, Order } from './api'
+import { getApiError, getBuffetPackage, getMenu, getOrders, getSessionByToken, placeOrder } from './api'
+import type { MenuItem, Order, SessionContext } from './api'
 import type { OrderStatus } from '../../contracts/shared'
 import type { StatusBadgeTone } from '../../components/common'
 import './ordering.css'
@@ -15,28 +15,36 @@ const orderStatusPresentation: Record<OrderStatus, { label: string; tone: Status
 }
 
 export default function CustomerOrderingPage() {
-  const { sessionId: rawId } = useParams()
-  const sessionId = Number(rawId)
-  const invalidSession = !Number.isSafeInteger(sessionId) || sessionId < 1
+  const { token = '' } = useParams()
+  const invalidToken = !token.trim()
+  const [session, setSession] = useState<SessionContext | null>(null)
+  const [packageName, setPackageName] = useState('')
   const [menu, setMenu] = useState<MenuItem[]>([])
   const [orders, setOrders] = useState<Order[]>([])
   const [cart, setCart] = useState<Record<number, number>>({})
   const [category, setCategory] = useState<number | 'all'>('all')
-  const [loading, setLoading] = useState(!invalidSession)
+  const [loading, setLoading] = useState(!invalidToken)
   const [submitting, setSubmitting] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
 
   useEffect(() => {
-    if (invalidSession) return
+    if (invalidToken) return
     let active = true
-    Promise.all([getMenu(sessionId), getOrders(sessionId)])
-      .then(([nextMenu, nextOrders]) => { if (active) { setMenu(nextMenu); setOrders(nextOrders); setError('') } })
+    getSessionByToken(token)
+      .then(async (context) => {
+        const [nextMenu, nextOrders, buffetPackage] = await Promise.all([
+          getMenu(context.sessionId, token), getOrders(context.sessionId, token), getBuffetPackage(context.packageId),
+        ])
+        if (active) {
+          setSession(context); setPackageName(buffetPackage.name); setMenu(nextMenu); setOrders(nextOrders); setError('')
+        }
+      })
       .catch((cause) => { if (active) setError(getApiError(cause)) })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
-  }, [sessionId, invalidSession])
+  }, [token, invalidToken])
 
   const visibleMenu = category === 'all' ? menu : menu.filter((item) => item.categoryId === category)
   const categories = useMemo(() => Array.from(new Map(menu.map((item) => [item.categoryId, { id: item.categoryId, name: item.categoryName }])).values()), [menu])
@@ -52,20 +60,22 @@ export default function CustomerOrderingPage() {
     if (submitting || count === 0) return
     setSubmitting(true); setError(''); setNotice('')
     try {
-      const created = await placeOrder(sessionId, cartItems.map((item) => ({ menuItemId: item.id, quantity: item.quantity })))
+      if (!session) return
+      const created = await placeOrder(session.sessionId, token, cartItems.map((item) => ({ menuItemId: item.id, quantity: item.quantity })))
       setOrders((current) => [created, ...current]); setCart({}); setConfirming(false); setNotice(`ส่งคำสั่งซื้อ #${created.orderId} แล้ว`)
     } catch (cause) { setError(getApiError(cause)); setConfirming(false) } finally { setSubmitting(false) }
   }
 
   async function refreshOrders() {
-    try { setOrders(await getOrders(sessionId)); setError('') } catch (cause) { setError(getApiError(cause)) }
+    if (!session) return
+    try { setOrders(await getOrders(session.sessionId, token)); setError('') } catch (cause) { setError(getApiError(cause)) }
   }
 
   return <main className="ordering-page customer-page">
-    <PageHeader eyebrow="สั่งอาหารผ่าน QR" title="เลือกเมนูที่ชอบ" description={`โต๊ะจากรอบการรับประทาน #${rawId ?? '-'}`} />
-    {(invalidSession || error) && <ErrorAlert message={invalidSession ? 'รหัสรอบการรับประทานไม่ถูกต้อง กรุณาสแกน QR ใหม่' : error} />}
+    <PageHeader eyebrow="สั่งอาหารผ่าน QR" title="เลือกเมนูที่ชอบ" description={session ? `โต๊ะ ${session.tableNumber} · ${packageName}` : 'ตรวจสอบ QR ของรอบการรับประทาน'} />
+    {(invalidToken || error) && <ErrorAlert message={invalidToken ? 'QR ไม่ถูกต้อง กรุณาสแกน QR ใหม่' : error} />}
     {notice && <div className="ordering-notice" role="status">{notice}</div>}
-    {!invalidSession && (loading ? <LoadingState label="กำลังตรวจสอบรอบการรับประทานและโหลดเมนู…" /> : <>
+    {!invalidToken && (loading ? <LoadingState label="กำลังตรวจสอบรอบการรับประทานและโหลดเมนู…" /> : <>
       <nav className="category-chips" aria-label="หมวดหมู่เมนู">
         <button className={category === 'all' ? 'active' : ''} onClick={() => setCategory('all')}>ทั้งหมด</button>
         {categories.filter((entry) => menu.some((item) => item.categoryId === entry.id)).map((entry) => <button key={entry.id} className={category === entry.id ? 'active' : ''} onClick={() => setCategory(entry.id)}>{entry.name}</button>)}
