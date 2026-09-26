@@ -91,14 +91,6 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, "Database constraint violation: duplicate or conflicting resource", request.getRequestURI());
     }
 
-    @ExceptionHandler(ServiceUnavailableException.class)
-    public ResponseEntity<ErrorResponse> handleServiceUnavailable(
-            ServiceUnavailableException exception,
-            HttpServletRequest request
-    ) {
-        return build(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage(), request.getRequestURI());
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(
             Exception exception,
