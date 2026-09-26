@@ -28,12 +28,12 @@ DO $$
 BEGIN
     IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
         REVOKE ALL ON TABLE buffet_packages, soups FROM anon;
-        REVOKE ALL ON SEQUENCE buffet_packages_id_seq, soups_id_seq FROM anon;
+        REVOKE ALL ON SEQUENCE public.buffet_packages_id_seq, public.soups_id_seq FROM anon;
     END IF;
 
     IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
         REVOKE ALL ON TABLE buffet_packages, soups FROM authenticated;
-        REVOKE ALL ON SEQUENCE buffet_packages_id_seq, soups_id_seq FROM authenticated;
+        REVOKE ALL ON SEQUENCE public.buffet_packages_id_seq, public.soups_id_seq FROM authenticated;
     END IF;
 END
 $$;
