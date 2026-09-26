@@ -6,7 +6,7 @@ Scope: replacement Menu/Ordering PR, Flyway V4/V5 and matching JPA mappings
 
 Design baseline: Notion ER Diagram and Data Dictionary & Migration
 
-The shared Supabase project is at Flyway V1/V2. Package/Soup owns V3 in PR #12. This branch is stacked on that PR so Menu/Ordering can be developed and tested as V4/V5 now. Do not deploy V4/V5 to shared Supabase until V3 is merged and applied.
+Package/Soup V3 merged into `develop` through PR #12, and this branch is synced with merge commit `52961a8`. Menu/Ordering therefore owns the next versions, V4/V5. Before shared deployment, confirm that Supabase `flyway_schema_history` has successfully applied V3.
 
 ## Decisions carried into the replacement PR
 

@@ -27,7 +27,7 @@ Menu categories, menu items, package access, orders and order items use JPA pers
 
 Run locally with `--spring.profiles.active=local`. Never enable the fixture profile in a deployed environment.
 
-PostgreSQL migration `V5__restrict_menu_and_order_access.sql` enables RLS and removes direct table and sequence privileges from Supabase `anon` and `authenticated` roles. Application access continues through the backend database role; Methus must still review the migration before shared deployment.
+PostgreSQL migration `V5__restrict_menu_and_order_access.sql` enables RLS, defines policies for the backend datasource role, and removes direct table and sequence privileges from Supabase `anon` and `authenticated` roles. Methus must still review the migration before shared deployment.
 
 Schema reconciliation decisions, extensions and blocked external foreign keys are recorded in `doc/database/menu-ordering-schema-delta.md`.
 

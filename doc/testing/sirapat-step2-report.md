@@ -18,7 +18,7 @@ Date: 26 September 2026
 | Backend test suite | 74 passed, 0 failed |
 | Ordering integration tests | 16 passed, including production-safe disablement, session-scoped order access, persistence, invalid-order rollback, protected order history, package-reference validation and pagination |
 | Flyway V1–V3 → V4 upgrade test | Passed |
-| PostgreSQL 16 V1–V5 migration | Passed; RLS enabled on all five Menu/Order tables and `anon`/`authenticated` table and sequence access revoked |
+| PostgreSQL 16 V1–V5 migration | Passed after syncing PR #12; five backend-role policies present, backend insert/select works, and `anon`/`authenticated` table and sequence access is revoked |
 | Frontend component tests | 7 passed, 0 failed, including delete/form reset, final-page deletion, package selection and duplicate-submit protection |
 | Frontend lint | Passed |
 | Frontend production build | Passed |
