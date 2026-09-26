@@ -51,5 +51,17 @@ class DiningSessionMigrationTest {
                         + "WHERE lower(table_name) = 'orders' AND lower(constraint_name) = 'fk_orders_dining_session' "
                         + "AND constraint_type = 'FOREIGN KEY'",
                 Integer.class)).isEqualTo(1);
+
+        jdbc.update("INSERT INTO restaurant_tables (id, table_number, capacity, status) "
+                + "VALUES (9001, 'V7-CASCADE', 4, 'OCCUPIED')");
+        jdbc.update("INSERT INTO buffet_packages (id, name, price) VALUES (9001, 'V7 Package', 299)");
+        jdbc.update("INSERT INTO soups (id, name) VALUES (9001, 'V7 Soup')");
+        jdbc.update("INSERT INTO dining_sessions "
+                + "(id, table_id, package_id, soup_id, adult_count, session_token) "
+                + "VALUES (9001, 9001, 9001, 9001, 1, 'v7-cascade-token')");
+        jdbc.update("INSERT INTO orders (id, session_id, table_number) "
+                + "VALUES (9001, 9001, 'V7-CASCADE')");
+        jdbc.update("DELETE FROM dining_sessions WHERE id = 9001");
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM orders WHERE id = 9001", Integer.class)).isZero();
     }
 }

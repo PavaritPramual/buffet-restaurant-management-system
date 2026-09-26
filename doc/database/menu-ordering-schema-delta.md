@@ -37,7 +37,7 @@ V4 adds the package FK because the V3 Package/Soup migration is present in its m
 
 - `package_menu_items.package_id` → `buffet_packages.id` with `ON DELETE CASCADE`
 
-The Dining Session table did not exist when V4 ran, so `orders.session_id` could not receive its FK there. V6 creates `dining_sessions`; V7 adds `fk_orders_dining_session` from `orders.session_id` to `dining_sessions.id` with `ON DELETE RESTRICT`. V4 and V6 remain unchanged. V7 is tested on isolated databases in this branch; this work has not migrated shared Supabase.
+The Dining Session table did not exist when V4 ran, so `orders.session_id` could not receive its FK there. V6 creates `dining_sessions`; V7 adds `fk_orders_dining_session` from `orders.session_id` to `dining_sessions.id` with `ON DELETE CASCADE`, as specified in the Data Dictionary migration design. V4 and V6 remain unchanged. V7 is tested on isolated databases in this branch; this work has not migrated shared Supabase.
 
 ## Verification and reviewers
 
