@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: test
   application:
     name: buffet-restaurant-backend
   jackson:
@@ -19,3 +21,9 @@ spring:
     default-schema: public
     schemas: public
     validate-on-migrate: true
+
+app:
+  menu:
+    admin-access-provider: fixture
+  ordering:
+    session-provider: fixture

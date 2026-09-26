@@ -16,13 +16,15 @@ class CatalogMigrationTest {
                 + ";MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1";
         Flyway.configure()
                 .dataSource(url, "sa", "")
-                .locations("classpath:db/migration/common")
+                .locations("classpath:db/migration/common", "classpath:db/migration/h2")
+                .target("2")
                 .load()
                 .migrate();
 
         MigrateResult upgrade = Flyway.configure()
                 .dataSource(url, "sa", "")
                 .locations("classpath:db/migration/common", "classpath:db/migration/h2")
+                .target("3")
                 .load()
                 .migrate();
 
