@@ -15,8 +15,8 @@ Date: 26 September 2026
 
 | Check | Result |
 |---|---|
-| Backend test suite | 74 passed, 0 failed |
-| Ordering integration tests | 16 passed, including production-safe disablement, session-scoped order access, persistence, invalid-order rollback, protected order history, package-reference validation and pagination |
+| Backend test suite | 75 passed, 0 failed |
+| Menu/Ordering integration tests | 17 passed, including production-safe ordering disablement, fail-closed menu mutations, session-scoped order access, persistence, invalid-order rollback, protected order history, package-reference validation and pagination |
 | Flyway V1–V3 → V4 upgrade test | Passed |
 | PostgreSQL 16 V1–V5 migration | Passed after syncing PR #12; five backend-role policies present, backend insert/select works, and `anon`/`authenticated` table and sequence access is revoked |
 | Frontend component tests | 7 passed, 0 failed, including delete/form reset, final-page deletion, package selection and duplicate-submit protection |
@@ -27,6 +27,6 @@ Date: 26 September 2026
 
 - Replace the production-disabled `SessionContextProvider` with the DiningSession implementation. The fixture is restricted to `local` and `test` profiles.
 - Let Sarun review and consume `OrderFulfillmentContext` for Kitchen status transitions.
-- Protect `/admin/menu` with the Authentication implementation.
+- Replace the fail-closed `MenuAdminAccessProvider` with the Authentication implementation that verifies an authorized staff role; the permissive provider is restricted to `local` and `test`.
 - Connect the Billing request flow after its contract is ready.
 - Have Methus review migrations V4 and V5 before they are applied to the shared Supabase project. V5 enables RLS and revokes direct access from `anon` and `authenticated`.

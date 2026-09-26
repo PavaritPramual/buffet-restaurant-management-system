@@ -11,7 +11,7 @@
 | Menu pagination and sorting | `OrderingIntegrationTest.menuItems_supportPaginationAndSorting`; `MenuAdminPage.test.tsx` final-page deletion case | Additional database sorting fields |
 | Package references must exist | `OrderingIntegrationTest.createMenuItem_whenPackageDoesNotExist_returns400WithoutSavingItem`; `MenuAdminPage.test.tsx` package selection case | Inactive-package product rule |
 | Optional image URL appears in customer menu | `CustomerOrderingPage.test.tsx` image case | Backend persistence round trip and browser preview |
-| Category and menu item CRUD | Menu item create/read/delete paths in `OrderingIntegrationTest`; deletion/form-reset cases in `MenuAdminPage.test.tsx` | Complete update persistence tests and staff authorization |
+| Category and menu item CRUD | Menu item create/read/delete paths in `OrderingIntegrationTest`; deletion/form-reset cases in `MenuAdminPage.test.tsx`; fail-closed mutation coverage in `MenuAdminDisabledIntegrationTest` | Complete update persistence tests and real staff-role integration |
 | Ordered menu history is preserved | `OrderingIntegrationTest.deleteMenuItem_whenItemHasOrderHistory_returns400AndKeepsHistory` | None |
 | Customer image, cart, submission, invalid session | `CustomerOrderingPage.test.tsx` | Integrated QR flow |
 | Admin selects packages from catalog | `MenuAdminPage.test.tsx` | Staff authorization and integrated browser CRUD |

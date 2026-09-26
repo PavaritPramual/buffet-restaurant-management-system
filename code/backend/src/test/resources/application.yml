@@ -23,5 +23,7 @@ spring:
     validate-on-migrate: true
 
 app:
+  menu:
+    admin-access-provider: fixture
   ordering:
     session-provider: fixture

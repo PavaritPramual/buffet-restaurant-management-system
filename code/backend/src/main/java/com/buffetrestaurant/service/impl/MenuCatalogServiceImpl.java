@@ -15,6 +15,7 @@ import com.buffetrestaurant.repository.BuffetPackageRepository;
 import com.buffetrestaurant.repository.MenuCategoryRepository;
 import com.buffetrestaurant.repository.MenuItemRepository;
 import com.buffetrestaurant.repository.OrderItemRepository;
+import com.buffetrestaurant.service.MenuAdminAccessProvider;
 import com.buffetrestaurant.service.MenuCatalogService;
 import java.util.List;
 import java.util.Set;
@@ -29,15 +30,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class MenuCatalogServiceImpl implements MenuCatalogService {
     private static final Set<String> SORT_FIELDS = Set.of("id", "name", "available");
+    private final MenuAdminAccessProvider adminAccessProvider;
     private final MenuCategoryRepository categoryRepository;
     private final MenuItemRepository itemRepository;
     private final BuffetPackageRepository packageRepository;
     private final OrderItemRepository orderItemRepository;
     private final OrderingMapper mapper;
 
-    public MenuCatalogServiceImpl(MenuCategoryRepository categoryRepository, MenuItemRepository itemRepository,
+    public MenuCatalogServiceImpl(MenuAdminAccessProvider adminAccessProvider,
+                                  MenuCategoryRepository categoryRepository, MenuItemRepository itemRepository,
                                   BuffetPackageRepository packageRepository, OrderItemRepository orderItemRepository,
                                   OrderingMapper mapper) {
+        this.adminAccessProvider = adminAccessProvider;
         this.categoryRepository = categoryRepository;
         this.itemRepository = itemRepository;
         this.packageRepository = packageRepository;
@@ -53,6 +57,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
 
     @Transactional
     public MenuCategoryResponse createCategory(MenuCategoryRequest request) {
+        adminAccessProvider.requireMenuWriteAccess();
         String name = request.name().trim();
         if (categoryRepository.existsByNameIgnoreCase(name)) throw new DuplicateResourceException("Menu category already exists: " + name);
         return mapper.toResponse(categoryRepository.save(new MenuCategory(name)));
@@ -60,6 +65,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
 
     @Transactional
     public MenuCategoryResponse updateCategory(Long id, MenuCategoryRequest request) {
+        adminAccessProvider.requireMenuWriteAccess();
         MenuCategory category = requireCategory(id);
         String name = request.name().trim();
         if (categoryRepository.existsByNameIgnoreCaseAndIdNot(name, id)) throw new DuplicateResourceException("Menu category already exists: " + name);
@@ -69,6 +75,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
 
     @Transactional
     public void deleteCategory(Long id) {
+        adminAccessProvider.requireMenuWriteAccess();
         MenuCategory category = requireCategory(id);
         if (itemRepository.existsByCategoryId(id)) throw new BusinessRuleException("Cannot delete a category that still contains menu items");
         categoryRepository.delete(category);
@@ -89,6 +96,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
 
     @Transactional
     public MenuItemResponse createMenuItem(MenuItemRequest request) {
+        adminAccessProvider.requireMenuWriteAccess();
         String name = request.name().trim();
         if (itemRepository.existsByNameIgnoreCase(name)) throw new DuplicateResourceException("Menu item already exists: " + name);
         requirePackages(request.packageIds());
@@ -99,6 +107,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
 
     @Transactional
     public MenuItemResponse updateMenuItem(Long id, MenuItemRequest request) {
+        adminAccessProvider.requireMenuWriteAccess();
         MenuItem item = requireItem(id);
         String name = request.name().trim();
         if (itemRepository.existsByNameIgnoreCaseAndIdNot(name, id)) throw new DuplicateResourceException("Menu item already exists: " + name);
@@ -114,6 +123,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
 
     @Transactional
     public void deleteMenuItem(Long id) {
+        adminAccessProvider.requireMenuWriteAccess();
         MenuItem item = requireItem(id);
         if (orderItemRepository.existsByMenuItemId(id)) {
             throw new BusinessRuleException("Cannot delete a menu item with order history; mark it unavailable instead");
