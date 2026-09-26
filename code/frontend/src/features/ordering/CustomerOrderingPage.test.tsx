@@ -34,8 +34,11 @@ describe('CustomerOrderingPage', () => {
     expect(screen.getByText('ทอดใหม่ทุกจาน')).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'เพิ่ม ไก่ทอด' }))
     fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสั่ง' }))
-    fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))
+    const confirmButton = screen.getByRole('button', { name: 'ยืนยัน' })
+    fireEvent.click(confirmButton)
+    fireEvent.click(confirmButton)
     await waitFor(() => expect(api.placeOrder).toHaveBeenCalledWith(1, [{ menuItemId: 10, quantity: 1 }]))
+    expect(api.placeOrder).toHaveBeenCalledTimes(1)
     expect(await screen.findByText('รับออเดอร์แล้ว')).toBeTruthy()
   })
 

@@ -152,6 +152,18 @@ class OrderingIntegrationTest {
     }
 
     @Test
+    void createMenuItem_whenPackageDoesNotExist_returns400WithoutSavingItem() throws Exception {
+        mockMvc.perform(post("/api/v1/menu-items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"categoryId\":" + category.getId()
+                                + ",\"name\":\"เมนูแพ็กเกจผิด\",\"available\":true,\"packageIds\":[999]}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Buffet packages not found: [999]"));
+
+        assertThat(itemRepository.count()).isZero();
+    }
+
+    @Test
     void menuForSession_onlyReturnsAvailableItemsInPackage() throws Exception {
         itemRepository.save(new MenuItem(category, "สั่งได้", true, null, Set.of(1L)));
         itemRepository.save(new MenuItem(category, "ปิดขาย", false, null, Set.of(1L)));

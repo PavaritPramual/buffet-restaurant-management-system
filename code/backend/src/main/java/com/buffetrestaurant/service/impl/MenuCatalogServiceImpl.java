@@ -11,11 +11,13 @@ import com.buffetrestaurant.exception.BusinessRuleException;
 import com.buffetrestaurant.exception.DuplicateResourceException;
 import com.buffetrestaurant.exception.ResourceNotFoundException;
 import com.buffetrestaurant.mapper.OrderingMapper;
+import com.buffetrestaurant.repository.BuffetPackageRepository;
 import com.buffetrestaurant.repository.MenuCategoryRepository;
 import com.buffetrestaurant.repository.MenuItemRepository;
 import com.buffetrestaurant.service.MenuCatalogService;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -28,12 +30,14 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
     private static final Set<String> SORT_FIELDS = Set.of("id", "name", "available");
     private final MenuCategoryRepository categoryRepository;
     private final MenuItemRepository itemRepository;
+    private final BuffetPackageRepository packageRepository;
     private final OrderingMapper mapper;
 
     public MenuCatalogServiceImpl(MenuCategoryRepository categoryRepository, MenuItemRepository itemRepository,
-                                  OrderingMapper mapper) {
+                                  BuffetPackageRepository packageRepository, OrderingMapper mapper) {
         this.categoryRepository = categoryRepository;
         this.itemRepository = itemRepository;
+        this.packageRepository = packageRepository;
         this.mapper = mapper;
     }
 
@@ -83,6 +87,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
     public MenuItemResponse createMenuItem(MenuItemRequest request) {
         String name = request.name().trim();
         if (itemRepository.existsByNameIgnoreCase(name)) throw new DuplicateResourceException("Menu item already exists: " + name);
+        requirePackages(request.packageIds());
         MenuItem item = new MenuItem(requireCategory(request.categoryId()), name, clean(request.description()),
                 request.available(), clean(request.imageUrl()), request.packageIds());
         return mapper.toResponse(itemRepository.save(item));
@@ -93,6 +98,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
         MenuItem item = requireItem(id);
         String name = request.name().trim();
         if (itemRepository.existsByNameIgnoreCaseAndIdNot(name, id)) throw new DuplicateResourceException("Menu item already exists: " + name);
+        requirePackages(request.packageIds());
         item.setCategory(requireCategory(request.categoryId()));
         item.setName(name);
         item.setDescription(clean(request.description()));
@@ -111,6 +117,17 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
 
     private MenuItem requireItem(Long id) {
         return itemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Menu item not found with id: " + id));
+    }
+
+    private void requirePackages(Set<Long> packageIds) {
+        Set<Long> foundIds = packageRepository.findAllById(packageIds).stream()
+                .map(packageEntry -> packageEntry.getId())
+                .collect(java.util.stream.Collectors.toSet());
+        Set<Long> missingIds = new TreeSet<>(packageIds);
+        missingIds.removeAll(foundIds);
+        if (!missingIds.isEmpty()) {
+            throw new BusinessRuleException("Buffet packages not found: " + missingIds);
+        }
     }
 
     private String clean(String value) { return value == null || value.isBlank() ? null : value.trim(); }

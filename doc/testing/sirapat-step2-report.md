@@ -15,11 +15,11 @@ Date: 26 September 2026
 
 | Check | Result |
 |---|---|
-| Backend test suite | 69 passed, 0 failed |
-| Ordering integration tests | 11 passed, including production-safe disablement, session-scoped order access, persistence, session/package rules and pagination |
+| Backend test suite | 70 passed, 0 failed |
+| Ordering integration tests | 12 passed, including production-safe disablement, session-scoped order access, persistence, session/package rules, package-reference validation and pagination |
 | Flyway V1–V3 → V4 upgrade test | Passed |
 | PostgreSQL 16 V1–V5 migration | Passed; RLS enabled on all five Menu/Order tables and `anon`/`authenticated` table and sequence access revoked |
-| Frontend component tests | 4 passed, 0 failed |
+| Frontend component tests | 6 passed, 0 failed, including final-page deletion, package selection and duplicate-submit protection |
 | Frontend lint | Passed |
 | Frontend production build | Passed |
 
