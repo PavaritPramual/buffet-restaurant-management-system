@@ -26,12 +26,15 @@ class CatalogMigrationTest {
                 .load()
                 .migrate();
 
-        assertThat(upgrade.migrationsExecuted).isEqualTo(1);
+        assertThat(upgrade.migrationsExecuted).isEqualTo(2);
         JdbcTemplate jdbc = new JdbcTemplate(new DriverManagerDataSource(url, "sa", ""));
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM buffet_packages", Integer.class)).isZero();
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM soups", Integer.class)).isZero();
         assertThat(jdbc.queryForObject(
                 "SELECT COUNT(*) FROM flyway_schema_history WHERE version = '3' AND success = TRUE",
+                Integer.class)).isEqualTo(1);
+        assertThat(jdbc.queryForObject(
+                "SELECT COUNT(*) FROM flyway_schema_history WHERE version = '6' AND success = TRUE",
                 Integer.class)).isEqualTo(1);
     }
 }
