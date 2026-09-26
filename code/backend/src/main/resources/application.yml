@@ -35,5 +35,7 @@ app:
     # Production-safe default. Authentication must replace this provider with a staff-role check.
     admin-access-provider: ${MENU_ADMIN_ACCESS_PROVIDER:disabled}
   ordering:
-    # Production-safe default. Use the local profile only for the development fixture.
-    session-provider: ${ORDERING_SESSION_PROVIDER:disabled}
+    # Validate the real session id and bearer token against DiningSession by default.
+    session-provider: ${ORDERING_SESSION_PROVIDER:database}
+  dining-session:
+    staff-access-provider: ${DINING_SESSION_STAFF_ACCESS_PROVIDER:disabled}

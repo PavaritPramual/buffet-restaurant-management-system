@@ -18,7 +18,7 @@ Owner: ปวริศช์ — Table & Dining Session
 | Field | JSON type | Nullable | Notes |
 |---|---|---|---|
 | `sessionId` | number | No | Dining Session identifier |
-| `sessionToken` | string | No | Token สำหรับ QR/session lookup |
+| `sessionToken` | string | No | Bearer token สำหรับ QR; ลูกค้าส่งใน `X-Session-Token` และใช้ได้เฉพาะ session `ACTIVE` |
 | `packageId` | number | No | Buffet Package identifier |
 | `tableId` | number | No | Restaurant Table identifier |
 | `tableNumber` | string | No | หมายเลขโต๊ะที่แสดงต่อผู้ใช้ |

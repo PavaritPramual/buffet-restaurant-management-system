@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,18 @@ public class DiningSessionController {
     ) {
         DiningSessionResponse created = diningSessionService.openSession(request);
         return ResponseEntity.created(URI.create("/api/v1/dining-sessions/" + created.sessionId())).body(created);
+    }
+
+    @GetMapping("/active")
+    @Operation(summary = "List active dining sessions for staff")
+    public ResponseEntity<List<DiningSessionResponse>> getActiveSessions() {
+        return ResponseEntity.ok(diningSessionService.getActiveSessions());
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get a dining session for staff")
+    public ResponseEntity<DiningSessionResponse> getSession(@PathVariable Long id) {
+        return ResponseEntity.ok(diningSessionService.getSession(id));
     }
 
     @GetMapping("/token/{token}")

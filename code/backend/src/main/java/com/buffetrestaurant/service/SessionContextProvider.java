@@ -3,7 +3,7 @@ package com.buffetrestaurant.service;
 import com.buffetrestaurant.domain.enums.DiningSessionStatus;
 
 public interface SessionContextProvider {
-    SessionContextSnapshot requireSession(Long sessionId);
+    SessionContextSnapshot requireSession(Long sessionId, String sessionToken);
 
     record SessionContextSnapshot(
             Long sessionId,

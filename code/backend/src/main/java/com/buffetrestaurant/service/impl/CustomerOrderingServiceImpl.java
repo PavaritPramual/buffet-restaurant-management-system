@@ -37,14 +37,14 @@ public class CustomerOrderingServiceImpl implements CustomerOrderingService {
         this.mapper = mapper;
     }
 
-    public List<MenuItemResponse> getMenu(Long sessionId) {
-        SessionContextSnapshot session = requireActive(sessionId);
+    public List<MenuItemResponse> getMenu(Long sessionId, String sessionToken) {
+        SessionContextSnapshot session = requireActive(sessionId, sessionToken);
         return menuItemRepository.findAvailableForPackage(session.packageId()).stream().map(mapper::toResponse).toList();
     }
 
     @Transactional
-    public OrderResponse placeOrder(Long sessionId, PlaceOrderRequest request) {
-        SessionContextSnapshot session = requireActive(sessionId);
+    public OrderResponse placeOrder(Long sessionId, String sessionToken, PlaceOrderRequest request) {
+        SessionContextSnapshot session = requireActive(sessionId, sessionToken);
         Map<Long, Integer> quantities = new LinkedHashMap<>();
         for (OrderItemRequest requested : request.items()) {
             if (quantities.putIfAbsent(requested.menuItemId(), requested.quantity()) != null) {
@@ -62,19 +62,19 @@ public class CustomerOrderingServiceImpl implements CustomerOrderingService {
         return mapper.toResponse(orderRepository.save(order));
     }
 
-    public List<OrderResponse> getOrders(Long sessionId) {
-        sessionProvider.requireSession(sessionId);
+    public List<OrderResponse> getOrders(Long sessionId, String sessionToken) {
+        requireActive(sessionId, sessionToken);
         return orderRepository.findBySessionIdOrderByCreatedAtDesc(sessionId).stream().map(mapper::toResponse).toList();
     }
 
-    public OrderResponse getOrder(Long sessionId, Long orderId) {
-        sessionProvider.requireSession(sessionId);
+    public OrderResponse getOrder(Long sessionId, String sessionToken, Long orderId) {
+        requireActive(sessionId, sessionToken);
         return mapper.toResponse(orderRepository.findByIdAndSessionId(orderId, sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId)));
     }
 
-    private SessionContextSnapshot requireActive(Long sessionId) {
-        SessionContextSnapshot session = sessionProvider.requireSession(sessionId);
+    private SessionContextSnapshot requireActive(Long sessionId, String sessionToken) {
+        SessionContextSnapshot session = sessionProvider.requireSession(sessionId, sessionToken);
         if (session.status() != DiningSessionStatus.ACTIVE) throw new BusinessRuleException("Dining session is not active");
         return session;
     }

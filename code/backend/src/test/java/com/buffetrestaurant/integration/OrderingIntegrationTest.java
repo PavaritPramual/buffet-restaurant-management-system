@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+@SpringBootTest(properties = "app.ordering.session-provider=database")
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("test")
@@ -44,6 +44,9 @@ class OrderingIntegrationTest {
         orderRepository.deleteAll();
         itemRepository.deleteAll();
         categoryRepository.deleteAll();
+        jdbcTemplate.update("DELETE FROM dining_sessions");
+        jdbcTemplate.update("DELETE FROM restaurant_tables");
+        jdbcTemplate.update("DELETE FROM soups");
         jdbcTemplate.update("DELETE FROM buffet_packages");
         jdbcTemplate.update(
                 "INSERT INTO buffet_packages (id, name, price, description, active) VALUES (?, ?, ?, ?, ?)",
@@ -51,6 +54,19 @@ class OrderingIntegrationTest {
         jdbcTemplate.update(
                 "INSERT INTO buffet_packages (id, name, price, description, active) VALUES (?, ?, ?, ?, ?)",
                 2L, "Premium", 499, null, true);
+        jdbcTemplate.update("INSERT INTO soups (id, name, active) VALUES (?, ?, ?)", 1L, "Tom Yum", true);
+        jdbcTemplate.update("INSERT INTO restaurant_tables (id, table_number, capacity, status) VALUES (?, ?, ?, ?)",
+                1L, "T01", 4, "OCCUPIED");
+        jdbcTemplate.update("INSERT INTO restaurant_tables (id, table_number, capacity, status) VALUES (?, ?, ?, ?)",
+                2L, "T02", 4, "OCCUPIED");
+        jdbcTemplate.update("INSERT INTO dining_sessions "
+                        + "(id, table_id, package_id, soup_id, adult_count, child_count, session_token, start_time, status) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)",
+                1L, 1L, 1L, 1L, 2, 0, "fixture-active-token", "ACTIVE");
+        jdbcTemplate.update("INSERT INTO dining_sessions "
+                        + "(id, table_id, package_id, soup_id, adult_count, child_count, session_token, start_time, status) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)",
+                2L, 2L, 1L, 1L, 2, 0, "fixture-second-token", "ACTIVE");
         category = categoryRepository.save(new MenuCategory("อาหารจานหลัก"));
     }
 
@@ -59,6 +75,7 @@ class OrderingIntegrationTest {
         MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวผัด", true, null, Set.of(1L)));
 
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
+                        .header("X-Session-Token", "fixture-active-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":2}]}"))
                 .andExpect(status().isCreated())
@@ -79,7 +96,8 @@ class OrderingIntegrationTest {
         order.addItem(item.getId(), item.getName(), 1);
         order = orderRepository.save(order);
 
-        mockMvc.perform(get("/api/v1/dining-sessions/1/orders/" + order.getId()))
+        mockMvc.perform(get("/api/v1/dining-sessions/1/orders/" + order.getId())
+                        .header("X-Session-Token", "fixture-active-token"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderId").value(order.getId()))
                 .andExpect(jsonPath("$.sessionId").value(1));
@@ -92,15 +110,44 @@ class OrderingIntegrationTest {
         order.addItem(item.getId(), item.getName(), 1);
         order = orderRepository.save(order);
 
-        mockMvc.perform(get("/api/v1/dining-sessions/2/orders/" + order.getId()))
+        mockMvc.perform(get("/api/v1/dining-sessions/2/orders/" + order.getId())
+                        .header("X-Session-Token", "fixture-second-token"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Order not found with id: " + order.getId()));
+    }
+
+    @Test
+    void menuOrdersAndOrderDetails_requireTokenMatchingSessionAndActiveStatus() throws Exception {
+        MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวผัด", true, null, Set.of(1L)));
+        String basePath = "/api/v1/dining-sessions/1";
+
+        mockMvc.perform(get(basePath + "/menu")).andExpect(status().isNotFound());
+        mockMvc.perform(get(basePath + "/orders").header("X-Session-Token", "wrong-token"))
+                .andExpect(status().isNotFound());
+        mockMvc.perform(post(basePath + "/orders").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1}]}"))
+                .andExpect(status().isNotFound());
+        mockMvc.perform(get(basePath + "/orders/999").header("X-Session-Token", "wrong-token"))
+                .andExpect(status().isNotFound());
+
+        mockMvc.perform(get("/api/v1/dining-sessions/2/menu")
+                        .header("X-Session-Token", "fixture-active-token"))
+                .andExpect(status().isNotFound());
+
+        jdbcTemplate.update("UPDATE dining_sessions SET status = 'COMPLETED' WHERE id = 1");
+        mockMvc.perform(get(basePath + "/menu").header("X-Session-Token", "fixture-active-token"))
+                .andExpect(status().isNotFound());
+        mockMvc.perform(post(basePath + "/orders").header("X-Session-Token", "fixture-active-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1}]}"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void placeOrder_whenItemUnavailable_returns400() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "ของหมด", false, null, Set.of(1L)));
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
+                        .header("X-Session-Token", "fixture-active-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1}]}"))
                 .andExpect(status().isBadRequest())
@@ -112,6 +159,7 @@ class OrderingIntegrationTest {
     void placeOrder_whenItemOutsidePackage_returns400() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "พรีเมียม", true, null, Set.of(2L)));
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
+                        .header("X-Session-Token", "fixture-active-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1}]}"))
                 .andExpect(status().isBadRequest())
@@ -120,19 +168,21 @@ class OrderingIntegrationTest {
     }
 
     @Test
-    void placeOrder_whenSessionInactive_returns400() throws Exception {
+    void placeOrder_whenSessionInactive_returns404() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวต้ม", true, null, Set.of(1L)));
-        mockMvc.perform(post("/api/v1/dining-sessions/2/orders")
+        jdbcTemplate.update("UPDATE dining_sessions SET status = 'COMPLETED' WHERE id = 1");
+        mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
+                        .header("X-Session-Token", "fixture-active-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1}]}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Dining session is not active"));
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void placeOrder_whenQuantityIsZero_returns400WithoutSavingOrder() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "ชาไทย", true, null, Set.of(1L)));
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
+                        .header("X-Session-Token", "fixture-active-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":0}]}"))
                 .andExpect(status().isBadRequest())
@@ -144,6 +194,7 @@ class OrderingIntegrationTest {
     void placeOrder_whenQuantityIsNegative_returns400WithoutSavingOrder() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "ชาไทย", true, null, Set.of(1L)));
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
+                        .header("X-Session-Token", "fixture-active-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":-1}]}"))
                 .andExpect(status().isBadRequest())
@@ -155,6 +206,7 @@ class OrderingIntegrationTest {
     void placeOrder_whenDuplicateMenuItemIds_returns400WithoutSavingOrder() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "ชาไทย", true, null, Set.of(1L)));
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
+                        .header("X-Session-Token", "fixture-active-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1},"
                                 + "{\"menuItemId\":" + item.getId() + ",\"quantity\":2}]}"))
@@ -221,7 +273,8 @@ class OrderingIntegrationTest {
         itemRepository.save(new MenuItem(category, "ปิดขาย", false, null, Set.of(1L)));
         itemRepository.save(new MenuItem(category, "คนละแพ็กเกจ", true, null, Set.of(2L)));
 
-        mockMvc.perform(get("/api/v1/dining-sessions/1/menu"))
+        mockMvc.perform(get("/api/v1/dining-sessions/1/menu")
+                        .header("X-Session-Token", "fixture-active-token"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].name").value("สั่งได้"));

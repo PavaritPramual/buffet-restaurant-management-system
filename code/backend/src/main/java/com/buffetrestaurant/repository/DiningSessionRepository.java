@@ -12,6 +12,11 @@ import org.springframework.data.repository.query.Param;
 public interface DiningSessionRepository extends JpaRepository<DiningSession, Long> {
     Optional<DiningSession> findBySessionTokenAndStatus(String sessionToken, DiningSessionStatus status);
 
+    Optional<DiningSession> findByIdAndSessionTokenAndStatus(
+            Long id, String sessionToken, DiningSessionStatus status);
+
+    java.util.List<DiningSession> findByStatusOrderByStartTimeDesc(DiningSessionStatus status);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select diningSession from DiningSession diningSession where diningSession.id = :id")
     Optional<DiningSession> findByIdForUpdate(@Param("id") Long id);

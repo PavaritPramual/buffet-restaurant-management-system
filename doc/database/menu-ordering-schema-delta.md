@@ -2,13 +2,13 @@
 
 Date: 26 September 2026
 
-Scope: replacement Menu/Ordering PR, Flyway V4/V5 and matching JPA mappings
+Scope: merged Menu/Ordering V4/V5 schema, Dining Session V6, and this branch's V7 FK integration
 
 Design baseline: Notion ER Diagram and Data Dictionary & Migration
 
-Package/Soup V3 merged into `develop` through PR #12, and this branch is synced with merge commit `52961a8`. Menu/Ordering therefore owns the next versions, V4/V5. Before shared deployment, confirm that Supabase `flyway_schema_history` has successfully applied V3.
+Package/Soup V3 merged through PR #12; the personal branch is now synced with the develop branch that includes PR #13. V4/V5 provide Menu/Ordering, V6 creates Dining Sessions, and this branch adds the forward-only V7 FK from orders to sessions. Verify the shared database migration history before any shared deployment; this work has only been applied to isolated test databases.
 
-## Decisions carried into the replacement PR
+## Schema decisions
 
 | Area | Previous implementation | Baseline / updated implementation | Reason |
 |---|---|---|---|
@@ -37,12 +37,13 @@ V4 adds the package FK because the V3 Package/Soup migration is present in its m
 
 - `package_menu_items.package_id` → `buffet_packages.id` with `ON DELETE CASCADE`
 
-The Dining Session table is reserved for V6 and does not exist when V4 runs, so `orders.session_id` cannot receive its canonical FK in V4. Pavarit and Methus must add `orders.session_id` → `dining_sessions.id` with the agreed delete behavior in V6 or a later reserved forward migration. This deferred constraint must be confirmed before the replacement PR merges.
+The Dining Session table did not exist when V4 ran, so `orders.session_id` could not receive its FK there. V6 creates `dining_sessions`; V7 adds `fk_orders_dining_session` from `orders.session_id` to `dining_sessions.id` with `ON DELETE RESTRICT`. V4 and V6 remain unchanged. V7 is tested on isolated databases in this branch; this work has not migrated shared Supabase.
 
 ## Verification and reviewers
 
-- Empty test database: Spring integration suite migrates V1 → V4 and validates JPA.
-- Upgrade test database: `MenuOrderingMigrationTest` migrates V1–V3 first, then applies V4.
+- Empty H2 test database: Flyway applies V1, V2, V3, V4, V6 and V7; Hibernate validates JPA.
+- Empty local PostgreSQL 16 test database: Flyway applies V1–V7; Hibernate validates JPA.
+- Upgrade test database: `MenuOrderingMigrationTest` migrates through V3 first, then applies all later available migrations through V7.
 - Methus: review migration ordering, constraints and Supabase execution.
 - Pavarit: approve schema extensions and external FK dependency.
 - Sarun: approve Order item/name/note impact on `OrderFulfillmentContext`.

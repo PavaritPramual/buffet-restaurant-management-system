@@ -18,11 +18,13 @@ import com.buffetrestaurant.repository.DiningSessionRepository;
 import com.buffetrestaurant.repository.RestaurantTableRepository;
 import com.buffetrestaurant.repository.SoupRepository;
 import com.buffetrestaurant.service.DiningSessionService;
+import com.buffetrestaurant.service.DiningSessionStaffAccessProvider;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Base64;
+import java.util.List;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,7 @@ public class DiningSessionServiceImpl implements DiningSessionService {
     private final DiningSessionRepository diningSessionRepository;
     private final DiningSessionMapper diningSessionMapper;
     private final ObjectProvider<PaymentStatusLookup> paymentStatusLookupProvider;
+    private final DiningSessionStaffAccessProvider staffAccessProvider;
     private final SecureRandom secureRandom = new SecureRandom();
     private final Clock clock;
 
@@ -49,10 +52,11 @@ public class DiningSessionServiceImpl implements DiningSessionService {
             SoupRepository soupRepository,
             DiningSessionRepository diningSessionRepository,
             DiningSessionMapper diningSessionMapper,
-            ObjectProvider<PaymentStatusLookup> paymentStatusLookupProvider
+            ObjectProvider<PaymentStatusLookup> paymentStatusLookupProvider,
+            DiningSessionStaffAccessProvider staffAccessProvider
     ) {
         this(tableRepository, packageRepository, soupRepository, diningSessionRepository,
-                diningSessionMapper, paymentStatusLookupProvider, Clock.systemUTC());
+                diningSessionMapper, paymentStatusLookupProvider, staffAccessProvider, Clock.systemUTC());
     }
 
     DiningSessionServiceImpl(
@@ -62,6 +66,7 @@ public class DiningSessionServiceImpl implements DiningSessionService {
             DiningSessionRepository diningSessionRepository,
             DiningSessionMapper diningSessionMapper,
             ObjectProvider<PaymentStatusLookup> paymentStatusLookupProvider,
+            DiningSessionStaffAccessProvider staffAccessProvider,
             Clock clock
     ) {
         this.tableRepository = tableRepository;
@@ -70,12 +75,14 @@ public class DiningSessionServiceImpl implements DiningSessionService {
         this.diningSessionRepository = diningSessionRepository;
         this.diningSessionMapper = diningSessionMapper;
         this.paymentStatusLookupProvider = paymentStatusLookupProvider;
+        this.staffAccessProvider = staffAccessProvider;
         this.clock = clock;
     }
 
     @Override
     @Transactional
     public DiningSessionResponse openSession(OpenDiningSessionRequest request) {
+        staffAccessProvider.requireServiceStaffAccess();
         RestaurantTable table = tableRepository.findByIdForUpdate(request.tableId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Restaurant table not found with id: " + request.tableId()));
@@ -114,6 +121,22 @@ public class DiningSessionServiceImpl implements DiningSessionService {
     }
 
     @Override
+    public List<DiningSessionResponse> getActiveSessions() {
+        staffAccessProvider.requireServiceStaffAccess();
+        return diningSessionRepository.findByStatusOrderByStartTimeDesc(DiningSessionStatus.ACTIVE).stream()
+                .map(diningSessionMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public DiningSessionResponse getSession(Long sessionId) {
+        staffAccessProvider.requireServiceStaffAccess();
+        DiningSession session = diningSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Dining session not found with id: " + sessionId));
+        return diningSessionMapper.toResponse(session);
+    }
+
+    @Override
     public DiningSessionResponse getActiveSessionByToken(String token) {
         DiningSession session = diningSessionRepository
                 .findBySessionTokenAndStatus(token, DiningSessionStatus.ACTIVE)
@@ -124,6 +147,7 @@ public class DiningSessionServiceImpl implements DiningSessionService {
     @Override
     @Transactional
     public DiningSessionResponse closeSession(Long sessionId) {
+        staffAccessProvider.requireServiceStaffAccess();
         DiningSession session = diningSessionRepository.findByIdForUpdate(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Dining session not found with id: " + sessionId));
         if (!DiningSessionStatus.ACTIVE.equals(session.getStatus())) {
