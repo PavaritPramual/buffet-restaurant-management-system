@@ -1,0 +1,13 @@
+CREATE TABLE buffet_packages (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL CHECK (price > 0),
+    description TEXT,
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE soups (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
