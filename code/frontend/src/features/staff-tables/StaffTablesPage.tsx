@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Card, EmptyState, ErrorAlert, LoadingState, PageHeader, SelectField, StatusBadge, TextField } from '../../components/common'
+import { Button, Card, EmptyState, ErrorAlert, LoadingState, PageHeader, RefreshIcon, SelectField, StatusBadge, TextField } from '../../components/common'
 import { getActiveSessions, getApiError, getPackages, getSoups, getTables, openDiningSession } from './api'
 import type { CatalogOption, OpenSessionInput, RestaurantTable } from './api'
 import type { SessionContext } from '../ordering/api'
@@ -61,7 +61,7 @@ export default function StaffTablesPage() {
   }
 
   return <main className="staff-tables-page">
-    <PageHeader eyebrow="พนักงานบริการ" title="โต๊ะในร้าน" description="เลือกโต๊ะเพื่อเปิดรอบกิน หรือดูรอบที่กำลังใช้งาน" action={<Button variant="secondary" onClick={() => void refresh()}>อัปเดต</Button>} />
+    <PageHeader eyebrow="พนักงานบริการ" title="โต๊ะในร้าน" description="เลือกโต๊ะเพื่อเปิดรอบกิน หรือดูรอบที่กำลังใช้งาน" action={<Button variant="secondary" className="ui-icon-button" aria-label="อัปเดตรายการโต๊ะ" title="อัปเดตรายการโต๊ะ" disabled={loading} onClick={() => void refresh()}><RefreshIcon /></Button>} />
     {error && <ErrorAlert message={error} />}
     {loading ? <LoadingState label="กำลังโหลดโต๊ะและรอบกิน…" /> : tables.length === 0 ? <EmptyState title="ยังไม่มีโต๊ะ" description="เพิ่มโต๊ะผ่านหน้าจัดการโต๊ะก่อนเริ่มบริการ" /> : <section className="staff-table-grid" aria-label="รายการโต๊ะ">
       {tables.map((table) => {

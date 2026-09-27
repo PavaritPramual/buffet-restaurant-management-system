@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Button, Card, ConfirmDialog, EmptyState, ErrorAlert, LoadingState, PageHeader, StatusBadge } from '../../components/common'
+import { Button, Card, ConfirmDialog, EmptyState, ErrorAlert, LoadingState, PageHeader, RefreshIcon, StatusBadge } from '../../components/common'
 import { getApiError, getBuffetPackage, getMenu, getOrders, getSessionByToken, placeOrder } from './api'
 import type { MenuItem, Order, SessionContext } from './api'
 import type { OrderStatus } from '../../contracts/shared'
@@ -89,7 +89,7 @@ export default function CustomerOrderingPage() {
         </Card>)}
       </section>}
       <Card className="cart-card"><div><h2>ตะกร้าอาหาร</h2><p>{count ? `${count} รายการ · ${cartItems.map((item) => `${item.name} × ${item.quantity}`).join(', ')}` : 'ยังไม่ได้เลือกเมนู'}</p></div><Button size="lg" disabled={!count} onClick={() => setConfirming(true)}>ยืนยันการสั่ง</Button></Card>
-      <section className="order-history"><div className="section-title"><div><h2>สถานะคำสั่งซื้อ</h2><p>ติดตามรายการที่ส่งเข้าครัวแล้ว</p></div><Button variant="secondary" onClick={refreshOrders}>อัปเดต</Button></div>
+      <section className="order-history"><div className="section-title"><div><h2>สถานะคำสั่งซื้อ</h2><p>ติดตามรายการที่ส่งเข้าครัวแล้ว</p></div><Button variant="secondary" className="ui-icon-button" aria-label="อัปเดตสถานะคำสั่งซื้อ" title="อัปเดตสถานะคำสั่งซื้อ" onClick={refreshOrders}><RefreshIcon /></Button></div>
         {orders.length === 0 ? <EmptyState title="ยังไม่มีคำสั่งซื้อ" /> : <div className="order-list">{orders.map((order) => <Card key={order.orderId} className="order-card"><div><strong>คำสั่งซื้อ #{order.orderId}</strong><p>{order.items.map((item) => `${item.name} × ${item.quantity}`).join(', ')}</p></div><StatusBadge tone={orderStatusPresentation[order.status].tone}>{orderStatusPresentation[order.status].label}</StatusBadge></Card>)}</div>}
       </section>
     </>)}
