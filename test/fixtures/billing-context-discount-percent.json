@@ -1,0 +1,10 @@
+{
+  "sessionId": 1,
+  "packagePrice": 399.00,
+  "adultCount": 2,
+  "childCount": 2,
+  "discountContext": {
+    "percentage": 10
+  },
+  "sessionStatus": "ACTIVE"
+}

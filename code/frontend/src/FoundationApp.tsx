@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import { API_BASE_URL } from './api/client'
+import BillingPreviewPage from './BillingPreviewPage'
 
 function FoundationReadyPage() {
   return (
@@ -32,6 +33,7 @@ function FoundationReadyPage() {
 export default function FoundationApp() {
   return (
     <Routes>
+      <Route path="/billing/preview" element={<BillingPreviewPage />} />
       <Route path="*" element={<FoundationReadyPage />} />
     </Routes>
   )
