@@ -3,3 +3,5 @@ app:
     admin-access-provider: fixture
   ordering:
     session-provider: fixture
+  fulfillment:
+    access-provider: fixture

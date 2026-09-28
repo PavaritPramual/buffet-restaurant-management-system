@@ -1,0 +1,9 @@
+.fulfillment-page { width: min(960px, 100%); margin: 0 auto; padding: 24px 16px 48px; }
+.order-board { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.order-board-card { display: grid; gap: 8px; }
+.order-board-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.order-board-header p { margin: 0; }
+.order-id { color: var(--color-muted); font-weight: 400; }
+.order-items { margin: 0; color: var(--color-text); }
+.order-time { margin: 0; color: var(--color-muted); font-size: 13px; }
+@media (max-width: 560px) { .fulfillment-page { padding: 20px 12px 40px; } .order-board { grid-template-columns: 1fr; } }
