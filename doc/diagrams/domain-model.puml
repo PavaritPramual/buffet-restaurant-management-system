@@ -1,0 +1,109 @@
+@startuml
+title Domain Model - Buffet Restaurant Management System
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+class User {
+    id
+    username
+    role
+    active
+}
+
+class RestaurantTable {
+    id
+    tableNumber
+    capacity
+    status
+}
+
+class DiningSession {
+    id
+    customerCount
+    sessionToken
+    startTime
+    endTime
+    status
+}
+
+class BuffetPackage {
+    id
+    name
+    price
+    active
+}
+
+class Soup {
+    id
+    name
+    active
+}
+
+class MenuCategory {
+    id
+    name
+}
+
+class MenuItem {
+    id
+    name
+    price
+    available
+}
+
+class Order {
+    id
+    status
+    createdAt
+}
+
+class OrderItem {
+    id
+    quantity
+    note
+}
+
+class Payment {
+    id
+    amount
+    paymentMethod
+    paymentStatus
+    paidAt
+}
+
+class StockItem {
+    id
+    name
+    unit
+    currentStock
+    minimumStock
+    openingTargetStock
+    active
+}
+
+class StockTransaction {
+    id
+    type
+    quantity
+    reason
+    createdAt
+}
+
+RestaurantTable "1" -- "0..*" DiningSession : hosts >
+BuffetPackage "1" -- "0..*" DiningSession : selected in >
+Soup "1" -- "0..*" DiningSession : selected in >
+
+BuffetPackage "*" -- "*" MenuItem : includes >
+MenuCategory "1" -- "0..*" MenuItem : categorizes >
+
+DiningSession "1" -- "0..*" Order : contains >
+Order "1" -- "1..*" OrderItem : consists of >
+MenuItem "1" -- "0..*" OrderItem : ordered as >
+
+DiningSession "1" -- "0..*" Payment : billed for >
+
+StockItem "1" -- "0..*" StockTransaction : tracked by >
+User "1" -- "0..*" StockTransaction : recorded by >
+
+@enduml

@@ -1,0 +1,49 @@
+@startuml
+title Activity Diagram - Payment & Close Dining Session
+
+|Customer|
+start
+:รับประทานอาหารเสร็จ;
+:แจ้งพนักงานขอเช็กบิล;
+
+|Service Staff|
+:ตรวจสอบ Dining Session ของโต๊ะ;
+:ส่งคำขอคำนวณยอดบิล (Request Bill);
+
+|System|
+:รวบรวมข้อมูล Dining Session;
+:คำนวณยอดรวมตาม Buffet Package และจำนวนคน;
+:คำนวณส่วนลดตาม Strategy (เด็ก / โปรโมชัน);
+:แสดงยอดสุทธิที่ต้องชำระ (Net Total);
+
+|Service Staff|
+:แจ้งยอดชำระให้ลูกค้าทราบ;
+
+repeat
+    |Customer|
+    :เลือกช่องทางชำระเงิน (CASH / QR / CARD);
+    :ดำเนินการชำระเงิน;
+
+    |Service Staff|
+    :ตรวจสอบยอดเงินที่ได้รับ / สลิปโอนเงิน;
+    :บันทึกข้อมูลการรับชำระเงินเข้าสู่ระบบ;
+
+    |System|
+    :ตรวจสอบความถูกต้องของการชำระเงิน;
+repeat while (ชำระเงินสำเร็จหรือไม่?) is (ไม่สำเร็จ)
+
+|System|
+:บันทึกข้อมูล Payment (สถานะ = PAID);
+:สร้างหลักฐานการชำระเงิน / ใบเสร็จ;
+
+|Service Staff|
+:มอบใบเสร็จให้แก่ลูกค้า;
+:กดยืนยันปิด Dining Session;
+
+|System|
+:เปลี่ยนสถานะ Dining Session เป็น COMPLETED;
+:ยกเลิกความถูกต้องของ Session Token (QR หมดอายุ);
+:เปลี่ยนสถานะโต๊ะเป็น AVAILABLE;
+
+stop
+@enduml
