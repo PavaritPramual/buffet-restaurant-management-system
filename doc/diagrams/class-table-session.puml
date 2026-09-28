@@ -1,0 +1,97 @@
+@startuml
+title Class Diagram - Table & Dining Session Management
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+package "Domain" {
+    class RestaurantTable {
+        - id : Long
+        - tableNumber : String
+        - capacity : Integer
+        - status : TableStatus
+        + isAvailable() : Boolean
+        + occupy() : void
+        + makeAvailable() : void
+    }
+
+    class DiningSession {
+        - id : Long
+        - adultCount : Integer
+        - childCount : Integer
+        - sessionToken : String
+        - startTime : LocalDateTime
+        - endTime : LocalDateTime
+        - status : DiningSessionStatus
+        + startSession() : void
+        + closeSession() : void
+        + invalidateToken() : void
+    }
+
+    class BuffetPackage {
+        - id : Long
+        - name : String
+        - price : BigDecimal
+        - active : Boolean
+    }
+
+    class Soup {
+        - id : Long
+        - name : String
+        - active : Boolean
+    }
+
+    enum TableStatus {
+        AVAILABLE
+        OCCUPIED
+    }
+
+    enum DiningSessionStatus {
+        ACTIVE
+        COMPLETED
+        CANCELLED
+    }
+}
+
+package "Repository" {
+    interface RestaurantTableRepository {
+        + findById(id : Long) : Optional<RestaurantTable>
+        + findByStatus(status : TableStatus) : List<RestaurantTable>
+        + save(table : RestaurantTable) : RestaurantTable
+    }
+
+    interface DiningSessionRepository {
+        + findById(id : Long) : Optional<DiningSession>
+        + findBySessionToken(token : String) : Optional<DiningSession>
+        + save(session : DiningSession) : DiningSession
+    }
+
+    interface BuffetPackageRepository {
+        + findById(id : Long) : Optional<BuffetPackage>
+        + findAll() : List<BuffetPackage>
+    }
+
+    interface SoupRepository {
+        + findById(id : Long) : Optional<Soup>
+        + findAll() : List<Soup>
+    }
+}
+
+package "Service" {
+    interface DiningSessionService {
+        + getAvailableTables() : List<TableResponseDTO>
+        + openSession(request : OpenSessionRequestDTO) : DiningSessionResponseDTO
+        + closeSession(sessionId : Long) : void
+    }
+}
+
+RestaurantTable "1" -- "0..*" DiningSession
+BuffetPackage "1" -- "0..*" DiningSession
+Soup "1" -- "0..*" DiningSession
+
+DiningSessionService --> RestaurantTableRepository
+DiningSessionService --> DiningSessionRepository
+DiningSessionService --> BuffetPackageRepository
+DiningSessionService --> SoupRepository
+
+@enduml

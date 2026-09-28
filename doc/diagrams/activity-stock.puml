@@ -1,0 +1,37 @@
+@startuml
+title Activity Diagram - Stock Management
+
+|Head Staff / Supervisor|
+start
+:เข้าสู่ระบบ;
+:เปิดหน้าจัดการ Stock;
+
+|System|
+:แสดงรายการ StockItem ทั้งหมด;
+:แสดงจำนวนคงเหลือ (Current), ปริมาณขั้นต่ำ (Minimum), ปริมาณที่ควรมี (Opening Target);
+
+|Head Staff / Supervisor|
+:ตรวจสอบปริมาณวัตถุดิบ;
+
+if (ต้องการรับวัตถุดิบเข้า (Stock In)?) then (ใช่)
+    :ระบุวัตถุดิบและจำนวนที่รับเข้า;
+    |System|
+    :ประมวลผล Stock In (เพิ่มยอดคงเหลือ);
+    :บันทึก StockTransaction (ประเภท = STOCK_IN);
+    |Head Staff / Supervisor|
+    :ตรวจสอบยอด Stock ใหม่;
+else (ไม่ใช่)
+endif
+
+if (ตรวจนับจริงแล้วยอดไม่ตรง (Adjustment)?) then (ใช่)
+    :บันทึกยอดตรวจนับจริงพร้อมระบุเหตุผล (Reason);
+    |System|
+    :ประมวลผล Stock Adjustment (ปรับยอดเป็นจำนวนจริง);
+    :บันทึก StockTransaction (ประเภท = ADJUSTMENT);
+    |Head Staff / Supervisor|
+    :ตรวจสอบผลการปรับยอด;
+else (ไม่ใช่)
+endif
+
+stop
+@enduml

@@ -1,0 +1,95 @@
+@startuml
+title Class Diagram - Stock Management (GoF Template Method Pattern)
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+package "Domain" {
+    class StockItem {
+        - id : Long
+        - name : String
+        - unit : String
+        - currentStock : BigDecimal
+        - minimumStock : BigDecimal
+        - openingTargetStock : BigDecimal
+        - active : Boolean
+        + updateStock(newBalance : BigDecimal) : void
+    }
+
+    class StockTransaction {
+        - id : Long
+        - type : StockTransactionType
+        - quantity : BigDecimal
+        - balanceAfter : BigDecimal
+        - reason : String
+        - createdAt : LocalDateTime
+    }
+
+    enum StockTransactionType {
+        STOCK_IN
+        ADJUSTMENT
+    }
+
+    class User {
+        - id : Long
+        - username : String
+        - role : UserRole
+    }
+}
+
+package "Template Method Pattern (Stock Transaction Engine)" {
+    abstract class StockTransactionProcessor <<AbstractClass>> {
+        ' Template Method
+        + final process(stockItemId : Long, quantity : BigDecimal, reason : String, user : User) : StockTransaction
+
+        ' Primitive / Hook Methods
+        # {abstract} validate(item : StockItem, quantity : BigDecimal) : void
+        # {abstract} calculateNewBalance(currentBalance : BigDecimal, quantity : BigDecimal) : BigDecimal
+        # {abstract} getTransactionType() : StockTransactionType
+        # logAudit(tx : StockTransaction) : void
+    }
+
+    class StockInProcessor {
+        # validate(item : StockItem, quantity : BigDecimal) : void
+        # calculateNewBalance(currentBalance : BigDecimal, quantity : BigDecimal) : BigDecimal
+        # getTransactionType() : StockTransactionType
+    }
+
+    class StockAdjustmentProcessor {
+        # validate(item : StockItem, quantity : BigDecimal) : void
+        # calculateNewBalance(currentBalance : BigDecimal, quantity : BigDecimal) : BigDecimal
+        # getTransactionType() : StockTransactionType
+    }
+
+    StockTransactionProcessor <|-- StockInProcessor
+    StockTransactionProcessor <|-- StockAdjustmentProcessor
+}
+
+package "Repository" {
+    interface StockItemRepository {
+        + findById(id : Long) : Optional<StockItem>
+        + findAll() : List<StockItem>
+        + save(item : StockItem) : StockItem
+    }
+
+    interface StockTransactionRepository {
+        + save(tx : StockTransaction) : StockTransaction
+        + findByStockItemId(stockItemId : Long) : List<StockTransaction>
+    }
+}
+
+package "Service" {
+    interface StockService {
+        + getStockOverview() : List<StockItemDTO>
+        + executeStockIn(stockItemId : Long, quantity : BigDecimal, user : User) : StockTransactionDTO
+        + executeAdjustment(stockItemId : Long, countedQuantity : BigDecimal, reason : String, user : User) : StockTransactionDTO
+    }
+}
+
+StockTransactionProcessor --> StockItemRepository
+StockTransactionProcessor --> StockTransactionRepository
+StockService --> StockTransactionProcessor
+StockItem "1" -- "0..*" StockTransaction
+User "1" -- "0..*" StockTransaction
+
+@enduml

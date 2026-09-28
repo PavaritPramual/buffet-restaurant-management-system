@@ -1,0 +1,158 @@
+@startuml er_diagram
+title Entity Relationship Diagram (ERD) - Buffet Restaurant Management System
+
+hide circle
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 5
+
+entity "users" as users {
+    * id : BIGINT <<PK, generated>>
+    --
+    * username : VARCHAR(50) <<UK>>
+    * password : VARCHAR(255)
+    * role : VARCHAR(30)
+    * active : BOOLEAN
+    * created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "user_profiles" as user_profiles {
+    * id : BIGINT <<PK, generated>>
+    --
+    * user_id : BIGINT <<FK, UK>>
+    * first_name : VARCHAR(100)
+    * last_name : VARCHAR(100)
+    phone_number : VARCHAR(20)
+    email : VARCHAR(100)
+}
+
+entity "restaurant_tables" as restaurant_tables {
+    * id : BIGINT <<PK, generated>>
+    --
+    * table_number : VARCHAR(20) <<UK>>
+    * capacity : INT
+    * status : VARCHAR(20)
+}
+
+entity "buffet_packages" as buffet_packages {
+    * id : BIGINT <<PK, generated>>
+    --
+    * name : VARCHAR(100)
+    * price : DECIMAL(10,2)
+    description : TEXT
+    * active : BOOLEAN
+}
+
+entity "soups" as soups {
+    * id : BIGINT <<PK, generated>>
+    --
+    * name : VARCHAR(100)
+    * active : BOOLEAN
+}
+
+entity "menu_categories" as menu_categories {
+    * id : BIGINT <<PK, generated>>
+    --
+    * name : VARCHAR(100)
+}
+
+entity "menu_items" as menu_items {
+    * id : BIGINT <<PK, generated>>
+    --
+    * category_id : BIGINT <<FK>>
+    * name : VARCHAR(100)
+    description : TEXT
+    * available : BOOLEAN
+}
+
+entity "package_menu_items" as package_menu_items {
+    * package_id : BIGINT <<PK, FK>>
+    * menu_item_id : BIGINT <<PK, FK>>
+}
+
+entity "dining_sessions" as dining_sessions {
+    * id : BIGINT <<PK, generated>>
+    --
+    * table_id : BIGINT <<FK>>
+    * package_id : BIGINT <<FK>>
+    * soup_id : BIGINT <<FK>>
+    * adult_count : INT
+    * child_count : INT
+    * session_token : VARCHAR(100) <<UK>>
+    * start_time : TIMESTAMP
+    end_time : TIMESTAMP
+    * status : VARCHAR(20)
+}
+
+entity "orders" as orders {
+    * id : BIGINT <<PK, generated>>
+    --
+    * session_id : BIGINT <<FK>>
+    * status : VARCHAR(20)
+    * created_at : TIMESTAMP
+}
+
+entity "order_items" as order_items {
+    * id : BIGINT <<PK, generated>>
+    --
+    * order_id : BIGINT <<FK>>
+    * menu_item_id : BIGINT <<FK>>
+    * quantity : INT
+    note : VARCHAR(255)
+}
+
+entity "payments" as payments {
+    * id : BIGINT <<PK, generated>>
+    --
+    * session_id : BIGINT <<FK, UK>>
+    * amount : DECIMAL(10,2)
+    * payment_method : VARCHAR(20)
+    * payment_status : VARCHAR(20)
+    * paid_at : TIMESTAMP
+}
+
+entity "stock_items" as stock_items {
+    * id : BIGINT <<PK, generated>>
+    --
+    * name : VARCHAR(100)
+    * unit : VARCHAR(30)
+    * current_stock : DECIMAL(10,2)
+    * minimum_stock : DECIMAL(10,2)
+    * opening_target_stock : DECIMAL(10,2)
+    * active : BOOLEAN
+}
+
+entity "stock_transactions" as stock_transactions {
+    * id : BIGINT <<PK, generated>>
+    --
+    * stock_item_id : BIGINT <<FK>>
+    * user_id : BIGINT <<FK>>
+    * type : VARCHAR(20)
+    * quantity : DECIMAL(10,2)
+    * balance_after : DECIMAL(10,2)
+    reason : VARCHAR(255)
+    * created_at : TIMESTAMP
+}
+
+' Relationships
+users ||--|| user_profiles : "1:1 has profile"
+dining_sessions ||--o| payments : "1:0..1 billed as"
+
+restaurant_tables ||--o{ dining_sessions : "hosts"
+buffet_packages ||--o{ dining_sessions : "applied to"
+soups ||--o{ dining_sessions : "selected in"
+
+menu_categories ||--o{ menu_items : "contains"
+
+dining_sessions ||--o{ orders : "places"
+orders ||--|{ order_items : "consists of"
+menu_items ||--o{ order_items : "ordered in"
+
+stock_items ||--o{ stock_transactions : "audited by"
+users ||--o{ stock_transactions : "performed by"
+
+buffet_packages ||--o{ package_menu_items : "links"
+menu_items ||--o{ package_menu_items : "included in"
+
+@enduml

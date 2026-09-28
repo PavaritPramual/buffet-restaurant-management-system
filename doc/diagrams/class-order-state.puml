@@ -1,0 +1,82 @@
+@startuml
+title Class Diagram - Order State Management (GoF State Pattern)
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+package "State Pattern (Order State Management)" {
+    class Order <<Context>> {
+        - id : Long
+        - status : OrderStatus
+        - state : OrderState
+        - createdAt : LocalDateTime
+        + setState(state : OrderState) : void
+        + nextState() : void
+        + cancel() : void
+        + getStatus() : OrderStatus
+    }
+
+    interface OrderState <<State>> {
+        + next(order : Order) : void
+        + cancel(order : Order) : void
+        + getStatus() : OrderStatus
+    }
+
+    class ReceivedState {
+        + next(order : Order) : void
+        + cancel(order : Order) : void
+        + getStatus() : OrderStatus
+    }
+
+    class PreparingState {
+        + next(order : Order) : void
+        + cancel(order : Order) : void
+        + getStatus() : OrderStatus
+    }
+
+    class ReadyState {
+        + next(order : Order) : void
+        + cancel(order : Order) : void
+        + getStatus() : OrderStatus
+    }
+
+    class ServedState {
+        + next(order : Order) : void
+        + cancel(order : Order) : void
+        + getStatus() : OrderStatus
+    }
+
+    OrderState <|.. ReceivedState
+    OrderState <|.. PreparingState
+    OrderState <|.. ReadyState
+    OrderState <|.. ServedState
+    Order o-- OrderState : delegates state transitions to >
+}
+
+package "Service" {
+    interface KitchenOrderService {
+        + getIncomingOrders() : List<OrderResponseDTO>
+        + startPreparing(orderId : Long) : OrderResponseDTO
+        + markReady(orderId : Long) : OrderResponseDTO
+    }
+
+    interface ServiceStaffOrderService {
+        + getReadyOrders() : List<OrderResponseDTO>
+        + markServed(orderId : Long) : OrderResponseDTO
+    }
+}
+
+package "Repository" {
+    interface OrderRepository {
+        + findById(id : Long) : Optional<Order>
+        + findByStatus(status : OrderStatus) : List<Order>
+        + save(order : Order) : Order
+    }
+}
+
+KitchenOrderService --> OrderRepository
+ServiceStaffOrderService --> OrderRepository
+KitchenOrderService ..> Order : interacts
+ServiceStaffOrderService ..> Order : interacts
+
+@enduml
