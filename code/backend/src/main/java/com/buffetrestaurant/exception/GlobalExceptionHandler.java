@@ -51,6 +51,22 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.NOT_FOUND, exception.getMessage(), request.getRequestURI());
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(
+            UnauthorizedException exception,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.UNAUTHORIZED, exception.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(
+            ForbiddenException exception,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.FORBIDDEN, exception.getMessage(), request.getRequestURI());
+    }
+
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateResource(
             DuplicateResourceException exception,

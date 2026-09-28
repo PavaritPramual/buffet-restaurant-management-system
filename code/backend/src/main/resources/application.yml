@@ -37,3 +37,6 @@ app:
   ordering:
     # Production-safe default. Use the local profile only for the development fixture.
     session-provider: ${ORDERING_SESSION_PROVIDER:disabled}
+  fulfillment:
+    # Production-safe default. Authentication must replace this provider with a real staff-role check.
+    access-provider: ${FULFILLMENT_ACCESS_PROVIDER:disabled}
