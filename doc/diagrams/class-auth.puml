@@ -1,0 +1,38 @@
+@startuml
+title Class Diagram - User & Authentication
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+package "Domain" {
+    class User {
+        - id : Long
+        - username : String
+        - password : String
+        - role : UserRole
+        - active : Boolean
+    }
+
+    enum UserRole {
+        SERVICE_STAFF
+        KITCHEN_STAFF
+        SUPERVISOR
+        MANAGER
+    }
+}
+
+package "Service" {
+    interface AuthenticationService {
+        + login(username : String, password : String) : String
+    }
+}
+
+package "Repository" {
+    interface UserRepository {
+        + findByUsername(username : String) : Optional<User>
+    }
+}
+
+AuthenticationService --> UserRepository
+
+@enduml

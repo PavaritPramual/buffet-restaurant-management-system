@@ -1,0 +1,87 @@
+@startuml
+title Class Diagram - Bill Calculation (GoF Strategy Pattern)
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+package "Domain" {
+    class DiningSession {
+        - id : Long
+        - adultCount : Integer
+        - childCount : Integer
+    }
+
+    class Payment {
+        - id : Long
+        - amount : BigDecimal
+        - paymentMethod : PaymentMethod
+        - paymentStatus : PaymentStatus
+        - paidAt : LocalDateTime
+    }
+
+    enum PaymentMethod {
+        CASH
+        QR
+        CARD
+    }
+
+    enum PaymentStatus {
+        PENDING
+        PAID
+        FAILED
+    }
+}
+
+package "Strategy Pattern (Bill Calculation Engine)" {
+    interface BillCalculationStrategy <<Strategy>> {
+        + calculate(session : DiningSession, currentTotal : BigDecimal) : BigDecimal
+    }
+
+    class StandardCalculationStrategy {
+        + calculate(session : DiningSession, currentTotal : BigDecimal) : BigDecimal
+    }
+
+    class ChildRateCalculationStrategy {
+        - childDiscountRate : BigDecimal
+        + calculate(session : DiningSession, currentTotal : BigDecimal) : BigDecimal
+    }
+
+    class PromotionDiscountStrategy {
+        - discountPercentage : BigDecimal
+        + calculate(session : DiningSession, currentTotal : BigDecimal) : BigDecimal
+    }
+
+    class BillCalculator <<Context>> {
+        - strategies : List<BillCalculationStrategy>
+        + addStrategy(strategy : BillCalculationStrategy) : void
+        + calculateFinalBill(session : DiningSession) : BillSummaryDTO
+    }
+
+    BillCalculationStrategy <|.. StandardCalculationStrategy
+    BillCalculationStrategy <|.. ChildRateCalculationStrategy
+    BillCalculationStrategy <|.. PromotionDiscountStrategy
+    BillCalculator o-- BillCalculationStrategy : uses
+}
+
+package "Service" {
+    interface BillingService {
+        + generateBill(sessionId : Long) : BillSummaryDTO
+    }
+
+    interface PaymentService {
+        + processPayment(sessionId : Long, request : PaymentRequestDTO) : PaymentReceiptDTO
+    }
+}
+
+package "Repository" {
+    interface PaymentRepository {
+        + save(payment : Payment) : Payment
+        + findByDiningSessionId(sessionId : Long) : Optional<Payment>
+    }
+}
+
+BillingService --> BillCalculator
+BillingService --> PaymentRepository
+PaymentService --> PaymentRepository
+
+@enduml

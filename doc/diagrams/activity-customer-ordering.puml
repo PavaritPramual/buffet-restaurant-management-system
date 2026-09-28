@@ -1,0 +1,67 @@
+@startuml
+title Activity Diagram - Customer Dining & Ordering
+
+|Customer|
+start
+:เข้าร้าน;
+:แจ้งจำนวนคน (ผู้ใหญ่ / เด็ก);
+
+|Service Staff|
+:ตรวจสอบโต๊ะว่าง;
+
+if (มีโต๊ะว่างหรือไม่?) then (มี)
+    :เปิด Dining Session;
+    :บันทึกจำนวนลูกค้า;
+    :เลือก Buffet Package;
+    :เลือกน้ำซุป;
+    :ออก QR Code ประจำโต๊ะให้ลูกค้า;
+else (ไม่มี)
+    :แจ้งว่าไม่มีโต๊ะว่าง;
+    stop
+endif
+
+|Customer|
+:สแกน QR Code;
+:ดูรายการอาหาร (ระบบกรองตาม Package);
+:เลือกอาหารและจำนวน;
+:ยืนยัน Order;
+
+|System|
+:สร้าง Order (สถานะ = RECEIVED);
+
+|Kitchen Staff|
+:รับ Order;
+:เตรียมอาหาร (สถานะ = PREPARING);
+:อาหารเสร็จสิ้น (สถานะ = READY);
+
+|Service Staff|
+:ตรวจสอบ Order ที่ READY;
+:นำอาหารไปเสิร์ฟที่โต๊ะ;
+:อัปเดตสถานะเป็น SERVED;
+
+|Customer|
+:รับประทานอาหาร;
+
+while (ต้องการสั่งอาหารเพิ่มหรือไม่?) is (ใช่)
+    |Customer|
+    :เลือกอาหารเพิ่ม;
+    :ยืนยัน Order เพิ่ม;
+
+    |System|
+    :สร้าง Order เพิ่ม (สถานะ = RECEIVED);
+
+    |Kitchen Staff|
+    :รับ Order เพิ่ม;
+    :เตรียมอาหาร (สถานะ = PREPARING);
+    :อาหารเสร็จสิ้น (สถานะ = READY);
+
+    |Service Staff|
+    :นำอาหารไปเสิร์ฟที่โต๊ะ;
+    :อัปเดตสถานะเป็น SERVED;
+
+    |Customer|
+    :รับประทานอาหารต่อ;
+endwhile (ไม่ต้องการสั่งเพิ่ม)
+
+stop
+@enduml

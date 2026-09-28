@@ -1,0 +1,94 @@
+@startuml
+title Sequence Diagram 1: Open Dining Session & QR Generation
+
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam maxMessageSize 250
+autonumber
+
+actor "Service Staff" as Staff
+boundary "TableController" as TC
+boundary "DiningSessionController" as DSC
+control "DiningSessionService" as DSS
+entity "RestaurantTableRepository" as TR
+entity "BuffetPackageRepository" as BPR
+entity "SoupRepository" as SR
+entity "DiningSessionRepository" as DSR
+entity "RestaurantTable" as Table
+entity "DiningSession" as Session
+
+== 1. Check Available Tables ==
+Staff -> TC: GET /api/v1/tables?status=AVAILABLE
+activate Staff
+activate TC
+TC -> DSS: getAvailableTables()
+activate DSS
+DSS -> TR: findByStatus(AVAILABLE)
+activate TR
+TR --> DSS: List<RestaurantTable>
+deactivate TR
+DSS --> TC: List<TableResponseDTO>
+deactivate DSS
+TC --> Staff: 200 OK (List of Available Tables)
+deactivate TC
+
+== 2. Open Dining Session & Setup ==
+Staff -> DSC: POST /api/v1/dining-sessions\n(OpenSessionRequestDTO: tableId, adultCount, childCount, packageId, soupId)
+activate DSC
+DSC -> DSS: openSession(requestDTO)
+activate DSS
+
+DSS -> TR: findById(requestDTO.tableId)
+activate TR
+TR --> DSS: Optional<RestaurantTable>
+deactivate TR
+
+alt Table Not Found or Not Available
+    DSS --> DSC: throw TableNotAvailableException("Table is occupied or invalid")
+    DSC --> Staff: 409 Conflict / 400 Bad Request (Error Response)
+else Table is Available
+    DSS -> BPR: findById(requestDTO.packageId)
+    activate BPR
+    BPR --> DSS: Optional<BuffetPackage>
+    deactivate BPR
+
+    DSS -> SR: findById(requestDTO.soupId)
+    activate SR
+    SR --> DSS: Optional<Soup>
+    deactivate SR
+
+    DSS -> Table: occupy()
+    activate Table
+    Table -> Table: status = OCCUPIED
+    Table --> DSS: void
+    deactivate Table
+
+    DSS -> TR: save(table)
+    activate TR
+    TR --> DSS: updatedTable
+    deactivate TR
+
+    DSS -> DSS: generateUniqueSessionToken()
+    note right: Generates secure UUID/Token\nlinked to this active session
+
+    create Session
+    DSS -> Session: new DiningSession(table, package, soup,\nadultCount, childCount, sessionToken, ACTIVE)
+
+    DSS -> DSR: save(session)
+    activate DSR
+    DSR --> DSS: savedSession (with generated id)
+    deactivate DSR
+
+    DSS -> DSS: generateQrCodeUrl(sessionToken)
+    note right: Fixed table QR maps to:\nhttps://restaurant.app/order?token={sessionToken}
+
+    DSS --> DSC: DiningSessionResponseDTO\n(sessionId, tableNumber, packageName, soupName, sessionToken, qrCodeUrl)
+    deactivate DSS
+    DSC --> Staff: 201 Created (DiningSessionResponseDTO)
+    deactivate DSC
+
+    Staff -> Staff: Provide table QR Code to Customer
+    deactivate Staff
+end
+
+@enduml

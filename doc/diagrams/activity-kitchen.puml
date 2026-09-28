@@ -1,0 +1,39 @@
+@startuml
+title Activity Diagram - Kitchen Order Processing
+
+|Customer|
+start
+:ส่งคำสั่งอาหารผ่าน QR;
+
+|System|
+:สร้าง Order;
+:ตั้งสถานะเริ่มต้น = RECEIVED;
+
+|Kitchen Staff|
+:ดู Incoming Orders;
+:กดรับ Order เพื่อเริ่มทำ;
+
+|System|
+:เปลี่ยนสถานะ = PREPARING;
+
+|Kitchen Staff|
+:ปรุงและจัดเตรียมอาหารตาม Order;
+
+if (อาหารปรุงเสร็จสมบูรณ์?) then (พร้อมเสิร์ฟ)
+    |System|
+    :เปลี่ยนสถานะ = READY;
+
+    |Service Staff|
+    :ตรวจสอบ Order ที่ READY;
+    :นำอาหารไปส่งมอบที่โต๊ะลูกค้า;
+    :กดยืนยันการเสิร์ฟอาหาร;
+
+    |System|
+    :เปลี่ยนสถานะ = SERVED;
+else (ยังไม่พร้อม)
+    |Kitchen Staff|
+    :เตรียมอาหารต่อ;
+endif
+
+stop
+@enduml

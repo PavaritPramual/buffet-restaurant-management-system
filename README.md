@@ -105,6 +105,10 @@ order by installed_rank;
 ควรพบแถว `1 | baseline | true` ซึ่งยืนยันว่าเกิดตาราง `flyway_schema_history`
 โดยไม่ต้องมีตาราง business ใด ๆ ใน migration นี้
 
+## System Design
+
+เอกสารแบบออกแบบที่ย้ายจาก Notion อยู่ที่ [doc/system-design/README.md](doc/system-design/README.md) พร้อม [PlantUML ที่แก้ไขได้](doc/diagrams/README.md) และ [Data Dictionary](doc/database/data-dictionary-design.md) โปรดดูสถานะเทียบกับโค้ดในหน้า System Design ก่อนใช้เป็นหลักฐาน implementation
+
 ## Shared Contracts
 
 - Canonical contract: `doc/contracts/shared-contracts.md`
