@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.UUID;
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.MigrationVersion;
 import org.flywaydb.core.api.output.MigrateResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,7 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 class DiningSessionMigrationTest {
     @Test
-    void freshSchemaAppliesDiningSessionV6WithExpectedConstraints() {
+    void freshSchemaAppliesDiningSessionMigrationsWithExpectedConstraints() {
         String url = "jdbc:h2:mem:dining_session_migration_" + UUID.randomUUID()
                 + ";MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1";
         MigrateResult result = Flyway.configure()
@@ -22,7 +23,7 @@ class DiningSessionMigrationTest {
                 .load()
                 .migrate();
 
-        assertThat(result.migrationsExecuted).isEqualTo(6);
+        assertThat(result.migrationsExecuted).isEqualTo(7);
         JdbcTemplate jdbc = new JdbcTemplate(new DriverManagerDataSource(url, "sa", ""));
         assertThat(jdbc.queryForObject(
                 "SELECT COUNT(*) FROM information_schema.table_constraints "
@@ -47,6 +48,14 @@ class DiningSessionMigrationTest {
                 "SELECT COUNT(*) FROM flyway_schema_history WHERE version = '7' AND success = TRUE",
                 Integer.class)).isEqualTo(1);
         assertThat(jdbc.queryForObject(
+                "SELECT COUNT(*) FROM flyway_schema_history WHERE version = '8' AND success = TRUE",
+                Integer.class)).isEqualTo(1);
+        assertThat(jdbc.queryForObject(
+                "SELECT is_nullable FROM information_schema.columns "
+                        + "WHERE lower(table_name) = 'dining_sessions' "
+                        + "AND lower(column_name) = 'package_price_at_open'",
+                String.class)).isEqualTo("NO");
+        assertThat(jdbc.queryForObject(
                 "SELECT COUNT(*) FROM information_schema.table_constraints "
                         + "WHERE lower(table_name) = 'orders' AND lower(constraint_name) = 'fk_orders_dining_session' "
                         + "AND constraint_type = 'FOREIGN KEY'",
@@ -57,11 +66,46 @@ class DiningSessionMigrationTest {
         jdbc.update("INSERT INTO buffet_packages (id, name, price) VALUES (9001, 'V7 Package', 299)");
         jdbc.update("INSERT INTO soups (id, name) VALUES (9001, 'V7 Soup')");
         jdbc.update("INSERT INTO dining_sessions "
-                + "(id, table_id, package_id, soup_id, adult_count, session_token) "
-                + "VALUES (9001, 9001, 9001, 9001, 1, 'v7-cascade-token')");
+                + "(id, table_id, package_id, soup_id, adult_count, package_price_at_open, session_token) "
+                + "VALUES (9001, 9001, 9001, 9001, 1, 299, 'v7-cascade-token')");
         jdbc.update("INSERT INTO orders (id, session_id, table_number) "
                 + "VALUES (9001, 9001, 'V7-CASCADE')");
         jdbc.update("DELETE FROM dining_sessions WHERE id = 9001");
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM orders WHERE id = 9001", Integer.class)).isZero();
+    }
+
+    @Test
+    void v8BackfillsExistingSessionsFromCatalogPrice() {
+        String url = "jdbc:h2:mem:dining_session_upgrade_" + UUID.randomUUID()
+                + ";MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1";
+        Flyway.configure()
+                .dataSource(url, "sa", "")
+                .locations("classpath:db/migration/common", "classpath:db/migration/h2")
+                .target(MigrationVersion.fromVersion("7"))
+                .load()
+                .migrate();
+        JdbcTemplate jdbc = new JdbcTemplate(new DriverManagerDataSource(url, "sa", ""));
+        jdbc.update("INSERT INTO restaurant_tables (id, table_number, capacity) "
+                + "VALUES (9101, 'V8-UPGRADE', 4)");
+        jdbc.update("INSERT INTO buffet_packages (id, name, price) "
+                + "VALUES (9101, 'Upgrade Package', 299)");
+        jdbc.update("INSERT INTO soups (id, name) VALUES (9101, 'Upgrade Soup')");
+        jdbc.update("INSERT INTO dining_sessions "
+                + "(id, table_id, package_id, soup_id, adult_count, session_token) "
+                + "VALUES (9101, 9101, 9101, 9101, 2, 'v8-upgrade-token')");
+        jdbc.update("UPDATE buffet_packages SET price = 399 WHERE id = 9101");
+
+        Flyway.configure()
+                .dataSource(url, "sa", "")
+                .locations("classpath:db/migration/common", "classpath:db/migration/h2")
+                .load()
+                .migrate();
+
+        assertThat(jdbc.queryForObject(
+                "SELECT package_price_at_open FROM dining_sessions WHERE id = 9101",
+                java.math.BigDecimal.class)).isEqualByComparingTo("399.00");
+        assertThatThrownBy(() -> jdbc.update("UPDATE dining_sessions "
+                + "SET package_price_at_open = -1 WHERE id = 9101"))
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 }

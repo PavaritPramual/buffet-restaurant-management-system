@@ -60,13 +60,15 @@ class OrderingIntegrationTest {
         jdbcTemplate.update("INSERT INTO restaurant_tables (id, table_number, capacity, status) VALUES (?, ?, ?, ?)",
                 2L, "T02", 4, "OCCUPIED");
         jdbcTemplate.update("INSERT INTO dining_sessions "
-                        + "(id, table_id, package_id, soup_id, adult_count, child_count, session_token, start_time, status) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)",
-                1L, 1L, 1L, 1L, 2, 0, "fixture-active-token", "ACTIVE");
+                        + "(id, table_id, package_id, soup_id, adult_count, child_count, "
+                        + "package_price_at_open, session_token, start_time, status) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)",
+                1L, 1L, 1L, 1L, 2, 0, 299, "fixture-active-token", "ACTIVE");
         jdbcTemplate.update("INSERT INTO dining_sessions "
-                        + "(id, table_id, package_id, soup_id, adult_count, child_count, session_token, start_time, status) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)",
-                2L, 2L, 1L, 1L, 2, 0, "fixture-second-token", "ACTIVE");
+                        + "(id, table_id, package_id, soup_id, adult_count, child_count, "
+                        + "package_price_at_open, session_token, start_time, status) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)",
+                2L, 2L, 1L, 1L, 2, 0, 299, "fixture-second-token", "ACTIVE");
         category = categoryRepository.save(new MenuCategory("อาหารจานหลัก"));
     }
 

@@ -46,11 +46,13 @@ Owner: ธีรเมธ — Billing & Payment
 | Field | JSON type | Nullable | Notes |
 |---|---|---|---|
 | `sessionId` | number | No | Dining Session identifier |
-| `packagePrice` | number | No | ราคาต่อคนของ Package |
+| `packagePrice` | number | No | ราคาแพ็กเกจ ณ ตอนเปิด Dining Session จาก `package_price_at_open`; backend อ่านเอง ไม่รับจาก browser |
 | `adultCount` | number | No | จำนวนผู้ใหญ่ |
 | `childCount` | number | No | จำนวนเด็ก |
 | `discountContext` | object | Yes | Billing owner กำหนดรายละเอียดภายใน |
 | `sessionStatus` | string | No | `DiningSessionStatus` |
+
+Dining Session owner ให้ข้อมูลผ่าน `DiningSessionBillingReader.requireBySessionId(sessionId)` ซึ่งคืนราคา snapshot, จำนวนคน และสถานะ; Billing owner เป็นผู้เติม `discountContext` และคำนวณยอด
 
 ## PaymentResult
 

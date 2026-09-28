@@ -12,7 +12,9 @@ import com.buffetrestaurant.domain.BuffetPackage;
 import com.buffetrestaurant.domain.RestaurantTable;
 import com.buffetrestaurant.domain.Soup;
 import com.buffetrestaurant.domain.enums.PaymentStatus;
+import com.buffetrestaurant.domain.enums.DiningSessionStatus;
 import com.buffetrestaurant.domain.enums.TableStatus;
+import com.buffetrestaurant.integration.billing.DiningSessionBillingReader;
 import com.buffetrestaurant.integration.payment.PaymentStatusLookup;
 import com.buffetrestaurant.repository.BuffetPackageRepository;
 import com.buffetrestaurant.repository.DiningSessionRepository;
@@ -56,6 +58,9 @@ class DiningSessionIntegrationTest {
 
     @Autowired
     private DiningSessionService diningSessionService;
+
+    @Autowired
+    private DiningSessionBillingReader billingReader;
 
     @MockitoBean
     private PaymentStatusLookup paymentStatusLookup;
@@ -149,6 +154,22 @@ class DiningSessionIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON).content(openRequest(1, 0)))
                 .andExpect(status().isBadRequest());
         assertThat(sessionRepository.count()).isZero();
+    }
+
+    @Test
+    void billingReaderUsesPriceAtOpenAfterCatalogPriceChanges() throws Exception {
+        openThroughApiAndReadToken();
+        long sessionId = sessionRepository.findAll().get(0).getId();
+        buffetPackage.update("Standard", new BigDecimal("399.00"), null);
+        packageRepository.saveAndFlush(buffetPackage);
+
+        DiningSessionBillingReader.BillingSnapshot snapshot =
+                billingReader.requireBySessionId(sessionId);
+        assertThat(snapshot.sessionId()).isEqualTo(sessionId);
+        assertThat(snapshot.packagePriceAtOpen()).isEqualByComparingTo("299.00");
+        assertThat(snapshot.adultCount()).isEqualTo(2);
+        assertThat(snapshot.childCount()).isZero();
+        assertThat(snapshot.sessionStatus()).isEqualTo(DiningSessionStatus.ACTIVE);
     }
 
     @Test

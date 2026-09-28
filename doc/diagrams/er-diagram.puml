@@ -79,6 +79,7 @@ entity "dining_sessions" as dining_sessions {
     * soup_id : BIGINT <<FK>>
     * adult_count : INT
     * child_count : INT
+    * package_price_at_open : DECIMAL(10,2)
     * session_token : VARCHAR(100) <<UK>>
     * start_time : TIMESTAMP
     end_time : TIMESTAMP

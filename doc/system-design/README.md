@@ -27,6 +27,7 @@
 - ระบบใช้ Layered Architecture: Controller → Service → Repository → Entity
 - Frontend เป็น React แยกจาก Spring Boot และเรียก REST API; Supabase ใช้ PostgreSQL
 - Staff login ตาม Tool Stack: Spring Security, BCrypt และ JWT; Customer เข้า flow สั่งอาหารด้วย token ของ Dining Session
+- ราคา Package สำหรับ Billing ล็อกใน Dining Session ตอนเปิดรอบ การเปลี่ยนราคาใน Catalog ภายหลังไม่เปลี่ยนยอดของรอบที่เปิดไปแล้ว
 - Module ใช้ shared contract; การเปลี่ยน Entity, enum หรือ API ที่ข้าม module ต้องแจ้ง owner
 - แบบออกแบบระบุ State สำหรับ Order, Strategy สำหรับการคำนวณบิล และ Template Method สำหรับ Stock เป็น pattern ที่ตั้งใจใช้ ตรวจ implementation จริงก่อนอ้างว่าเสร็จ
 - UI ของ Customer เน้นมือถือ, Staff เป็น POS, Kitchen เป็น KDS และ Admin/Stock ใช้ sidebar

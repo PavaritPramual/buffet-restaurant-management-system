@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -38,6 +39,10 @@ public class DiningSession {
 
     @Column(name = "child_count", nullable = false)
     private Integer childCount;
+
+    @Column(name = "package_price_at_open", nullable = false, updatable = false,
+            precision = 10, scale = 2)
+    private BigDecimal packagePriceAtOpen;
 
     @Column(name = "session_token", nullable = false, unique = true, length = 100)
     private String sessionToken;
@@ -69,6 +74,7 @@ public class DiningSession {
         this.soup = soup;
         this.adultCount = adultCount;
         this.childCount = childCount;
+        this.packagePriceAtOpen = buffetPackage.getPrice();
         this.sessionToken = sessionToken;
         this.startTime = startTime;
         this.status = DiningSessionStatus.ACTIVE;
@@ -80,6 +86,7 @@ public class DiningSession {
     public Soup getSoup() { return soup; }
     public Integer getAdultCount() { return adultCount; }
     public Integer getChildCount() { return childCount; }
+    public BigDecimal getPackagePriceAtOpen() { return packagePriceAtOpen; }
     public String getSessionToken() { return sessionToken; }
     public LocalDateTime getStartTime() { return startTime; }
     public LocalDateTime getEndTime() { return endTime; }
