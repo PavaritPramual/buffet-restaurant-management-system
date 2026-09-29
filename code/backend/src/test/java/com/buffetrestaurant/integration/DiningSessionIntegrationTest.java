@@ -24,6 +24,8 @@ import com.buffetrestaurant.repository.RestaurantTableRepository;
 import com.buffetrestaurant.repository.SoupRepository;
 import com.buffetrestaurant.service.DiningSessionService;
 import com.buffetrestaurant.dto.request.OpenDiningSessionRequest;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.List;
 import jakarta.servlet.http.Cookie;
@@ -51,6 +53,9 @@ import org.springframework.test.web.servlet.MockMvc;
 class DiningSessionIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private RestaurantTableRepository tableRepository;
@@ -238,6 +243,20 @@ class DiningSessionIntegrationTest {
                 .andExpect(status().isUnauthorized());
         mockMvc.perform(get("/api/v1/dining-sessions/customer-context").cookie(second))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void legacyQrTokenGetIsUnavailableAndAbsentFromOpenApi() throws Exception {
+        mockMvc.perform(get("/api/v1/dining-sessions/token/legacy-example"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404));
+
+        String spec = mockMvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        JsonNode paths = objectMapper.readTree(spec).path("paths");
+        assertThat(paths.has("/api/v1/dining-sessions/token/{token}")).isFalse();
+        assertThat(paths.path("/api/v1/dining-sessions/qr-exchange").has("post")).isTrue();
     }
 
     @Test

@@ -86,6 +86,15 @@ entity "dining_sessions" as dining_sessions {
     * status : VARCHAR(20)
 }
 
+entity "customer_session_grants" as customer_session_grants {
+    * id : BIGINT <<PK, generated>>
+    --
+    * session_id : BIGINT <<FK>>
+    * token_hash : VARCHAR(64) <<UK>>
+    * created_at : TIMESTAMP WITH TIME ZONE
+    * expires_at : TIMESTAMP WITH TIME ZONE
+}
+
 entity "orders" as orders {
     * id : BIGINT <<PK, generated>>
     --
@@ -147,6 +156,7 @@ soups ||--o{ dining_sessions : "selected in"
 menu_categories ||--o{ menu_items : "contains"
 
 dining_sessions ||--o{ orders : "places"
+dining_sessions ||--o{ customer_session_grants : "grants access to"
 orders ||--|{ order_items : "consists of"
 menu_items ||--o{ order_items : "ordered in"
 

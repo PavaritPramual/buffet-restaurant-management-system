@@ -79,10 +79,9 @@ else Table is Available
     DSR --> DSS: savedSession (with generated id)
     deactivate DSR
 
-    DSS -> DSS: generateQrCodeUrl(sessionToken)
-    note right: Fixed table QR maps to:\nhttps://restaurant.app/order?token={sessionToken}
+    note right: Staff UI builds /customer/qr#token={sessionToken}\nFragment is removed by Customer UI before QR exchange
 
-    DSS --> DSC: DiningSessionResponseDTO\n(sessionId, tableNumber, packageName, soupName, sessionToken, qrCodeUrl)
+    DSS --> DSC: DiningSessionResponseDTO\n(sessionId, tableNumber, packageName, soupName, sessionToken)
     deactivate DSS
     DSC --> Staff: 201 Created (DiningSessionResponseDTO)
     deactivate DSC
