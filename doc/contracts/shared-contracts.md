@@ -52,6 +52,28 @@ Owner: ธีรเมธ — Billing & Payment
 | `discountContext` | object | Yes | Billing owner กำหนดรายละเอียดภายใน |
 | `sessionStatus` | string | No | `DiningSessionStatus` |
 
+## Billing preview API
+
+Owner: ธีรเมธ — Billing & Payment (pending cross-module review)
+
+`POST /api/v1/billing/preview` accepts `{ "sessionId": 1 }` only as business input.
+`sessionId` is a required positive integer (Java `Long`). Browser-supplied prices,
+counts, status or discounts are not used. `BillingContext` above is internal backend
+calculation input; its existing fixtures remain calculation examples, not HTTP request bodies.
+The backend provider must resolve the price snapshot at session opening, guest counts,
+status and backend-owned discount rules. Only ACTIVE sessions can be previewed for payment.
+
+Response 200: `sessionId`, `subtotalNoneDiscount`, `discountAmount`, `totalBeforeRounding`,
+`roundingAdjustment`, `totalAmount` (all JSON numbers). The engine rounds the final total
+once to 2 decimals with HALF_UP; `roundingAdjustment = totalAmount - totalBeforeRounding`.
+Preview performs no payment write and does not close a session.
+
+Errors use ErrorResponse: 400 invalid input/inactive session, 404 session not found,
+503 provider unavailable. The default provider currently returns 503; database adapter
+and staff authorization remain pending integration. Do not expose as a production staff API yet.
+Request fixture: `test/fixtures/billing-preview-request.json`.
+Frontend: `/billing/preview` for entering an ID, `/staff/sessions/:sessionId/billing` for a selected session.
+
 ## PaymentResult
 
 Owner: ธีรเมธ — Billing & Payment

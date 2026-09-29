@@ -9,6 +9,7 @@ export default function FoundationApp() {
     <Routes>
       <Route path="/" element={<DesignSystemPage />} />
       <Route path="/billing/preview" element={<BillingPreviewPage />} />
+      <Route path="/staff/sessions/:sessionId/billing" element={<BillingPreviewPage />} />
       <Route
         path="/customer/sessions/:sessionId"
         element={<CustomerOrderingPage />}

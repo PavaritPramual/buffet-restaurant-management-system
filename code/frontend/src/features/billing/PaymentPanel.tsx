@@ -1,0 +1,79 @@
+import { useRef, useState } from 'react'
+import { isAxiosError } from 'axios'
+import { createPayment } from '../../api/payments'
+import type { BillSummary } from '../../api/billing'
+import type { PaymentMethod, PaymentResult } from '../../contracts/shared'
+import { ErrorAlert } from '../../components/common'
+import PaymentForm from './PaymentForm'
+import PaymentConfirmation from './PaymentConfirmation'
+
+interface PaymentPanelProps {
+  bill: BillSummary
+  enabled?: boolean
+}
+
+export default function PaymentPanel({
+  bill,
+  enabled = false,
+}: PaymentPanelProps) {
+  const [busy, setBusy] = useState(false)
+  const [attempted, setAttempted] = useState(false)
+  const [error, setError] = useState('')
+  const [result, setResult] = useState<PaymentResult | null>(null)
+  const requestStarted = useRef(false)
+
+  async function handlePayment(method: PaymentMethod) {
+    if (!enabled || requestStarted.current) return
+
+    requestStarted.current = true
+    setAttempted(true)
+    setBusy(true)
+    setError('')
+
+    try {
+      const response = await createPayment({
+        sessionId: bill.sessionId,
+        paymentMethod: method,
+      })
+
+      if (
+        response.sessionId !== bill.sessionId ||
+        response.paymentMethod !== method
+      ) {
+        setError('ผลการชำระไม่ตรงกับคำขอ กรุณาตรวจสอบรายการก่อนทำต่อ')
+        return
+      }
+
+      setResult(response)
+    } catch (cause) {
+      if (isAxiosError(cause) && cause.response?.status === 409) {
+        setError('ข้อมูลการชำระขัดแย้งกับรายการเดิม กรุณาตรวจสอบสถานะการชำระ')
+      } else if (isAxiosError(cause) && cause.response?.status === 503) {
+        setError('ระบบรับชำระยังไม่พร้อมใช้งาน กรุณาติดต่อผู้ดูแลระบบ')
+      } else {
+        setError('ยังยืนยันผลการชำระไม่ได้ กรุณาตรวจสอบรายการก่อนส่งคำขอซ้ำ')
+      }
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <>
+      {!enabled && <p>การรับชำระยังไม่เปิดใช้งาน</p>}
+
+      {error && <ErrorAlert message={error} />}
+
+      {result ? (
+        <PaymentConfirmation result={result} />
+      ) : (
+        <PaymentForm
+          totalAmount={bill.totalAmount}
+          busy={busy}
+          disabled={!enabled || attempted}
+          onConfirm={handlePayment}
+        />
+      )}
+    </>
+  )
+}
