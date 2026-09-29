@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(name = "app.ordering.session-provider", havingValue = "disabled", matchIfMissing = true)
 public class DisabledSessionContextProvider implements SessionContextProvider {
     @Override
-    public SessionContextSnapshot requireSession(Long sessionId) {
+    public SessionContextSnapshot requireSession(Long sessionId, String sessionToken) {
         throw new ServiceUnavailableException(
                 "Customer ordering is unavailable until Dining Session verification is configured"
         );

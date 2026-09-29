@@ -20,11 +20,20 @@ class RestaurantTable {
 
 class DiningSession {
     id
-    customerCount
+    adultCount
+    childCount
+    packagePriceAtOpen
     sessionToken
     startTime
     endTime
     status
+}
+
+class CustomerSessionGrant {
+    id
+    tokenHash
+    createdAt
+    expiresAt
 }
 
 class BuffetPackage {
@@ -98,6 +107,7 @@ BuffetPackage "*" -- "*" MenuItem : includes >
 MenuCategory "1" -- "0..*" MenuItem : categorizes >
 
 DiningSession "1" -- "0..*" Order : contains >
+DiningSession "1" -- "0..*" CustomerSessionGrant : authorizes >
 Order "1" -- "1..*" OrderItem : consists of >
 MenuItem "1" -- "0..*" OrderItem : ordered as >
 

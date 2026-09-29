@@ -12,13 +12,10 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(name = "app.ordering.session-provider", havingValue = "fixture")
 public class FixtureSessionContextProvider implements SessionContextProvider {
     @Override
-    public SessionContextSnapshot requireSession(Long sessionId) {
-        if (Long.valueOf(1L).equals(sessionId)) {
+    public SessionContextSnapshot requireSession(Long sessionId, String sessionToken) {
+        if (Long.valueOf(1L).equals(sessionId) && "fixture-active-token".equals(sessionToken)) {
             return new SessionContextSnapshot(1L, 1L, "T01", DiningSessionStatus.ACTIVE);
         }
-        if (Long.valueOf(2L).equals(sessionId)) {
-            return new SessionContextSnapshot(2L, 1L, "T02", DiningSessionStatus.COMPLETED);
-        }
-        throw new ResourceNotFoundException("Dining session not found with id: " + sessionId);
+        throw new ResourceNotFoundException("Active dining session not found");
     }
 }

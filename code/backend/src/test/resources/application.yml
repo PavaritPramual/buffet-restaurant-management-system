@@ -27,5 +27,7 @@ app:
     admin-access-provider: fixture
   ordering:
     session-provider: fixture
+  dining-session:
+    staff-access-provider: fixture
   fulfillment:
     access-provider: fixture

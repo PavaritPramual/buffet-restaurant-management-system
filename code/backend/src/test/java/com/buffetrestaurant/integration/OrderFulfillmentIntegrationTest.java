@@ -50,10 +50,21 @@ class OrderFulfillmentIntegrationTest {
         orderRepository.deleteAll();
         itemRepository.deleteAll();
         categoryRepository.deleteAll();
+        jdbcTemplate.update("DELETE FROM customer_session_grants");
+        jdbcTemplate.update("DELETE FROM dining_sessions");
+        jdbcTemplate.update("DELETE FROM restaurant_tables");
+        jdbcTemplate.update("DELETE FROM soups");
         jdbcTemplate.update("DELETE FROM buffet_packages");
         jdbcTemplate.update(
                 "INSERT INTO buffet_packages (id, name, price, description, active) VALUES (?, ?, ?, ?, ?)",
                 1L, "Standard", 299, null, true);
+        jdbcTemplate.update("INSERT INTO soups (id, name, active) VALUES (1, 'Tom Yum', true)");
+        jdbcTemplate.update("INSERT INTO restaurant_tables (id, table_number, capacity, status) "
+                + "VALUES (1, 'T01', 4, 'OCCUPIED')");
+        jdbcTemplate.update("INSERT INTO dining_sessions "
+                + "(id, table_id, package_id, soup_id, adult_count, child_count, "
+                + "package_price_at_open, session_token, start_time, status) "
+                + "VALUES (1, 1, 1, 1, 2, 0, 299, 'fulfillment-test-qr', CURRENT_TIMESTAMP, 'ACTIVE')");
         category = categoryRepository.save(new MenuCategory("อาหารจานหลัก"));
     }
 

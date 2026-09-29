@@ -2,7 +2,15 @@
 
 ต้นทาง: [Data Dictionary & Migration ใน Notion](https://app.notion.com/p/3d8cb2e9d47a81d9aa4cdcec37b26c9d) · ย้ายเมื่อ 28 กันยายน 2026
 
-เอกสารนี้อธิบาย **แบบออกแบบ** ของ 14 ตาราง รวมถึงตารางที่ยังไม่ได้สร้างใน `develop` ส่วน SQL DDL รวมก้อนใน Notion เป็น reference เท่านั้น การเปลี่ยนฐานข้อมูลจริงต้องใช้ Flyway migration ตามลำดับใน [backend](https://github.com/PavaritPramual/buffet-restaurant-management-system/tree/develop/code/backend/src/main/resources/db/migration) ตรวจ [schema delta](menu-ordering-schema-delta.md) เมื่อเทียบ Menu/Ordering กับแบบออกแบบ
+เอกสารนี้อธิบาย **แบบออกแบบ** เดิมของ 14 ตาราง และส่วนต่างที่ implement ใน PR #16 ส่วน SQL DDL รวมก้อนใน Notion เป็น reference เท่านั้น การเปลี่ยนฐานข้อมูลจริงต้องใช้ Flyway migration ตามลำดับใน [backend](../../code/backend/src/main/resources/db/migration) ตรวจ [schema delta](menu-ordering-schema-delta.md) เมื่อเทียบ Menu/Ordering กับแบบออกแบบ
+
+การตัดสินใจเพิ่มเติมสำหรับ Billing: `package_price_at_open` เก็บราคาแพ็กเกจ ณ เวลาเปิด Dining Session เพื่อไม่ให้การแก้ราคา Package ภายหลังเปลี่ยนยอดของลูกค้าที่กำลังกินอยู่ การเพิ่มคอลัมน์นี้ใช้ Flyway V8 หลัง V6/V7; แถวเดิมที่มีอยู่ก่อน V8 จะ backfill ด้วยราคา Package ณ เวลาย้ายข้อมูล ซึ่งไม่สามารถย้อนหาราคาตอนเปิดรอบจริงได้
+
+ส่วนต่างจากแบบออกแบบ ณ PR #16: V6 เพิ่ม `customer_session_grants` เพื่อเก็บ hash ของ credential ลูกค้า, เวลาออกและหมดอายุ และ FK ไปยังรอบกินที่ลบ grant ตามรอบ; QR token ใน `dining_sessions` ใช้แลกได้ครั้งเดียวแล้วหมุนค่าใหม่ V6 บังคับ `adult_count + child_count >= 1` และเพิ่ม index บน FK ทั้งสามของรอบกิน V7 ใช้ `ON DELETE RESTRICT` สำหรับ `orders.session_id` เพื่อรักษาประวัติ Order แทน `CASCADE` ใน SQL แบบเดิม ส่วน `orders.session_id` มี index จาก V4 อยู่แล้ว
+
+`customer_session_grants` ใน V6 มี `id` BIGINT PK, `session_id` BIGINT FK, `token_hash` VARCHAR(64) UNIQUE, `created_at` และ `expires_at` แบบ TIMESTAMP WITH TIME ZONE; hash นี้เป็น credential ใน cookie ไม่ใช่ QR token และ grant หลายรายการผูกกับรอบกินเดียวได้ ส่วน V8 เพิ่ม `dining_sessions.package_price_at_open` เป็น DECIMAL(10,2) NOT NULL เพื่อใช้คิดบิลตามราคา ณ เวลาเปิดรอบ
+
+Backend ต่อ Supabase ด้วย role `postgres` ซึ่งมี `BYPASSRLS`: policy ใน V6 ระบุ role นี้และปิดสิทธิ์ `PUBLIC`, `anon`, `authenticated` บนตารางและ sequence ใหม่ แต่ `FORCE RLS` ไม่จำกัด `postgres` ได้ในสถาปัตยกรรมนี้ API จึงต้องตรวจสิทธิ์เอง งานสร้าง application role ที่ไม่มี `BYPASSRLS` ต้องออกแบบแยกต่างหาก วันที่ 29 กันยายน 2026 พบว่า V6–V8 ถูก apply บน Supabase ส่วนกลางแล้วโดยไม่ตั้งใจ; ขณะตรวจไม่พบแถวใน `dining_sessions` ห้ามแก้ migration ที่ apply แล้วย้อนหลัง และต้องตรวจ `flyway_schema_history` ก่อน migration ถัดไป
 
 เอกสารพจนานุกรมข้อมูล (Data Dictionary) และโค้ดสำหรับสร้างฐานข้อมูล (SQL DDL Migration Script) ครบทั้ง 14 ตาราง
 ---
@@ -91,6 +99,7 @@
 | `soup_id` | BIGINT | FK -> soups(id) | NO | - | น้ำซุปที่เลือก |
 | `adult_count` | INT | - | NO | - | จำนวนลูกค้าผู้ใหญ่ |
 | `child_count` | INT | - | NO | 0 | จำนวนลูกค้าเด็ก |
+| `package_price_at_open` | DECIMAL(10,2) | CHECK >= 0 | NO | - | ราคาแพ็กเกจต่อผู้ใหญ่หนึ่งคนที่ล็อกตอนเปิดรอบ |
 | `session_token` | VARCHAR(100) | UNIQUE, INDEX | NO | - | Secure Token สำหรับ QR Code ประจำรอบ |
 | `start_time` | TIMESTAMP | - | NO | CURRENT_TIMESTAMP | เวลาเปิดโต๊ะ |
 | `end_time` | TIMESTAMP | - | YES | NULL | เวลาปิดรอบ |
