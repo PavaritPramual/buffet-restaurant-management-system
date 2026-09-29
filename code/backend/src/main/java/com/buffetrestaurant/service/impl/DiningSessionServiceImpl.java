@@ -15,6 +15,7 @@ import com.buffetrestaurant.integration.payment.PaymentStatusLookup;
 import com.buffetrestaurant.mapper.DiningSessionMapper;
 import com.buffetrestaurant.repository.BuffetPackageRepository;
 import com.buffetrestaurant.repository.DiningSessionRepository;
+import com.buffetrestaurant.repository.CustomerSessionGrantRepository;
 import com.buffetrestaurant.repository.RestaurantTableRepository;
 import com.buffetrestaurant.repository.SoupRepository;
 import com.buffetrestaurant.service.DiningSessionService;
@@ -39,6 +40,7 @@ public class DiningSessionServiceImpl implements DiningSessionService {
     private final BuffetPackageRepository packageRepository;
     private final SoupRepository soupRepository;
     private final DiningSessionRepository diningSessionRepository;
+    private final CustomerSessionGrantRepository customerGrantRepository;
     private final DiningSessionMapper diningSessionMapper;
     private final ObjectProvider<PaymentStatusLookup> paymentStatusLookupProvider;
     private final DiningSessionStaffAccessProvider staffAccessProvider;
@@ -51,11 +53,12 @@ public class DiningSessionServiceImpl implements DiningSessionService {
             BuffetPackageRepository packageRepository,
             SoupRepository soupRepository,
             DiningSessionRepository diningSessionRepository,
+            CustomerSessionGrantRepository customerGrantRepository,
             DiningSessionMapper diningSessionMapper,
             ObjectProvider<PaymentStatusLookup> paymentStatusLookupProvider,
             DiningSessionStaffAccessProvider staffAccessProvider
     ) {
-        this(tableRepository, packageRepository, soupRepository, diningSessionRepository,
+        this(tableRepository, packageRepository, soupRepository, diningSessionRepository, customerGrantRepository,
                 diningSessionMapper, paymentStatusLookupProvider, staffAccessProvider, Clock.systemUTC());
     }
 
@@ -64,6 +67,7 @@ public class DiningSessionServiceImpl implements DiningSessionService {
             BuffetPackageRepository packageRepository,
             SoupRepository soupRepository,
             DiningSessionRepository diningSessionRepository,
+            CustomerSessionGrantRepository customerGrantRepository,
             DiningSessionMapper diningSessionMapper,
             ObjectProvider<PaymentStatusLookup> paymentStatusLookupProvider,
             DiningSessionStaffAccessProvider staffAccessProvider,
@@ -73,6 +77,7 @@ public class DiningSessionServiceImpl implements DiningSessionService {
         this.packageRepository = packageRepository;
         this.soupRepository = soupRepository;
         this.diningSessionRepository = diningSessionRepository;
+        this.customerGrantRepository = customerGrantRepository;
         this.diningSessionMapper = diningSessionMapper;
         this.paymentStatusLookupProvider = paymentStatusLookupProvider;
         this.staffAccessProvider = staffAccessProvider;
@@ -137,14 +142,6 @@ public class DiningSessionServiceImpl implements DiningSessionService {
     }
 
     @Override
-    public DiningSessionResponse getActiveSessionByToken(String token) {
-        DiningSession session = diningSessionRepository
-                .findBySessionTokenAndStatus(token, DiningSessionStatus.ACTIVE)
-                .orElseThrow(() -> new ResourceNotFoundException("Active dining session not found"));
-        return diningSessionMapper.toResponse(session);
-    }
-
-    @Override
     @Transactional
     public DiningSessionResponse closeSession(Long sessionId) {
         staffAccessProvider.requireServiceStaffAccess();
@@ -172,6 +169,7 @@ public class DiningSessionServiceImpl implements DiningSessionService {
         RestaurantTable table = tableRepository.findByIdForUpdate(session.getRestaurantTable().getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Restaurant table not found with id: " + session.getRestaurantTable().getId()));
+        customerGrantRepository.deleteByDiningSessionId(sessionId);
         session.complete(LocalDateTime.now(clock));
         table.makeAvailable();
         tableRepository.save(table);

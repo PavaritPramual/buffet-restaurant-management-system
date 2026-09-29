@@ -19,7 +19,7 @@ class PostgresDiningSessionMigrationTest {
         registry.add("spring.datasource.url", () -> System.getenv("DINING_TEST_PG_URL"));
         registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
         registry.add("spring.datasource.username", () -> "postgres");
-        registry.add("spring.datasource.password", () -> "");
+        registry.add("spring.datasource.password", () -> System.getenv("DINING_TEST_PG_PASSWORD"));
         registry.add("spring.flyway.locations", () ->
                 "classpath:db/migration/common,classpath:db/migration/postgresql");
     }
@@ -37,5 +37,33 @@ class PostgresDiningSessionMigrationTest {
                         + "WHERE table_schema = 'public' AND table_name = 'dining_sessions' "
                         + "AND column_name = 'package_price_at_open'",
                 String.class)).isEqualTo("NO");
+        for (String column : new String[] {"buffet_packages.price", "dining_sessions.package_price_at_open"}) {
+            String[] parts = column.split("\\.");
+            assertThat(jdbc.queryForObject("SELECT numeric_precision FROM information_schema.columns "
+                            + "WHERE table_schema = 'public' AND table_name = ? AND column_name = ?",
+                    Integer.class, parts[0], parts[1])).isEqualTo(10);
+            assertThat(jdbc.queryForObject("SELECT numeric_scale FROM information_schema.columns "
+                            + "WHERE table_schema = 'public' AND table_name = ? AND column_name = ?",
+                    Integer.class, parts[0], parts[1])).isEqualTo(2);
+        }
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM pg_policies "
+                + "WHERE schemaname = 'public' AND tablename IN ('dining_sessions', 'customer_session_grants') "
+                + "AND 'postgres' = ANY(roles)", Integer.class)).isEqualTo(2);
+        for (String table : new String[] {"dining_sessions", "customer_session_grants"}) {
+            for (String privilege : new String[] {"SELECT", "INSERT", "UPDATE", "DELETE"}) {
+                assertThat(jdbc.queryForObject("SELECT has_table_privilege('anon', ?, ?)", Boolean.class,
+                        "public." + table, privilege)).isFalse();
+                assertThat(jdbc.queryForObject("SELECT has_table_privilege('authenticated', ?, ?)", Boolean.class,
+                        "public." + table, privilege)).isFalse();
+                assertThat(jdbc.queryForObject("SELECT has_table_privilege('postgres', ?, ?)", Boolean.class,
+                        "public." + table, privilege)).isTrue();
+            }
+        }
+        for (String sequence : new String[] {"dining_sessions_id_seq", "customer_session_grants_id_seq"}) {
+            assertThat(jdbc.queryForObject("SELECT has_sequence_privilege('anon', ?, 'USAGE')", Boolean.class,
+                    "public." + sequence)).isFalse();
+            assertThat(jdbc.queryForObject("SELECT has_sequence_privilege('authenticated', ?, 'USAGE')", Boolean.class,
+                    "public." + sequence)).isFalse();
+        }
     }
 }

@@ -33,6 +33,11 @@ class DiningSessionMigrationTest {
                 "SELECT COUNT(*) FROM information_schema.table_constraints "
                         + "WHERE lower(table_name) = 'dining_sessions' AND constraint_type = 'UNIQUE'",
                 Integer.class)).isEqualTo(1);
+        for (String index : new String[] {"idx_dining_sessions_table", "idx_dining_sessions_package",
+                "idx_dining_sessions_soup", "idx_customer_grants_session", "idx_orders_session"}) {
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM information_schema.indexes "
+                    + "WHERE lower(index_name) = ?", Integer.class, index)).isOne();
+        }
         assertThatThrownBy(() -> jdbc.update(
                 "INSERT INTO orders (session_id, table_number, status) VALUES (?, ?, ?)",
                 999L, "T99", "RECEIVED"))
@@ -55,6 +60,17 @@ class DiningSessionMigrationTest {
                         + "WHERE lower(table_name) = 'dining_sessions' "
                         + "AND lower(column_name) = 'package_price_at_open'",
                 String.class)).isEqualTo("NO");
+        for (String column : new String[] {"buffet_packages.price", "dining_sessions.package_price_at_open"}) {
+            String[] parts = column.split("\\.");
+            assertThat(jdbc.queryForObject(
+                    "SELECT numeric_precision FROM information_schema.columns "
+                            + "WHERE lower(table_name) = ? AND lower(column_name) = ?",
+                    Integer.class, parts[0], parts[1])).isEqualTo(10);
+            assertThat(jdbc.queryForObject(
+                    "SELECT numeric_scale FROM information_schema.columns "
+                            + "WHERE lower(table_name) = ? AND lower(column_name) = ?",
+                    Integer.class, parts[0], parts[1])).isEqualTo(2);
+        }
         assertThat(jdbc.queryForObject(
                 "SELECT COUNT(*) FROM information_schema.table_constraints "
                         + "WHERE lower(table_name) = 'orders' AND lower(constraint_name) = 'fk_orders_dining_session' "
@@ -62,16 +78,19 @@ class DiningSessionMigrationTest {
                 Integer.class)).isEqualTo(1);
 
         jdbc.update("INSERT INTO restaurant_tables (id, table_number, capacity, status) "
-                + "VALUES (9001, 'V7-CASCADE', 4, 'OCCUPIED')");
+                + "VALUES (9001, 'V7-RESTRICT', 4, 'OCCUPIED')");
         jdbc.update("INSERT INTO buffet_packages (id, name, price) VALUES (9001, 'V7 Package', 299)");
         jdbc.update("INSERT INTO soups (id, name) VALUES (9001, 'V7 Soup')");
         jdbc.update("INSERT INTO dining_sessions "
                 + "(id, table_id, package_id, soup_id, adult_count, package_price_at_open, session_token) "
-                + "VALUES (9001, 9001, 9001, 9001, 1, 299, 'v7-cascade-token')");
+                + "VALUES (9001, 9001, 9001, 9001, 1, 299, 'v7-restrict-token')");
         jdbc.update("INSERT INTO orders (id, session_id, table_number) "
-                + "VALUES (9001, 9001, 'V7-CASCADE')");
-        jdbc.update("DELETE FROM dining_sessions WHERE id = 9001");
-        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM orders WHERE id = 9001", Integer.class)).isZero();
+                + "VALUES (9001, 9001, 'V7-RESTRICT')");
+        assertThatThrownBy(() -> jdbc.update("DELETE FROM dining_sessions WHERE id = 9001"))
+                .isInstanceOf(DataIntegrityViolationException.class);
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM orders WHERE id = 9001", Integer.class)).isOne();
+        assertThatThrownBy(() -> jdbc.update("UPDATE dining_sessions SET adult_count = 0 WHERE id = 9001"))
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test

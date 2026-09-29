@@ -15,6 +15,12 @@ import com.buffetrestaurant.repository.CustomerOrderRepository;
 import com.buffetrestaurant.repository.MenuCategoryRepository;
 import com.buffetrestaurant.repository.MenuItemRepository;
 import java.util.Set;
+import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
+import java.util.HexFormat;
+import jakarta.servlet.http.Cookie;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +42,7 @@ class OrderingIntegrationTest {
     @Autowired private MenuItemRepository itemRepository;
     @Autowired private CustomerOrderRepository orderRepository;
     @Autowired private JdbcTemplate jdbcTemplate;
+    @Autowired private EntityManager entityManager;
 
     private MenuCategory category;
 
@@ -44,6 +51,7 @@ class OrderingIntegrationTest {
         orderRepository.deleteAll();
         itemRepository.deleteAll();
         categoryRepository.deleteAll();
+        jdbcTemplate.update("DELETE FROM customer_session_grants");
         jdbcTemplate.update("DELETE FROM dining_sessions");
         jdbcTemplate.update("DELETE FROM restaurant_tables");
         jdbcTemplate.update("DELETE FROM soups");
@@ -69,7 +77,26 @@ class OrderingIntegrationTest {
                         + "package_price_at_open, session_token, start_time, status) "
                         + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)",
                 2L, 2L, 1L, 1L, 2, 0, 299, "fixture-second-token", "ACTIVE");
+        addGrant(1L, "fixture-active-credential");
+        addGrant(2L, "fixture-second-credential");
         category = categoryRepository.save(new MenuCategory("อาหารจานหลัก"));
+    }
+
+    private void addGrant(long sessionId, String credential) {
+        try {
+            String hash = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                    .digest(credential.getBytes(StandardCharsets.UTF_8)));
+            OffsetDateTime now = OffsetDateTime.now();
+            jdbcTemplate.update("INSERT INTO customer_session_grants "
+                    + "(session_id, token_hash, created_at, expires_at) VALUES (?, ?, ?, ?)",
+                    sessionId, hash, now, now.plusHours(8));
+        } catch (java.security.NoSuchAlgorithmException exception) {
+            throw new IllegalStateException(exception);
+        }
+    }
+
+    private Cookie customerCookie(String credential) {
+        return new Cookie("customer_session", credential);
     }
 
     @Test
@@ -77,7 +104,8 @@ class OrderingIntegrationTest {
         MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวผัด", true, null, Set.of(1L)));
 
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
-                        .header("X-Session-Token", "fixture-active-token")
+                        .cookie(customerCookie("fixture-active-credential"))
+                        .header("Origin", "http://localhost:5173")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":2}]}"))
                 .andExpect(status().isCreated())
@@ -99,7 +127,7 @@ class OrderingIntegrationTest {
         order = orderRepository.save(order);
 
         mockMvc.perform(get("/api/v1/dining-sessions/1/orders/" + order.getId())
-                        .header("X-Session-Token", "fixture-active-token"))
+                        .cookie(customerCookie("fixture-active-credential")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderId").value(order.getId()))
                 .andExpect(jsonPath("$.sessionId").value(1));
@@ -113,7 +141,7 @@ class OrderingIntegrationTest {
         order = orderRepository.save(order);
 
         mockMvc.perform(get("/api/v1/dining-sessions/2/orders/" + order.getId())
-                        .header("X-Session-Token", "fixture-second-token"))
+                        .cookie(customerCookie("fixture-second-credential")))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Order not found with id: " + order.getId()));
     }
@@ -123,23 +151,25 @@ class OrderingIntegrationTest {
         MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวผัด", true, null, Set.of(1L)));
         String basePath = "/api/v1/dining-sessions/1";
 
-        mockMvc.perform(get(basePath + "/menu")).andExpect(status().isNotFound());
-        mockMvc.perform(get(basePath + "/orders").header("X-Session-Token", "wrong-token"))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(get(basePath + "/menu")).andExpect(status().isUnauthorized());
+        mockMvc.perform(get(basePath + "/orders").cookie(customerCookie("wrong-token")))
+                .andExpect(status().isUnauthorized());
         mockMvc.perform(post(basePath + "/orders").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1}]}"))
-                .andExpect(status().isNotFound());
-        mockMvc.perform(get(basePath + "/orders/999").header("X-Session-Token", "wrong-token"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get(basePath + "/orders/999").cookie(customerCookie("wrong-token")))
+                .andExpect(status().isUnauthorized());
 
         mockMvc.perform(get("/api/v1/dining-sessions/2/menu")
-                        .header("X-Session-Token", "fixture-active-token"))
+                        .cookie(customerCookie("fixture-active-credential")))
                 .andExpect(status().isNotFound());
 
         jdbcTemplate.update("UPDATE dining_sessions SET status = 'COMPLETED' WHERE id = 1");
-        mockMvc.perform(get(basePath + "/menu").header("X-Session-Token", "fixture-active-token"))
+        entityManager.clear();
+        mockMvc.perform(get(basePath + "/menu").cookie(customerCookie("fixture-active-credential")))
                 .andExpect(status().isNotFound());
-        mockMvc.perform(post(basePath + "/orders").header("X-Session-Token", "fixture-active-token")
+        mockMvc.perform(post(basePath + "/orders").cookie(customerCookie("fixture-active-credential"))
+                        .header("Origin", "http://localhost:5173")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1}]}"))
                 .andExpect(status().isNotFound());
@@ -149,7 +179,8 @@ class OrderingIntegrationTest {
     void placeOrder_whenItemUnavailable_returns400() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "ของหมด", false, null, Set.of(1L)));
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
-                        .header("X-Session-Token", "fixture-active-token")
+                        .cookie(customerCookie("fixture-active-credential"))
+                        .header("Origin", "http://localhost:5173")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1}]}"))
                 .andExpect(status().isBadRequest())
@@ -161,7 +192,8 @@ class OrderingIntegrationTest {
     void placeOrder_whenItemOutsidePackage_returns400() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "พรีเมียม", true, null, Set.of(2L)));
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
-                        .header("X-Session-Token", "fixture-active-token")
+                        .cookie(customerCookie("fixture-active-credential"))
+                        .header("Origin", "http://localhost:5173")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1}]}"))
                 .andExpect(status().isBadRequest())
@@ -173,8 +205,10 @@ class OrderingIntegrationTest {
     void placeOrder_whenSessionInactive_returns404() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวต้ม", true, null, Set.of(1L)));
         jdbcTemplate.update("UPDATE dining_sessions SET status = 'COMPLETED' WHERE id = 1");
+        entityManager.clear();
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
-                        .header("X-Session-Token", "fixture-active-token")
+                        .cookie(customerCookie("fixture-active-credential"))
+                        .header("Origin", "http://localhost:5173")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1}]}"))
                 .andExpect(status().isNotFound());
@@ -184,7 +218,8 @@ class OrderingIntegrationTest {
     void placeOrder_whenQuantityIsZero_returns400WithoutSavingOrder() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "ชาไทย", true, null, Set.of(1L)));
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
-                        .header("X-Session-Token", "fixture-active-token")
+                        .cookie(customerCookie("fixture-active-credential"))
+                        .header("Origin", "http://localhost:5173")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":0}]}"))
                 .andExpect(status().isBadRequest())
@@ -196,7 +231,8 @@ class OrderingIntegrationTest {
     void placeOrder_whenQuantityIsNegative_returns400WithoutSavingOrder() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "ชาไทย", true, null, Set.of(1L)));
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
-                        .header("X-Session-Token", "fixture-active-token")
+                        .cookie(customerCookie("fixture-active-credential"))
+                        .header("Origin", "http://localhost:5173")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":-1}]}"))
                 .andExpect(status().isBadRequest())
@@ -208,7 +244,8 @@ class OrderingIntegrationTest {
     void placeOrder_whenDuplicateMenuItemIds_returns400WithoutSavingOrder() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "ชาไทย", true, null, Set.of(1L)));
         mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
-                        .header("X-Session-Token", "fixture-active-token")
+                        .cookie(customerCookie("fixture-active-credential"))
+                        .header("Origin", "http://localhost:5173")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"items\":[{\"menuItemId\":" + item.getId() + ",\"quantity\":1},"
                                 + "{\"menuItemId\":" + item.getId() + ",\"quantity\":2}]}"))
@@ -276,7 +313,7 @@ class OrderingIntegrationTest {
         itemRepository.save(new MenuItem(category, "คนละแพ็กเกจ", true, null, Set.of(2L)));
 
         mockMvc.perform(get("/api/v1/dining-sessions/1/menu")
-                        .header("X-Session-Token", "fixture-active-token"))
+                        .cookie(customerCookie("fixture-active-credential")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].name").value("สั่งได้"));

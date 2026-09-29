@@ -10,10 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface DiningSessionRepository extends JpaRepository<DiningSession, Long> {
-    Optional<DiningSession> findBySessionTokenAndStatus(String sessionToken, DiningSessionStatus status);
-
-    Optional<DiningSession> findByIdAndSessionTokenAndStatus(
-            Long id, String sessionToken, DiningSessionStatus status);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select diningSession from DiningSession diningSession where diningSession.sessionToken = :token")
+    Optional<DiningSession> findBySessionTokenForUpdate(@Param("token") String token);
 
     java.util.List<DiningSession> findByStatusOrderByStartTimeDesc(DiningSessionStatus status);
 

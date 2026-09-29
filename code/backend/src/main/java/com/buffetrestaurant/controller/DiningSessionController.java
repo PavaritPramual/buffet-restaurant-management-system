@@ -47,12 +47,6 @@ public class DiningSessionController {
         return ResponseEntity.ok(diningSessionService.getSession(id));
     }
 
-    @GetMapping("/token/{token}")
-    @Operation(summary = "Look up an active dining session by its QR token")
-    public ResponseEntity<DiningSessionResponse> getByToken(@PathVariable String token) {
-        return ResponseEntity.ok(diningSessionService.getActiveSessionByToken(token));
-    }
-
     @PostMapping("/{id}/close")
     @Operation(summary = "Close a dining session after payment is confirmed")
     public ResponseEntity<DiningSessionResponse> closeSession(@PathVariable Long id) {

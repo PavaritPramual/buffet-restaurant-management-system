@@ -96,4 +96,8 @@ public class DiningSession {
         this.status = DiningSessionStatus.COMPLETED;
         this.endTime = completedAt;
     }
+
+    public void rotateQrToken(String nextToken) {
+        this.sessionToken = nextToken;
+    }
 }

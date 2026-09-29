@@ -17,6 +17,8 @@ import com.buffetrestaurant.domain.enums.TableStatus;
 import com.buffetrestaurant.integration.billing.DiningSessionBillingReader;
 import com.buffetrestaurant.integration.payment.PaymentStatusLookup;
 import com.buffetrestaurant.repository.BuffetPackageRepository;
+import com.buffetrestaurant.repository.CustomerSessionGrantRepository;
+import com.buffetrestaurant.service.impl.CustomerSessionAccessService;
 import com.buffetrestaurant.repository.DiningSessionRepository;
 import com.buffetrestaurant.repository.RestaurantTableRepository;
 import com.buffetrestaurant.repository.SoupRepository;
@@ -24,10 +26,16 @@ import com.buffetrestaurant.service.DiningSessionService;
 import com.buffetrestaurant.dto.request.OpenDiningSessionRequest;
 import java.math.BigDecimal;
 import java.util.List;
+import jakarta.servlet.http.Cookie;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.time.OffsetDateTime;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.HexFormat;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -57,6 +65,15 @@ class DiningSessionIntegrationTest {
     private DiningSessionRepository sessionRepository;
 
     @Autowired
+    private CustomerSessionGrantRepository grantRepository;
+
+    @Autowired
+    private CustomerSessionAccessService customerAccessService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
     private DiningSessionService diningSessionService;
 
     @Autowired
@@ -71,6 +88,7 @@ class DiningSessionIntegrationTest {
 
     @BeforeEach
     void prepareData() {
+        grantRepository.deleteAll();
         sessionRepository.deleteAll();
         tableRepository.deleteAll();
         packageRepository.deleteAll();
@@ -84,6 +102,7 @@ class DiningSessionIntegrationTest {
 
     @AfterEach
     void removeData() {
+        grantRepository.deleteAll();
         sessionRepository.deleteAll();
         tableRepository.deleteAll();
         packageRepository.deleteAll();
@@ -173,16 +192,38 @@ class DiningSessionIntegrationTest {
     }
 
     @Test
-    void tokenFindsOnlyActiveSessionAndPaidCloseReturnsTableToAvailable() throws Exception {
+    void qrExchangeRotatesTokenAndPaidCloseRevokesCustomerCookies() throws Exception {
         String token = openThroughApiAndReadToken();
         long sessionId = sessionRepository.findAll().get(0).getId();
 
-        mockMvc.perform(get("/api/v1/dining-sessions/token/" + token))
+        String firstCookie = mockMvc.perform(post("/api/v1/dining-sessions/qr-exchange")
+                        .header("Origin", "http://localhost:5173")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"token\":\"" + token + "\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.sessionStatus").value("ACTIVE"));
-        mockMvc.perform(get("/api/v1/dining-sessions/token/not-a-token"))
+                .andExpect(jsonPath("$.sessionStatus").value("ACTIVE"))
+                .andExpect(jsonPath("$.sessionToken").doesNotExist())
+                .andExpect(jsonPath("$.packagePriceAtOpen").doesNotExist())
+                .andExpect(header().string("Set-Cookie", org.hamcrest.Matchers.containsString("HttpOnly")))
+                .andReturn().getResponse().getHeader("Set-Cookie");
+        mockMvc.perform(post("/api/v1/dining-sessions/qr-exchange")
+                        .header("Origin", "http://localhost:5173")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"token\":\"" + token + "\"}"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
+        String rotated = sessionRepository.findById(sessionId).orElseThrow().getSessionToken();
+        String secondCookie = mockMvc.perform(post("/api/v1/dining-sessions/qr-exchange")
+                        .header("Origin", "http://localhost:5173")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"token\":\"" + rotated + "\"}"))
+                .andExpect(status().isOk()).andReturn().getResponse().getHeader("Set-Cookie");
+        Cookie first = new Cookie("customer_session", firstCookie.split("[=;]")[1]);
+        Cookie second = new Cookie("customer_session", secondCookie.split("[=;]")[1]);
+        mockMvc.perform(get("/api/v1/dining-sessions/customer-context").cookie(first))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/dining-sessions/customer-context").cookie(second))
+                .andExpect(status().isOk());
 
         when(paymentStatusLookup.findPaymentForSession(sessionId)).thenReturn(
                 new PaymentStatusLookup.PaymentVerification(sessionId, PaymentStatus.PAID));
@@ -193,8 +234,10 @@ class DiningSessionIntegrationTest {
 
         assertThat(tableRepository.findById(table.getId()).orElseThrow().getStatus())
                 .isEqualTo(TableStatus.AVAILABLE);
-        mockMvc.perform(get("/api/v1/dining-sessions/token/" + token))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/v1/dining-sessions/customer-context").cookie(first))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/v1/dining-sessions/customer-context").cookie(second))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -217,6 +260,59 @@ class DiningSessionIntegrationTest {
                         "Payment result belongs to a different dining session"));
         assertThat(tableRepository.findById(table.getId()).orElseThrow().getStatus())
                 .isEqualTo(TableStatus.OCCUPIED);
+    }
+
+    @Test
+    void customerCookieMustBePresentUnexpiredAndForTheSameSession() throws Exception {
+        String token = openThroughApiAndReadToken();
+        long sessionId = sessionRepository.findAll().get(0).getId();
+        mockMvc.perform(post("/api/v1/dining-sessions/qr-exchange")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"token\":\"" + token + "\"}"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(post("/api/v1/dining-sessions/qr-exchange")
+                        .header("Origin", "https://untrusted.example")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"token\":\"" + token + "\"}"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/api/v1/dining-sessions/customer-context"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/v1/dining-sessions/customer-context")
+                        .cookie(new Cookie("customer_session", "unknown")))
+                .andExpect(status().isUnauthorized());
+
+        String credential = customerAccessService.exchange(token).credential();
+        Cookie cookie = new Cookie("customer_session", credential);
+        mockMvc.perform(get("/api/v1/dining-sessions/" + (sessionId + 1) + "/menu").cookie(cookie))
+                .andExpect(status().isNotFound());
+        String hash = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                .digest(credential.getBytes(StandardCharsets.UTF_8)));
+        jdbcTemplate.update("UPDATE customer_session_grants SET expires_at = ? WHERE token_hash = ?",
+                OffsetDateTime.now().minusSeconds(1), hash);
+        mockMvc.perform(get("/api/v1/dining-sessions/customer-context").cookie(cookie))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void simultaneousQrRedemptionAllowsExactlyOneExchange() throws Exception {
+        String token = openThroughApiAndReadToken();
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            List<CompletableFuture<Boolean>> attempts = java.util.stream.IntStream.range(0, 2)
+                    .mapToObj(index -> CompletableFuture.supplyAsync(() -> {
+                        try {
+                            customerAccessService.exchange(token);
+                            return true;
+                        } catch (com.buffetrestaurant.exception.ResourceNotFoundException exception) {
+                            return false;
+                        }
+                    }, executor)).toList();
+            assertThat(attempts.stream().map(CompletableFuture::join)
+                    .filter(Boolean::booleanValue).count()).isOne();
+            assertThat(grantRepository.count()).isOne();
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     @Test

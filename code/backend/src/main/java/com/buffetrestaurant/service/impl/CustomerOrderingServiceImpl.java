@@ -44,7 +44,7 @@ public class CustomerOrderingServiceImpl implements CustomerOrderingService {
 
     @Transactional
     public OrderResponse placeOrder(Long sessionId, String sessionToken, PlaceOrderRequest request) {
-        SessionContextSnapshot session = requireActive(sessionId, sessionToken);
+        SessionContextSnapshot session = sessionProvider.requireSessionForOrder(sessionId, sessionToken);
         Map<Long, Integer> quantities = new LinkedHashMap<>();
         for (OrderItemRequest requested : request.items()) {
             if (quantities.putIfAbsent(requested.menuItemId(), requested.quantity()) != null) {
