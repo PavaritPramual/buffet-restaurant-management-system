@@ -52,6 +52,15 @@ public class CustomerOrder {
         items.add(new OrderItem(this, menuItemId, itemName, quantity));
     }
 
+    /**
+     * Persists a new fulfillment status. Callers (the fulfillment service) are responsible for
+     * validating that the transition is legal via the {@code OrderState} pattern before calling
+     * this; the entity itself does not re-validate the transition.
+     */
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
+    }
+
     public Long getId() { return id; }
     public Long getSessionId() { return sessionId; }
     public String getTableNumber() { return tableNumber; }

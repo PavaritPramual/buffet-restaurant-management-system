@@ -5,3 +5,5 @@ app:
     session-provider: database
   dining-session:
     staff-access-provider: fixture
+  fulfillment:
+    access-provider: fixture

@@ -39,3 +39,6 @@ app:
     session-provider: ${ORDERING_SESSION_PROVIDER:database}
   dining-session:
     staff-access-provider: ${DINING_SESSION_STAFF_ACCESS_PROVIDER:disabled}
+  fulfillment:
+    # Production-safe default. Authentication must replace this provider with a real staff-role check.
+    access-provider: ${FULFILLMENT_ACCESS_PROVIDER:disabled}

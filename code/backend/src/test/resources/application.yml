@@ -29,3 +29,5 @@ app:
     session-provider: fixture
   dining-session:
     staff-access-provider: fixture
+  fulfillment:
+    access-provider: fixture
