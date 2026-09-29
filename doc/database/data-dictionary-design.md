@@ -6,6 +6,10 @@
 
 การตัดสินใจเพิ่มเติมสำหรับ Billing: `package_price_at_open` เก็บราคาแพ็กเกจ ณ เวลาเปิด Dining Session เพื่อไม่ให้การแก้ราคา Package ภายหลังเปลี่ยนยอดของลูกค้าที่กำลังกินอยู่ การเพิ่มคอลัมน์นี้ใช้ Flyway V8 หลัง V6/V7; แถวเดิมที่มีอยู่ก่อน V8 จะ backfill ด้วยราคา Package ณ เวลาย้ายข้อมูล ซึ่งไม่สามารถย้อนหาราคาตอนเปิดรอบจริงได้
 
+ส่วนต่างจากแบบออกแบบ ณ PR #16: V6 เพิ่ม `customer_session_grants` เพื่อเก็บ hash ของ credential ลูกค้า, เวลาออกและหมดอายุ และ FK ไปยังรอบกินที่ลบ grant ตามรอบ; QR token ใน `dining_sessions` ใช้แลกได้ครั้งเดียวแล้วหมุนค่าใหม่ V6 บังคับ `adult_count + child_count >= 1` และเพิ่ม index บน FK ทั้งสามของรอบกิน V7 ใช้ `ON DELETE RESTRICT` สำหรับ `orders.session_id` เพื่อรักษาประวัติ Order แทน `CASCADE` ใน SQL แบบเดิม ส่วน `orders.session_id` มี index จาก V4 อยู่แล้ว
+
+Backend ปัจจุบันต่อ Supabase ด้วย role `postgres` ซึ่งมี `BYPASSRLS`: policy ใน V6 ระบุ role นี้และปิดสิทธิ์ `PUBLIC`, `anon`, `authenticated` บนตารางและ sequence ใหม่ แต่ `FORCE RLS` ไม่จำกัด `postgres` ได้ในสถาปัตยกรรมนี้ API จึงต้องตรวจสิทธิ์เอง งานสร้าง application role ที่ไม่มี `BYPASSRLS` ต้องออกแบบแยกต่างหาก ก่อนนำ V8 ขึ้นฐานส่วนกลางให้ตรวจอีกครั้งว่าไม่มี `dining_sessions` เก่าที่ต้อง backfill ราคาโดยประมาณ และตรวจ `flyway_schema_history` ก่อนแก้หรือใช้ migration ใด
+
 เอกสารพจนานุกรมข้อมูล (Data Dictionary) และโค้ดสำหรับสร้างฐานข้อมูล (SQL DDL Migration Script) ครบทั้ง 14 ตาราง
 ---
 ## 1. Data Dictionary (พจนานุกรมข้อมูลรายตาราง)

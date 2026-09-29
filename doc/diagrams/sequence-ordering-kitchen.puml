@@ -26,22 +26,23 @@ participant "PreparingState" as PrepState <<State>>
 participant "ReadyState" as ReadyState <<State>>
 participant "ServedState" as ServedState <<State>>
 
-== 1. Customer Scans QR, Resolves Session & Views Filtered Menu ==
-Cust -> DSC: GET /api/v1/dining-sessions/token/{sessionToken}
+== 1. Customer Redeems Single-Use QR & Views Filtered Menu ==
+Cust -> DSC: POST /api/v1/dining-sessions/qr-exchange\nBody: {token}; allowed Origin
 activate Cust
 activate DSC
-DSC -> DSS: getActiveSessionByToken(sessionToken)
+DSC -> DSS: lock active session by QR token
 activate DSS
-DSS -> DSR: findBySessionToken(sessionToken)
+DSS -> DSR: findBySessionTokenForUpdate(token)
 activate DSR
 DSR --> DSS: Optional<DiningSession>
 deactivate DSR
-DSS --> DSC: DiningSessionResponseDTO(sessionId, packageId, tableNumber)
+DSS -> DSR: rotate QR token; save hashed customer credential
+DSS --> DSC: CustomerSessionResponse(sessionId, packageId, tableNumber)
 deactivate DSS
-DSC --> Cust: 200 OK (Active Session)
+DSC --> Cust: 200 OK + HttpOnly customer_session cookie
 deactivate DSC
 
-Cust -> MC: GET /api/v1/dining-sessions/{sessionId}/menu
+Cust -> MC: GET /api/v1/dining-sessions/{sessionId}/menu\nCookie: customer_session
 activate MC
 MC -> MS: getAvailableMenuForSession(sessionId)
 activate MS
@@ -59,12 +60,12 @@ MC --> Cust: 200 OK (Allowed Menu Items for Package)
 deactivate MC
 
 == 2. Customer Places Order (Round-by-Round) ==
-Cust -> OC: POST /api/v1/dining-sessions/{sessionId}/orders\n(PlaceOrderRequestDTO: items: [{menuItemId, quantity, note}])
+Cust -> OC: POST /api/v1/dining-sessions/{sessionId}/orders\nCookie: customer_session; allowed Origin\nBody: items [{menuItemId, quantity}]
 activate OC
 OC -> OS: placeOrder(requestDTO)
 activate OS
 
-OS -> DSR: findById(sessionId)
+OS -> DSR: findByIdForUpdate(sessionId)\n(same row lock as closeSession)
 activate DSR
 DSR --> OS: Optional<DiningSession>
 deactivate DSR

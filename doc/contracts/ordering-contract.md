@@ -10,12 +10,14 @@ Owner: ศิระพัทธ์. This module consumes `SessionContext` from t
 | POST / PUT / DELETE | `/api/v1/menu-categories[/{id}]` | Category CRUD; deleting a category with items returns 400 |
 | GET | `/api/v1/menu-items?page=0&size=20&sort=name,asc` | `{content,page,size,totalElements,totalPages}`; max size 100 |
 | GET / POST / PUT / DELETE | `/api/v1/menu-items[/{id}]` | Menu item CRUD |
-| GET | `/api/v1/dining-sessions/{id}/menu` | Available items in the active session's package; requires matching `X-Session-Token` |
-| POST | `/api/v1/dining-sessions/{id}/orders` | 201 with Order, initial status `RECEIVED`; requires matching `X-Session-Token` |
-| GET | `/api/v1/dining-sessions/{id}/orders` | Orders for an active session; requires matching `X-Session-Token` |
-| GET | `/api/v1/dining-sessions/{sessionId}/orders/{orderId}` | Order summary; requires matching `X-Session-Token`; cross-session access returns 404 |
+| POST | `/api/v1/dining-sessions/qr-exchange` | Redeem one-time QR token from JSON body; returns customer context and `HttpOnly` cookie |
+| GET | `/api/v1/dining-sessions/customer-context` | Active customer context from cookie; excludes QR token and price |
+| GET | `/api/v1/dining-sessions/{id}/menu` | Available items in the active session's package; requires matching customer cookie |
+| POST | `/api/v1/dining-sessions/{id}/orders` | 201 with Order, initial status `RECEIVED`; requires matching customer cookie and allowed Origin |
+| GET | `/api/v1/dining-sessions/{id}/orders` | Orders for an active session; requires matching customer cookie |
+| GET | `/api/v1/dining-sessions/{sessionId}/orders/{orderId}` | Order summary; requires matching customer cookie; cross-session access returns 404 |
 
-Customer QR route: `/customer/qr/{token}`. The page resolves the token through `GET /api/v1/dining-sessions/token/{token}`, then sends it in `X-Session-Token` on every menu and order request. The bearer token must match the path session ID and an `ACTIVE` row. Missing, mismatched, unknown, or closed-session tokens return 404. A numeric session ID alone does not authorize customer access.
+Customer QR route: `/customer/qr#token={oneTimeToken}`. The browser removes the fragment immediately and sends the token only in the JSON body of `POST /api/v1/dining-sessions/qr-exchange`. On success the backend rotates the displayed QR and issues a random `customer_session` credential in an `HttpOnly` cookie, storing only its hash. Each phone may redeem the newly displayed QR for its own credential. Menu and order requests use the cookie, require an `ACTIVE` session, and must match the path session ID. Missing/invalid cookie returns 401, mismatched or closed session returns 404. A numeric session ID alone does not authorize customer access. State-changing customer requests require an allowed `Origin`; missing/disallowed Origin returns 403.
 
 Order request: `{"items":[{"menuItemId":1,"quantity":2}]}`. Quantity must be positive; duplicate item IDs, unavailable items, items outside the package, and inactive sessions are rejected. The saved order snapshots the item's name and table number. Errors use the shared `ErrorResponse` fields. The Order response matches `OrderFulfillmentContext`: `orderId`, `sessionId`, `tableNumber`, `items`, `status`, and `createdAt`.
 
@@ -33,4 +35,4 @@ PostgreSQL migration `V5__restrict_menu_and_order_access.sql` enables RLS, defin
 
 Schema reconciliation decisions, extensions and blocked external foreign keys are recorded in `doc/database/menu-ordering-schema-delta.md`.
 
-The customer page uses `/customer/qr/{token}` and calls the shared Axios client through `VITE_API_BASE_URL`. Menu mutations and staff session operations are fail-closed by default; Authentication must provide the deployed role-checking implementations. API/JSON changes require ศรัณย์'s review, shared entity changes require ปวริศช์'s review, and migrations require เมธัส's review.
+The customer page uses `/customer/qr#token={oneTimeToken}` and calls the credential-enabled Axios client through `VITE_API_BASE_URL`. Local same-site deployment uses `SameSite=Lax`; a public cross-site deployment requires an explicitly designed cookie/CORS setup or a same-site reverse proxy. Menu mutations and staff session operations are fail-closed by default; Authentication must provide the deployed role-checking implementations. API/JSON changes require ศรัณย์'s review, shared entity changes require ปวริศช์'s review, and migrations require เมธัส's review.

@@ -43,8 +43,8 @@ describe('Staff table flow', () => {
       tableId: 7, packageId: 5, soupId: 2, adultCount: 1, childCount: 0,
     }))
     expect(await screen.findByText('QR สำหรับลูกค้า')).toBeTruthy()
-    expect(container.querySelector('svg')).toBeTruthy()
-    expect(screen.getByRole('link').getAttribute('href')).toContain('/customer/qr/demo-token')
+    expect(container.querySelector('svg title')?.textContent).toBe('QR โต๊ะ T07')
+    expect(screen.getByRole('link').getAttribute('href')).toContain('/customer/qr#token=demo-token')
   })
 
   it('keeps the session open and reports the API error when payment is not ready', async () => {
@@ -69,6 +69,6 @@ describe('Staff table flow', () => {
 
     expect(await screen.findByText('รอบกินนี้ปิดแล้ว QR จึงใช้ไม่ได้')).toBeTruthy()
     expect(screen.queryByRole('link')).toBeNull()
-    expect(document.querySelector('svg')).toBeNull()
+    expect(document.querySelector('svg title')).toBeNull()
   })
 })

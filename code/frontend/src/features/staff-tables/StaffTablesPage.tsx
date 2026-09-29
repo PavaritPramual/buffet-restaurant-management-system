@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Card, EmptyState, ErrorAlert, LoadingState, PageHeader, RefreshIcon, SelectField, StatusBadge, TextField } from '../../components/common'
 import { getActiveSessions, getApiError, getPackages, getSoups, getTables, openDiningSession } from './api'
-import type { CatalogOption, OpenSessionInput, RestaurantTable } from './api'
-import type { SessionContext } from '../ordering/api'
+import type { CatalogOption, OpenSessionInput, RestaurantTable, StaffSession } from './api'
 import './staff-tables.css'
 
 const labels = { AVAILABLE: 'ว่าง', OCCUPIED: 'กำลังใช้งาน' }
@@ -11,7 +10,7 @@ const labels = { AVAILABLE: 'ว่าง', OCCUPIED: 'กำลังใช้�
 export default function StaffTablesPage() {
   const navigate = useNavigate()
   const [tables, setTables] = useState<RestaurantTable[]>([])
-  const [sessions, setSessions] = useState<SessionContext[]>([])
+  const [sessions, setSessions] = useState<StaffSession[]>([])
   const [packages, setPackages] = useState<CatalogOption[]>([])
   const [soups, setSoups] = useState<CatalogOption[]>([])
   const [loading, setLoading] = useState(true)
@@ -23,7 +22,7 @@ export default function StaffTablesPage() {
   const [soupId, setSoupId] = useState('')
   const [saving, setSaving] = useState(false)
 
-  function applyData([nextTables, nextSessions, nextPackages, nextSoups]: [RestaurantTable[], SessionContext[], CatalogOption[], CatalogOption[]]) {
+  function applyData([nextTables, nextSessions, nextPackages, nextSoups]: [RestaurantTable[], StaffSession[], CatalogOption[], CatalogOption[]]) {
       setTables(nextTables); setSessions(nextSessions); setPackages(nextPackages); setSoups(nextSoups)
       setPackageId((current) => current || String(nextPackages[0]?.id ?? ''))
       setSoupId((current) => current || String(nextSoups[0]?.id ?? ''))

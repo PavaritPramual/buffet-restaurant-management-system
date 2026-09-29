@@ -18,13 +18,17 @@ Owner: ปวริศช์ — Table & Dining Session
 | Field | JSON type | Nullable | Notes |
 |---|---|---|---|
 | `sessionId` | number | No | Dining Session identifier |
-| `sessionToken` | string | No | Bearer token สำหรับ QR; ลูกค้าส่งใน `X-Session-Token` และใช้ได้เฉพาะ session `ACTIVE` |
+| `sessionToken` | string | No | QR token แบบใช้ครั้งเดียวใน response พนักงานเท่านั้น; ต้องไม่อยู่ใน response ลูกค้า |
 | `packageId` | number | No | Buffet Package identifier |
 | `tableId` | number | No | Restaurant Table identifier |
 | `tableNumber` | string | No | หมายเลขโต๊ะที่แสดงต่อผู้ใช้ |
 | `sessionStatus` | string | No | `DiningSessionStatus` |
 | `adultCount` | number | No | Integer ตั้งแต่ 0 ขึ้นไป |
 | `childCount` | number | No | Integer ตั้งแต่ 0 ขึ้นไป |
+
+ลูกค้าเปิด `/customer/qr#token={sessionToken}`; หน้าเว็บล้าง fragment แล้วส่ง token ใน body ของ `POST /api/v1/dining-sessions/qr-exchange` พร้อม `Origin` ที่อนุญาต Backend หมุน QR token และออก `customer_session` แบบสุ่มใน `HttpOnly` cookie อายุสูงสุด 8 ชั่วโมง เก็บเฉพาะ SHA-256 hash ของ credential ใน `customer_session_grants` ลูกค้าหลายเครื่องแลก QR รุ่นถัดไปได้คนละ credential
+
+Customer response มีเพียง `sessionId`, `packageId`, `tableNumber`, `sessionStatus`; ไม่ส่ง `sessionToken`, ราคา snapshot หรือข้อมูล Billing คำขอเมนู/ออเดอร์ต้องมี cookie ของ session เดียวกันที่ยัง `ACTIVE` และคำขอเขียนต้องผ่าน Origin check การปิดรอบเพิกถอน credentials ทั้งหมด
 
 ## OrderFulfillmentContext
 

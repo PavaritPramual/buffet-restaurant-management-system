@@ -28,6 +28,7 @@
 - Frontend เป็น React แยกจาก Spring Boot และเรียก REST API; Supabase ใช้ PostgreSQL
 - Staff login ตาม Tool Stack: Spring Security, BCrypt และ JWT; Customer เข้า flow สั่งอาหารด้วย token ของ Dining Session
 - ราคา Package สำหรับ Billing ล็อกใน Dining Session ตอนเปิดรอบ การเปลี่ยนราคาใน Catalog ภายหลังไม่เปลี่ยนยอดของรอบที่เปิดไปแล้ว
+- QR ปัจจุบันเป็นรหัสใช้แลกครั้งเดียวใน URL fragment; backend หมุน QR หลังแลกและออก cookie `HttpOnly` แยกต่อเครื่อง คำสั่งอาหารและการปิดรอบล็อกแถว Dining Session เดียวกันเพื่อกำหนดลำดับแน่นอน ดู [shared contract](../contracts/shared-contracts.md)
 - Module ใช้ shared contract; การเปลี่ยน Entity, enum หรือ API ที่ข้าม module ต้องแจ้ง owner
 - แบบออกแบบระบุ State สำหรับ Order, Strategy สำหรับการคำนวณบิล และ Template Method สำหรับ Stock เป็น pattern ที่ตั้งใจใช้ ตรวจ implementation จริงก่อนอ้างว่าเสร็จ
 - UI ของ Customer เน้นมือถือ, Staff เป็น POS, Kitchen เป็น KDS และ Admin/Stock ใช้ sidebar
@@ -44,5 +45,7 @@
 2. Use case เขียน Open และ Setup เป็นสองขั้น แต่ API ที่พัฒนาบน branch ปวริศช์เปิดรอบพร้อมโต๊ะ แพ็กเกจ น้ำซุป และจำนวนคนในคำขอเดียว
 3. Class/sequence diagrams แสดง pattern และ service ที่เป็นแผนออกแบบ บางส่วนยังรอ implementation ของแต่ละ owner
 4. SQL DDL ใน Notion เป็นตัวอย่างรวม 14 ตาราง ห้ามนำไปรันแทน Flyway หรือแก้ migration ที่ apply แล้ว
+
+การเชื่อม Supabase ปัจจุบันใช้ `postgres` ซึ่งมี `BYPASSRLS` (ตรวจ 29 กันยายน 2026) ดังนั้น API ต้องตรวจสิทธิ์ Staff/Customer เอง V6 เปิด RLS, ระบุ policy ของ role นี้ และปิด grant ของ `PUBLIC`/client roles สำหรับตารางใหม่ ส่วน application role ที่ไม่มี `BYPASSRLS` เป็นงานออกแบบต่อไป ฐานส่วนกลางมี Flyway V1–V5 และยังไม่มี `dining_sessions` ณ วันที่ตรวจ; ต้องตรวจซ้ำก่อนนำ V6–V8 ขึ้นจริง
 
 เมื่อ schema/flow เปลี่ยน ให้แก้ไฟล์ออกแบบใน commit เดียวกับการเปลี่ยน contract หรือ migration และแจ้ง owner ที่เกี่ยวข้อง

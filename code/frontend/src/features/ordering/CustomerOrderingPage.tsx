@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLayoutEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Card, ConfirmDialog, EmptyState, ErrorAlert, LoadingState, PageHeader, RefreshIcon, StatusBadge } from '../../components/common'
-import { getApiError, getBuffetPackage, getMenu, getOrders, getSessionByToken, placeOrder } from './api'
+import { getApiError, getBuffetPackage, getCustomerContext, getMenu, getOrders, placeOrder, redeemQr } from './api'
 import type { MenuItem, Order, SessionContext } from './api'
 import type { OrderStatus } from '../../contracts/shared'
 import type { StatusBadgeTone } from '../../components/common'
@@ -15,27 +16,32 @@ const orderStatusPresentation: Record<OrderStatus, { label: string; tone: Status
 }
 
 export default function CustomerOrderingPage() {
-  const { token = '' } = useParams()
-  const invalidToken = !token.trim()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [qrToken] = useState(() => new URLSearchParams(location.hash.slice(1)).get('token') ?? '')
   const [session, setSession] = useState<SessionContext | null>(null)
   const [packageName, setPackageName] = useState('')
   const [menu, setMenu] = useState<MenuItem[]>([])
   const [orders, setOrders] = useState<Order[]>([])
   const [cart, setCart] = useState<Record<number, number>>({})
   const [category, setCategory] = useState<number | 'all'>('all')
-  const [loading, setLoading] = useState(!invalidToken)
+  const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
 
+  useLayoutEffect(() => {
+    if (location.hash) navigate('/customer/qr', { replace: true })
+  }, [location.hash, navigate])
+
   useEffect(() => {
-    if (invalidToken) return
     let active = true
-    getSessionByToken(token)
+    const lookup = qrToken ? redeemQr(qrToken) : getCustomerContext()
+    lookup
       .then(async (context) => {
         const [nextMenu, nextOrders, buffetPackage] = await Promise.all([
-          getMenu(context.sessionId, token), getOrders(context.sessionId, token), getBuffetPackage(context.packageId),
+          getMenu(context.sessionId), getOrders(context.sessionId), getBuffetPackage(context.packageId),
         ])
         if (active) {
           setSession(context); setPackageName(buffetPackage.name); setMenu(nextMenu); setOrders(nextOrders); setError('')
@@ -44,7 +50,7 @@ export default function CustomerOrderingPage() {
       .catch((cause) => { if (active) setError(getApiError(cause)) })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
-  }, [token, invalidToken])
+  }, [qrToken])
 
   const visibleMenu = category === 'all' ? menu : menu.filter((item) => item.categoryId === category)
   const categories = useMemo(() => Array.from(new Map(menu.map((item) => [item.categoryId, { id: item.categoryId, name: item.categoryName }])).values()), [menu])
@@ -61,21 +67,21 @@ export default function CustomerOrderingPage() {
     setSubmitting(true); setError(''); setNotice('')
     try {
       if (!session) return
-      const created = await placeOrder(session.sessionId, token, cartItems.map((item) => ({ menuItemId: item.id, quantity: item.quantity })))
+      const created = await placeOrder(session.sessionId, cartItems.map((item) => ({ menuItemId: item.id, quantity: item.quantity })))
       setOrders((current) => [created, ...current]); setCart({}); setConfirming(false); setNotice(`ส่งคำสั่งซื้อ #${created.orderId} แล้ว`)
     } catch (cause) { setError(getApiError(cause)); setConfirming(false) } finally { setSubmitting(false) }
   }
 
   async function refreshOrders() {
     if (!session) return
-    try { setOrders(await getOrders(session.sessionId, token)); setError('') } catch (cause) { setError(getApiError(cause)) }
+    try { setOrders(await getOrders(session.sessionId)); setError('') } catch (cause) { setError(getApiError(cause)) }
   }
 
   return <main className="ordering-page customer-page">
     <PageHeader eyebrow="สั่งอาหารผ่าน QR" title="เลือกเมนูที่ชอบ" description={session ? `โต๊ะ ${session.tableNumber} · ${packageName}` : 'ตรวจสอบ QR ของรอบการรับประทาน'} />
-    {(invalidToken || error) && <ErrorAlert message={invalidToken ? 'QR ไม่ถูกต้อง กรุณาสแกน QR ใหม่' : error} />}
+    {error && <ErrorAlert message={error} />}
     {notice && <div className="ordering-notice" role="status">{notice}</div>}
-    {!invalidToken && (loading ? <LoadingState label="กำลังตรวจสอบรอบการรับประทานและโหลดเมนู…" /> : <>
+    {loading ? <LoadingState label="กำลังตรวจสอบรอบการรับประทานและโหลดเมนู…" /> : session && <>
       <nav className="category-chips" aria-label="หมวดหมู่เมนู">
         <button className={category === 'all' ? 'active' : ''} onClick={() => setCategory('all')}>ทั้งหมด</button>
         {categories.filter((entry) => menu.some((item) => item.categoryId === entry.id)).map((entry) => <button key={entry.id} className={category === entry.id ? 'active' : ''} onClick={() => setCategory(entry.id)}>{entry.name}</button>)}
@@ -92,7 +98,7 @@ export default function CustomerOrderingPage() {
       <section className="order-history"><div className="section-title"><div><h2>สถานะคำสั่งซื้อ</h2><p>ติดตามรายการที่ส่งเข้าครัวแล้ว</p></div><Button variant="secondary" className="ui-icon-button" aria-label="อัปเดตสถานะคำสั่งซื้อ" title="อัปเดตสถานะคำสั่งซื้อ" onClick={refreshOrders}><RefreshIcon /></Button></div>
         {orders.length === 0 ? <EmptyState title="ยังไม่มีคำสั่งซื้อ" /> : <div className="order-list">{orders.map((order) => <Card key={order.orderId} className="order-card"><div><strong>คำสั่งซื้อ #{order.orderId}</strong><p>{order.items.map((item) => `${item.name} × ${item.quantity}`).join(', ')}</p></div><StatusBadge tone={orderStatusPresentation[order.status].tone}>{orderStatusPresentation[order.status].label}</StatusBadge></Card>)}</div>}
       </section>
-    </>)}
+    </>}
     <ConfirmDialog open={confirming} title="ยืนยันการสั่งอาหาร" description={`ส่ง ${count} รายการเข้าครัว เมื่อยืนยันแล้วจะติดตามสถานะได้ด้านล่าง`} busy={submitting} onCancel={() => setConfirming(false)} onConfirm={() => void submit()} />
   </main>
 }

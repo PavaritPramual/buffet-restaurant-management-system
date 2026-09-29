@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
-import { Button, Card, ConfirmDialog, ErrorAlert, LoadingState, PageHeader, StatusBadge } from '../../components/common'
+import { Button, Card, ConfirmDialog, ErrorAlert, LoadingState, PageHeader, RefreshIcon, StatusBadge } from '../../components/common'
 import { getApiError, getDiningSession, closeDiningSession } from './api'
-import type { SessionContext } from '../ordering/api'
+import type { StaffSession } from './api'
 import './staff-tables.css'
 
 export default function DiningSessionPage() {
@@ -11,7 +11,7 @@ export default function DiningSessionPage() {
   const sessionId = Number(rawId)
   const invalidSessionId = !Number.isSafeInteger(sessionId) || sessionId < 1
   const navigate = useNavigate()
-  const [session, setSession] = useState<SessionContext | null>(null)
+  const [session, setSession] = useState<StaffSession | null>(null)
   const [loading, setLoading] = useState(!invalidSessionId)
   const [error, setError] = useState('')
   const [confirming, setConfirming] = useState(false)
@@ -27,6 +27,19 @@ export default function DiningSessionPage() {
     return () => { active = false }
   }, [sessionId, invalidSessionId])
 
+  useEffect(() => {
+    if (invalidSessionId || session?.sessionStatus !== 'ACTIVE') return
+    const timer = window.setInterval(() => {
+      getDiningSession(sessionId).then(setSession).catch((cause) => setError(getApiError(cause)))
+    }, 5000)
+    return () => window.clearInterval(timer)
+  }, [sessionId, invalidSessionId, session?.sessionStatus])
+
+  async function refreshQr() {
+    try { setSession(await getDiningSession(sessionId)); setError('') }
+    catch (cause) { setError(getApiError(cause)) }
+  }
+
   async function closeSession() {
     if (closing) return
     setClosing(true); setError('')
@@ -37,7 +50,7 @@ export default function DiningSessionPage() {
   }
 
   const customerUrl = session?.sessionStatus === 'ACTIVE'
-    ? new URL(`/customer/qr/${encodeURIComponent(session.sessionToken)}`, window.location.origin).toString()
+    ? new URL(`/customer/qr#token=${encodeURIComponent(session.sessionToken)}`, window.location.origin).toString()
     : ''
 
   return <main className="staff-session-page">
@@ -52,9 +65,9 @@ export default function DiningSessionPage() {
           {session.sessionStatus === 'ACTIVE' && <Button variant="danger" onClick={() => setConfirming(true)}>ปิดรอบกิน</Button>}
         </Card>
         <Card className="staff-session-qr-card">
-          <h2>QR สำหรับลูกค้า</h2>
+          <div className="section-title"><h2>QR สำหรับลูกค้า</h2><Button variant="secondary" className="ui-icon-button" aria-label="อัปเดต QR" title="อัปเดต QR" onClick={() => void refreshQr()}><RefreshIcon /></Button></div>
           {customerUrl ? <>
-            <p>ให้ลูกค้าสแกนเพื่อยืนยันรอบกินและดูเมนู</p>
+            <p>QR ใช้แลกสิทธิ์ได้ครั้งเดียว หลังลูกค้าสแกน ระบบจะแสดง QR ใหม่สำหรับเครื่องถัดไป</p>
             <QRCodeSVG value={customerUrl} size={220} level="M" title={`QR โต๊ะ ${session.tableNumber}`} />
             <a href={customerUrl}>{customerUrl}</a>
           </> : <p>รอบกินนี้ปิดแล้ว QR จึงใช้ไม่ได้</p>}
