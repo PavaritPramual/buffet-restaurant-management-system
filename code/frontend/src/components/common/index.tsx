@@ -2,6 +2,12 @@ import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAt
 export function Button({ variant = 'primary', size = 'md', loading = false, children, disabled, className = '', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'danger' | 'ghost'; size?: 'sm' | 'md' | 'lg'; loading?: boolean }) {
   return <button className={`ui-button ${variant} ${size} ${className}`} disabled={disabled || loading} {...props}>{loading ? 'กำลังดำเนินการ…' : children}</button>
 }
+export function RefreshIcon() {
+  return <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5" />
+    <path d="M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5" />
+  </svg>
+}
 export function TextField({ label, error, ...props }: InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string }) {
   return <label className="ui-field"><span>{label}</span><input aria-invalid={Boolean(error)} {...props} />{error && <small className="ui-field-error">{error}</small>}</label>
 }

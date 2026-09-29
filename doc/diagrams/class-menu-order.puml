@@ -1,0 +1,54 @@
+@startuml
+title Class Diagram - Menu & Order Domain
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+package "Domain" {
+    class BuffetPackage {
+        - id : Long
+        - name : String
+        - price : BigDecimal
+        - active : Boolean
+    }
+
+    class MenuCategory {
+        - id : Long
+        - name : String
+    }
+
+    class MenuItem {
+        - id : Long
+        - name : String
+        - description : String
+        - available : Boolean
+    }
+
+    class Order {
+        - id : Long
+        - status : OrderStatus
+        - createdAt : LocalDateTime
+        + addItem(item : OrderItem) : void
+        + calculateTotalItems() : Integer
+    }
+
+    class OrderItem {
+        - id : Long
+        - quantity : Integer
+        - note : String
+    }
+
+    enum OrderStatus {
+        RECEIVED
+        PREPARING
+        READY
+        SERVED
+    }
+}
+
+BuffetPackage "*" -- "*" MenuItem : includes
+MenuCategory "1" -- "0..*" MenuItem : categorizes
+Order "1" -- "1..*" OrderItem : contains
+MenuItem "1" -- "0..*" OrderItem : represents
+
+@enduml

@@ -18,13 +18,17 @@ Owner: ปวริศช์ — Table & Dining Session
 | Field | JSON type | Nullable | Notes |
 |---|---|---|---|
 | `sessionId` | number | No | Dining Session identifier |
-| `sessionToken` | string | No | Token สำหรับ QR/session lookup |
+| `sessionToken` | string | No | QR token แบบใช้ครั้งเดียวใน response พนักงานเท่านั้น; ต้องไม่อยู่ใน response ลูกค้า |
 | `packageId` | number | No | Buffet Package identifier |
 | `tableId` | number | No | Restaurant Table identifier |
 | `tableNumber` | string | No | หมายเลขโต๊ะที่แสดงต่อผู้ใช้ |
 | `sessionStatus` | string | No | `DiningSessionStatus` |
 | `adultCount` | number | No | Integer ตั้งแต่ 0 ขึ้นไป |
 | `childCount` | number | No | Integer ตั้งแต่ 0 ขึ้นไป |
+
+ลูกค้าเปิด `/customer/qr#token={sessionToken}`; หน้าเว็บล้าง fragment แล้วส่ง token ใน body ของ `POST /api/v1/dining-sessions/qr-exchange` พร้อม `Origin` ที่อนุญาต Backend หมุน QR token และออก `customer_session` แบบสุ่มใน `HttpOnly` cookie อายุสูงสุด 8 ชั่วโมง เก็บเฉพาะ SHA-256 hash ของ credential ใน `customer_session_grants` ลูกค้าหลายเครื่องแลก QR รุ่นถัดไปได้คนละ credential
+
+Customer response มีเพียง `sessionId`, `packageId`, `tableNumber`, `sessionStatus`; ไม่ส่ง `sessionToken`, ราคา snapshot หรือข้อมูล Billing คำขอเมนู/ออเดอร์ต้องมี cookie ของ session เดียวกันที่ยัง `ACTIVE` และคำขอเขียนต้องผ่าน Origin check การปิดรอบเพิกถอน credentials ทั้งหมด
 
 ## OrderFulfillmentContext
 
@@ -46,11 +50,13 @@ Owner: ธีรเมธ — Billing & Payment
 | Field | JSON type | Nullable | Notes |
 |---|---|---|---|
 | `sessionId` | number | No | Dining Session identifier |
-| `packagePrice` | number | No | ราคาต่อคนของ Package |
+| `packagePrice` | number | No | ราคาแพ็กเกจ ณ ตอนเปิด Dining Session จาก `package_price_at_open`; backend อ่านเอง ไม่รับจาก browser |
 | `adultCount` | number | No | จำนวนผู้ใหญ่ |
 | `childCount` | number | No | จำนวนเด็ก |
 | `discountContext` | object | Yes | Billing owner กำหนดรายละเอียดภายใน |
 | `sessionStatus` | string | No | `DiningSessionStatus` |
+
+Dining Session owner ให้ข้อมูลผ่าน `DiningSessionBillingReader.requireBySessionId(sessionId)` ซึ่งคืนราคา snapshot, จำนวนคน และสถานะ; Billing owner เป็นผู้เติม `discountContext` และคำนวณยอด
 
 ## Billing preview API
 
@@ -73,6 +79,7 @@ Errors use ErrorResponse: 400 invalid input/inactive session, 404 session not fo
 and staff authorization remain pending integration. Do not expose as a production staff API yet.
 Request fixture: `test/fixtures/billing-preview-request.json`.
 Frontend: `/billing/preview` for entering an ID, `/staff/sessions/:sessionId/billing` for a selected session.
+
 
 ## PaymentResult
 

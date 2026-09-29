@@ -1,0 +1,147 @@
+@startuml
+title Sequence Diagram 3: Billing, Calculation (Strategy Pattern) & Payment
+
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam maxMessageSize 250
+autonumber
+
+actor "Customer" as Cust
+actor "Service Staff" as Staff
+boundary "BillingController" as BC
+boundary "PaymentController" as PC
+control "BillingService" as BS
+control "PaymentService" as PS
+participant "BillCalculator" as Calc <<Context>>
+participant "StandardCalculationStrategy" as StdStrat <<Strategy>>
+participant "ChildRateCalculationStrategy" as ChildStrat <<Strategy>>
+participant "PromotionDiscountStrategy" as PromoStrat <<Strategy>>
+entity "DiningSessionRepository" as DSR
+entity "PaymentRepository" as PR
+entity "RestaurantTableRepository" as TR
+entity "Payment" as Payment
+entity "DiningSession" as Session
+entity "RestaurantTable" as Table
+
+== 1. Request Bill & Calculate Amount (GoF Strategy Pattern) ==
+Cust -> Staff: Request check bill
+activate Cust
+activate Staff
+
+Staff -> BC: GET /api/v1/billing/sessions/{sessionId}
+activate BC
+BC -> BS: generateBill(sessionId)
+activate BS
+
+BS -> DSR: findById(sessionId)
+activate DSR
+DSR --> BS: Optional<DiningSession>
+deactivate DSR
+
+create Calc
+BS -> Calc: new BillCalculator()
+create StdStrat
+BS -> StdStrat: new StandardCalculationStrategy()
+BS -> Calc: addStrategy(StandardCalculationStrategy)
+
+opt if session.childCount > 0
+    create ChildStrat
+    BS -> ChildStrat: new ChildRateCalculationStrategy(discountRate=0.50)
+    BS -> Calc: addStrategy(ChildRateCalculationStrategy)
+end
+
+opt if active promotion applied
+    create PromoStrat
+    BS -> PromoStrat: new PromotionDiscountStrategy(discountPercentage=0.10)
+    BS -> Calc: addStrategy(PromotionDiscountStrategy)
+end
+
+BS -> Calc: calculateFinalBill(session)
+activate Calc
+Calc -> StdStrat: calculate(session, currentTotal=0)
+activate StdStrat
+StdStrat --> Calc: adultSubtotal (adultCount * packagePrice)
+deactivate StdStrat
+
+opt childCount > 0
+    Calc -> ChildStrat: calculate(session, adultSubtotal)
+    activate ChildStrat
+    ChildStrat --> Calc: childSubtotal (childCount * packagePrice * 0.5)
+    deactivate ChildStrat
+end
+
+opt active promo
+    Calc -> PromoStrat: calculate(session, subtotalWithChildren)
+    activate PromoStrat
+    PromoStrat --> Calc: finalNetTotal (- promoDiscount)
+    deactivate PromoStrat
+end
+
+Calc --> BS: BillSummaryDTO (adultTotal, childTotal, discount, grandTotal)
+deactivate Calc
+
+BS --> BC: BillSummaryDTO
+deactivate BS
+BC --> Staff: 200 OK (BillSummaryDTO)
+deactivate BC
+
+Staff --> Cust: Presents bill & net total amount
+deactivate Staff
+
+== 2. Customer Pays & Staff Records Payment ==
+Cust -> Staff: Chooses payment method (CASH / QR / CARD) & pays
+activate Staff
+
+Staff -> PC: POST /api/v1/payments\n(PaymentRequestDTO: sessionId, paymentMethod, amountPaid)
+activate PC
+PC -> PS: processPayment(sessionId, paymentRequestDTO)
+activate PS
+
+PS -> DSR: findById(sessionId)
+activate DSR
+DSR --> PS: DiningSession
+deactivate DSR
+
+create Payment
+PS -> Payment: new Payment(session, amountPaid, paymentMethod, PAID, now())
+PS -> PR: save(payment)
+activate PR
+PR --> PS: savedPayment
+deactivate PR
+
+PS -> Session: closeSession()
+activate Session
+Session -> Session: status = COMPLETED\nendTime = now()
+Session -> Session: invalidateToken()
+Session --> PS: void
+deactivate Session
+PS -> DSR: save(session)
+activate DSR
+DSR --> PS: savedSession
+deactivate DSR
+
+PS -> TR: findById(session.table.id)
+activate TR
+TR --> PS: RestaurantTable
+deactivate TR
+
+PS -> Table: makeAvailable()
+activate Table
+Table -> Table: status = AVAILABLE
+Table --> PS: void
+deactivate Table
+PS -> TR: save(table)
+activate TR
+TR --> PS: savedTable
+deactivate TR
+
+PS --> PC: PaymentReceiptDTO (paymentId, sessionId, tableNumber, method, amountPaid, paidAt)
+deactivate PS
+PC --> Staff: 201 Created (PaymentReceiptDTO)
+deactivate PC
+
+Staff --> Cust: Hand over receipt & thank customer
+deactivate Staff
+deactivate Cust
+
+@enduml
