@@ -11,7 +11,22 @@ export interface Order { orderId: number; sessionId: number; tableNumber: string
 export interface PageResult<T> { content: T[]; page: number; size: number; totalElements: number; totalPages: number }
 
 export { getApiError }
-export async function redeemQr(token: string) { return (await customerApiClient.post<SessionContext>('/dining-sessions/qr-exchange', { token })).data }
+const pendingQrExchanges = new Map<string, Promise<SessionContext>>()
+let previousQrExchange: Promise<unknown> = Promise.resolve()
+
+export function redeemQr(token: string): Promise<SessionContext> {
+  const pending = pendingQrExchanges.get(token)
+  if (pending) return pending
+
+  // A new scan must finish after the previous exchange so its cookie wins.
+  const exchange = previousQrExchange.catch(() => undefined).then(async () =>
+    (await customerApiClient.post<SessionContext>('/dining-sessions/qr-exchange', { token })).data)
+  pendingQrExchanges.set(token, exchange)
+  previousQrExchange = exchange.then(() => undefined, () => undefined)
+  const clear = () => { if (pendingQrExchanges.get(token) === exchange) pendingQrExchanges.delete(token) }
+  void exchange.then(clear, clear)
+  return exchange
+}
 export async function getCustomerContext() { return (await customerApiClient.get<SessionContext>('/dining-sessions/customer-context')).data }
 export async function getMenu(sessionId: number) { return (await customerApiClient.get<MenuItem[]>(`/dining-sessions/${sessionId}/menu`)).data }
 export async function getBuffetPackage(id: number) { return (await apiClient.get<BuffetPackage>(`/buffet-packages/${id}`)).data }

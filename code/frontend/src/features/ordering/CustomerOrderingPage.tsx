@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useLayoutEffect } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Card, ConfirmDialog, EmptyState, ErrorAlert, LoadingState, PageHeader, RefreshIcon, StatusBadge } from '../../components/common'
 import { getApiError, getBuffetPackage, getCustomerContext, getMenu, getOrders, placeOrder, redeemQr } from './api'
@@ -15,10 +14,15 @@ const orderStatusPresentation: Record<OrderStatus, { label: string; tone: Status
   SERVED: { label: 'เสิร์ฟแล้ว', tone: 'success' },
 }
 
+function tokenFromHash(hash: string) { return new URLSearchParams(hash.slice(1)).get('token') ?? '' }
+
 export default function CustomerOrderingPage() {
   const location = useLocation()
   const navigate = useNavigate()
-  const [qrToken] = useState(() => new URLSearchParams(location.hash.slice(1)).get('token') ?? '')
+  const [scan, setScan] = useState<{ id: number; token: string } | null>(() =>
+    location.hash ? { id: 0, token: tokenFromHash(location.hash) } : null)
+  const scanEpoch = useRef(0)
+  const processedHash = useRef(location.hash)
   const [session, setSession] = useState<SessionContext | null>(null)
   const [packageName, setPackageName] = useState('')
   const [menu, setMenu] = useState<MenuItem[]>([])
@@ -32,25 +36,38 @@ export default function CustomerOrderingPage() {
   const [notice, setNotice] = useState('')
 
   useLayoutEffect(() => {
+    if (!location.hash) { processedHash.current = ''; return }
+    if (processedHash.current !== location.hash) {
+      processedHash.current = location.hash
+      setScan({ id: ++scanEpoch.current, token: tokenFromHash(location.hash) })
+      setSession(null); setPackageName(''); setMenu([]); setOrders([]); setCart({})
+      setCategory('all'); setError(''); setNotice(''); setConfirming(false)
+      setSubmitting(false); setLoading(true)
+    }
+  }, [location.hash])
+
+  useEffect(() => {
     if (location.hash) navigate('/customer/qr', { replace: true })
   }, [location.hash, navigate])
 
   useEffect(() => {
     let active = true
-    const lookup = qrToken ? redeemQr(qrToken) : getCustomerContext()
+    const epoch = scanEpoch.current
+    const isCurrent = () => active && scanEpoch.current === epoch
+    const lookup = scan ? redeemQr(scan.token) : getCustomerContext()
     lookup
       .then(async (context) => {
         const [nextMenu, nextOrders, buffetPackage] = await Promise.all([
           getMenu(context.sessionId), getOrders(context.sessionId), getBuffetPackage(context.packageId),
         ])
-        if (active) {
+        if (isCurrent()) {
           setSession(context); setPackageName(buffetPackage.name); setMenu(nextMenu); setOrders(nextOrders); setError('')
         }
       })
-      .catch((cause) => { if (active) setError(getApiError(cause)) })
-      .finally(() => { if (active) setLoading(false) })
+      .catch((cause) => { if (isCurrent()) setError(getApiError(cause)) })
+      .finally(() => { if (isCurrent()) setLoading(false) })
     return () => { active = false }
-  }, [qrToken])
+  }, [scan])
 
   const visibleMenu = category === 'all' ? menu : menu.filter((item) => item.categoryId === category)
   const categories = useMemo(() => Array.from(new Map(menu.map((item) => [item.categoryId, { id: item.categoryId, name: item.categoryName }])).values()), [menu])
@@ -64,17 +81,26 @@ export default function CustomerOrderingPage() {
 
   async function submit() {
     if (submitting || count === 0) return
+    const epoch = scanEpoch.current
     setSubmitting(true); setError(''); setNotice('')
     try {
       if (!session) return
       const created = await placeOrder(session.sessionId, cartItems.map((item) => ({ menuItemId: item.id, quantity: item.quantity })))
-      setOrders((current) => [created, ...current]); setCart({}); setConfirming(false); setNotice(`ส่งคำสั่งซื้อ #${created.orderId} แล้ว`)
-    } catch (cause) { setError(getApiError(cause)); setConfirming(false) } finally { setSubmitting(false) }
+      if (scanEpoch.current === epoch) {
+        setOrders((current) => [created, ...current]); setCart({}); setConfirming(false); setNotice(`ส่งคำสั่งซื้อ #${created.orderId} แล้ว`)
+      }
+    } catch (cause) {
+      if (scanEpoch.current === epoch) { setError(getApiError(cause)); setConfirming(false) }
+    } finally { if (scanEpoch.current === epoch) setSubmitting(false) }
   }
 
   async function refreshOrders() {
     if (!session) return
-    try { setOrders(await getOrders(session.sessionId)); setError('') } catch (cause) { setError(getApiError(cause)) }
+    const epoch = scanEpoch.current
+    try {
+      const refreshed = await getOrders(session.sessionId)
+      if (scanEpoch.current === epoch) { setOrders(refreshed); setError('') }
+    } catch (cause) { if (scanEpoch.current === epoch) setError(getApiError(cause)) }
   }
 
   return <main className="ordering-page customer-page">
