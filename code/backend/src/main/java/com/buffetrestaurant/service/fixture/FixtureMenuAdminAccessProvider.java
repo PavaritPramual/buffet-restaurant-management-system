@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({"local", "test"})
+@Profile({"local", "test", "demo"})
 @ConditionalOnProperty(name = "app.menu.admin-access-provider", havingValue = "fixture")
 public class FixtureMenuAdminAccessProvider implements MenuAdminAccessProvider {
     @Override

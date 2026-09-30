@@ -105,6 +105,38 @@ order by installed_rank;
 ควรพบแถว `1 | baseline | true` ซึ่งยืนยันว่าเกิดตาราง `flyway_schema_history`
 โดยไม่ต้องมีตาราง business ใด ๆ ใน migration นี้
 
+### Authentication and stock demo
+
+สำหรับลองหน้า Admin โดยไม่ใช้ Supabase ให้รัน backend ด้วย H2 demo profile จาก `code/backend`:
+
+```bash
+mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=demo 
+```
+
+Profile นี้ใช้ Flyway migrations ชุด common/H2 และ seed ข้อมูลซ้ำได้เมื่อเริ่มระบบใหม่
+(account และ stock item ที่มีแล้วจะไม่ถูกสร้างซ้ำ; initial stock ถูกบันทึกเป็น transaction)
+บัญชี demo คือ `admin` / `admin123` ใช้กับ demo เท่านั้น ห้ามนำรหัสนี้ไปใช้กับระบบจริง
+จากนั้นเปิด frontend และเข้า `http://localhost:5173/admin/stock` หรือ `/admin/users`.
+
+API login ใช้ HTTP session cookie: `POST /api/v1/auth/login`, `GET /api/v1/auth/me`
+และ `POST /api/v1/auth/logout` ส่วน stock ใช้ `GET /api/v1/stock`,
+`POST /api/v1/stock/{id}/in`, `POST /api/v1/stock/{id}/adjustments` และ
+`GET /api/v1/stock/transactions`. ทุก movement บันทึก actor, reason, delta และ balance หลังทำรายการ
+ใน `stock_transactions`.
+
+Migration review: `V6__create_user_and_stock_tables.sql` เป็น schema กลางที่ทดสอบบน H2;
+`V7__restrict_flyway_and_stock_access.sql` ใช้เฉพาะ PostgreSQL เปิด RLS ให้ backend datasource role
+และ revoke privileges ของ `PUBLIC`, `anon`, `authenticated` จาก `flyway_schema_history`
+และตาราง auth/stock. V1–V5 เป็น migration ของ baseline/Table/Package/Menu/Order เดิมและไม่ถูกแก้ไข
+ในการเปลี่ยนแปลงนี้ ขอให้ปวริศช์ตรวจ V7 ก่อนนำไปรันกับ shared Supabase; PostgreSQL migration
+นี้ไม่ได้ถูกรันใน automated tests ซึ่งตั้งใจแยกจาก Supabase กลาง.
+
+สำหรับฐาน production ที่ยังไม่มี account ให้ provision manager แรกโดยตั้ง
+`BOOTSTRAP_ADMIN_ENABLED=true`, `BOOTSTRAP_ADMIN_USERNAME` และ `BOOTSTRAP_ADMIN_PASSWORD`
+(อย่างน้อย 8 ตัวอักษร) พร้อม `BOOTSTRAP_ADMIN_DISPLAY_NAME`/`BOOTSTRAP_ADMIN_EMAIL` ตามต้องการ
+runner จะทำงานเฉพาะเมื่อ `app_users` ยังว่าง ใช้ BCrypt ผ่าน `AuthService` และไม่สร้างซ้ำ
+เมื่อมีผู้ใช้แล้ว ปิด `BOOTSTRAP_ADMIN_ENABLED` หลัง bootstrap.
+
 ## System Design
 
 เอกสารแบบออกแบบที่ย้ายจาก Notion อยู่ที่ [doc/system-design/README.md](doc/system-design/README.md) พร้อม [PlantUML ที่แก้ไขได้](doc/diagrams/README.md) และ [Data Dictionary](doc/database/data-dictionary-design.md) โปรดดูสถานะเทียบกับโค้ดในหน้า System Design ก่อนใช้เป็นหลักฐาน implementation
@@ -157,8 +189,8 @@ Compose อ่าน `code/backend/.env` ถ้ามี และส่งค�
 ใช้ `.env.example` เป็นตัวอย่าง ห้าม commit `.env` หรือใส่ secrets ใน Dockerfile
 ห้ามใส่ secrets ในตัวแปร `VITE_*` เพราะเป็นค่าฝั่ง frontend
 
-Backend foundation ปัจจุบันยังไม่มี datasource configuration
-เมื่อรวม persistence baseline แล้ว ต้องกำหนดค่า Supabase ตามที่ baseline ต้องการ
+Backend ปกติใช้ Supabase datasource จาก `.env`; `demo` profile ใช้ H2 ในเครื่องและไม่ต้องตั้งค่า Supabase
+สำหรับ automated tests ใช้ H2 จาก `src/test/resources/application.yml`.
 
 ### Verify CORS
 
