@@ -2,6 +2,7 @@ package com.buffetrestaurant.exception;
 
 import com.buffetrestaurant.dto.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,6 +25,25 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
         return build(HttpStatus.BAD_REQUEST, message, request.getRequestURI());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(
+            ConstraintViolationException exception,
+            HttpServletRequest request
+    ) {
+        String message = exception.getConstraintViolations().stream()
+                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
+                .collect(Collectors.joining(", "));
+        return build(HttpStatus.BAD_REQUEST, message, request.getRequestURI());
+    }
+
+    @ExceptionHandler(StockRuleViolationException.class)
+    public ResponseEntity<ErrorResponse> handleStockRuleViolation(
+            StockRuleViolationException exception,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.BAD_REQUEST, exception.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -58,6 +78,22 @@ public class GlobalExceptionHandler {
     ) {
         return build(HttpStatus.UNAUTHORIZED, exception.getMessage(), request.getRequestURI());
     }
+
+        @ExceptionHandler(AuthenticationRequiredException.class)
+        public ResponseEntity<ErrorResponse> handleAuthenticationRequired(
+                        AuthenticationRequiredException exception,
+                        HttpServletRequest request
+        ) {
+                return build(HttpStatus.UNAUTHORIZED, exception.getMessage(), request.getRequestURI());
+        }
+
+        @ExceptionHandler(RoleAccessDeniedException.class)
+        public ResponseEntity<ErrorResponse> handleRoleAccessDenied(
+                        RoleAccessDeniedException exception,
+                        HttpServletRequest request
+        ) {
+                return build(HttpStatus.FORBIDDEN, exception.getMessage(), request.getRequestURI());
+        }
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateResource(

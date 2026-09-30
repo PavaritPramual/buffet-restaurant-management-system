@@ -15,10 +15,6 @@ public class StockAdjustmentProcessor extends StockTransactionTemplate {
     }
 
     @Override
-    protected void validateQuantity(BigDecimal quantity) {
-    }
-
-    @Override
     protected BigDecimal calculateDelta(BigDecimal quantity) { return quantity; }
 
     @Override

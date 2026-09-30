@@ -8,7 +8,11 @@ import com.buffetrestaurant.dto.response.UserResponse;
 import com.buffetrestaurant.exception.InvalidCredentialsException;
 import com.buffetrestaurant.repository.UserAccountRepository;
 import com.buffetrestaurant.repository.UserProfileRepository;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import java.util.List;
+import java.util.Set;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +22,14 @@ public class AuthService {
     private final UserAccountRepository users;
     private final UserProfileRepository profiles;
     private final PasswordEncoder passwordEncoder;
+    private final Validator validator;
 
-    public AuthService(UserAccountRepository users, UserProfileRepository profiles, PasswordEncoder passwordEncoder) {
+    public AuthService(UserAccountRepository users, UserProfileRepository profiles, PasswordEncoder passwordEncoder,
+            Validator validator) {
         this.users = users;
         this.profiles = profiles;
         this.passwordEncoder = passwordEncoder;
+        this.validator = validator;
     }
 
     @Transactional(readOnly = true)
@@ -37,6 +44,8 @@ public class AuthService {
 
     @Transactional
     public UserResponse createUser(CreateUserRequest request) {
+        Set<ConstraintViolation<CreateUserRequest>> violations = validator.validate(request);
+        if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
         UserAccount user = users.save(new UserAccount(request.username(),
                 passwordEncoder.encode(request.password()), request.role()));
         UserProfile profile = profiles.save(new UserProfile(user, request.displayName(), request.email()));

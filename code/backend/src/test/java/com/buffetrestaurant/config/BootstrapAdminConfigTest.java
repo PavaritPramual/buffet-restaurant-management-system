@@ -1,6 +1,5 @@
 package com.buffetrestaurant.config;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -31,14 +30,16 @@ class BootstrapAdminConfigTest {
     }
 
     @Test
-    void doesNothingAfterUsersExistAndRejectsInvalidFirstCredentials() throws Exception {
+    void doesNothingAfterUsersExistAndDelegatesCredentialValidationToAuthService() throws Exception {
         when(users.count()).thenReturn(1L);
         config.bootstrapInitialManager(users, authService, "first-manager", "initial-secret",
                 "Restaurant Manager", "").run(new DefaultApplicationArguments());
         verify(authService, never()).createUser(any(CreateUserRequest.class));
 
         when(users.count()).thenReturn(0L);
-        assertThrows(IllegalStateException.class, () -> config.bootstrapInitialManager(users, authService,
-                "first-manager", "short", "Restaurant Manager", "").run(new DefaultApplicationArguments()));
+        config.bootstrapInitialManager(users, authService, "first-manager", "short",
+                "Restaurant Manager", "").run(new DefaultApplicationArguments());
+        verify(authService).createUser(new CreateUserRequest("first-manager", "short",
+                "Restaurant Manager", "", UserRole.MANAGER));
     }
 }

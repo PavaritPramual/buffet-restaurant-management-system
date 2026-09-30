@@ -27,6 +27,7 @@ public class AuthController {
         UserContext context = authService.authenticate(request.username(), request.password());
         HttpSession session = servletRequest.getSession(true);
         session.setAttribute(USER_CONTEXT_SESSION_KEY, context);
+        servletRequest.changeSessionId();
         return ResponseEntity.ok(context);
     }
 

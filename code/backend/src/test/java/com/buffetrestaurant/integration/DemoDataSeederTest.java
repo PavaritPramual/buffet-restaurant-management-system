@@ -48,7 +48,7 @@ class DemoDataSeederTest {
         assertThat(passwordEncoder.matches("admin123", users.findByUsername("admin").orElseThrow().getPasswordHash()))
                 .isTrue();
         assertThat(jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM stock_transactions WHERE reason = 'Initial demo stock' AND actor_user_id = (SELECT id FROM app_users WHERE username = 'admin')",
+            "SELECT COUNT(*) FROM stock_transactions WHERE reason = 'สต็อกตั้งต้นสำหรับทดลอง' AND actor_user_id = (SELECT id FROM app_users WHERE username = 'admin')",
                 Integer.class)).isEqualTo(3);
     }
 

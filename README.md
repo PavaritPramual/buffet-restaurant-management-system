@@ -124,12 +124,19 @@ API login ใช้ HTTP session cookie: `POST /api/v1/auth/login`, `GET /api/v1
 `GET /api/v1/stock/transactions`. ทุก movement บันทึก actor, reason, delta และ balance หลังทำรายการ
 ใน `stock_transactions`.
 
-Migration review: `V6__create_user_and_stock_tables.sql` เป็น schema กลางที่ทดสอบบน H2;
-`V7__restrict_flyway_and_stock_access.sql` ใช้เฉพาะ PostgreSQL เปิด RLS ให้ backend datasource role
+Migration review: `V10__create_user_and_stock_tables.sql` เป็น schema กลางที่ทดสอบบน H2;
+`V11__restrict_flyway_and_stock_access.sql` ใช้เฉพาะ PostgreSQL เปิด RLS ให้ backend datasource role
 และ revoke privileges ของ `PUBLIC`, `anon`, `authenticated` จาก `flyway_schema_history`
-และตาราง auth/stock. V1–V5 เป็น migration ของ baseline/Table/Package/Menu/Order เดิมและไม่ถูกแก้ไข
-ในการเปลี่ยนแปลงนี้ ขอให้ปวริศช์ตรวจ V7 ก่อนนำไปรันกับ shared Supabase; PostgreSQL migration
-นี้ไม่ได้ถูกรันใน automated tests ซึ่งตั้งใจแยกจาก Supabase กลาง.
+และตาราง auth/stock. ใช้เลข V10/V11 เพื่อเว้น V6–V9 ที่ develop ใช้แล้ว; migration ที่มีอยู่เดิม
+ไม่ถูกแก้ย้อนหลัง. H2 ตรวจการ migrate จาก V1 ถึง V10 เท่าที่มีใน branch นี้ ส่วน V11 และ concurrent stock
+มี PostgreSQL Testcontainers tests ซึ่งต้องใช้ Docker. ก่อน merge ต้อง sync develop แล้วรัน migration
+ตั้งแต่ V1 ถึง V11 รวม V6–V9 ของ develop; ขอให้ปวริศช์ review V11 และ schema delta ใน
+[auth-stock schema delta](doc/database/auth-stock-schema-delta.md) ก่อนใช้กับ shared Supabase.
+
+Role flow: ทุก stock read ต้อง login; `MANAGER` และ `SUPERVISOR` ทำ stock-in/adjustment ได้;
+`MANAGER` เท่านั้นที่อ่าน/สร้าง users และแก้ menu catalog. Login เปลี่ยน session ID หลังยืนยันตัวตน.
+DiningSession/Ordering/Fulfillment ยังใช้ provider ของเจ้าของ feature และไม่ได้เชื่อมกับ Auth session ใน PR นี้;
+QR, Staff Tables และ Kitchen/Serving routes เดิมไม่ควรถูกเปลี่ยนจาก feature นี้.
 
 สำหรับฐาน production ที่ยังไม่มี account ให้ provision manager แรกโดยตั้ง
 `BOOTSTRAP_ADMIN_ENABLED=true`, `BOOTSTRAP_ADMIN_USERNAME` และ `BOOTSTRAP_ADMIN_PASSWORD`

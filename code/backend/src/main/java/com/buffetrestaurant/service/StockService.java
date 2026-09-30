@@ -8,13 +8,16 @@ import com.buffetrestaurant.dto.response.StockItemResponse;
 import com.buffetrestaurant.dto.response.StockTransactionResponse;
 import com.buffetrestaurant.dto.response.UserContext;
 import com.buffetrestaurant.exception.ResourceNotFoundException;
+import jakarta.validation.Valid;
 import com.buffetrestaurant.repository.StockItemRepository;
 import com.buffetrestaurant.repository.StockTransactionRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Service
+@Validated
 public class StockService {
     private final StockItemRepository items;
     private final StockTransactionRepository transactions;
@@ -35,13 +38,13 @@ public class StockService {
     }
 
     @Transactional
-    public StockTransactionResponse stockIn(Long itemId, StockInRequest request, UserContext actor) {
+    public StockTransactionResponse stockIn(Long itemId, @Valid StockInRequest request, UserContext actor) {
         return StockTransactionResponse.from(stockInProcessor.process(findItem(itemId), request.quantity(),
                 request.reason(), actor));
     }
 
     @Transactional
-    public StockTransactionResponse adjust(Long itemId, StockAdjustmentRequest request, UserContext actor) {
+    public StockTransactionResponse adjust(Long itemId, @Valid StockAdjustmentRequest request, UserContext actor) {
         return StockTransactionResponse.from(adjustmentProcessor.process(findItem(itemId), request.quantityDelta(),
                 request.reason(), actor));
     }
@@ -55,6 +58,7 @@ public class StockService {
     }
 
     private StockItem findItem(Long itemId) {
-        return items.findById(itemId).orElseThrow(() -> new ResourceNotFoundException("Stock item not found: " + itemId));
+        return items.findByIdForUpdate(itemId)
+                .orElseThrow(() -> new ResourceNotFoundException("Stock item not found: " + itemId));
     }
 }

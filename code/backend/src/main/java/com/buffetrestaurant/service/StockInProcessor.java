@@ -15,13 +15,6 @@ public class StockInProcessor extends StockTransactionTemplate {
     }
 
     @Override
-    protected void validateQuantity(BigDecimal quantity) {
-        if (quantity.signum() < 0) {
-            throw new IllegalStateException("Stock-in quantity must be positive");
-        }
-    }
-
-    @Override
     protected BigDecimal calculateDelta(BigDecimal quantity) { return quantity; }
 
     @Override

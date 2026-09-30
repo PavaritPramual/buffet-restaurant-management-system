@@ -2,6 +2,13 @@ import { apiClient } from '../../api/client'
 
 export type UserRole = 'SERVICE_STAFF' | 'KITCHEN_STAFF' | 'SUPERVISOR' | 'MANAGER'
 
+export const roleLabels: Record<UserRole, string> = {
+  SERVICE_STAFF: 'พนักงานบริการ',
+  KITCHEN_STAFF: 'พนักงานครัว',
+  SUPERVISOR: 'หัวหน้างาน',
+  MANAGER: 'ผู้จัดการ',
+}
+
 export type UserContext = {
   userId: number
   username: string

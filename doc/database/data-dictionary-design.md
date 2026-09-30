@@ -4,6 +4,8 @@
 
 เอกสารนี้อธิบาย **แบบออกแบบ** ของ 14 ตาราง รวมถึงตารางที่ยังไม่ได้สร้างใน `develop` ส่วน SQL DDL รวมก้อนใน Notion เป็น reference เท่านั้น การเปลี่ยนฐานข้อมูลจริงต้องใช้ Flyway migration ตามลำดับใน [backend](https://github.com/PavaritPramual/buffet-restaurant-management-system/tree/develop/code/backend/src/main/resources/db/migration) ตรวจ [schema delta](menu-ordering-schema-delta.md) เมื่อเทียบ Menu/Ordering กับแบบออกแบบ
 
+Authentication/Stock implementation ใช้ schema ต่างจากตาราง `users`, profile และ stock ในแบบออกแบบ รายละเอียดอยู่ใน [Auth/Stock schema delta](auth-stock-schema-delta.md); สถานะการอนุมัติจาก feature owners ยังต้องยืนยันก่อน merge.
+
 เอกสารพจนานุกรมข้อมูล (Data Dictionary) และโค้ดสำหรับสร้างฐานข้อมูล (SQL DDL Migration Script) ครบทั้ง 14 ตาราง
 ---
 ## 1. Data Dictionary (พจนานุกรมข้อมูลรายตาราง)

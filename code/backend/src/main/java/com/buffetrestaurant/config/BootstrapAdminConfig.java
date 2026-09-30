@@ -27,10 +27,6 @@ public class BootstrapAdminConfig {
     ) {
         return args -> {
             if (users.count() > 0) return;
-            if (username.isBlank() || password.length() < 8 || displayName.isBlank()) {
-                throw new IllegalStateException(
-                        "Bootstrap admin requires a username, display name, and password of at least 8 characters");
-            }
             authService.createUser(new CreateUserRequest(username, password, displayName, email, UserRole.MANAGER));
         };
     }

@@ -26,9 +26,9 @@ class MenuOrderingMigrationTest {
                 .load();
         latest.migrate();
 
-        assertThat(latest.info().current().getVersion().getVersion()).isEqualTo("6");
+        assertThat(latest.info().current().getVersion().getVersion()).isEqualTo("10");
         assertThat(latest.info().applied())
                 .extracting(migration -> migration.getVersion().getVersion())
-                .contains("4", "6");
+                .contains("4", "10");
     }
 }

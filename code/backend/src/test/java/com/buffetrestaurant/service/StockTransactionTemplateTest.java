@@ -1,6 +1,7 @@
 package com.buffetrestaurant.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -12,14 +13,20 @@ import com.buffetrestaurant.domain.StockTransaction;
 import com.buffetrestaurant.domain.UserAccount;
 import com.buffetrestaurant.domain.enums.StockTransactionType;
 import com.buffetrestaurant.domain.enums.UserRole;
+import com.buffetrestaurant.dto.request.StockAdjustmentRequest;
+import com.buffetrestaurant.dto.request.StockInRequest;
 import com.buffetrestaurant.dto.response.UserContext;
+import com.buffetrestaurant.exception.StockRuleViolationException;
 import com.buffetrestaurant.repository.StockItemRepository;
 import com.buffetrestaurant.repository.StockTransactionRepository;
 import com.buffetrestaurant.repository.UserAccountRepository;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 
 class StockTransactionTemplateTest {
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final StockItemRepository items = mock(StockItemRepository.class);
     private final StockTransactionRepository transactions = mock(StockTransactionRepository.class);
     private final UserAccountRepository users = mock(UserAccountRepository.class);
@@ -53,16 +60,17 @@ class StockTransactionTemplateTest {
         assertEquals(new BigDecimal("3.000"), item.getQuantity());
         assertEquals(StockTransactionType.ADJUSTMENT, transaction.getTransactionType());
 
-        assertThrows(IllegalStateException.class, () -> adjustment.process(item,
+        assertThrows(StockRuleViolationException.class, () -> adjustment.process(item,
                 new BigDecimal("-4.000"), "Count correction", actor));
     }
 
     @Test
-    void rejectsZeroQuantityAndBlankReason() {
-        assertThrows(IllegalStateException.class, () -> adjustment.process(item, BigDecimal.ZERO, "Count", actor));
-        assertThrows(IllegalStateException.class, () -> stockIn.process(item,
-                BigDecimal.ONE, "  ", actor));
-        assertThrows(IllegalStateException.class, () -> stockIn.process(item,
-                new BigDecimal("-1"), "Invalid receipt", actor));
+        void requestDtosRejectInvalidQuantityPrecisionAndReason() {
+        assertFalse(validator.validate(new StockInRequest(BigDecimal.ZERO, "delivery")).isEmpty());
+        assertFalse(validator.validate(new StockInRequest(new BigDecimal("1.0001"), "delivery")).isEmpty());
+        assertFalse(validator.validate(new StockInRequest(BigDecimal.ONE, "  ")).isEmpty());
+        assertFalse(validator.validate(new StockAdjustmentRequest(BigDecimal.ZERO, "count")).isEmpty());
+        assertFalse(validator.validate(new StockAdjustmentRequest(new BigDecimal("-1000000000"), "count")).isEmpty());
+        assertFalse(validator.validate(new StockAdjustmentRequest(BigDecimal.ONE, "\t ")).isEmpty());
     }
 }

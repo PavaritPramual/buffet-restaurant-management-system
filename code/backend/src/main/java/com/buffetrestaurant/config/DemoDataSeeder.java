@@ -23,26 +23,26 @@ import org.springframework.context.annotation.Profile;
 @ConditionalOnProperty(name = "app.seed.enabled", havingValue = "true")
 public class DemoDataSeeder {
     @Bean
-        ApplicationRunner seedDemoData(UserAccountRepository users, StockItemRepository stockItems,
+    ApplicationRunner seedDemoData(UserAccountRepository users, StockItemRepository stockItems,
             AuthService authService, StockService stockService) {
         return args -> {
             if (users.findByUsername("admin").isEmpty()) {
-            authService.createUser(new CreateUserRequest("admin", "admin123", "Demo Manager",
-                "admin@example.test", UserRole.MANAGER));
+                authService.createUser(new CreateUserRequest("admin", "admin123", "ผู้จัดการตัวอย่าง",
+                        "admin@example.test", UserRole.MANAGER));
             }
             UserAccount user = users.findByUsername("admin").orElseThrow();
 
             List<StockItem> seededItems = List.of(
-                    new StockItem("ING-001", "Jasmine rice", "kg", BigDecimal.ZERO, new BigDecimal("8.000")),
-                    new StockItem("ING-002", "Fresh milk", "L", BigDecimal.ZERO, new BigDecimal("5.000")),
-                    new StockItem("ING-003", "Pork shoulder", "kg", BigDecimal.ZERO, new BigDecimal("4.000"))
+                    new StockItem("ING-001", "ข้าวหอมมะลิ", "กก.", BigDecimal.ZERO, new BigDecimal("8.000")),
+                    new StockItem("ING-002", "นมสด", "ลิตร", BigDecimal.ZERO, new BigDecimal("5.000")),
+                    new StockItem("ING-003", "สันคอหมู", "กก.", BigDecimal.ZERO, new BigDecimal("4.000"))
             );
-            UserContext context = new UserContext(user.getId(), user.getUsername(), "Demo Manager", user.getRole());
+            UserContext context = new UserContext(user.getId(), user.getUsername(), "ผู้จัดการตัวอย่าง", user.getRole());
             for (StockItem seed : seededItems) {
                 if (stockItems.findBySku(seed.getSku()).isEmpty()) {
                     StockItem saved = stockItems.save(seed);
                     stockService.stockIn(saved.getId(), new StockInRequest(new BigDecimal("20.000"),
-                            "Initial demo stock"), context);
+                            "สต็อกตั้งต้นสำหรับทดลอง"), context);
                 }
             }
         };
