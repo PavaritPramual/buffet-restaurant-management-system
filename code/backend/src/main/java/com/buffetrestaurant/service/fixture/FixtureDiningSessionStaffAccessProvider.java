@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({"local", "test"})
+@Profile({"local", "test", "demo"})
 @ConditionalOnProperty(name = "app.dining-session.staff-access-provider", havingValue = "fixture")
 public class FixtureDiningSessionStaffAccessProvider implements DiningSessionStaffAccessProvider {
     @Override

@@ -5,10 +5,10 @@ import StockPage from './features/admin/StockPage'
 import UsersPage from './features/admin/UsersPage'
 import CustomerOrderingPage from './features/ordering/CustomerOrderingPage'
 import MenuAdminPage from './features/ordering/MenuAdminPage'
-import StaffTablesPage from './features/staff/StaffTablesPage'
-import DiningSessionPage from './features/staff/DiningSessionPage'
-import KitchenBoardPage from './features/kitchen/KitchenBoardPage'
-import StaffServingPage from './features/staff/StaffServingPage'
+import StaffTablesPage from './features/staff-tables/StaffTablesPage'
+import DiningSessionPage from './features/staff-tables/DiningSessionPage'
+import KitchenBoardPage from './features/fulfillment/KitchenBoardPage'
+import StaffServingPage from './features/fulfillment/StaffServingPage'
 
 export default function FoundationApp() {
   return <Routes>

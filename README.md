@@ -127,13 +127,16 @@ API login ใช้ HTTP session cookie: `POST /api/v1/auth/login`, `GET /api/v1
 Migration review: `V10__create_user_and_stock_tables.sql` เป็น schema กลางที่ทดสอบบน H2;
 `V11__restrict_flyway_and_stock_access.sql` ใช้เฉพาะ PostgreSQL เปิด RLS ให้ backend datasource role
 และ revoke privileges ของ `PUBLIC`, `anon`, `authenticated` จาก `flyway_schema_history`
-และตาราง auth/stock. ใช้เลข V10/V11 เพื่อเว้น V6–V9 ที่ develop ใช้แล้ว; migration ที่มีอยู่เดิม
-ไม่ถูกแก้ย้อนหลัง. H2 ตรวจการ migrate จาก V1 ถึง V10 เท่าที่มีใน branch นี้ ส่วน V11 และ concurrent stock
-มี PostgreSQL Testcontainers tests ซึ่งต้องใช้ Docker. ก่อน merge ต้อง sync develop แล้วรัน migration
-ตั้งแต่ V1 ถึง V11 รวม V6–V9 ของ develop; ขอให้ปวริศช์ review V11 และ schema delta ใน
-[auth-stock schema delta](doc/database/auth-stock-schema-delta.md) ก่อนใช้กับ shared Supabase.
+และตาราง auth/stock. V6–V8 มีอยู่ใน migration history ปัจจุบัน ส่วน Payment V9 ยังไม่มีใน checkout นี้
+และห้ามระบุว่าอยู่ใน develop แล้ว. เนื่องจาก Flyway ใช้ `outOfOrder=false` ต้องตกลงกับ Payment owner
+ให้นำ V9 ขึ้นก่อน V10/V11 หรือกำหนดเลขใหม่ก่อน apply migration ใด ๆ ลงฐานกลาง; หากใช้ V10/V11 ก่อน
+V9 ที่เพิ่มภายหลังจะไม่ถูกรันตามลำดับปกติ. H2 integration run ยืนยัน migration V1–V8 และ V10;
+V11 และ concurrent stock มี PostgreSQL Testcontainers tests ซึ่งต้องใช้ Docker. ก่อนใช้ shared Supabase
+ให้ปวริศช์ review V11 และ schema delta ใน [auth-stock schema delta](doc/database/auth-stock-schema-delta.md)
+รวมถึงอนุมัติการเลื่อน `opening_target_stock` และ active/inactive lifecycle หรือกำหนดงาน follow-up
+ให้ตรงกับแบบ; จนกว่าจะตกลงกัน ห้ามถือว่า Stock schema ครบตาม design baseline.
 
-Role flow: ทุก stock read ต้อง login; `MANAGER` และ `SUPERVISOR` ทำ stock-in/adjustment ได้;
+Role flow: ทุก stock read จำกัดเฉพาะ `MANAGER` และ `SUPERVISOR`; roles นี้ทำ stock-in/adjustment ได้ด้วย;
 `MANAGER` เท่านั้นที่อ่าน/สร้าง users และแก้ menu catalog. Login เปลี่ยน session ID หลังยืนยันตัวตน.
 DiningSession/Ordering/Fulfillment ยังใช้ provider ของเจ้าของ feature และไม่ได้เชื่อมกับ Auth session ใน PR นี้;
 QR, Staff Tables และ Kitchen/Serving routes เดิมไม่ควรถูกเปลี่ยนจาก feature นี้.

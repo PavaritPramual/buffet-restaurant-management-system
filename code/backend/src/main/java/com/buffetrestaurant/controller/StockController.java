@@ -33,7 +33,7 @@ public class StockController {
 
     @GetMapping
     public List<StockItemResponse> overview(HttpServletRequest request) {
-        users.requireAuthenticated(request);
+        users.requireAnyRole(request, UserRole.MANAGER, UserRole.SUPERVISOR);
         return stockService.overview();
     }
 
@@ -54,7 +54,7 @@ public class StockController {
     @GetMapping("/transactions")
     public List<StockTransactionResponse> history(
             @RequestParam(name = "itemId", required = false) Long itemId, HttpServletRequest request) {
-        users.requireAuthenticated(request);
+        users.requireAnyRole(request, UserRole.MANAGER, UserRole.SUPERVISOR);
         return stockService.history(itemId);
     }
 }

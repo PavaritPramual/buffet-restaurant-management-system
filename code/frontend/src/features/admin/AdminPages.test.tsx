@@ -25,7 +25,6 @@ const history: StockTransaction[] = [{
   balanceAfter: 12, reason: 'รับจากผู้ขาย', actorUsername: 'manager', createdAt: '2026-09-30T10:00:00Z',
 }]
 const manager: UserContext = { userId: 1, username: 'manager', displayName: 'ผู้จัดการ', role: 'MANAGER' }
-const staff: UserContext = { userId: 2, username: 'staff', displayName: 'พนักงาน', role: 'SERVICE_STAFF' }
 const account: UserRecord = { id: 2, username: 'staff', displayName: 'พนักงานบริการ', email: null, role: 'SERVICE_STAFF' }
 
 afterEach(() => { cleanup(); vi.clearAllMocks() })
@@ -55,17 +54,6 @@ describe('Admin stock and user pages', () => {
     fireEvent.click(screen.getByRole('button', { name: 'บันทึกรายการ' }))
 
     await waitFor(() => expect(stockApi.stockIn).toHaveBeenCalledWith(4, '2.5', 'รับจากผู้ขาย'))
-  })
-
-  it('keeps stock read-only for service staff', async () => {
-    vi.mocked(stockApi.overview).mockResolvedValue([item])
-    vi.mocked(stockApi.history).mockResolvedValue(history)
-
-    renderInShell(<StockPage />, staff)
-
-    expect(await screen.findAllByText('ข้าวหอมมะลิ')).toHaveLength(2)
-    expect(screen.queryByRole('button', { name: 'รับเข้า' })).toBeNull()
-    expect(screen.queryByRole('button', { name: 'ปรับยอด' })).toBeNull()
   })
 
   it('renders the user list and offers account creation to the manager page', async () => {

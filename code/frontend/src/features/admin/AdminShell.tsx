@@ -13,6 +13,8 @@ export default function AdminShell() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [logoutError, setLogoutError] = useState('')
+  const [loggingOut, setLoggingOut] = useState(false)
 
   useEffect(() => {
     authApi.current()
@@ -36,8 +38,16 @@ export default function AdminShell() {
   }
 
   async function handleLogout() {
-    await authApi.logout().catch(() => undefined)
-    setUser(null)
+    setLoggingOut(true)
+    setLogoutError('')
+    try {
+      await authApi.logout()
+      setUser(null)
+    } catch (requestError) {
+      setLogoutError(getErrorMessage(requestError))
+    } finally {
+      setLoggingOut(false)
+    }
   }
 
   if (checking) return <div className="admin-loading">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
@@ -58,6 +68,9 @@ export default function AdminShell() {
     </main>
   }
 
+  if (user.role === 'SERVICE_STAFF') return <Navigate to="/staff/tables" replace />
+  if (user.role === 'KITCHEN_STAFF') return <Navigate to="/kitchen" replace />
+
   if (user.role !== 'MANAGER' && ['/admin/users', '/admin/menu'].includes(location.pathname)) {
     return <Navigate to="/admin/stock" replace />
   }
@@ -67,14 +80,15 @@ export default function AdminShell() {
       <div className="admin-brand"><span className="admin-brand-mark">BR</span><span>BUFFET<br /><b>ระบบจัดการร้าน</b></span></div>
       <p className="admin-eyebrow">เมนูหลัก</p>
       <nav className="admin-nav" aria-label="เมนูผู้ดูแล">
-        <NavLink to="/admin/stock">สต็อก</NavLink>
+        {(user.role === 'MANAGER' || user.role === 'SUPERVISOR') && <NavLink to="/admin/stock">สต็อก</NavLink>}
         {user.role === 'MANAGER' && <NavLink to="/admin/users">พนักงาน</NavLink>}
         {user.role === 'MANAGER' && <NavLink to="/admin/menu">เมนูอาหาร</NavLink>}
       </nav>
+      {logoutError && <p className="admin-error" role="alert">ออกจากระบบไม่สำเร็จ: {logoutError}</p>}
       <div className="admin-sidebar-user">
         <div className="admin-avatar">{user.displayName.slice(0, 1).toUpperCase()}</div>
         <div><strong>{user.displayName}</strong><span>{roleLabels[user.role]}</span></div>
-        <button className="admin-logout" title="ออกจากระบบ" aria-label="ออกจากระบบ" onClick={handleLogout}>↗</button>
+        <button className="admin-logout" title="ออกจากระบบ" aria-label="ออกจากระบบ" disabled={loggingOut} onClick={handleLogout}>↗</button>
       </div>
     </aside>
     <main className="admin-main">

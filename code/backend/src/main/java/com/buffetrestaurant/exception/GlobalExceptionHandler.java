@@ -88,17 +88,17 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.UNAUTHORIZED, exception.getMessage(), request.getRequestURI());
     }
 
-    @ExceptionHandler(AuthenticationRequiredException.class)
+    @ExceptionHandler({AuthenticationRequiredException.class, UnauthorizedException.class})
     public ResponseEntity<ErrorResponse> handleAuthenticationRequired(
-            AuthenticationRequiredException exception,
+            RuntimeException exception,
             HttpServletRequest request
     ) {
         return build(HttpStatus.UNAUTHORIZED, exception.getMessage(), request.getRequestURI());
     }
 
-    @ExceptionHandler(RoleAccessDeniedException.class)
+    @ExceptionHandler({RoleAccessDeniedException.class, ForbiddenException.class})
     public ResponseEntity<ErrorResponse> handleRoleAccessDenied(
-            RoleAccessDeniedException exception,
+            RuntimeException exception,
             HttpServletRequest request
     ) {
         return build(HttpStatus.FORBIDDEN, exception.getMessage(), request.getRequestURI());

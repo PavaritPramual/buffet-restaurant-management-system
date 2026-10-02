@@ -85,7 +85,8 @@ class AuthStockIntegrationTest {
     @Test
     void appliesRoleMatrixToUsersStockAndMenuMutations() throws Exception {
         MockHttpSession staff = login("staff");
-        mockMvc.perform(get("/api/v1/stock").session(staff)).andExpect(status().isOk());
+                mockMvc.perform(get("/api/v1/stock").session(staff)).andExpect(status().isForbidden());
+                mockMvc.perform(get("/api/v1/stock/transactions").session(staff)).andExpect(status().isForbidden());
         mockMvc.perform(get("/api/v1/admin/users").session(staff)).andExpect(status().isForbidden());
         mockMvc.perform(post("/api/v1/admin/users").session(staff).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"username\":\"blocked\",\"password\":\"password123\",\"displayName\":\"Blocked\",\"role\":\"MANAGER\"}"))
@@ -98,12 +99,15 @@ class AuthStockIntegrationTest {
                 .andExpect(status().isForbidden());
 
         MockHttpSession kitchen = login("kitchen");
-        mockMvc.perform(get("/api/v1/stock").session(kitchen)).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/stock").session(kitchen)).andExpect(status().isForbidden());
+        mockMvc.perform(get("/api/v1/stock/transactions").session(kitchen)).andExpect(status().isForbidden());
         mockMvc.perform(post("/api/v1/stock/" + stockItem.getId() + "/adjustments").session(kitchen)
                 .contentType(MediaType.APPLICATION_JSON).content("{\"quantityDelta\":-1,\"reason\":\"count\"}"))
                 .andExpect(status().isForbidden());
 
         MockHttpSession supervisor = login("supervisor");
+        mockMvc.perform(get("/api/v1/stock").session(supervisor)).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/stock/transactions").session(supervisor)).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/admin/users").session(supervisor)).andExpect(status().isForbidden());
         mockMvc.perform(post("/api/v1/stock/" + stockItem.getId() + "/in").session(supervisor)
                 .contentType(MediaType.APPLICATION_JSON).content("{\"quantity\":1,\"reason\":\"delivery\"}"))
@@ -113,6 +117,8 @@ class AuthStockIntegrationTest {
                 .andExpect(status().isOk());
 
         MockHttpSession manager = login("manager");
+        mockMvc.perform(get("/api/v1/stock").session(manager)).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/stock/transactions").session(manager)).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/admin/users").session(manager)).andExpect(status().isOk());
         mockMvc.perform(post("/api/v1/menu-categories").session(manager)
                 .contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"Manager category\"}"))
@@ -125,6 +131,7 @@ class AuthStockIntegrationTest {
     @Test
     void loginStockInAdjustmentAndHistoryUseTheSameAuditTrail() throws Exception {
         mockMvc.perform(get("/api/v1/stock")).andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/v1/stock/transactions")).andExpect(status().isUnauthorized());
         mockMvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"username\":\"staff\",\"password\":\"wrong\"}"))
                 .andExpect(status().isUnauthorized());

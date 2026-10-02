@@ -16,6 +16,7 @@ vi.mock('./api', async () => {
 
 const manager: UserContext = { userId: 1, username: 'manager', displayName: 'ผู้จัดการ', role: 'MANAGER' }
 const staff: UserContext = { userId: 2, username: 'staff', displayName: 'พนักงาน', role: 'SERVICE_STAFF' }
+const kitchen: UserContext = { userId: 3, username: 'kitchen', displayName: 'พนักงานครัว', role: 'KITCHEN_STAFF' }
 
 afterEach(() => { cleanup(); vi.clearAllMocks() })
 
@@ -28,6 +29,8 @@ function renderShell(path: string) {
           <Route path="users" element={<p>หน้าพนักงาน</p>} />
           <Route path="menu" element={<p>หน้าเมนู</p>} />
         </Route>
+        <Route path="/staff/tables" element={<p>หน้าโต๊ะพนักงาน</p>} />
+        <Route path="/kitchen" element={<p>หน้าครัว</p>} />
       </Routes>
     </MemoryRouter>,
   )
@@ -44,8 +47,26 @@ describe('AdminShell', () => {
     expect(screen.getByRole('link', { name: 'เมนูอาหาร' })).toBeTruthy()
   })
 
-  it('limits staff navigation to stock and redirects manager-only routes', async () => {
+  it('redirects service staff to staff tables instead of exposing stock', async () => {
     vi.mocked(authApi.current).mockResolvedValue(staff)
+
+    renderShell('/admin/users')
+
+    expect(await screen.findByText('หน้าโต๊ะพนักงาน')).toBeTruthy()
+    expect(screen.queryByRole('link', { name: 'สต็อก' })).toBeNull()
+  })
+
+  it('redirects kitchen staff to the kitchen flow', async () => {
+    vi.mocked(authApi.current).mockResolvedValue(kitchen)
+
+    renderShell('/admin/stock')
+
+    expect(await screen.findByText('หน้าครัว')).toBeTruthy()
+    expect(screen.queryByRole('link', { name: 'สต็อก' })).toBeNull()
+  })
+
+  it('limits supervisor navigation to stock', async () => {
+    vi.mocked(authApi.current).mockResolvedValue({ ...manager, role: 'SUPERVISOR' })
 
     renderShell('/admin/users')
 
@@ -67,5 +88,17 @@ describe('AdminShell', () => {
     await waitFor(() => expect(authApi.login).toHaveBeenCalledWith('manager', 'password123'))
     expect(await screen.findByText('หน้า stock')).toBeTruthy()
     expect(screen.getByRole('link', { name: 'พนักงาน' })).toBeTruthy()
+  })
+
+  it('keeps the session visible and reports an error when logout fails', async () => {
+    vi.mocked(authApi.current).mockResolvedValue(manager)
+    vi.mocked(authApi.logout).mockRejectedValue({ response: { data: { message: 'Session was not closed' } } })
+
+    renderShell('/admin/stock')
+    fireEvent.click(await screen.findByRole('button', { name: 'ออกจากระบบ' }))
+
+    expect((await screen.findByRole('alert')).textContent).toContain('ออกจากระบบไม่สำเร็จ: Session was not closed')
+    expect(screen.getByText('หน้า stock')).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeNull()
   })
 })
