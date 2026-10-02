@@ -138,8 +138,9 @@ V11 และ concurrent stock มี PostgreSQL Testcontainers tests ซึ่�
 
 Role flow: ทุก stock read จำกัดเฉพาะ `MANAGER` และ `SUPERVISOR`; roles นี้ทำ stock-in/adjustment ได้ด้วย;
 `MANAGER` เท่านั้นที่อ่าน/สร้าง users และแก้ menu catalog. Login เปลี่ยน session ID หลังยืนยันตัวตน.
-DiningSession/Ordering/Fulfillment ยังใช้ provider ของเจ้าของ feature และไม่ได้เชื่อมกับ Auth session ใน PR นี้;
-QR, Staff Tables และ Kitchen/Serving routes เดิมไม่ควรถูกเปลี่ยนจาก feature นี้.
+หน้า Staff Tables, Dining Session, Kitchen และ Serving ใช้ authenticated shell ร่วมกันเพื่อตรวจ `/auth/me`,
+แสดง logout และกลับหน้า login เมื่อ session หมดอายุ; การอนุญาตของ DiningSession/Ordering/Fulfillment API
+ยังใช้ provider ของเจ้าของ feature และยังไม่ได้เชื่อมกับ Auth session ใน PR นี้. QR flow ไม่เปลี่ยน.
 
 สำหรับฐาน production ที่ยังไม่มี account ให้ provision manager แรกโดยตั้ง
 `BOOTSTRAP_ADMIN_ENABLED=true`, `BOOTSTRAP_ADMIN_USERNAME` และ `BOOTSTRAP_ADMIN_PASSWORD`

@@ -1,8 +1,11 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { AxiosError, AxiosHeaders } from 'axios'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { apiClient } from '../../api/client'
 import AdminShell from './AdminShell'
+import StaffShell from '../auth/StaffShell'
 import { authApi } from './api'
 import type { UserContext } from './api'
 
@@ -29,8 +32,12 @@ function renderShell(path: string) {
           <Route path="users" element={<p>หน้าพนักงาน</p>} />
           <Route path="menu" element={<p>หน้าเมนู</p>} />
         </Route>
-        <Route path="/staff/tables" element={<p>หน้าโต๊ะพนักงาน</p>} />
-        <Route path="/kitchen" element={<p>หน้าครัว</p>} />
+        <Route element={<StaffShell />}>
+          <Route path="/staff/tables" element={<p>หน้าโต๊ะพนักงาน</p>} />
+          <Route path="/staff/sessions/:sessionId" element={<p>รายละเอียดรอบกิน</p>} />
+          <Route path="/staff/serving" element={<p>หน้าเสิร์ฟ</p>} />
+          <Route path="/kitchen" element={<p>หน้าครัว</p>} />
+        </Route>
       </Routes>
     </MemoryRouter>,
   )
@@ -53,6 +60,7 @@ describe('AdminShell', () => {
     renderShell('/admin/users')
 
     expect(await screen.findByText('หน้าโต๊ะพนักงาน')).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'ออกจากระบบ' })).toBeTruthy()
     expect(screen.queryByRole('link', { name: 'สต็อก' })).toBeNull()
   })
 
@@ -100,5 +108,45 @@ describe('AdminShell', () => {
     expect((await screen.findByRole('alert')).textContent).toContain('ออกจากระบบไม่สำเร็จ: Session was not closed')
     expect(screen.getByText('หน้า stock')).toBeTruthy()
     expect(screen.queryByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeNull()
+  })
+
+  it('logs service staff in, redirects by role, and logs out', async () => {
+    vi.mocked(authApi.current)
+      .mockRejectedValueOnce(new Error('not signed in'))
+      .mockResolvedValueOnce(staff)
+      .mockRejectedValueOnce(new Error('session closed'))
+    vi.mocked(authApi.login).mockResolvedValue(staff)
+    vi.mocked(authApi.logout).mockResolvedValue(undefined)
+
+    renderShell('/admin/stock')
+    fireEvent.change(await screen.findByLabelText('ชื่อผู้ใช้'), { target: { value: 'staff' } })
+    fireEvent.change(screen.getByLabelText('รหัสผ่าน'), { target: { value: 'password123' } })
+    fireEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }))
+
+    expect(await screen.findByText('หน้าโต๊ะพนักงาน')).toBeTruthy()
+    fireEvent.click(await screen.findByRole('button', { name: 'ออกจากระบบ' }))
+
+    await waitFor(() => expect(authApi.login).toHaveBeenCalledWith('staff', 'password123'))
+    await waitFor(() => expect(authApi.logout).toHaveBeenCalledOnce())
+    expect(await screen.findByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
+  })
+
+  it('returns staff to login when the shared session expires', async () => {
+    vi.mocked(authApi.current).mockResolvedValueOnce(staff).mockRejectedValueOnce(new Error('expired'))
+
+    renderShell('/staff/tables')
+    expect(await screen.findByText('หน้าโต๊ะพนักงาน')).toBeTruthy()
+    const expiredRequest = apiClient.get('/protected', {
+      adapter: (config) => Promise.reject(new AxiosError('Unauthorized', 'ERR_BAD_REQUEST', config, undefined, {
+        config,
+        data: {},
+        headers: new AxiosHeaders(),
+        status: 401,
+        statusText: 'Unauthorized',
+      })),
+    })
+    await expect(expiredRequest).rejects.toMatchObject({ response: { status: 401 } })
+
+    expect(await screen.findByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
   })
 })

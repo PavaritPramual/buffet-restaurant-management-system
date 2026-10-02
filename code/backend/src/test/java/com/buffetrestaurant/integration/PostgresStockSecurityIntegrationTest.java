@@ -45,7 +45,7 @@ class PostgresStockSecurityIntegrationTest {
     @Container
     private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("buffet")
-            .withUsername("backend")
+            .withUsername("postgres")
             .withPassword("backend-test")
             .withInitScript("postgres-test-roles.sql");
 

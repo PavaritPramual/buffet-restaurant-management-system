@@ -7,6 +7,10 @@ spring:
     locations: classpath:db/migration/common,classpath:db/migration/postgresql
 
 app:
+  dining-session:
+    staff-access-provider: disabled
+  fulfillment:
+    access-provider: disabled
   menu:
     admin-access-provider: session
   ordering:

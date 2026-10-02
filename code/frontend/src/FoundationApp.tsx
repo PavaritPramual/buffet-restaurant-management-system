@@ -9,13 +9,18 @@ import StaffTablesPage from './features/staff-tables/StaffTablesPage'
 import DiningSessionPage from './features/staff-tables/DiningSessionPage'
 import KitchenBoardPage from './features/fulfillment/KitchenBoardPage'
 import StaffServingPage from './features/fulfillment/StaffServingPage'
+import StaffShell from './features/auth/StaffShell'
 
 export default function FoundationApp() {
   return <Routes>
     <Route path="/" element={<DesignSystemPage />} />
     <Route path="/customer/qr" element={<CustomerOrderingPage />} />
-    <Route path="/staff/tables" element={<StaffTablesPage />} />
-    <Route path="/staff/sessions/:sessionId" element={<DiningSessionPage />} />
+    <Route element={<StaffShell />}>
+      <Route path="/staff/tables" element={<StaffTablesPage />} />
+      <Route path="/staff/sessions/:sessionId" element={<DiningSessionPage />} />
+      <Route path="/kitchen" element={<KitchenBoardPage />} />
+      <Route path="/staff/serving" element={<StaffServingPage />} />
+    </Route>
     <Route path="/admin" element={<AdminShell />}>
       <Route index element={<Navigate to="stock" replace />} />
       <Route path="stock" element={<StockPage />} />
@@ -23,8 +28,6 @@ export default function FoundationApp() {
       <Route path="menu" element={<MenuAdminPage />} />
     </Route>
     <Route path="/admin/menu" element={<MenuAdminPage />} />
-    <Route path="/kitchen" element={<KitchenBoardPage />} />
-    <Route path="/staff/serving" element={<StaffServingPage />} />
     <Route path="*" element={<DesignSystemPage />} />
   </Routes>
 }
