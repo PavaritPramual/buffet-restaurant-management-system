@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -71,6 +72,14 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.NOT_FOUND, exception.getMessage(), request.getRequestURI());
     }
 
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMissingRoute(
+            NoResourceFoundException exception,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.NOT_FOUND, "Resource not found", request.getRequestURI());
+    }
+
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentials(
             InvalidCredentialsException exception,
@@ -79,21 +88,21 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.UNAUTHORIZED, exception.getMessage(), request.getRequestURI());
     }
 
-        @ExceptionHandler(AuthenticationRequiredException.class)
-        public ResponseEntity<ErrorResponse> handleAuthenticationRequired(
-                        AuthenticationRequiredException exception,
-                        HttpServletRequest request
-        ) {
-                return build(HttpStatus.UNAUTHORIZED, exception.getMessage(), request.getRequestURI());
-        }
+    @ExceptionHandler(AuthenticationRequiredException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationRequired(
+            AuthenticationRequiredException exception,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.UNAUTHORIZED, exception.getMessage(), request.getRequestURI());
+    }
 
-        @ExceptionHandler(RoleAccessDeniedException.class)
-        public ResponseEntity<ErrorResponse> handleRoleAccessDenied(
-                        RoleAccessDeniedException exception,
-                        HttpServletRequest request
-        ) {
-                return build(HttpStatus.FORBIDDEN, exception.getMessage(), request.getRequestURI());
-        }
+    @ExceptionHandler(RoleAccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleRoleAccessDenied(
+            RoleAccessDeniedException exception,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.FORBIDDEN, exception.getMessage(), request.getRequestURI());
+    }
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateResource(

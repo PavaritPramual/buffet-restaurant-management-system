@@ -141,7 +141,7 @@ YYYY-MM-DDTHH:mm:ssXXX
 * `409 Conflict` — ข้อมูลขัดแย้ง (เช่น ซ้ำ unique key)
 * `500 Internal Server Error` — ข้อผิดพลาดฝั่ง server (ไม่ควรเกิดขึ้นจาก validation)
 
-> **สถานะการ implement ปัจจุบัน:** `GlobalExceptionHandler.java` ตอนนี้มี handler จริงเฉพาะ `400 Bad Request` (validation error และ malformed/unreadable body) กับ `500 Internal Server Error` (catch-all `Exception`) เท่านั้น **ยังไม่มี handler สำหรับ `401`, `403`, `404`, `409`** — Module ที่ต้องใช้ status เหล่านี้ (เช่น resource not found, สิทธิ์ไม่พอ, ข้อมูลซ้ำ) ต้องเพิ่ม exception + handler ของตัวเองใน `GlobalExceptionHandler` พร้อมเขียน test ยืนยันรูปแบบ `ErrorResponse` ก่อน จึงจะถือว่า contract นี้ใช้ได้ครบสำหรับ status code นั้นๆ
+`GlobalExceptionHandler.java` มี handler สำหรับ `400`, `401`, `403`, `404`, `409`, `503` และ `500` แล้ว ทุกกรณีใช้ `ErrorResponse` รูปแบบเดียวกัน
 
 ---
 
@@ -181,7 +181,7 @@ public record ErrorResponse(
 
 > **หมายเหตุ:** โครงสร้างปัจจุบันไม่มี field แยกรายฟิลด์ (เช่น `fieldErrors`) — ทุก validation error ทั้งหมดถูกรวมไว้ใน `message` เดียว ถ้า Module ใดต้องการ field-level detail เพิ่มเติม ต้องเสนอแก้ `ErrorResponse.java` และแจ้งทุก Module ก่อน ไม่ใช่เพิ่มเองใน DTO เฉพาะจุด
 
-> **หมายเหตุความครบถ้วน:** `ErrorResponse` shape ด้านบนคือ contract ที่ยืนยันแล้วจริงสำหรับ error ที่ `GlobalExceptionHandler` จัดการอยู่ปัจจุบัน (400, 500) เท่านั้น สำหรับ `401`, `403`, `404`, `409` ให้ implement handler ใหม่ใน `GlobalExceptionHandler` ที่คืน `ErrorResponse` shape เดียวกันนี้ พร้อม unit test ยืนยัน ก่อนถือว่า Module นั้นปฏิบัติตาม contract ฉบับนี้ครบถ้วน
+Controller จะคืน DTO โดยตรงหรือห่อด้วย `ResponseEntity<DTO>` ก็ได้เมื่อ HTTP status เป็น `200` และ JSON body มี shape เดียวกัน ใช้ `ResponseEntity` เมื่อต้องกำหนด status/header เช่น `201 Location`, `Set-Cookie` หรือ `Cache-Control` ข้อผิดพลาดทั้งหมดใช้ `ErrorResponse` จาก handler กลาง
 
 ---
 
@@ -267,5 +267,5 @@ Response `400 Bad Request`
 
 - [x] ตัวอย่าง request/response อ่านแล้วนำไปใช้ได้ทันที — อิงจาก `OrderFulfillmentContext` จริงใน `shared-contracts.md` และ `shared.ts` โดยตรง
 - [x] ค่า enum ตรงกับ backend และ frontend — ตรวจสอบกับ `domain/enums/*.java` และ `contracts/shared.ts` แล้ว (ทั้งสองฝั่งตรงกัน)
-- [x] ไม่มี contract ที่ขัดกับ `shared-contracts.md` — แก้ `ErrorResponse` ให้ตรงกับ `dto/response/ErrorResponse.java` จริง, แก้ base path เป็น `/api/v1`, แก้ type inconsistency (`orderId` เป็น `number` ทุกจุด, `tableNumber` เป็น `string` ทุกจุด), จัดลำดับหัวข้อ 2.3/2.4 ให้ถูก, ฟันธง Update = `200 OK` เป็นมาตรฐานเดียว, และระบุชัดว่า `401/403/404/409` handler ยังไม่ implement จริง ต้องเพิ่ม handler+test ก่อนถือว่าใช้ contract สมบูรณ์
+- [x] ไม่มี contract ที่ขัดกับ `shared-contracts.md` — base path `/api/v1`, ID เป็น JSON number, `ErrorResponse` ตรงกับ DTO จริง และ handler ครอบคลุม status ที่ใช้อยู่
 - [ ] ปวริศช์และ Feature Owner อย่างน้อย 1 คน review — ยังไม่ผ่าน รอ PR review
