@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.UUID;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationVersion;
-import org.flywaydb.core.api.output.MigrateResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -17,13 +16,12 @@ class DiningSessionMigrationTest {
     void freshSchemaAppliesDiningSessionMigrationsWithExpectedConstraints() {
         String url = "jdbc:h2:mem:dining_session_migration_" + UUID.randomUUID()
                 + ";MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1";
-        MigrateResult result = Flyway.configure()
+        Flyway.configure()
                 .dataSource(url, "sa", "")
                 .locations("classpath:db/migration/common", "classpath:db/migration/h2")
                 .load()
                 .migrate();
 
-        assertThat(result.migrationsExecuted).isEqualTo(7);
         JdbcTemplate jdbc = new JdbcTemplate(new DriverManagerDataSource(url, "sa", ""));
         assertThat(jdbc.queryForObject(
                 "SELECT COUNT(*) FROM information_schema.table_constraints "

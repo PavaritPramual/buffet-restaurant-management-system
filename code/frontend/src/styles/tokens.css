@@ -25,6 +25,12 @@
   --color-danger-bg: #fef2f2;
   --color-inactive: #4b5563;
   --color-inactive-bg: #f3f4f6;
+  --color-admin-rail: #173b34;
+  --color-admin-rail-active: #295449;
+  --color-admin-on-rail: #eaf3ec;
+  --color-admin-rail-muted: #c2d4c8;
+  --color-admin-accent: #b3d982;
+  --color-admin-tint: #d8e9dc;
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-6: 24px; --space-8: 32px;
   --radius-control: 8px; --radius-card: 12px;
 }

@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
  * boards. Never enable this provider in a deployed environment.
  */
 @Component
-@Profile({"local", "test"})
+@Profile({"local", "test", "demo"})
 @ConditionalOnProperty(name = "app.fulfillment.access-provider", havingValue = "fixture")
 public class FixtureOrderFulfillmentAccessProvider implements OrderFulfillmentAccessProvider {
 
