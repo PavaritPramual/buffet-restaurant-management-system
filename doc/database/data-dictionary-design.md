@@ -12,6 +12,8 @@
 
 Backend ต่อ Supabase ด้วย role `postgres` ซึ่งมี `BYPASSRLS`: policy ใน V6 ระบุ role นี้และปิดสิทธิ์ `PUBLIC`, `anon`, `authenticated` บนตารางและ sequence ใหม่ แต่ `FORCE RLS` ไม่จำกัด `postgres` ได้ในสถาปัตยกรรมนี้ API จึงต้องตรวจสิทธิ์เอง งานสร้าง application role ที่ไม่มี `BYPASSRLS` ต้องออกแบบแยกต่างหาก วันที่ 29 กันยายน 2026 พบว่า V6–V8 ถูก apply บน Supabase ส่วนกลางแล้วโดยไม่ตั้งใจ; ขณะตรวจไม่พบแถวใน `dining_sessions` ห้ามแก้ migration ที่ apply แล้วย้อนหลัง และต้องตรวจ `flyway_schema_history` ก่อน migration ถัดไป
 
+Authentication/Stock implementation ใช้ schema ต่างจากตาราง `users`, profile และ stock ในแบบออกแบบ รายละเอียดอยู่ใน [Auth/Stock schema delta](auth-stock-schema-delta.md); สถานะการอนุมัติจาก feature owners ยังต้องยืนยันก่อน merge.
+
 เอกสารพจนานุกรมข้อมูล (Data Dictionary) และโค้ดสำหรับสร้างฐานข้อมูล (SQL DDL Migration Script) ครบทั้ง 14 ตาราง
 ---
 ## 1. Data Dictionary (พจนานุกรมข้อมูลรายตาราง)

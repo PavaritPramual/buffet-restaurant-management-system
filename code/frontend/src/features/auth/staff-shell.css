@@ -1,0 +1,16 @@
+.staff-shell { min-height: 100vh; color: var(--color-text); background: var(--color-background); text-align: left; }
+.staff-shell-header { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 28px; border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
+.staff-shell-brand, .staff-shell-user { display: flex; align-items: center; gap: 12px; }
+.staff-shell-brand { font-size: 13px; }
+.staff-shell-brand > strong > span { margin-left: 8px; color: var(--color-muted); font-size: 11px; font-weight: 500; }
+.staff-shell-user > div { text-align: right; }
+.staff-shell-user strong, .staff-shell-user span { display: block; }
+.staff-shell-user strong { font-size: 12px; }
+.staff-shell-user span { margin-top: 3px; color: var(--color-muted); font-size: 10px; }
+.staff-shell-user .admin-logout { color: var(--color-text); }
+.staff-shell-error { margin: 12px 28px 0; }
+@media (max-width: 620px) {
+  .staff-shell-header { padding: 8px 14px; }
+  .staff-shell-brand { gap: 8px; font-size: 11px; }
+  .staff-shell-brand > strong > span { display: none; }
+}

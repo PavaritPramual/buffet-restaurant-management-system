@@ -2,6 +2,7 @@ package com.buffetrestaurant.exception;
 
 import com.buffetrestaurant.dto.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,6 +26,25 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
         return build(HttpStatus.BAD_REQUEST, message, request.getRequestURI());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(
+            ConstraintViolationException exception,
+            HttpServletRequest request
+    ) {
+        String message = exception.getConstraintViolations().stream()
+                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
+                .collect(Collectors.joining(", "));
+        return build(HttpStatus.BAD_REQUEST, message, request.getRequestURI());
+    }
+
+    @ExceptionHandler(StockRuleViolationException.class)
+    public ResponseEntity<ErrorResponse> handleStockRuleViolation(
+            StockRuleViolationException exception,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.BAD_REQUEST, exception.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -60,17 +80,25 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.NOT_FOUND, "Resource not found", request.getRequestURI());
     }
 
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorized(
-            UnauthorizedException exception,
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(
+            InvalidCredentialsException exception,
             HttpServletRequest request
     ) {
         return build(HttpStatus.UNAUTHORIZED, exception.getMessage(), request.getRequestURI());
     }
 
-    @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ErrorResponse> handleForbidden(
-            ForbiddenException exception,
+    @ExceptionHandler({AuthenticationRequiredException.class, UnauthorizedException.class})
+    public ResponseEntity<ErrorResponse> handleAuthenticationRequired(
+            RuntimeException exception,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.UNAUTHORIZED, exception.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler({RoleAccessDeniedException.class, ForbiddenException.class})
+    public ResponseEntity<ErrorResponse> handleRoleAccessDenied(
+            RuntimeException exception,
             HttpServletRequest request
     ) {
         return build(HttpStatus.FORBIDDEN, exception.getMessage(), request.getRequestURI());

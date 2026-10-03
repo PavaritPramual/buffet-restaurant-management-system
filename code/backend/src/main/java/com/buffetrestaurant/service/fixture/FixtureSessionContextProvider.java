@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({"local", "test"})
+@Profile({"local", "test", "demo"})
 @ConditionalOnProperty(name = "app.ordering.session-provider", havingValue = "fixture")
 public class FixtureSessionContextProvider implements SessionContextProvider {
     @Override
