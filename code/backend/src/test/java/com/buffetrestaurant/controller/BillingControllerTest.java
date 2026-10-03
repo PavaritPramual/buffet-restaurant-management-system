@@ -8,6 +8,7 @@ import com.buffetrestaurant.exception.ResourceNotFoundException;
 import com.buffetrestaurant.service.billing.BillingContextProvider;
 import com.buffetrestaurant.service.billing.BillingPreviewService;
 import com.buffetrestaurant.service.fixture.DisabledBillingContextProvider;
+import com.buffetrestaurant.service.PaymentAccessProvider;
 import java.math.BigDecimal;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BillingControllerTest {
     @Autowired MockMvc mvc;
     @MockitoBean BillingContextProvider provider;
+    @MockitoBean PaymentAccessProvider accessProvider;
 
     private BillingContext context() {
         BillingContext context = new BillingContext();

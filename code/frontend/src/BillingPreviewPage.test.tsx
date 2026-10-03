@@ -27,7 +27,8 @@ describe('Billing preview', () => {
     submit('12')
     expect(await screen.findByText('ยอดสุทธิ: 997.50 บาท')).toBeTruthy()
     expect(apiClient.post).toHaveBeenCalledWith('/billing/preview', { sessionId: 12 })
-    expect(screen.queryByRole('button', { name: /ชำระ/ })).toBeNull()
+    expect(screen.getByRole('button', { name: 'บันทึกการชำระ' })).toBeTruthy()
+    expect(apiClient.post).toHaveBeenCalledTimes(1)
   })
   it('rejects invalid input without calling the API', async () => {
     renderPage()

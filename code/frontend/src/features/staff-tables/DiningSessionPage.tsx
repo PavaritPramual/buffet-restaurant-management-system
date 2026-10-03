@@ -62,7 +62,26 @@ export default function DiningSessionPage() {
           <div className="staff-table-card-heading"><div><small>โต๊ะ</small><h2>{session.tableNumber}</h2></div><StatusBadge tone={session.sessionStatus === 'ACTIVE' ? 'info' : 'neutral'}>{session.sessionStatus === 'ACTIVE' ? 'กำลังใช้งาน' : 'ปิดรอบแล้ว'}</StatusBadge></div>
           <dl><div><dt>ผู้ใหญ่</dt><dd>{session.adultCount} คน</dd></div><div><dt>เด็ก</dt><dd>{session.childCount} คน</dd></div><div><dt>เริ่มรอบ</dt><dd>{new Date(session.startTime).toLocaleString('th-TH')}</dd></div></dl>
           <p>แพ็กเกจ #{session.packageId} · น้ำซุป #{session.soupId}</p>
-          {session.sessionStatus === 'ACTIVE' && <Button variant="danger" onClick={() => setConfirming(true)}>ปิดรอบกิน</Button>}
+          {session.sessionStatus === 'ACTIVE' && (
+            <>
+              <Button
+                type="button"
+                onClick={() =>
+                  navigate(`/staff/sessions/${session.sessionId}/billing`)
+                }
+              >
+                ดูบิล / รับชำระ
+              </Button>
+
+              <Button
+                type="button"
+                variant="danger"
+                onClick={() => setConfirming(true)}
+              >
+                ปิดรอบกิน
+              </Button>
+            </>
+          )}
         </Card>
         <Card className="staff-session-qr-card">
           <div className="section-title"><h2>QR สำหรับลูกค้า</h2><Button variant="secondary" className="ui-icon-button" aria-label="อัปเดต QR" title="อัปเดต QR" onClick={() => void refreshQr()}><RefreshIcon /></Button></div>

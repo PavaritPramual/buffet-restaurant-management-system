@@ -18,6 +18,7 @@ import com.buffetrestaurant.repository.PaymentRepository;
 import com.buffetrestaurant.service.PaymentService;
 import com.buffetrestaurant.service.billing.BillingContextProvider;
 import com.buffetrestaurant.service.billing.BillingEngine;
+import com.buffetrestaurant.service.PaymentAccessProvider;
 
 @Service
 @Transactional 
@@ -26,20 +27,24 @@ public class PaymentServiceImpl implements PaymentService{
     private final PaymentRepository paymentRepository;
     private final BillingContextProvider contextProvider;
     private final BillingEngine billingEngine;
+    private final PaymentAccessProvider accessProvider;
     
     public PaymentServiceImpl(
         PaymentRepository paymentRepository,
         BillingContextProvider billingContextProvider,
-        BillingEngine billingEngine
+        BillingEngine billingEngine,
+        PaymentAccessProvider accessProvider
     ){
         this.paymentRepository = paymentRepository;
         this.contextProvider = billingContextProvider;
         this.billingEngine = billingEngine;
+        this.accessProvider = accessProvider;
 
     }
 
     @Override 
     public PaymentResult pay(CreatePaymentRequest request){
+        accessProvider.requirePaymentAccess();
 
         if (request == null
             || request.sessionId() == null

@@ -47,3 +47,7 @@ app:
   fulfillment:
     # Production-safe default. Authentication must replace this provider with a real staff-role check.
     access-provider: ${FULFILLMENT_ACCESS_PROVIDER:disabled}
+  billing:
+    context-provider: ${BILLING_CONTEXT_PROVIDER:disabled}
+  payment:
+    status-provider: ${PAYMENT_STATUS_PROVIDER:disabled}

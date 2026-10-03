@@ -2,10 +2,11 @@ import { useRef, useState } from 'react'
 import './features/billing/billing-preview.css'
 import type { FormEvent } from 'react'
 import { isAxiosError } from 'axios'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { previewBill } from './api/billing'
 import type { BillSummary } from './api/billing'
 import { Button, Card, ErrorAlert, PageHeader, TextField } from './components/common'
+import PaymentPanel from './features/billing/PaymentPanel'
 
 function errorMessage(error: unknown): string {
   if (isAxiosError(error)) {
@@ -28,6 +29,7 @@ export default function BillingPreviewPage() {
 }
 
 function BillingPreviewForm({ routeSessionId }: { routeSessionId?: string }) {
+  const navigate = useNavigate()
   const [sessionInput, setSessionInput] = useState(routeSessionId ?? '')
   const [summary, setSummary] = useState<BillSummary | null>(null)
   const [loading, setLoading] = useState(false)
@@ -65,6 +67,15 @@ function BillingPreviewForm({ routeSessionId }: { routeSessionId?: string }) {
   return (
     <main className="billing-preview-page">
       <PageHeader title="ดูบิลตามรอบการรับประทาน" description="ตรวจสอบยอดก่อนรับชำระเงิน" />
+      {routeSessionId !== undefined && (
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => navigate(`/staff/sessions/${routeSessionId}`)}
+        >
+          กลับไปรายละเอียดรอบกิน
+        </Button>
+      )}
       <Card>
         <form onSubmit={handleCalculate} className="billing-preview-form" noValidate>
           <TextField
@@ -95,6 +106,11 @@ function BillingPreviewForm({ routeSessionId }: { routeSessionId?: string }) {
             <p>ปรับเศษ: {summary.roundingAdjustment > 0 ? '+' : ''}{summary.roundingAdjustment} บาท</p>
           )}
           <p>ยอดสุทธิ: {summary.totalAmount.toFixed(2)} บาท</p>
+          <PaymentPanel
+            key={summary.sessionId}
+            bill={summary}
+            enabled
+          />
         </Card>
       )}
     </main>
