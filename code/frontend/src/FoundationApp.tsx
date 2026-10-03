@@ -27,7 +27,6 @@ export default function FoundationApp() {
       <Route path="users" element={<UsersPage />} />
       <Route path="menu" element={<MenuAdminPage />} />
     </Route>
-    <Route path="/admin/menu" element={<MenuAdminPage />} />
     <Route path="*" element={<DesignSystemPage />} />
   </Routes>
 }

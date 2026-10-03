@@ -83,11 +83,18 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
 
     public PageResponse<MenuItemResponse> getMenuItems(int page, int size, String sort) {
         if (page < 0 || size < 1 || size > 100) throw new BusinessRuleException("page must be >= 0 and size must be between 1 and 100");
-        String[] parts = sort == null ? new String[]{"id", "asc"} : sort.split(",", 2);
-        String field = parts[0];
+        String[] parts = sort == null ? new String[]{"id", "asc"} : sort.split(",", -1);
+        if (parts.length > 2) throw new BusinessRuleException("sort must be field,asc or field,desc");
+        String field = parts[0].trim();
         if (!SORT_FIELDS.contains(field)) throw new BusinessRuleException("Unsupported sort field: " + field);
-        Sort.Direction direction = parts.length == 2 && "desc".equalsIgnoreCase(parts[1]) ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Page<MenuItem> result = itemRepository.findAll(PageRequest.of(page, size, Sort.by(direction, field)));
+        String directionValue = parts.length == 2 ? parts[1].trim() : "asc";
+        if (!"asc".equalsIgnoreCase(directionValue) && !"desc".equalsIgnoreCase(directionValue)) {
+            throw new BusinessRuleException("Unsupported sort direction: " + directionValue);
+        }
+        Sort.Direction direction = Sort.Direction.fromString(directionValue);
+        Sort ordering = Sort.by(direction, field);
+        if (!"id".equals(field)) ordering = ordering.and(Sort.by("id"));
+        Page<MenuItem> result = itemRepository.findAll(PageRequest.of(page, size, ordering));
         return new PageResponse<>(result.getContent().stream().map(mapper::toResponse).toList(),
                 result.getNumber(), result.getSize(), result.getTotalElements(), result.getTotalPages());
     }

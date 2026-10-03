@@ -30,6 +30,30 @@ function mockCatalog() {
 }
 
 describe('MenuAdminPage', () => {
+  it('resets pagination when sorting changes and sends the selected API sort', async () => {
+    mockCatalog()
+    vi.mocked(api.getMenuItems).mockResolvedValue({ content: [menuItem], page: 0, size: 10, totalElements: 11, totalPages: 2 })
+    render(<MenuAdminPage />)
+    await screen.findByText('หน้า 1 / 2')
+    fireEvent.click(screen.getByRole('button', { name: 'ถัดไป' }))
+    await screen.findByText('หน้า 2 / 2')
+    fireEvent.change(screen.getByLabelText('เรียงเมนู'), { target: { value: 'name,desc' } })
+    await waitFor(() => expect(api.getMenuItems).toHaveBeenLastCalledWith(0, 10, 'name,desc'))
+    expect(screen.getByText('หน้า 1 / 2')).toBeTruthy()
+    expect(screen.getAllByText('Standard').length).toBeGreaterThan(0)
+  })
+
+  it('allows retrying a failed catalog load and clears the stale error', async () => {
+    mockCatalog()
+    vi.mocked(api.getMenuItems).mockRejectedValueOnce({ response: { data: { message: 'โหลดรายการไม่สำเร็จ' } } })
+      .mockResolvedValue({ content: [menuItem], page: 0, size: 10, totalElements: 1, totalPages: 1 })
+    render(<MenuAdminPage />)
+    expect(await screen.findByRole('alert')).toHaveProperty('textContent', 'โหลดรายการไม่สำเร็จ')
+    fireEvent.click(screen.getByRole('button', { name: 'โหลดข้อมูลใหม่' }))
+    expect(await screen.findByText('ไก่ทอด')).toBeTruthy()
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+
   it('loads active packages and submits selected package ids', async () => {
     mockCatalog()
     vi.mocked(api.getMenuItems).mockResolvedValue({ content: [], page: 0, size: 10, totalElements: 0, totalPages: 0 })
