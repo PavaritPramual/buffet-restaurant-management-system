@@ -12,6 +12,8 @@ export interface PageResult<T> { content: T[]; page: number; size: number; total
 
 export { getApiError }
 interface QrScan { token: string; promise: Promise<SessionContext>; settled: boolean; failed: boolean }
+// Coordination is limited to this tab. The customer cookie is shared across tabs;
+// use one ordering tab per browser (see doc/testing/test-plan.md for recovery).
 let latestQrScan: QrScan | null = null
 let previousQrExchange: Promise<unknown> = Promise.resolve()
 

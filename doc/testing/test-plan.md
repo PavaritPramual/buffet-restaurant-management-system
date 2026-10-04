@@ -15,6 +15,14 @@ Unit tests cover business rules without network or database. Controller tests co
 - Pairwise persistence tests: dedicated disposable database/schema; never use the team's shared project for destructive automated tests.
 - Cross-module payload examples: `test/fixtures/` and `doc/contracts/shared-contracts.md`.
 
+## Customer browser-tab limitation
+
+Customer QR/session coordination currently supports one ordering tab per browser profile. `latestQrScan` and exchange sequencing live in one tab, while the HttpOnly customer cookie is shared across tabs. A QR exchange in another tab can therefore leave an older tab displaying a previous session; requests with that old session ID and the newer cookie are rejected by the backend. The UI does not receive cross-tab session notifications. Close older ordering tabs and reload the remaining tab to read the current cookie/session, or use separate browser profiles for different sessions. No multi-tab synchronization is delivered or covered by the acceptance tests.
+
+## Continuous integration and database safety
+
+[CI workflow](../../.github/workflows/ci.yml) runs backend verification with disposable PostgreSQL services and frontend tests/lint/build for PRs into `develop`. See [database safety setup](../../test/README.md): all environment-driven Menu/Dining PostgreSQL tests require `ALLOW_DESTRUCTIVE_DB_TESTS=true`, an explicit loopback port and `buffet_test_` database name without URL options, plus a matching database comment. The checks run before migration/startup and again before concurrency cleanup. Docker Stock tests use a separate Testcontainers database. Browser execution and screenshot inspection remain local evidence. The workflow configuration alone is not a passing CI result; inspect the run for the current revision before merging.
+
 ## Entry and exit criteria
 
 Entry: the module contract and fixture are agreed; the branch is based on current `develop`. Exit for a module PR: backend tests, frontend tests/lint/build, responsive browser checks, Swagger and migrations pass; acceptance criteria and limits are recorded; another team member reviews. Integration is complete only after the real Session adapter, authorization, Kitchen/Billing handoff, and pairwise integration tests pass.

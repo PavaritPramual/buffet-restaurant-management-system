@@ -8,12 +8,13 @@ import org.flywaydb.core.api.MigrationVersion;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
-/** MENU_TEST_PG_URL must name a fresh, disposable database; never shared Supabase. */
+/** Requires explicit opt-in and a marked, fresh disposable loopback database. */
 @EnabledIfEnvironmentVariable(named = "MENU_TEST_PG_URL", matches = ".+")
+@EnabledIfEnvironmentVariable(named = "ALLOW_DESTRUCTIVE_DB_TESTS", matches = "true")
 class PostgresMenuOrderingMigrationTest {
     @Test
     void foundationV2UpgradesAndEnforcesCatalogConstraintsAndClientRoleRestrictions() throws Exception {
-        String url = System.getenv("MENU_TEST_PG_URL");
+        String url = DisposablePostgresDatabase.requireReady("MENU_TEST");
         String user = System.getenv().getOrDefault("MENU_TEST_PG_USER", "postgres");
         String password = System.getenv().getOrDefault("MENU_TEST_PG_PASSWORD", "");
         Flyway foundation = Flyway.configure().dataSource(url, user, password)

@@ -2,7 +2,21 @@
 
 Scope: Menu Catalog, Customer Ordering and their SQA/frontend acceptance criteria. Based on develop `727413e` (PR #17), with review fixes after `dee08a8` on `sirapat_673380293-3_01`, submitted in [PR #18](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/18). This report does not approve a PR or declare the full team's Core Flow complete.
 
-## Final recheck before PR submission
+## Follow-up review: database safety, Admin errors and CI
+
+The review of `36eee85` identified missing destructive-test guards and a shared Admin error state. The environment-driven Menu migration, Dining migration and order/close concurrency tests now require explicit `ALLOW_DESTRUCTIVE_DB_TESTS=true`, a strict loopback JDBC URL with a `buffet_test_` database name and no URL options, and the database comment `buffet-disposable-test-only`. These checks happen before any Flyway migration or Spring datasource startup; concurrency cleanup verifies the actual connected database again before DELETE. [Guard regression tests](../../code/backend/src/test/java/com/buffetrestaurant/integration/DisposablePostgresDatabaseTest.java) cover missing opt-in, unsafe URL forms, unmarked databases and database mismatch. See [setup instructions](../../test/README.md).
+
+Menu Admin separates catalog-load errors from create/update/delete/validation errors. Only load failures offer “โหลดข้อมูลใหม่”; a successful catalog refresh preserves mutation errors and drafts. If a mutation succeeds but its reload fails, the form is reset and save success is retained; retry fetches catalog data without repeating the mutation.
+
+Customer multi-tab ordering is outside the current requirement scope: coordination is per tab and the cookie is shared, so an older tab can show an obsolete session after another tab scans a QR. Backend session mismatch rejection remains enforced. The [test plan](test-plan.md#customer-browser-tab-limitation) records this limitation and recovery without adding synchronization.
+
+[CI](../../.github/workflows/ci.yml) runs backend verification with fresh marked PostgreSQL databases and frontend tests/lint/build. Reports are workflow artifacts rather than additional evidence folders in the PR. GitHub execution results are available in the PR checks and must be verified on its current revision; CI configuration alone is not evidence of a passing run.
+
+Follow-up local verification on 4 October: 218 backend cases discovered, 216 passed, 2 Docker-dependent Stock cases skipped, with no failures/errors. This includes 27 guard regression cases and all 5 environment-driven PostgreSQL cases on new marked databases. A separate negative integration run confirmed that missing opt-in skips all 5 PostgreSQL cases and an unmarked database is rejected before migration (0 public tables afterward), including Spring startup paths. Frontend: 83 passed across 11 files, build passed, lint had 0 errors and the same 4 existing warnings. `actionlint` 1.7.12 accepted the workflow. Raw logs are ignored `code/backend/step2-safety-review-{backend,disabled,unmarked}.log` and `code/frontend/step2-safety-review-{frontend,lint,build}.log`.
+
+The older 189 backend / 78 frontend / 13 browser results and screenshots below are historical local evidence from the preceding revision. Browser scripts were not rerun in this follow-up; no new screenshot folder is added. The previously inspected screenshots remain evidence for that recorded execution.
+
+## Final local recheck before PR submission (prior revision)
 
 The final 4 October review found no new actionable defect in the reviewed changes. The full backend suite was rerun after all corrections: 191 discovered, 189 passed, 2 Docker-dependent Stock security cases skipped, and no failures/errors. PostgreSQL migrations and all three order/close concurrency cases passed on fresh disposable local databases. The permanent frontend suite passed 78 cases in 11 files; 6 additional temporary review cases also passed separately. Build passed; lint reported no errors and the same 4 existing warnings.
 
@@ -65,15 +79,16 @@ Final local raw logs are `code/backend/step2-final-review-backend.log`, `code/fr
 Backend from `code/backend`:
 
 ```powershell
-# Point these only at fresh disposable local databases; create anon/authenticated test roles.
-$env:MENU_TEST_PG_URL='jdbc:postgresql://127.0.0.1:55432/sirapat_menu_fixed_20261004'
+# Create fresh marked disposable local databases and anon/authenticated roles (test/README.md).
+$env:ALLOW_DESTRUCTIVE_DB_TESTS='true'
+$env:MENU_TEST_PG_URL='jdbc:postgresql://127.0.0.1:55432/buffet_test_menu_local'
 $env:MENU_TEST_PG_PASSWORD='step2-test'
-$env:DINING_TEST_PG_URL='jdbc:postgresql://127.0.0.1:55432/sirapat_dining_fixed_20261004'
+$env:DINING_TEST_PG_URL='jdbc:postgresql://127.0.0.1:55432/buffet_test_dining_local'
 $env:DINING_TEST_PG_PASSWORD='step2-test'
 mvn '-Dmaven.repo.local=.m2-cache' test
 ```
 
-For a repeated PostgreSQL Menu upgrade run, use a new empty disposable database; this test deliberately checks the upgrade starting at V2. With no PostgreSQL environment variables, the optional PostgreSQL cases are skipped. V9 Payment is absent from this branch; test history jumps from V8 to V10 and does not prove deployment ordering on shared Supabase.
+For a repeated PostgreSQL Menu upgrade run, use a new empty marked disposable database; this test deliberately checks the upgrade starting at V2. With no PostgreSQL URL or no explicit destructive-test opt-in, the optional PostgreSQL cases are skipped. V9 Payment is absent from this branch; test history jumps from V8 to V10 and does not prove deployment ordering on shared Supabase.
 
 Browser backend from `code/backend`:
 

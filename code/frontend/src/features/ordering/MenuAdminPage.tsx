@@ -16,39 +16,40 @@ export default function MenuAdminPage() {
   const [categoryName, setCategoryName] = useState(''); const [editingCategory, setEditingCategory] = useState<number | null>(null)
   const [itemDraft, setItemDraft] = useState<ItemDraft>(emptyItem); const [editingItem, setEditingItem] = useState<number | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<{ kind: 'category' | 'item'; id: number; label: string } | null>(null)
-  const [error, setError] = useState(''); const [notice, setNotice] = useState(''); const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(''); const [mutationError, setMutationError] = useState('')
+  const [notice, setNotice] = useState(''); const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true)
   const catalogRequest = useRef(0)
   const invalidateCatalog = useCallback(() => { ++catalogRequest.current }, [])
 
   const load = useCallback(async (currentPage: number) => {
     const request = ++catalogRequest.current
     setLoading(true)
+    setLoadError('')
     try {
       const [nextCategories, nextPackages, nextItems] = await Promise.all([getCategories(), getBuffetPackages(true), getMenuItems(currentPage, 10, sort)])
       if (request !== catalogRequest.current) return
       setCategories(nextCategories); setPackages(nextPackages); setItems(nextItems.content); setTotal(nextItems.totalElements); setTotalPages(nextItems.totalPages)
-      setError('')
       setItemDraft((current) => nextCategories.some((category) => category.id === current.categoryId)
         ? current
         : { ...current, categoryId: nextCategories[0]?.id ?? 0 })
     } catch (cause) {
-      if (request === catalogRequest.current) { setError(getApiError(cause)); throw cause }
+      if (request === catalogRequest.current) setLoadError(getApiError(cause))
     } finally { if (request === catalogRequest.current) setLoading(false) }
   }, [sort])
   useEffect(() => {
     // Loading server data is the synchronization purpose of this effect.
     // oxlint-disable-next-line react/set-state-in-effect
-    void load(page).catch(() => undefined)
+    void load(page)
     return invalidateCatalog
   }, [invalidateCatalog, load, page])
   function changePage(nextPage: number) { if (nextPage === page) return; invalidateCatalog(); setLoading(true); setPage(nextPage) }
   function changeSort(nextSort: string) { if (nextSort === sort) return; invalidateCatalog(); setLoading(true); setPage(0); setSort(nextSort) }
-  function retryLoad() { void load(page).catch(() => undefined) }
-  async function run(action: () => Promise<void>) { if (busy) return; setBusy(true); setError(''); setNotice(''); try { await action() } catch (cause) { setError(getApiError(cause)) } finally { setBusy(false) } }
+  function retryLoad() { void load(page) }
+  async function run(action: () => Promise<void>) { if (busy) return; setBusy(true); setMutationError(''); setNotice(''); try { await action() } catch (cause) { setMutationError(getApiError(cause)) } finally { setBusy(false) } }
   function submitCategory(event: FormEvent) { event.preventDefault(); if (!categoryName.trim()) return; void run(async () => { await saveCategory(editingCategory, categoryName.trim()); await load(page); setCategoryName(''); setEditingCategory(null); setNotice('บันทึกหมวดหมู่แล้ว') }) }
   function submitItem(event: FormEvent) {
     event.preventDefault()
-    if (!itemDraft.packageIds.length) { setError('กรุณาเลือกแพ็กเกจอย่างน้อย 1 รายการ'); return }
+    if (!itemDraft.packageIds.length) { setMutationError('กรุณาเลือกแพ็กเกจอย่างน้อย 1 รายการ'); return }
     const input: MenuItemInput = { categoryId: itemDraft.categoryId, name: itemDraft.name.trim(), description: itemDraft.description.trim() || null, available: itemDraft.available, packageIds: itemDraft.packageIds, imageUrl: itemDraft.imageUrl.trim() || null }
     void run(async () => { await saveMenuItem(editingItem, input); await load(page); setEditingItem(null); setItemDraft({ ...emptyItem, categoryId: categories[0]?.id ?? 0 }); setNotice('บันทึกเมนูแล้ว') })
   }
@@ -70,7 +71,8 @@ export default function MenuAdminPage() {
   }) }
 
   return <main className="ordering-page admin-page"><PageHeader eyebrow="ผู้จัดการ · รายการเมนู" title="จัดการเมนูอาหาร" description="ข้อมูลถูกบันทึกในฐานข้อมูลและนำไปใช้กับหน้าสั่งอาหารของลูกค้า" />
-    {error && <><ErrorAlert message={error} /><Button variant="secondary" disabled={loading || busy} onClick={retryLoad}>โหลดข้อมูลใหม่</Button></>}{notice && <div className="ordering-notice" role="status">{notice}</div>}
+    {loadError && <><ErrorAlert message={loadError} /><Button variant="secondary" disabled={loading || busy} onClick={retryLoad}>โหลดข้อมูลใหม่</Button></>}
+    {mutationError && <ErrorAlert message={mutationError} />}{notice && <div className="ordering-notice" role="status">{notice}</div>}
     <div className="admin-forms"><Card><h2>หมวดหมู่</h2><form className="admin-form" onSubmit={submitCategory}><TextField label="ชื่อหมวดหมู่" value={categoryName} maxLength={100} required onChange={(event) => setCategoryName(event.target.value)} /><div className="form-actions"><Button loading={busy} type="submit">{editingCategory ? 'บันทึกการแก้ไข' : 'เพิ่มหมวดหมู่'}</Button>{editingCategory && <Button variant="secondary" type="button" onClick={() => { setEditingCategory(null); setCategoryName('') }}>ยกเลิก</Button>}</div></form>
       {categories.length === 0 ? <EmptyState title="ยังไม่มีหมวดหมู่" /> : <ul className="category-list">{categories.map((entry) => <li key={entry.id}><span>{entry.name}</span><span><Button variant="ghost" size="sm" onClick={() => { setEditingCategory(entry.id); setCategoryName(entry.name) }}>แก้ไข</Button><Button variant="ghost" size="sm" onClick={() => setDeleteTarget({ kind: 'category', id: entry.id, label: entry.name })}>ลบ</Button></span></li>)}</ul>}</Card>
       <Card><h2>{editingItem ? 'แก้ไขเมนู' : 'เพิ่มเมนู'}</h2><form className="admin-form" onSubmit={submitItem}><TextField label="ชื่อเมนู" value={itemDraft.name} maxLength={100} required onChange={(event) => setItemDraft({ ...itemDraft, name: event.target.value })} /><TextField label="รายละเอียดเมนู (ถ้ามี)" value={itemDraft.description} onChange={(event) => setItemDraft({ ...itemDraft, description: event.target.value })} /><SelectField label="หมวดหมู่" value={itemDraft.categoryId} required onChange={(event) => setItemDraft({ ...itemDraft, categoryId: Number(event.target.value) })}>{categories.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</SelectField><fieldset className="package-options"><legend>แพ็กเกจที่สั่งเมนูนี้ได้</legend>{packages.length ? packages.map((entry) => <label key={entry.id} className="checkbox-field"><input type="checkbox" checked={itemDraft.packageIds.includes(entry.id)} onChange={() => togglePackage(entry.id)} /> {entry.name}</label>) : <p>ยังไม่มีแพ็กเกจที่เปิดใช้งาน</p>}</fieldset><TextField label="URL ภาพเมนู (ถ้ามี)" value={itemDraft.imageUrl} onChange={(event) => setItemDraft({ ...itemDraft, imageUrl: event.target.value })} /><label className="checkbox-field"><input type="checkbox" checked={itemDraft.available} onChange={(event) => setItemDraft({ ...itemDraft, available: event.target.checked })} /> พร้อมให้สั่ง</label><div className="form-actions"><Button loading={busy} disabled={!categories.length || !packages.length}>บันทึกเมนู</Button>{editingItem && <Button variant="secondary" type="button" onClick={() => { setEditingItem(null); setItemDraft({ ...emptyItem, categoryId: categories[0]?.id ?? 0 }) }}>ยกเลิก</Button>}</div></form></Card></div>
