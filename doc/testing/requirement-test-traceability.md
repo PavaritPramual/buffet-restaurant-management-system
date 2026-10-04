@@ -22,4 +22,4 @@ Verified on 4 October 2026; see [execution report](sirapat-step2-report.md).
 | Live Swagger schema and UI | Browser smoke checks API paths and Swagger HTTP 200 | None for module docs |
 | Customer request bill / bill status | Not delivered by the current Billing/Payment baseline | Teeramet contract/implementation and pairwise test |
 
-Evidence after all review corrections: [latest smoke results and screenshots](../../test/evidence/sirapat-step2-2026-10-04/second-fixes/), [3 Customer concurrency browser cases](../../test/evidence/sirapat-step2-2026-10-04/second-fixes/concurrency/browser-concurrency-results.json), [schema delta](../database/menu-ordering-schema-delta.md). Tests and schema audit do not constitute another person's approval.
+Evidence after all review corrections: [final smoke results and screenshots](../../test/evidence/sirapat-step2-2026-10-04/final-review/), [3 Customer concurrency browser cases](../../test/evidence/sirapat-step2-2026-10-04/final-review/concurrency/browser-concurrency-results.json), [schema delta](../database/menu-ordering-schema-delta.md). Tests and schema audit do not constitute another person's approval.

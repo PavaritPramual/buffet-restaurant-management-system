@@ -25,4 +25,4 @@ Entry: the module contract and fixture are agreed; the branch is based on curren
 
 ## Latest execution
 
-See [Sirapat Step 2 verification](sirapat-step2-report.md) and [browser evidence](../../test/evidence/sirapat-step2-2026-10-04/) for actual results from 4 October 2026. Owner review and canonical schema approval remain separate acceptance gates.
+See [Sirapat Step 2 verification](sirapat-step2-report.md) and [final browser evidence](../../test/evidence/sirapat-step2-2026-10-04/final-review/) for actual results from 4 October 2026. Owner review and canonical schema approval remain separate acceptance gates.
