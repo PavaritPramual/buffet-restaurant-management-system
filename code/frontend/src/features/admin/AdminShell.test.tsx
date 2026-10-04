@@ -4,7 +4,7 @@ import { AxiosError, AxiosHeaders } from 'axios'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { apiClient } from '../../api/client'
-import AdminShell from './AdminShell'
+import AdminShell, { ManagerRoute } from './AdminShell'
 import StaffShell from '../auth/StaffShell'
 import { authApi } from './api'
 import type { UserContext } from './api'
@@ -29,8 +29,10 @@ function renderShell(path: string) {
       <Routes>
         <Route path="/admin" element={<AdminShell />}>
           <Route path="stock" element={<p>หน้า stock</p>} />
-          <Route path="users" element={<p>หน้าพนักงาน</p>} />
-          <Route path="menu" element={<p>หน้าเมนู</p>} />
+          <Route element={<ManagerRoute />}>
+            <Route path="users" element={<p>หน้าพนักงาน</p>} />
+            <Route path="menu" element={<p>หน้าเมนู</p>} />
+          </Route>
         </Route>
         <Route element={<StaffShell />}>
           <Route path="/staff/tables" element={<p>หน้าโต๊ะพนักงาน</p>} />

@@ -11,23 +11,38 @@ export interface Order { orderId: number; sessionId: number; tableNumber: string
 export interface PageResult<T> { content: T[]; page: number; size: number; totalElements: number; totalPages: number }
 
 export { getApiError }
-const pendingQrExchanges = new Map<string, Promise<SessionContext>>()
+interface QrScan { token: string; promise: Promise<SessionContext>; settled: boolean; failed: boolean }
+// Coordination is limited to this tab. The customer cookie is shared across tabs;
+// use one ordering tab per browser (see doc/testing/test-plan.md for recovery).
+let latestQrScan: QrScan | null = null
 let previousQrExchange: Promise<unknown> = Promise.resolve()
 
 export function redeemQr(token: string): Promise<SessionContext> {
-  const pending = pendingQrExchanges.get(token)
-  if (pending) return pending
+  // Coalesce duplicate subscriptions only for the latest scan, including StrictMode.
+  if (latestQrScan?.token === token && !latestQrScan.settled) return latestQrScan.promise
 
   // A new scan must finish after the previous exchange so its cookie wins.
   const exchange = previousQrExchange.catch(() => undefined).then(async () =>
     (await customerApiClient.post<SessionContext>('/dining-sessions/qr-exchange', { token })).data)
-  pendingQrExchanges.set(token, exchange)
+  const scan: QrScan = { token, promise: exchange, settled: false, failed: false }
+  latestQrScan = scan
   previousQrExchange = exchange.then(() => undefined, () => undefined)
-  const clear = () => { if (pendingQrExchanges.get(token) === exchange) pendingQrExchanges.delete(token) }
-  void exchange.then(clear, clear)
+  void exchange.then(() => { scan.settled = true }, () => { scan.settled = true; scan.failed = true })
   return exchange
 }
-export async function getCustomerContext() { return (await customerApiClient.get<SessionContext>('/dining-sessions/customer-context')).data }
+export async function getCustomerContext({ retryFailedQr = false }: { retryFailedQr?: boolean } = {}): Promise<SessionContext> {
+  // Keep the latest scan across route remounts; a failed scan cannot restore an older cookie.
+  if (retryFailedQr && latestQrScan?.failed) void redeemQr(latestQrScan.token)
+  while (true) {
+    const scan = latestQrScan
+    try {
+      if (scan) await scan.promise
+      if (scan !== latestQrScan) continue
+      const context = (await customerApiClient.get<SessionContext>('/dining-sessions/customer-context')).data
+      if (scan === latestQrScan) return context
+    } catch (cause) { if (scan === latestQrScan) throw cause }
+  }
+}
 export async function getMenu(sessionId: number) { return (await customerApiClient.get<MenuItem[]>(`/dining-sessions/${sessionId}/menu`)).data }
 export async function getBuffetPackage(id: number) { return (await apiClient.get<BuffetPackage>(`/buffet-packages/${id}`)).data }
 export async function getCategories() { return (await apiClient.get<Category[]>('/menu-categories')).data }
