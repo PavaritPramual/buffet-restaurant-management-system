@@ -10,12 +10,20 @@ Run this list for changes to Menu, Ordering, Session contracts, API conventions,
 - [x] Customer layout remains usable at roughly 360px width and at desktop width.
 - [x] Category and item create/edit/delete work; deleting a category with items returns a clear error; an item with order history is retained and directs staff to mark it unavailable.
 - [x] Pagination and sorting give stable results when there are more items than one page.
+- [x] Late catalog responses cannot override the selected page/sort, show stale errors or dismiss a newer request's loading indicator.
+- [x] A history refresh started before order acknowledgement cannot erase that order or report an obsolete error; a fresh refresh still updates status.
+- [x] Supervisor cannot open Menu/Users editors through uppercase or trailing-slash URLs; Manager still can.
+- [x] A-B-A QR scans execute in order and never render an obsolete session against another scan's cookie; latest duplicate subscriptions still share one POST.
+- [x] PostgreSQL order/close tests wait for actual row-lock contention and separately verify revoked credentials after committed close.
+- [x] History that observes a persisted order before POST acknowledgement retains one card and its newer kitchen status.
+- [x] History refresh recovery clears only its own failure and preserves an order submission failure/cart.
+- [x] Returning to Customer during QR exchange waits for the latest scan before reading cookie context; failed scans do not restore an older table and explicit retry works.
 - [x] Optional menu image appears when set, while a menu without an image still renders cleanly.
 - [x] Unknown or lowercase shared enum values still return 400 with `ErrorResponse`.
 - [x] No automated test touches shared Supabase data or commits secrets.
 - [ ] Full team integration: production Staff/Fulfillment Auth and Billing trigger/payment-close flow work with real adapters.
 
-Checked Menu/Ordering items above refer to the 4 October 2026 isolated run in [Sirapat report](sirapat-step2-report.md): 188 backend passes, 2 Stock/Docker skips, 46 frontend passes. The separate Fulfillment checklist below is maintained by its owner and is unchanged.
+Checked Menu/Ordering items above refer to the 4 October 2026 verification in [Sirapat report](sirapat-step2-report.md): current frontend 78 passes; earlier full backend 189 passes / 2 Stock-Docker skips, followed by a focused 38-case recheck. Backend code was unchanged by the second Customer-only corrections. The separate Fulfillment checklist below is maintained by its owner and is unchanged.
 
 ## Order Fulfillment (Kitchen & Serving)
 

@@ -1,0 +1,84 @@
+{
+  "executedAt": "2026-10-03T23:34:33.007Z",
+  "results": [
+    {
+      "name": "Manager browser catalog create/update/sort",
+      "result": "PASS",
+      "detail": "Real Auth session and persisted API; 1280px"
+    },
+    {
+      "name": "Manager browser delete",
+      "result": "PASS",
+      "detail": "Unordered item is deleted through confirmation and API"
+    },
+    {
+      "name": "Real QR / menu by package / 360px layout",
+      "result": "PASS",
+      "detail": {
+        "width": 360,
+        "scrollWidth": 360,
+        "controls": [
+          {
+            "label": "ทั้งหมด",
+            "height": 44
+          },
+          {
+            "label": "ของทอดทดสอบ",
+            "height": 44
+          },
+          {
+            "label": "ลด ไก่ทอดกรอบทดสอบ",
+            "height": 44
+          },
+          {
+            "label": "เพิ่ม ไก่ทอดกรอบทดสอบ",
+            "height": 44
+          },
+          {
+            "label": "ยืนยันการสั่ง",
+            "height": 48
+          },
+          {
+            "label": "อัปเดตสถานะคำสั่งซื้อ",
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "name": "Customer quantity / confirm / single submission / RECEIVED",
+      "result": "PASS",
+      "detail": "One actual order POST; cart cleared and order status shown"
+    },
+    {
+      "name": "Loading state",
+      "result": "PASS",
+      "detail": "Real menu request delayed for visual verification"
+    },
+    {
+      "name": "Network error recovery",
+      "result": "PASS",
+      "detail": "Aborted menu request; retry succeeds with existing customer cookie"
+    },
+    {
+      "name": "Empty state",
+      "result": "PASS",
+      "detail": "Visual fixture for an empty menu; main order flow used real API"
+    },
+    {
+      "name": "Invalid QR",
+      "result": "PASS",
+      "detail": "Real API rejects invalid token and does not expose ordering controls"
+    },
+    {
+      "name": "Direct menu URL requires login",
+      "result": "PASS",
+      "detail": "Catalog editor is inside authenticated Admin shell"
+    },
+    {
+      "name": "Swagger / OpenAPI",
+      "result": "PASS",
+      "detail": "Live specification contains Menu/Category CRUD and customer endpoints"
+    }
+  ]
+}
