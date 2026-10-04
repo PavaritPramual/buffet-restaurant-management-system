@@ -47,6 +47,9 @@ class PaymentAuthorizationTest {
 
     @Test
     void rejectsRequestsWithoutLogin() throws Exception {
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .get("/api/v1/payments/sessions/12"))
+                .andExpect(status().isUnauthorized());
         mvc.perform(post("/api/v1/billing/preview")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"sessionId\":12}"))
@@ -71,6 +74,10 @@ class PaymentAuthorizationTest {
                 AuthController.USER_CONTEXT_SESSION_KEY,
                 new UserContext(1L, "test-user", "Test User", role)
         );
+
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .get("/api/v1/payments/sessions/12").session(session))
+                .andExpect(status().isForbidden());
 
         mvc.perform(post("/api/v1/billing/preview")
                         .session(session)

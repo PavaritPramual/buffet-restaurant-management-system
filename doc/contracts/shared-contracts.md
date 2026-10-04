@@ -83,6 +83,15 @@ Frontend: `/billing/preview` for entering an ID, `/staff/sessions/:sessionId/bil
 
 ## PaymentResult
 
+### Payment HTTP API
+
+- `POST /api/v1/payments`: รับ `{sessionId, paymentMethod}`; backend อ่านราคา snapshot และคำนวณยอดเอง คืน PaymentResult และ HTTP 201 เมื่อบันทึก PAID
+- `GET /api/v1/payments/sessions/{sessionId}`: อ่าน PaymentResult เดิมโดยไม่สร้างหรือส่งชำระซ้ำ; ไม่มีรายการคืน 404
+- ทั้งสอง endpoint ต้อง login เป็น SERVICE_STAFF; ไม่ login คืน 401, role อื่นคืน 403
+- หลังบันทึก PAID ยังต้องกดปิดรอบแยก; close rule อ่านสถานะจาก PaymentStatusLookup
+- การอ่านสถานะล้มเหลวไม่เท่ากับยังไม่ชำระ; frontend ต้องตรวจผลอีกครั้งก่อนทำรายการต่อ
+- Endpoint อ่านสถานะเป็น contract เพิ่มเติมที่ต้องให้ศรัณย์/ปวริศช์ review ใน PR
+
 Owner: ธีรเมธ — Billing & Payment
 
 | Field | JSON type | Nullable | Notes |

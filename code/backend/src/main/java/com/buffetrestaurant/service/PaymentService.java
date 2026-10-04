@@ -7,4 +7,5 @@ public interface PaymentService {
     
 
     PaymentResult pay(CreatePaymentRequest request);
+    PaymentResult findBySessionId(Long sessionId);
 }

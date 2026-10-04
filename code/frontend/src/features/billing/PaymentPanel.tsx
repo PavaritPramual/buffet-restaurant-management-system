@@ -1,9 +1,9 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { isAxiosError } from 'axios'
-import { createPayment } from '../../api/payments'
+import { createPayment, findPayment } from '../../api/payments'
 import type { BillSummary } from '../../api/billing'
 import type { PaymentMethod, PaymentResult } from '../../contracts/shared'
-import { ErrorAlert } from '../../components/common'
+import { Button, ErrorAlert } from '../../components/common'
 import PaymentForm from './PaymentForm'
 import PaymentConfirmation from './PaymentConfirmation'
 
@@ -21,9 +21,47 @@ export default function PaymentPanel({
   const [error, setError] = useState('')
   const [result, setResult] = useState<PaymentResult | null>(null)
   const requestStarted = useRef(false)
+  const [checking, setChecking] = useState(true)
+  const [checked, setChecked] = useState(false)
+
+  useEffect(() => {
+    let active = true
+    if (!enabled) return () => { active = false }
+    findPayment(bill.sessionId).then((existing) => {
+      if (!active) return
+      if (existing && existing.sessionId !== bill.sessionId) throw new Error('Session mismatch')
+      setResult(existing)
+      setChecked(true)
+    }).catch(() => {
+      if (active) setError('ตรวจสถานะการชำระไม่ได้ กรุณากดตรวจสอบสถานะอีกครั้ง')
+    }).finally(() => {
+      if (active) setChecking(false)
+    })
+    return () => { active = false }
+  }, [bill.sessionId, enabled])
+
+  async function checkPayment() {
+    if (checking || busy) return
+    setChecking(true)
+    setError('')
+    try {
+      const existing = await findPayment(bill.sessionId)
+      if (existing && existing.sessionId !== bill.sessionId) throw new Error('Session mismatch')
+      setResult(existing)
+      setChecked(true)
+      if (!existing && attempted) {
+        setError('ยังไม่พบรายการชำระ กรุณาตรวจสอบกับผู้ดูแลก่อนส่งคำขอใหม่')
+      }
+    } catch {
+      setChecked(false)
+      setError('ตรวจสถานะการชำระไม่ได้ กรุณาลองตรวจสอบอีกครั้ง')
+    } finally {
+      setChecking(false)
+    }
+  }
 
   async function handlePayment(method: PaymentMethod) {
-    if (!enabled || requestStarted.current) return
+    if (!enabled || !checked || checking || result || requestStarted.current) return
 
     requestStarted.current = true
     setAttempted(true)
@@ -63,6 +101,12 @@ export default function PaymentPanel({
       {!enabled && <p>การรับชำระยังไม่เปิดใช้งาน</p>}
 
       {error && <ErrorAlert message={error} />}
+      {enabled && (
+        <Button type="button" variant="secondary" loading={checking}
+          disabled={busy} onClick={checkPayment}>
+          ตรวจสอบสถานะการชำระ
+        </Button>
+      )}
 
       {result ? (
         <PaymentConfirmation result={result} />
@@ -70,7 +114,7 @@ export default function PaymentPanel({
         <PaymentForm
           totalAmount={bill.totalAmount}
           busy={busy}
-          disabled={!enabled || attempted}
+          disabled={!enabled || attempted || checking || !checked}
           onConfirm={handlePayment}
         />
       )}

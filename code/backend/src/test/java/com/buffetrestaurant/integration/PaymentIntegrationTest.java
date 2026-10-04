@@ -36,7 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @TestPropertySource(properties = {
         "app.billing.context-provider=database",
-        "app.payment.status-provider=database"
+        "app.payment.status-provider=database",
+        "app.dining-session.staff-access-provider=session"
 })
 @Transactional
 class PaymentIntegrationTest {
@@ -108,6 +109,29 @@ class PaymentIntegrationTest {
         assertThat(payments.findBySessionId(SESSION_ID)).isEmpty();
     }
 
+    @Test
+    void missingPaymentReturns404WithoutCreatingOne() throws Exception {
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .get("/api/v1/payments/sessions/" + SESSION_ID).session(staffSession))
+                .andExpect(status().isNotFound());
+        assertThat(payments.findBySessionId(SESSION_ID)).isEmpty();
+    }
+
+    @Test
+    void closeRequiresAuthenticatedServiceStaff() throws Exception {
+        mvc.perform(post("/api/v1/dining-sessions/" + SESSION_ID + "/close"))
+                .andExpect(status().isUnauthorized());
+        for (UserRole role : new UserRole[]{UserRole.KITCHEN_STAFF, UserRole.SUPERVISOR, UserRole.MANAGER}) {
+            MockHttpSession other = new MockHttpSession();
+            other.setAttribute(AuthController.USER_CONTEXT_SESSION_KEY,
+                    new UserContext(2L, "other", "Other", role));
+            mvc.perform(post("/api/v1/dining-sessions/" + SESSION_ID + "/close").session(other))
+                    .andExpect(status().isForbidden());
+        }
+        assertThat(jdbc.queryForObject("SELECT status FROM dining_sessions WHERE id = ?",
+                String.class, SESSION_ID)).isEqualTo("ACTIVE");
+    }
+
     @ParameterizedTest
     @EnumSource(PaymentMethod.class)
     void recordsPaidPaymentAndExposesStatus(PaymentMethod method) throws Exception {
@@ -127,6 +151,12 @@ class PaymentIntegrationTest {
         assertThat(saved.getAmount()).isEqualByComparingTo("997.50");
         assertThat(saved.getPaymentStatus()).isEqualTo(PaymentStatus.PAID);
         assertThat(saved.getPaidAt()).isNotNull();
+
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .get("/api/v1/payments/sessions/" + SESSION_ID).session(staffSession))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.paymentId").value(saved.getId()))
+                .andExpect(jsonPath("$.paymentStatus").value("PAID"));
 
         PaymentStatusLookup.PaymentVerification verification =
                 statusLookup.findPaymentForSession(SESSION_ID);

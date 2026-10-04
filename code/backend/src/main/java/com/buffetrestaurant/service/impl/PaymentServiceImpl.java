@@ -24,6 +24,20 @@ import com.buffetrestaurant.service.PaymentAccessProvider;
 @Transactional 
 public class PaymentServiceImpl implements PaymentService{
 
+    @Override
+    @Transactional(readOnly = true)
+    public PaymentResult findBySessionId(Long sessionId) {
+        accessProvider.requirePaymentAccess();
+        if (sessionId == null || sessionId <= 0) {
+            throw new IllegalArgumentException("A positive session ID is required");
+        }
+        Payment payment = paymentRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new com.buffetrestaurant.exception.ResourceNotFoundException(
+                        "Payment not found for this session"));
+        return new PaymentResult(payment.getId(), payment.getSessionId(),
+                payment.getPaymentMethod(), payment.getPaymentStatus(), payment.getPaidAt());
+    }
+
     private final PaymentRepository paymentRepository;
     private final BillingContextProvider contextProvider;
     private final BillingEngine billingEngine;

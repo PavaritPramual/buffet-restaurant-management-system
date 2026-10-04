@@ -5,7 +5,7 @@ import { AxiosError } from 'axios'
 import BillingPreviewPage from './BillingPreviewPage'
 import { apiClient } from './api/client'
 
-vi.mock('./api/client', () => ({ apiClient: { post: vi.fn() } }))
+vi.mock('./api/client', () => ({ apiClient: { post: vi.fn(), get: vi.fn() } }))
 const bill = { sessionId: 12, subtotalNoneDiscount: 997.5, discountAmount: 0,
   totalAmount: 997.5, totalBeforeRounding: 997.5, roundingAdjustment: 0 }
 function renderPage(path = '/billing/preview') {
@@ -19,7 +19,12 @@ function submit(id: string) {
   fireEvent.click(screen.getByRole('button', { name: 'ดูบิล' }))
 }
 afterEach(cleanup)
-beforeEach(() => vi.resetAllMocks())
+beforeEach(() => {
+  vi.resetAllMocks()
+  const missing = new AxiosError('not found')
+  Object.assign(missing, { response: { status: 404 } })
+  vi.mocked(apiClient.get).mockRejectedValue(missing)
+})
 describe('Billing preview', () => {
   it('sends only sessionId and displays the server total', async () => {
     vi.mocked(apiClient.post).mockResolvedValue({ data: bill })

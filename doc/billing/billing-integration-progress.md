@@ -1,73 +1,56 @@
-# สถานะ Billing integration — 28 September 2026
+# Billing / Payment integration — 4 October 2026
 
-Branch: `teeramet_673380273-9_02`
+Branch: `teeramet_673380273-9_02`. This implementation is on the personal branch; review and merge into develop remain pending.
 
-## สิ่งที่เปลี่ยนและการเชื่อมต่อ
+## Implemented flow
 
-1. `BillingPreviewPage.tsx` รับรหัสรอบจากช่องกรอกหรือ URL ของพนักงาน แล้วเรียก API
-   เมื่อเปลี่ยนรหัสจะล้างบิลเดิม ป้องกันการกดซ้ำขณะโหลด และไม่แสดง response ที่เป็นของรอบอื่น
-2. `api/billing.ts` ส่งเพียง `{ "sessionId": ... }` ไปยัง POST `/api/v1/billing/preview`
-   ไม่ส่งราคา จำนวนคน ส่วนลด หรือสถานะจาก browser ไปคำนวณอีกต่อไป
-3. `BillingPreviewRequest` เป็น record ที่เก็บ sessionId; Controller ใช้ `@Valid`
-   เพื่อเรียกกฎ `@NotNull` และ `@Positive` ก่อนเรียก service
-4. `BillingController` ดูแล HTTP และ Swagger แล้วส่งรหัสให้ `BillingPreviewService`
-5. `BillingPreviewService` เรียก `BillingContextProvider` ตรวจรหัสตรงกันและสถานะ ACTIVE
-   แล้วส่ง context ให้ BillingEngine เดิม ไม่มีการบันทึก Payment หรือปิดรอบ
-6. BillingEngine และ Strategy ไม่ได้เปลี่ยนสูตร เก็บค่าคำนวณเต็มความละเอียดและปัดยอดสุดท้าย
-   ด้วย HALF_UP ตามเดิม Service เก็บ dependency ใน field ส่วนข้อมูลบิลเก็บในตัวแปรของแต่ละคำขอ
-7. `DisabledBillingContextProvider` ยังเป็นค่าเริ่มต้น: ตอบ 503 จนกว่าจะมี adapter ฐานข้อมูล
-   ไม่สร้างข้อมูลปลอมใน runtime เพราะ PaymentService ก็ใช้ Provider เดียวกัน
+1. Session detail links to `/staff/sessions/:sessionId/billing`.
+2. Preview accepts only sessionId. DatabaseBillingContextProvider reads packagePriceAtOpen and counts from DiningSessionBillingReader; browser pricing is not trusted.
+3. BillingEngine charges adults full price and children half price. It supports backend percentage discounts 0–100, calculates with BigDecimal and rounds the final total once using HALF_UP. Runtime currently supplies no discount; promotion management is not implemented.
+4. PaymentService recalculates backend data, rejects inactive sessions and existing payments, and records CASH/QR/CARD as PAID with OffsetDateTime. No payment gateway is used.
+5. V9 creates payments with unique session_id, FK, amount/method/status/timestamp checks. PostgreSQL restricts client roles. H2 has a separate V9; applied SQL is not modified.
+6. DatabasePaymentStatusLookup provides sessionId/status to close. Payment leaves the session ACTIVE. Separate close completes the session and returns the table to AVAILABLE.
+7. Preview/payment require SERVICE_STAFF. SessionDiningSessionStaffAccessProvider applies the same check to DiningSession when `app.dining-session.staff-access-provider=session`. Demo now selects session; main retains disabled until configured.
+8. GET `/api/v1/payments/sessions/{sessionId}` reads recorded PaymentResult. PaymentPanel checks status before permitting payment, displays previous confirmation, and offers read-only reconciliation after ambiguous errors. Payments are not automatically retried.
 
-PaymentServiceImpl เดิมจะอ่าน context และคำนวณยอดใหม่ก่อนบันทึก Payment;
-การดูบิลไม่ใช่ใบเสร็จ และไม่ได้ยืนยันว่ามีการจ่ายเงินแล้ว
+## Verified on 4 October
 
-## เปิดหน้าไหน
+- Targeted backend tests: 42 passed, no failures/errors/skips.
+- Full backend suite: 212 discovered, 207 passed, 5 skipped, no failures/errors, BUILD SUCCESS.
+- Skips: PostgreSQL DiningSession migration 1, Order/Close concurrency 2, Stock security 2. These do not prove PostgreSQL success.
+- Payment integration uses the real session authorization adapter rather than the staff fixture. MockHttpSession supplies authenticated users; real login/browser evidence remains separate.
+- Calculation tests cover adult/child/mixed, 0/10/100% discounts, invalid percentages/counts, rounding and repeatable calculation.
+- Frontend: 49/49 tests and production build passed. Lint has 0 errors, 4 existing warnings in Admin/Fulfillment pages.
+- UI tests cover existing payment, failure to read status, ambiguous POST reconciliation without reposting, and mismatched sessions.
+- No central Supabase migrations were run.
 
-- `/billing/preview`: กรอกรหัสรอบ แล้วกดดูบิล
-- `/staff/sessions/12/billing`: รหัสมาจาก URL แล้วกดดูบิล
-- เมื่อ backend รันได้แต่ Provider ยัง disabled จะได้ 503 พร้อมข้อความระบบยังไม่พร้อม
-- ยังไม่ติดตั้ง PaymentPanel ในหน้านี้จนกว่าจะเชื่อมฐานข้อมูลและสิทธิ์พนักงาน
-- ใช้ common UI components กับ CSS เฉพาะหน้า เพราะ entry ปัจจุบันโหลด shared CSS
-  แต่ไม่ได้โหลด Tailwind stylesheet ที่ utility classes เดิมต้องใช้
+## Reproduce automated checks
 
-## งานที่รอเชื่อมต่อ
+```bash
+cd /home/koji/CS3-1/Prinsible_software/buffet-restaurant-management-system/code/backend
+./mvnw test
 
-1. รวม DiningSession ที่ผ่าน review จาก PR16 ตามขั้นตอน Git ของทีม
-2. ทำ BillingContextProvider โดยเรียก DiningSessionBillingReader.requireBySessionId
-   ใช้ packagePriceAtOpen เป็น packagePrice และกำหนด discountContext ฝั่ง backend
-3. ทำ PaymentStatusLookup อ่าน PaymentRepository คืน sessionId และสถานะจากฐานข้อมูล
-   การปิดรอบยังเป็นอีก action ของพนักงานหลังจ่าย
-4. จองเลข migration Payment กับเมธัส: PR16 ใช้ V6–V8 แล้ว ยังไม่ได้จอง V9
-   ทำ FK/unique constraint และ paid_at nullable ตามชนิดเวลาที่ตกลงกัน
-5. เชื่อม authentication และ role ของพนักงานก่อนเปิดใช้งานจริง
-6. เชื่อม UI ชำระเงิน พร้อมอ่านสถานะเพื่อจัดการกรณีส่งคำขอแล้วไม่ทราบผล
-7. ทดสอบเปิดรอบ → ดูบิล → จ่าย → ปิดรอบ ในฐานข้อมูลทดสอบแยกก่อนตรวจ runtime ร่วม
-
-ตอนนี้มี Payment entity เดิมแต่ยังไม่มี migration ของตาราง payments ดังนั้น backend ทั้งระบบ
-อาจติด JPA schema validation จนกว่างาน schema จะพร้อม เทสต์เฉพาะ web layer ไม่ได้ยืนยัน startup ทั้งระบบ
-
-## Contract และ fixture
-
-HTTP body เปลี่ยนจาก BillingContext เป็น BillingPreviewRequest แล้ว
-แก้ shared-contracts.md, Swagger และ frontend call พร้อมเพิ่ม billing-preview-request.json
-fixtures billing-context เดิมยังเป็นข้อมูลคำนวณภายใน ไม่ใช่ HTTP request อีกต่อไป
-ต้องให้ปวริศช์และศรัณย์รีวิวการเปลี่ยน contract ก่อน merge; ยังไม่ได้ส่งข้อความแทนผู้ใช้
-
-## หลักฐานทดสอบ
-
-- Frontend: `npm test -- --environment jsdom` ผ่าน 13 tests (6 tests ใหม่ของ Billing)
-- Frontend build และ lint ผ่านหลังปรับ CSS; tests 13/13 ผ่านหลังแก้ครั้งสุดท้าย
-- Backend ผ่าน 13/13 tests, Failures 0, Errors 0, BUILD SUCCESS (11 web + 2 calculation)
-- Backend เลือก BillingControllerTest และ StandardBillCalculationTest ใช้ service/engine จริง
-  แต่ mock provider ไม่เชื่อมฐานข้อมูล ไม่แตะ Supabase
-- ตรวจ browser แทรกราคา, ส่วนลดจาก backend, ขอบเขต HALF_UP, รหัสผิด,
-  รอบไม่ ACTIVE, context คนละรอบ, 404 และ 503
-- sandbox/JDK นี้ไม่อนุญาต Mockito self-attach จึงใช้ javaagent ตอนเริ่ม test process
-  ไม่ได้เปลี่ยน pom ของโปรเจกต์เพื่อแก้ข้อจำกัดเฉพาะเครื่อง
-
-```sh
-mvn -o -Dtest=BillingControllerTest,StandardBillCalculationTest \
-  -DargLine=-javaagent:/home/koji/.m2/repository/org/mockito/mockito-core/5.17.0/mockito-core-5.17.0.jar test
+cd /home/koji/CS3-1/Prinsible_software/buffet-restaurant-management-system/code/frontend
+npm test -- --environment jsdom
+npm run build
+npm run lint
 ```
 
-ยังไม่ได้ merge PR16, สร้าง migration, เปิดระบบชำระจริง, commit หรือ push
+The agent environment used an explicit Mockito javaagent because self-attach is restricted; a normal local JDK may not need it.
+
+## Remaining acceptance evidence
+
+- User reported successful local H2 browser payment/close and authorization checks on 4 October; see billing-demo-checklist.md for exact reported outcomes and limits. Still capture screenshots/clip and explicitly verify refresh preserves the payment ID and network-error recovery.
+- PostgreSQL V9/security and concurrent duplicate payment on a separate test database. H2 does not establish PostgreSQL locking/role behavior.
+- Integrated Docker/CORS/frontend/backend/Supabase runtime. Docker socket access and local server socket creation were denied in the agent environment; the attempted H2 demo reached JPA initialization but failed to bind the HTTP server. This is not a successful runtime demo.
+- Inspect central Flyway history and coordinate V9 before V10/V11 or a forward migration plan if newer versions already ran. Do not modify applied SQL.
+- Pavarit reviews close/integration, Sarun DTO/API, Sirapat calculation/frontend tests, Methus migrations/Auth.
+- Update Tasks with PR/evidence/blockers and mark complete after review and runtime/demo evidence.
+
+## Checklist assessment
+
+- Calculation and important boundaries: automated evidence available.
+- Invalid/duplicate payment and PAID/close: automated H2 evidence available with real role checks.
+- UI/API: implemented, component-tested, with user-reported local browser success; screenshots and remaining cases pending.
+- Docker/Supabase/Flyway/CORS: pending integrated runtime evidence.
+- Tests/Swagger/demo/review: tests and Swagger updated, local demo results reported; remaining demo evidence and review pending.
