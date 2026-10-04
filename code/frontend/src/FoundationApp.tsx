@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import DesignSystemPage from './DesignSystemPage'
-import AdminShell from './features/admin/AdminShell'
+import AdminShell, { ManagerRoute } from './features/admin/AdminShell'
 import StockPage from './features/admin/StockPage'
 import UsersPage from './features/admin/UsersPage'
 import CustomerOrderingPage from './features/ordering/CustomerOrderingPage'
@@ -24,10 +24,11 @@ export default function FoundationApp() {
     <Route path="/admin" element={<AdminShell />}>
       <Route index element={<Navigate to="stock" replace />} />
       <Route path="stock" element={<StockPage />} />
-      <Route path="users" element={<UsersPage />} />
-      <Route path="menu" element={<MenuAdminPage />} />
+      <Route element={<ManagerRoute />}>
+        <Route path="users" element={<UsersPage />} />
+        <Route path="menu" element={<MenuAdminPage />} />
+      </Route>
     </Route>
-    <Route path="/admin/menu" element={<MenuAdminPage />} />
     <Route path="*" element={<DesignSystemPage />} />
   </Routes>
 }

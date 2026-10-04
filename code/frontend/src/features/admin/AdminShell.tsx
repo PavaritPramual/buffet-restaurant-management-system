@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Navigate, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Navigate, NavLink, Outlet, useOutletContext } from 'react-router-dom'
 import { authApi, getErrorMessage, roleLabels } from './api'
 import type { UserContext } from './api'
 import './admin.css'
 
 export default function AdminShell() {
-  const location = useLocation()
   const [user, setUser] = useState<UserContext | null>(null)
   const [checking, setChecking] = useState(true)
   const [username, setUsername] = useState('')
@@ -71,10 +70,6 @@ export default function AdminShell() {
   if (user.role === 'SERVICE_STAFF') return <Navigate to="/staff/tables" replace />
   if (user.role === 'KITCHEN_STAFF') return <Navigate to="/kitchen" replace />
 
-  if (user.role !== 'MANAGER' && ['/admin/users', '/admin/menu'].includes(location.pathname)) {
-    return <Navigate to="/admin/stock" replace />
-  }
-
   return <div className="admin-shell">
     <aside className="admin-sidebar">
       <div className="admin-brand"><span className="admin-brand-mark">BR</span><span>BUFFET<br /><b>ระบบจัดการร้าน</b></span></div>
@@ -96,4 +91,9 @@ export default function AdminShell() {
       <Outlet context={user} />
     </main>
   </div>
+}
+
+export function ManagerRoute() {
+  const user = useOutletContext<UserContext>()
+  return user.role === 'MANAGER' ? <Outlet context={user} /> : <Navigate to="/admin/stock" replace />
 }
