@@ -44,7 +44,7 @@ The next review reproduced three additional Customer interleavings despite the o
 
 [CustomerOrderingConcurrency.test.tsx](../../code/frontend/src/features/ordering/CustomerOrderingConcurrency.test.tsx) adds 6 component cases. The API suite adds 5 context-coordination cases, covering pending exchange, newer scan during context success/failure, explicit retry and obsolete exchange failure. The complete frontend suite now has 78 passing tests across 11 files. The backend production and test sources were unchanged in this second correction stage; the final full-suite verification is summarized below.
 
-## Current delivery and verification
+## Prior revision delivery and verification
 
 - Category/Menu CRUD is exercised through the real authenticated MANAGER session provider, with persisted update/delete and package-link assertions. All six mutation endpoints reject anonymous users (401) and SERVICE_STAFF/KITCHEN_STAFF/SUPERVISOR (403).
 - Catalog pagination covers ascending/descending order, subsequent/empty pages, invalid bounds/fields/directions and stable ID tie-breaking. The Admin page exposes sorting and package names, with retry after a load error.
