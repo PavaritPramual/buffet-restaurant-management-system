@@ -1,3 +1,5 @@
+
+import BillingPreviewPage from './BillingPreviewPage'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import DesignSystemPage from './DesignSystemPage'
 import AdminShell, { ManagerRoute } from './features/admin/AdminShell'
@@ -12,6 +14,7 @@ import StaffServingPage from './features/fulfillment/StaffServingPage'
 import StaffShell from './features/auth/StaffShell'
 
 export default function FoundationApp() {
+
   return <Routes>
     <Route path="/" element={<DesignSystemPage />} />
     <Route path="/customer/qr" element={<CustomerOrderingPage />} />
@@ -20,6 +23,8 @@ export default function FoundationApp() {
       <Route path="/staff/sessions/:sessionId" element={<DiningSessionPage />} />
       <Route path="/kitchen" element={<KitchenBoardPage />} />
       <Route path="/staff/serving" element={<StaffServingPage />} />
+      <Route path="/billing/preview" element={<BillingPreviewPage />} />
+      <Route path="/staff/sessions/:sessionId/billing" element={<BillingPreviewPage />} />
     </Route>
     <Route path="/admin" element={<AdminShell />}>
       <Route index element={<Navigate to="stock" replace />} />
@@ -31,4 +36,5 @@ export default function FoundationApp() {
     </Route>
     <Route path="*" element={<DesignSystemPage />} />
   </Routes>
+
 }

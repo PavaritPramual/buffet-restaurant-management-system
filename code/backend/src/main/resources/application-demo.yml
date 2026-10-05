@@ -21,8 +21,12 @@ app:
   ordering:
     session-provider: fixture
   dining-session:
-    staff-access-provider: fixture
+    staff-access-provider: session
   fulfillment:
     access-provider: fixture
   seed:
     enabled: true
+  billing:
+    context-provider: database
+  payment:
+    status-provider: database

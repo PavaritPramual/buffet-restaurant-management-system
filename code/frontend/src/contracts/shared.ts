@@ -54,9 +54,10 @@ export interface BillingContext {
 export interface PaymentResult {
   paymentId: number
   sessionId: number
+  amount: number
   paymentMethod: PaymentMethod
   paymentStatus: PaymentStatus
-  paidAt: string
+  paidAt: string | null
 }
 
 export interface UserContext {

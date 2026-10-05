@@ -58,7 +58,42 @@ Owner: ธีรเมธ — Billing & Payment
 
 Dining Session owner ให้ข้อมูลผ่าน `DiningSessionBillingReader.requireBySessionId(sessionId)` ซึ่งคืนราคา snapshot, จำนวนคน และสถานะ; Billing owner เป็นผู้เติม `discountContext` และคำนวณยอด
 
+## Billing preview API
+
+Owner: ธีรเมธ — Billing & Payment (pending cross-module review)
+
+`POST /api/v1/billing/preview` accepts `{ "sessionId": 1 }` only as business input.
+`sessionId` is a required positive integer (Java `Long`). Browser-supplied prices,
+counts, status or discounts are not used. `BillingContext` above is internal backend
+calculation input; its existing fixtures remain calculation examples, not HTTP request bodies.
+The backend provider must resolve the price snapshot at session opening, guest counts,
+status and backend-owned discount rules. Only ACTIVE sessions can be previewed for payment.
+
+Response 200: `sessionId`, `subtotalAmount`, `discountAmount`, `totalAmount` (JSON numbers).
+Amounts are display values in baht at two decimal places. `subtotalAmount - discountAmount = totalAmount`.
+Precise subtotal, percentage discount, pre-rounding total and adjustment stay in internal `BillCalculation`.
+The payable total is calculated at full BigDecimal precision then rounded once with HALF_UP.
+Display discount is the display subtotal minus payable total; it is not an intermediate calculation input.
+Preview does not create a payment or close a session. This replaces the earlier response fields;
+frontend and Swagger are updated together and API owner review is required before merge.
+
+Errors: 400 invalid input/inactive session, 401 login required, 403 SERVICE_STAFF required,
+404 session not found, 503 provider unavailable. Database and session providers are implemented;
+production defaults remain disabled until runtime configuration enables them.
+Request fixture: `test/fixtures/billing-preview-request.json`.
+Frontend: `/billing/preview` for entering an ID, `/staff/sessions/:sessionId/billing` for a selected session.
+
+
 ## PaymentResult
+
+### Payment HTTP API
+
+- `POST /api/v1/payments`: รับ `{sessionId, paymentMethod}`; backend อ่านราคา snapshot และคำนวณยอดเอง คืน PaymentResult และ HTTP 201 เมื่อบันทึก PAID
+- `GET /api/v1/payments/sessions/{sessionId}`: อ่าน PaymentResult เดิมโดยไม่สร้างหรือส่งชำระซ้ำ; ไม่มีรายการคืน 404
+- ทั้งสอง endpoint ต้อง login เป็น SERVICE_STAFF; ไม่ login คืน 401, role อื่นคืน 403
+- หลังบันทึก PAID ยังต้องกดปิดรอบแยก; close rule อ่านสถานะจาก PaymentStatusLookup
+- การอ่านสถานะล้มเหลวไม่เท่ากับยังไม่ชำระ; ห้าม retry อัตโนมัติ หลัง GET สำเร็จและไม่พบรายการจึงปลดล็อกให้ผู้ใช้ยืนยันลองชำระใหม่ได้
+- Endpoint อ่านสถานะเป็น contract เพิ่มเติมที่ต้องให้ศรัณย์/ปวริศช์ review ใน PR
 
 Owner: ธีรเมธ — Billing & Payment
 
@@ -66,9 +101,10 @@ Owner: ธีรเมธ — Billing & Payment
 |---|---|---|---|
 | `paymentId` | number | No | Payment identifier |
 | `sessionId` | number | No | Dining Session identifier |
+| `amount` | number | No | Recorded amount from Payment, not a recalculated preview |
 | `paymentMethod` | string | No | `PaymentMethod` |
 | `paymentStatus` | string | No | `PaymentStatus` |
-| `paidAt` | string | No | ISO-8601 with timezone |
+| `paidAt` | string | Yes | ISO-8601 with timezone; required when PAID, null otherwise |
 
 ## UserContext
 

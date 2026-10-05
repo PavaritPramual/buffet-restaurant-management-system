@@ -1,0 +1,375 @@
+{
+  "date": "2026-10-05",
+  "environment": "local disposable PostgreSQL 18; native HTTP runtime; non-superuser JDBC role buffet_backend_test",
+  "scope": "API/Auth/CORS/Swagger smoke; not browser or Docker/Supabase evidence",
+  "checks": [
+    {
+      "method": "GET",
+      "path": "/actuator/health",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "OPTIONS",
+      "path": "/api/v1/payments",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/sessions/1",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/sessions/1",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tables",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/buffet-packages",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/soups",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions/1/close",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/billing/preview",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/sessions/1",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments",
+      "status": 409,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/dining-sessions/1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/buffet-packages/1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/sessions/1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/billing/preview",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions/1/close",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tables/1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/buffet-packages/1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions/2/close",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/billing/preview",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/sessions/2",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments",
+      "status": 409,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/dining-sessions/2",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/buffet-packages/1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/sessions/2",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/billing/preview",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions/2/close",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tables/1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/buffet-packages/1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions/3/close",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/billing/preview",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/sessions/3",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments",
+      "status": 409,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/dining-sessions/3",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/buffet-packages/1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/sessions/3",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/billing/preview",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions/3/close",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tables/1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/buffet-packages/1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/sessions/1",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/dining-sessions/active",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/sessions/1",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/dining-sessions/active",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/v3/api-docs",
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "credentials_recorded": false
+}
