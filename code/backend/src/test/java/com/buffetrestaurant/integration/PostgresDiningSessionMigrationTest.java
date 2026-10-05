@@ -10,16 +10,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-/** Runs against a disposable PostgreSQL database when DINING_TEST_PG_URL is set. */
+/** Requires explicit opt-in and a marked disposable loopback database before Spring/Flyway startup. */
 @SpringBootTest
 @EnabledIfEnvironmentVariable(named = "DINING_TEST_PG_URL", matches = ".+")
+@EnabledIfEnvironmentVariable(named = "ALLOW_DESTRUCTIVE_DB_TESTS", matches = "true")
 class PostgresDiningSessionMigrationTest {
     @DynamicPropertySource
     static void postgresProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", () -> System.getenv("DINING_TEST_PG_URL"));
+        String url = DisposablePostgresDatabase.requireReady("DINING_TEST");
+        registry.add("spring.datasource.url", () -> url);
         registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
-        registry.add("spring.datasource.username", () -> "postgres");
-        registry.add("spring.datasource.password", () -> System.getenv("DINING_TEST_PG_PASSWORD"));
+        registry.add("spring.datasource.username", () -> System.getenv().getOrDefault("DINING_TEST_PG_USER", "postgres"));
+        registry.add("spring.datasource.password", () -> System.getenv().getOrDefault("DINING_TEST_PG_PASSWORD", ""));
         registry.add("spring.flyway.locations", () ->
                 "classpath:db/migration/common,classpath:db/migration/postgresql");
     }

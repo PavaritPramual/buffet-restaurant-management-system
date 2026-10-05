@@ -1,0 +1,79 @@
+name: CI
+on:
+  pull_request:
+    branches: [develop]
+  push:
+    branches: [develop]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  backend:
+    name: Backend and PostgreSQL
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: ci-disposable-only
+        ports: ['15432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: code/backend/pom.xml
+      - name: Create marked disposable databases in the job service
+        env:
+          POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+        run: docker exec -i "$POSTGRES_CONTAINER" psql -U postgres -d postgres --set ON_ERROR_STOP=1 < code/backend/src/test/resources/disposable-postgres-ci.sql
+      - name: Verify backend including PostgreSQL migrations and concurrency
+        working-directory: code/backend
+        env:
+          ALLOW_DESTRUCTIVE_DB_TESTS: 'true'
+          MENU_TEST_PG_URL: jdbc:postgresql://127.0.0.1:15432/buffet_test_menu_ci
+          MENU_TEST_PG_PASSWORD: ci-disposable-only
+          DINING_TEST_PG_URL: jdbc:postgresql://127.0.0.1:15432/buffet_test_dining_ci
+          DINING_TEST_PG_PASSWORD: ci-disposable-only
+        run: mvn --batch-mode --no-transfer-progress verify
+      - name: Preserve test reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: backend-test-reports
+          path: code/backend/target/surefire-reports/
+          if-no-files-found: warn
+          retention-days: 7
+  frontend:
+    name: Frontend tests, lint and build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: code/frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: code/frontend/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run lint
+      - run: npm run build

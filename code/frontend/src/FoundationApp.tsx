@@ -2,7 +2,7 @@
 import BillingPreviewPage from './BillingPreviewPage'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import DesignSystemPage from './DesignSystemPage'
-import AdminShell from './features/admin/AdminShell'
+import AdminShell, { ManagerRoute } from './features/admin/AdminShell'
 import StockPage from './features/admin/StockPage'
 import UsersPage from './features/admin/UsersPage'
 import CustomerOrderingPage from './features/ordering/CustomerOrderingPage'
@@ -14,36 +14,25 @@ import StaffServingPage from './features/fulfillment/StaffServingPage'
 import StaffShell from './features/auth/StaffShell'
 
 export default function FoundationApp() {
-  return (
-    <Routes>
-      <Route path="/" element={<DesignSystemPage />} />
-      <Route path="/customer/qr" element={<CustomerOrderingPage />} />
 
-      <Route element={<StaffShell />}>
-        <Route path="/staff/tables" element={<StaffTablesPage />} />
-        <Route
-          path="/staff/sessions/:sessionId"
-          element={<DiningSessionPage />}
-        />
-
-        <Route path="/billing/preview" element={<BillingPreviewPage />} />
-        <Route
-          path="/staff/sessions/:sessionId/billing"
-          element={<BillingPreviewPage />}
-        />
-
-        <Route path="/kitchen" element={<KitchenBoardPage />} />
-        <Route path="/staff/serving" element={<StaffServingPage />} />
-      </Route>
-
-      <Route path="/admin" element={<AdminShell />}>
-        <Route index element={<Navigate to="stock" replace />} />
-        <Route path="stock" element={<StockPage />} />
+  return <Routes>
+    <Route path="/" element={<DesignSystemPage />} />
+    <Route path="/customer/qr" element={<CustomerOrderingPage />} />
+    <Route element={<StaffShell />}>
+      <Route path="/staff/tables" element={<StaffTablesPage />} />
+      <Route path="/staff/sessions/:sessionId" element={<DiningSessionPage />} />
+      <Route path="/kitchen" element={<KitchenBoardPage />} />
+      <Route path="/staff/serving" element={<StaffServingPage />} />
+    </Route>
+    <Route path="/admin" element={<AdminShell />}>
+      <Route index element={<Navigate to="stock" replace />} />
+      <Route path="stock" element={<StockPage />} />
+      <Route element={<ManagerRoute />}>
         <Route path="users" element={<UsersPage />} />
         <Route path="menu" element={<MenuAdminPage />} />
       </Route>
+    </Route>
+    <Route path="*" element={<DesignSystemPage />} />
+  </Routes>
 
-      <Route path="*" element={<DesignSystemPage />} />
-    </Routes>
-  )
 }
