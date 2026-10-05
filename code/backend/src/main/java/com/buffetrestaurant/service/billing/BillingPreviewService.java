@@ -33,6 +33,11 @@ public class BillingPreviewService {
         if (context.getSessionStatus() != DiningSessionStatus.ACTIVE) {
             throw new BusinessRuleException("Only ACTIVE sessions can be calculated for payment");
         }
-        return billingEngine.calculate(context);
+        BillCalculation calculation = billingEngine.calculate(context);
+        java.math.BigDecimal displaySubtotal = calculation.subtotalNoneDiscount()
+                .setScale(2, java.math.RoundingMode.HALF_UP);
+        // Display discount reconciles to the final payable amount; exact math remains internal.
+        return new BillSummary(calculation.sessionId(), displaySubtotal,
+                displaySubtotal.subtract(calculation.totalAmount()), calculation.totalAmount());
     }
 }

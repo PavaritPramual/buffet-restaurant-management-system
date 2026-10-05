@@ -11,7 +11,7 @@ import com.buffetrestaurant.domain.Payment;
 import com.buffetrestaurant.domain.enums.DiningSessionStatus;
 import com.buffetrestaurant.dto.billing.BillingContext;
 import com.buffetrestaurant.dto.request.CreatePaymentRequest;
-import com.buffetrestaurant.dto.response.BillSummary;
+import com.buffetrestaurant.service.billing.BillCalculation;
 import com.buffetrestaurant.dto.response.PaymentResult;
 import com.buffetrestaurant.exception.DuplicateResourceException;
 import com.buffetrestaurant.repository.PaymentRepository;
@@ -34,7 +34,7 @@ public class PaymentServiceImpl implements PaymentService{
         Payment payment = paymentRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> new com.buffetrestaurant.exception.ResourceNotFoundException(
                         "Payment not found for this session"));
-        return new PaymentResult(payment.getId(), payment.getSessionId(),
+        return new PaymentResult(payment.getId(), payment.getSessionId(), payment.getAmount(),
                 payment.getPaymentMethod(), payment.getPaymentStatus(), payment.getPaidAt());
     }
 
@@ -85,7 +85,7 @@ public class PaymentServiceImpl implements PaymentService{
             throw new DuplicateResourceException("A payment already exists for this session");
         }
 
-        BillSummary summary = billingEngine.calculate(context);
+        BillCalculation summary = billingEngine.calculate(context);
         BigDecimal amount = summary.getTotalAmount();
 
         if (amount == null || amount.signum() < 0){
@@ -109,6 +109,7 @@ public class PaymentServiceImpl implements PaymentService{
 
             saved.getId(),
             saved.getSessionId(),
+            saved.getAmount(),
             saved.getPaymentMethod(),
             saved.getPaymentStatus(),
             saved.getPaidAt()

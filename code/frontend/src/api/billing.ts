@@ -6,11 +6,9 @@ export interface BillingPreviewRequest {
 
 export interface BillSummary {
   sessionId: number
-  subtotalNoneDiscount: number
+  subtotalAmount: number
   discountAmount: number
   totalAmount: number
-  totalBeforeRounding: number
-  roundingAdjustment: number
 }
 
 export async function previewBill(sessionId: number): Promise<BillSummary> {

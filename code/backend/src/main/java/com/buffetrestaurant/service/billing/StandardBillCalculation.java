@@ -5,6 +5,13 @@ import java.math.BigDecimal;
 import com.buffetrestaurant.dto.billing.BillingContext;
 
 public class StandardBillCalculation implements BillCalculationStrategy{
+    private final BillCalculationStrategy childStrategy;
+
+    public StandardBillCalculation() { this(new ChildRateCalculationStrategy(new BigDecimal("0.5"))); }
+
+    public StandardBillCalculation(BillCalculationStrategy childStrategy) {
+        this.childStrategy = java.util.Objects.requireNonNull(childStrategy);
+    }
 
     
 
@@ -36,7 +43,7 @@ public class StandardBillCalculation implements BillCalculationStrategy{
         BigDecimal packagePrice = context.getPackagePrice();
 
         BigDecimal adultTotal = packagePrice.multiply(BigDecimal.valueOf(context.getAdultCount()));
-        BigDecimal childTotal = packagePrice.multiply(new BigDecimal("0.5")).multiply(BigDecimal.valueOf(context.getChildCount()));
+        BigDecimal childTotal = childStrategy.calculate(context);
         
         return adultTotal.add(childTotal);
     }

@@ -44,7 +44,7 @@ Evidence source: the developer running the local H2 demo reported these results 
 - Duplicate POST while the session remained active returned 409 (status supplied).
 - GET payment status: logged out returned 401, demo admin/MANAGER returned 403, SERVICE_STAFF returned 200 as expected (developer confirmed the three-step check).
 
-Still collect: screenshots/clip, an explicit refresh/same-payment-ID result, browser network-error recovery, and any role checks beyond MANAGER. This local H2 report does not prove PostgreSQL/Supabase or Docker runtime.
+Follow-up agent verification on 5 October supplies PostgreSQL browser refresh/same-payment-ID and close screenshots, plus native HTTP checks for KITCHEN_STAFF/SUPERVISOR. See pr19-review-verification.md; browser network fault injection remains unverified. This local H2 report does not prove PostgreSQL/Supabase or Docker runtime.
 
 - [ ] Session detail → bill link selects the correct session ID.
 - [ ] Preview shows subtotal 997.50, discount 0, total 997.50 without writing a payment.

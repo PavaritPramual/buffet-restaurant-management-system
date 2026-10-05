@@ -23,6 +23,8 @@ export default function FoundationApp() {
       <Route path="/staff/sessions/:sessionId" element={<DiningSessionPage />} />
       <Route path="/kitchen" element={<KitchenBoardPage />} />
       <Route path="/staff/serving" element={<StaffServingPage />} />
+      <Route path="/billing/preview" element={<BillingPreviewPage />} />
+      <Route path="/staff/sessions/:sessionId/billing" element={<BillingPreviewPage />} />
     </Route>
     <Route path="/admin" element={<AdminShell />}>
       <Route index element={<Navigate to="stock" replace />} />

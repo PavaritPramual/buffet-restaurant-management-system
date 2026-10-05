@@ -99,12 +99,8 @@ function BillingPreviewForm({ routeSessionId }: { routeSessionId?: string }) {
         <Card>
           <h2>สรุปบิล</h2>
           <p>รหัสรอบ: {summary.sessionId}</p>
-          <p>ยอดก่อนลด: {summary.subtotalNoneDiscount} บาท</p>
+          <p>ยอดก่อนลด: {summary.subtotalAmount} บาท</p>
           <p>ส่วนลด: {summary.discountAmount} บาท</p>
-          <p>ยอดหลังลด ก่อนปรับเศษ: {summary.totalBeforeRounding} บาท</p>
-          {summary.roundingAdjustment !== 0 && (
-            <p>ปรับเศษ: {summary.roundingAdjustment > 0 ? '+' : ''}{summary.roundingAdjustment} บาท</p>
-          )}
           <p>ยอดสุทธิ: {summary.totalAmount.toFixed(2)} บาท</p>
           <PaymentPanel
             key={summary.sessionId}

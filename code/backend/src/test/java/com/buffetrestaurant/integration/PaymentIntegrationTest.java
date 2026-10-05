@@ -143,6 +143,7 @@ class PaymentIntegrationTest {
                 .andExpect(jsonPath("$.sessionId").value(SESSION_ID))
                 .andExpect(jsonPath("$.paymentMethod").value(method.name()))
                 .andExpect(jsonPath("$.paymentStatus").value("PAID"))
+                .andExpect(jsonPath("$.amount").value(997.50))
                 .andExpect(jsonPath("$.paidAt").isNotEmpty());
 
         Payment saved = payments.findBySessionId(SESSION_ID).orElseThrow();
@@ -156,6 +157,7 @@ class PaymentIntegrationTest {
                         .get("/api/v1/payments/sessions/" + SESSION_ID).session(staffSession))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.paymentId").value(saved.getId()))
+                .andExpect(jsonPath("$.amount").value(997.50))
                 .andExpect(jsonPath("$.paymentStatus").value("PAID"));
 
         PaymentStatusLookup.PaymentVerification verification =

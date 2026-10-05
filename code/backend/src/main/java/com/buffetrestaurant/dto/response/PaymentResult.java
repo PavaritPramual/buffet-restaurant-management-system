@@ -8,6 +8,7 @@ import com.buffetrestaurant.domain.enums.PaymentStatus;
 public record PaymentResult(
     Long paymentId,
     Long sessionId,
+    java.math.BigDecimal amount,
     PaymentMethod paymentMethod,
     PaymentStatus paymentStatus,
     OffsetDateTime paidAt

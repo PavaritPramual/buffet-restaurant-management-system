@@ -50,7 +50,9 @@ export default function PaymentPanel({
       setResult(existing)
       setChecked(true)
       if (!existing && attempted) {
-        setError('ยังไม่พบรายการชำระ กรุณาตรวจสอบกับผู้ดูแลก่อนส่งคำขอใหม่')
+        // Only an explicit successful status check unlocks a manual retry.
+        requestStarted.current = false
+        setAttempted(false)
       }
     } catch {
       setChecked(false)

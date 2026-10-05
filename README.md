@@ -246,3 +246,35 @@ docker compose down
 docker compose logs backend
 docker compose logs frontend
 ```
+
+## Billing / Payment runtime setup
+
+After Auth/session/schema are ready, copy the non-secret provider settings from
+`code/backend/.env.example` into your local deployment environment:
+
+```env
+DINING_SESSION_STAFF_ACCESS_PROVIDER=session
+BILLING_CONTEXT_PROVIDER=database
+PAYMENT_STATUS_PROVIDER=database
+```
+
+Defaults remain disabled (fail closed). JDBC/Hibernate and Flyway use the same datasource
+and DB role configured by SUPABASE_DB_USERNAME. This is a database login, not a Supabase
+REST service_role key. If deployment separates migration and runtime roles, owners must
+explicitly grant the actual runtime role and test it; do not add auth.uid() policies to
+our Spring session authorization flow.
+
+V9 creates payments. V12 is a **proposed forward migration** aligning policy/grants with
+the migration/JDBC role and resolving the identity sequence through pg_get_serial_sequence.
+Do not change applied V9. Methus must confirm V12 is available and inspect central
+flyway_schema_history before merge/apply. If V10/V11 already ran without V9, V12 cannot
+create the missing payments table by itself: coordinate a versioned forward creation plan.
+Do not enable out-of-order migrations or run shared DB migrations to bypass that gate.
+
+For an isolated H2 browser smoke run use `doc/billing/billing-demo-checklist.md`.
+For PostgreSQL payment/duplicate/security verification use the guarded disposable DB setup
+in `doc/billing/pr19-review-verification.md`. Never use central Supabase for automated tests.
+
+Public BillSummary now contains sessionId/subtotalAmount/discountAmount/totalAmount only;
+precise rounding intermediates are internal. PaymentResult adds the recorded amount.
+These contract and strategy-composition changes require Sarun/Pavarit/Sirapat review.

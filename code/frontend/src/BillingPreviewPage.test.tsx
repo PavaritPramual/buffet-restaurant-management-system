@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
@@ -6,8 +7,8 @@ import BillingPreviewPage from './BillingPreviewPage'
 import { apiClient } from './api/client'
 
 vi.mock('./api/client', () => ({ apiClient: { post: vi.fn(), get: vi.fn() } }))
-const bill = { sessionId: 12, subtotalNoneDiscount: 997.5, discountAmount: 0,
-  totalAmount: 997.5, totalBeforeRounding: 997.5, roundingAdjustment: 0 }
+const bill = { sessionId: 12, subtotalAmount: 997.5, discountAmount: 0,
+  totalAmount: 997.5 }
 function renderPage(path = '/billing/preview') {
   return render(<MemoryRouter initialEntries={[path]}><Routes>
     <Route path="/billing/preview" element={<BillingPreviewPage />} />

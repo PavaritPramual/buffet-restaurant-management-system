@@ -10,6 +10,13 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.assertj.core.api.Assertions.*;
 
 class BillingEngineTest {
+    @Test
+    void policiesCanBeReplacedWithoutChangingEngine() {
+        var pricing = new StandardBillCalculation(new ChildRateCalculationStrategy(new BigDecimal("0.25")));
+        var replacement = new BillingEngine(pricing, (context, subtotal) -> new BigDecimal("10"));
+        assertThat(replacement.calculate(context("100", 1, 1)).totalAmount()).isEqualByComparingTo("115.00");
+        assertThatIllegalArgumentException().isThrownBy(() -> new ChildRateCalculationStrategy(new BigDecimal("1.1")));
+    }
     private final BillingEngine engine = new BillingEngine(new StandardBillCalculation());
 
     private BillingContext context(String price, int adults, int children) {

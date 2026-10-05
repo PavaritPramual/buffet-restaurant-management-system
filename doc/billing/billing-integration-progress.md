@@ -11,7 +11,7 @@ Branch: `teeramet_673380273-9_02`. This implementation is on the personal branch
 5. V9 creates payments with unique session_id, FK, amount/method/status/timestamp checks. PostgreSQL restricts client roles. H2 has a separate V9; applied SQL is not modified.
 6. DatabasePaymentStatusLookup provides sessionId/status to close. Payment leaves the session ACTIVE. Separate close completes the session and returns the table to AVAILABLE.
 7. Preview/payment require SERVICE_STAFF. SessionDiningSessionStaffAccessProvider applies the same check to DiningSession when `app.dining-session.staff-access-provider=session`. Demo now selects session; main retains disabled until configured.
-8. GET `/api/v1/payments/sessions/{sessionId}` reads recorded PaymentResult. PaymentPanel checks status before permitting payment, displays previous confirmation, and offers read-only reconciliation after ambiguous errors. Payments are not automatically retried.
+8. GET `/api/v1/payments/sessions/{sessionId}` reads recorded PaymentResult. PaymentPanel checks status before permitting payment, displays previous confirmation, and offers read-only reconciliation after ambiguous errors. Payments are not automatically retried; after a successful explicit no-record lookup, the user can confirm a manual retry.
 
 ## Verified on 4 October
 
@@ -38,10 +38,20 @@ npm run lint
 
 The agent environment used an explicit Mockito javaagent because self-attach is restricted; a normal local JDK may not need it.
 
+## PR19 review update — 5 October 2026
+
+See [review verification](pr19-review-verification.md) for the current changes and evidence.
+Normal npm test passes 96/96. Backend passes 273/275 with only 2 Docker Stock cases skipped;
+PostgreSQL Payment, migration and Order/Close tests ran. Native PostgreSQL HTTP smoke and
+browser refresh/same-payment-ID/close were verified. Public DTOs are compact, PaymentResult
+includes recorded amount, calculation strategies are separated, and V12 is a proposed forward
+privilege migration pending owner/version confirmation. The older 4 October counts below
+are historical evidence, not the latest verification.
+
 ## Remaining acceptance evidence
 
-- User reported successful local H2 browser payment/close and authorization checks on 4 October; see billing-demo-checklist.md for exact reported outcomes and limits. Still capture screenshots/clip and explicitly verify refresh preserves the payment ID and network-error recovery.
-- PostgreSQL V9/security and concurrent duplicate payment on a separate test database. H2 does not establish PostgreSQL locking/role behavior.
+- User reported successful local H2 browser payment/close and authorization checks on 4 October; see billing-demo-checklist.md for exact reported outcomes and limits. Refresh/same-ID and close now have 5 October browser screenshots; network-error retry has component-test evidence.
+- PostgreSQL V9/V12 privileges/constraints and concurrent duplicate payment passed on disposable PostgreSQL 18; shared Supabase remains a separate gate.
 - Integrated Docker/CORS/frontend/backend/Supabase runtime. Docker socket access and local server socket creation were denied in the agent environment; the attempted H2 demo reached JPA initialization but failed to bind the HTTP server. This is not a successful runtime demo.
 - Inspect central Flyway history and coordinate V9 before V10/V11 or a forward migration plan if newer versions already ran. Do not modify applied SQL.
 - Pavarit reviews close/integration, Sarun DTO/API, Sirapat calculation/frontend tests, Methus migrations/Auth.
@@ -51,6 +61,6 @@ The agent environment used an explicit Mockito javaagent because self-attach is 
 
 - Calculation and important boundaries: automated evidence available.
 - Invalid/duplicate payment and PAID/close: automated H2 evidence available with real role checks.
-- UI/API: implemented, component-tested, with user-reported local browser success; screenshots and remaining cases pending.
+- UI/API: implemented, component-tested, with user-reported local browser success; new screenshots are available in the 5 October review report; browser network fault injection remains pending.
 - Docker/Supabase/Flyway/CORS: pending integrated runtime evidence.
 - Tests/Swagger/demo/review: tests and Swagger updated, local demo results reported; remaining demo evidence and review pending.

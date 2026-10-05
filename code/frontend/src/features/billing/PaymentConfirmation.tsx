@@ -22,7 +22,7 @@ export default function PaymentConfirmation({
     )
   }
 
-  const paidAtText = new Date(result.paidAt).toLocaleString('th-TH', {
+  const paidAtText = new Date(result.paidAt ?? '').toLocaleString('th-TH', {
     timeZone: 'Asia/Bangkok',
   })
 
@@ -32,6 +32,7 @@ export default function PaymentConfirmation({
       <StatusBadge tone="success">ชำระแล้ว</StatusBadge>
       <p>เลขที่รายการชำระ: {result.paymentId}</p>
       <p>เลขที่รอบใช้บริการ: {result.sessionId}</p>
+      <p>ยอดชำระจริง: {result.amount.toFixed(2)} บาท</p>
       <p>วิธีชำระ: {paymentMethodLabels[result.paymentMethod]}</p>
       <p>เวลาชำระ: {paidAtText}</p>
       <p>บันทึกการชำระแล้ว ยังต้องดำเนินการปิดโต๊ะผ่านระบบ</p>

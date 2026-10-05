@@ -156,7 +156,7 @@ class PostgresOrderCloseConcurrencyTest {
                     ordering.placeOrder(SESSION_ID, credential,
                             new PlaceOrderRequest(List.of(new OrderItemRequest(MENU_ID, 1))));
                     return true;
-                } catch (ResourceNotFoundException exception) {
+                } catch (ResourceNotFoundException | com.buffetrestaurant.exception.UnauthorizedException exception) {
                     return false;
                 }
             }, executor);

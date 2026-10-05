@@ -49,7 +49,7 @@ class BillingControllerTest {
                         + "\"discountContext\":{\"percentage\":100},\"sessionStatus\":\"COMPLETED\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sessionId").value(12))
-                .andExpect(jsonPath("$.subtotalNoneDiscount").value(997.5))
+                .andExpect(jsonPath("$.subtotalAmount").value(997.5))
                 .andExpect(jsonPath("$.discountAmount").value(0))
                 .andExpect(jsonPath("$.totalAmount").value(997.5));
         verify(provider).findBySessionId(12L);
@@ -66,9 +66,9 @@ class BillingControllerTest {
         mvc.perform(post("/api/v1/billing/preview").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"sessionId\":12}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.discountAmount").value(0.005))
-                .andExpect(jsonPath("$.totalBeforeRounding").value(0.045))
-                .andExpect(jsonPath("$.roundingAdjustment").value(0.005))
+                .andExpect(jsonPath("$.discountAmount").value(0.00))
+                .andExpect(jsonPath("$.totalBeforeRounding").doesNotExist())
+                .andExpect(jsonPath("$.roundingAdjustment").doesNotExist())
                 .andExpect(jsonPath("$.totalAmount").value(0.05));
     }
 
