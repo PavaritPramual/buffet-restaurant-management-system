@@ -7,7 +7,7 @@ Manager จัดการข้อมูลร้าน ผู้ใช้ แ�
 
 ## สถานะปัจจุบัน
 
-**แนวทางสไลด์ล่าสุด:** ใช้ [Canva](https://canva.link/hwrws57kjwgvafx) เป็นต้นฉบับและเครื่องมือพรีเซนต์รวมทั้งทีม แล้วเก็บ PDF export เป็นเวอร์ชันใน `doc/slide/` ดู [สถานะ/เวอร์ชันสไลด์](doc/slide/README.md) และ [ร่างเนื้อหา40หน้า](doc/slide/team-final-canva-content.md) ไม่ใช้ PPTX ร่างรายคนเป็นชุดส่งหรือขอรีวิว
+**แนวทางสไลด์ล่าสุด:** ใช้ [Canva ทีม 40 หน้า](https://www.canva.com/d/D0dhcGCjuTTS7pV) เป็นต้นฉบับและเครื่องมือพรีเซนต์รวมทั้งทีม แล้วเก็บ PDF export เป็นเวอร์ชันใน `doc/slide/` ดู [สถานะ/เวอร์ชันสไลด์](doc/slide/README.md) และ [เนื้อหาและคำพูดประกอบ](doc/slide/team-final-canva-content.md) นำเข้าและอ่านกลับครบแล้ว ยังรอตรวจภาพ/เจ้าของยืนยัน/PDF/ผล release ไม่ใช้ PPTX ร่างรายคนเป็นชุดส่งหรือขอรีวิว
 
 Code baseline `develop 472fba4` ณ 7 ตุลาคม2026: Step2ปิดแล้วและPR#22รวมlocalregression/AdminShell/testpreparation
 เอกสารและสไลด์ปวริศช์ชุดนี้รอreview **ยังไม่ใช่ Final ที่พร้อมส่ง** Public deployment, Stock target/active, Profileละเอียด, SOLID gaps, Gitเกณฑ์รายคน และreleaseยังต้องปิด

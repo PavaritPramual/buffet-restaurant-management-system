@@ -4,7 +4,7 @@
 
 ใช้Canvaเป็นต้นฉบับและเครื่องมือพรีเซนต์ของทั้งทีม PDFต้องexportจากCanvaและเก็บแต่ละเวอร์ชัน Reviewerไม่ต้องตรวจPPTX/PDF/notesร่างเดิม ดู [สถานะสไลด์ปัจจุบัน](../slide/README.md) และ [ร่างชุดทีม40หน้า](../slide/team-final-canva-content.md)
 
-เนื้อหาทีม32หน้าหลัก+8ภาคผนวกพร้อมnotes/owner/107referencesแล้ว การส่งไฟล์เข้าCanvaถูกautomaticapprovalreviewปฏิเสธ จึงรออนุมัติเฉพาะไฟล์ ไม่อ้างว่าCanva/PDFexport/visualQAเสร็จ ผลPPTX/PDF6หน้าด้านล่างเป็น **ผลประวัติก่อนเปลี่ยนแนวทาง** ไม่ใช่เกณฑ์รับรองสไลด์รุ่นทีม
+ผู้ใช้อนุมัติการนำเข้าแล้ว [Canva ทีม v01](https://www.canva.com/d/D0dhcGCjuTTS7pV) มี32หน้าหลัก+8ภาคผนวก อ่านกลับยืนยันข้อความและnotesทั้ง40หน้าตรงร่าง พบข้อความแก้ไขได้535รายการและไม่มีกรอบข้อความออกนอกcanvas1920×1080 ยังไม่ได้ตรวจภาพทุกหน้า/owner review/PDF export เครื่องมือภาพเปิดURLpreviewไม่ได้และCanva connectorไม่มีexportPDF จึงคงgateเหล่านี้ไว้ ผลPPTX/PDF6หน้าด้านล่างเป็น **ผลประวัติก่อนเปลี่ยนแนวทาง** ไม่ใช่เกณฑ์รับรองสไลด์รุ่นทีม
 
 ตรวจ 7 ตุลาคม2026 Code baseline `472fba4f25a27fa2e3cd1e1213151ce971646f3a` หลัง PR#22 merge งานรอบนี้เป็นเอกสารและสไลด์ ไม่เปลี่ยน runtime/API/DTO/Entity/migration/CI และไม่เชื่อม Supabase เพื่อรัน migration
 

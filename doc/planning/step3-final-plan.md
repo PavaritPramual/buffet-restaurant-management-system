@@ -1,6 +1,6 @@
 # Step 3 Final — plan snapshot
 
-**อัปเดตแนวทางสไลด์7ตุลาคม2026:** ทำCanvaรวมทั้ง5คนเป็นต้นฉบับและเครื่องมือพรีเซนต์ แล้วเก็บPDFที่exportจากCanvaเป็นเวอร์ชัน พร้อมlink/changelogใน [doc/slide](../slide/README.md) ไม่ใช้PPTXเป็นชุดส่งหรือขอreview ร่างรายคนและข้อความPPTXในsnapshotด้านล่างเป็นประวัติ เนื้อหาทีม40หน้ามีรายละเอียดtestsแล้ว แต่รออนุมัติส่งเข้าCanva/ตรวจภาพ/ownerreview/PDFexport ไม่ติ๊กเกณฑ์สไลด์Finalจากร่างเนื้อหา
+**อัปเดตแนวทางสไลด์7ตุลาคม2026:** ใช้ [Canva ทีม 40 หน้า](https://www.canva.com/d/D0dhcGCjuTTS7pV) เป็นต้นฉบับและเครื่องมือพรีเซนต์ของทั้ง5คน ผู้ใช้อนุมัตินำเข้าแล้ว อ่านกลับข้อความและnotesครบ รอตรวจภาพทุกหน้า/owner review/PDF export/ผลrelease/ซ้อม เก็บPDFที่exportจากCanvaเป็นเวอร์ชัน พร้อมlink/changelogใน [doc/slide](../slide/README.md) ไม่ใช้PPTXเป็นชุดส่งหรือขอreview ร่างรายคนและข้อความPPTXในsnapshotด้านล่างเป็นประวัติ ไม่ติ๊กเกณฑ์สไลด์Finalจากร่างเนื้อหา
 
 Snapshot Notion 7 ตุลาคม 2026 ก่อน PRเอกสารปวริศช์ สถานะสดดู [Step3](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6)
 

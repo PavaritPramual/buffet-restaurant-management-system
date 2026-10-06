@@ -1,5 +1,7 @@
 # สไลด์รวมทีม — Canva content v01
 
+[เปิดต้นฉบับ Canva ทีม 40 หน้า](https://www.canva.com/d/D0dhcGCjuTTS7pV) · design `DAHXQy_ZUvQ` · นำเข้าและอ่านกลับข้อความ/notesครบแล้ว ยังรอตรวจภาพทุกหน้า เจ้าของยืนยัน PDF export และผล release
+
 วันที่ 7 ตุลาคม 2026 Code baseline develop472fba4 และหลักฐาน PR22 ไม่ใช่ public/release acceptance
 
 32 หน้าหลัก + 8 หน้าภาคผนวก มีข้อความบนสไลด์ คำพูดประกอบ แหล่งอ้างอิงและเจ้าของ ครอบคลุมสมาชิกทั้ง5คน ร่างนี้ยังต้องเจ้าของยืนยันและเติมผล Finalจริง
