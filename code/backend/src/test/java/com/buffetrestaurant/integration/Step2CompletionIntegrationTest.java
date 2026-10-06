@@ -68,6 +68,22 @@ class Step2CompletionIntegrationTest {
         entityManager.clear();
         mvc.perform(get("/api/v1/dining-sessions/940001/bill-status").cookie(customer)).andExpect(status().isUnauthorized());
     }
+    @Test void paymentRequiresRequestAndPaidSessionStillRejectsOrders() throws Exception {
+        var staff = login("SERVICE_STAFF");
+        String payment = "{\"sessionId\":940001,\"paymentMethod\":\"CASH\"}";
+        mvc.perform(post("/api/v1/payments").session(staff).contentType(MediaType.APPLICATION_JSON).content(payment))
+                .andExpect(status().isConflict());
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM payments WHERE session_id=940001", Integer.class)).isZero();
+        mvc.perform(post("/api/v1/dining-sessions/940001/bill-request").cookie(customer).header("Origin","http://localhost:5173"))
+                .andExpect(status().isOk());
+        mvc.perform(post("/api/v1/payments").session(staff).contentType(MediaType.APPLICATION_JSON).content(payment))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.paymentStatus").value("PAID"));
+        mvc.perform(post("/api/v1/dining-sessions/940001/orders").cookie(customer).header("Origin","http://localhost:5173")
+                .contentType(MediaType.APPLICATION_JSON).content("{\"items\":[{\"menuItemId\":1,\"quantity\":1}]}"))
+                .andExpect(status().isConflict());
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM orders WHERE session_id=940001", Integer.class)).isZero();
+        assertThat(jdbc.queryForObject("SELECT status FROM dining_sessions WHERE id=940001", String.class)).isEqualTo("ACTIVE");
+    }
     @Autowired jakarta.persistence.EntityManager entityManager;
     @Test void priceSnapshotAndPaidStatusUseRecordedAmountWithoutClosing() throws Exception {
         jdbc.update("UPDATE buffet_packages SET price=999 WHERE id=940001"); entityManager.clear();

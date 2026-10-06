@@ -15,6 +15,10 @@ import com.buffetrestaurant.service.billing.BillCalculation;
 import com.buffetrestaurant.dto.response.PaymentResult;
 import com.buffetrestaurant.exception.DuplicateResourceException;
 import com.buffetrestaurant.repository.PaymentRepository;
+import com.buffetrestaurant.repository.DiningSessionRepository;
+import com.buffetrestaurant.exception.ResourceNotFoundException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import com.buffetrestaurant.service.PaymentService;
 import com.buffetrestaurant.service.billing.BillingContextProvider;
 import com.buffetrestaurant.service.billing.BillingEngine;
@@ -23,6 +27,9 @@ import com.buffetrestaurant.service.PaymentAccessProvider;
 @Service
 @Transactional 
 public class PaymentServiceImpl implements PaymentService{
+
+    private final EntityManager entityManager;
+    private final DiningSessionRepository sessions;
 
     @Override
     @Transactional(readOnly = true)
@@ -47,12 +54,16 @@ public class PaymentServiceImpl implements PaymentService{
         PaymentRepository paymentRepository,
         BillingContextProvider billingContextProvider,
         BillingEngine billingEngine,
-        PaymentAccessProvider accessProvider
+        PaymentAccessProvider accessProvider,
+        DiningSessionRepository sessions,
+        EntityManager entityManager
     ){
         this.paymentRepository = paymentRepository;
         this.contextProvider = billingContextProvider;
         this.billingEngine = billingEngine;
         this.accessProvider = accessProvider;
+        this.sessions = sessions;
+        this.entityManager = entityManager;
 
     }
 
@@ -68,6 +79,16 @@ public class PaymentServiceImpl implements PaymentService{
             throw new IllegalArgumentException("Valid Session ID and Patment method are required");
         }
 
+        var session = sessions.findByIdForUpdate(request.sessionId()).orElseThrow(() ->
+                new ResourceNotFoundException("Dining session not found"));
+        // Re-read after waiting on the same lock used by Order, Bill Request and Close.
+        entityManager.refresh(session, LockModeType.PESSIMISTIC_WRITE);
+        if (session.getStatus() != DiningSessionStatus.ACTIVE) {
+            throw new IllegalStateException("Only ACTIVE status can be paid");
+        }
+        if (session.getBillRequestedAt() == null) {
+            throw new DuplicateResourceException("Request the bill before accepting payment");
+        }
         BillingContext context = contextProvider.findBySessionId(request.sessionId());
 
         if (context == null || !request.sessionId().equals(context.getSessionId())){

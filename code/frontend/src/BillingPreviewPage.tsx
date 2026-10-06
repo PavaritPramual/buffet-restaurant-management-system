@@ -7,6 +7,7 @@ import { previewBill } from './api/billing'
 import type { BillSummary } from './api/billing'
 import { Button, Card, ErrorAlert, PageHeader, TextField } from './components/common'
 import PaymentPanel from './features/billing/PaymentPanel'
+import { getDiningSession } from './features/staff-tables/api'
 
 function errorMessage(error: unknown): string {
   if (isAxiosError(error)) {
@@ -32,6 +33,7 @@ function BillingPreviewForm({ routeSessionId }: { routeSessionId?: string }) {
   const navigate = useNavigate()
   const [sessionInput, setSessionInput] = useState(routeSessionId ?? '')
   const [summary, setSummary] = useState<BillSummary | null>(null)
+  const [paymentEnabled, setPaymentEnabled] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const inFlight = useRef(false)
@@ -41,6 +43,7 @@ function BillingPreviewForm({ routeSessionId }: { routeSessionId?: string }) {
     if (inFlight.current) return
     setError('')
     setSummary(null)
+    setPaymentEnabled(false)
     const input = sessionInput.trim()
     const sessionId = Number(input)
     if (!/^[1-9]\d*$/.test(input) || !Number.isSafeInteger(sessionId)) {
@@ -50,12 +53,13 @@ function BillingPreviewForm({ routeSessionId }: { routeSessionId?: string }) {
     inFlight.current = true
     setLoading(true)
     try {
-      const result = await previewBill(sessionId)
-      if (result.sessionId !== sessionId) {
+      const [result, session] = await Promise.all([previewBill(sessionId), getDiningSession(sessionId)])
+      if (result.sessionId !== sessionId || session.sessionId !== sessionId) {
         setError('ข้อมูลบิลไม่ตรงกับรอบที่เลือก กรุณาลองใหม่')
         return
       }
       setSummary(result)
+      setPaymentEnabled(session.sessionStatus === 'ACTIVE' && !!session.billRequestedAt)
     } catch (error) {
       setError(errorMessage(error))
     } finally {
@@ -87,6 +91,7 @@ function BillingPreviewForm({ routeSessionId }: { routeSessionId?: string }) {
             onChange={(event) => {
               setSessionInput(event.target.value)
               setSummary(null)
+              setPaymentEnabled(false)
               setError('')
             }}
           />
@@ -102,10 +107,11 @@ function BillingPreviewForm({ routeSessionId }: { routeSessionId?: string }) {
           <p>ยอดก่อนลด: {summary.subtotalAmount} บาท</p>
           <p>ส่วนลด: {summary.discountAmount} บาท</p>
           <p>ยอดสุทธิ: {summary.totalAmount.toFixed(2)} บาท</p>
+          {!paymentEnabled && <p>รับชำระได้หลังลูกค้าขอคิดบิล กรุณาให้ลูกค้าขอคิดบิลแล้วกดดูบิลอีกครั้ง</p>}
           <PaymentPanel
             key={summary.sessionId}
             bill={summary}
-            enabled
+            enabled={paymentEnabled}
           />
         </Card>
       )}

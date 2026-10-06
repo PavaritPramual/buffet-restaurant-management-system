@@ -58,6 +58,8 @@ class PostgresOrderCloseConcurrencyTest {
     @Autowired private CustomerOrderingService ordering;
     @Autowired private DiningSessionService sessions;
     @MockitoBean private PaymentStatusLookup paymentStatusLookup;
+    @MockitoBean private com.buffetrestaurant.service.PaymentAccessProvider paymentAccess;
+    @Autowired private com.buffetrestaurant.service.PaymentService payments;
 
     @Autowired private com.buffetrestaurant.service.CustomerBillingService billing;
     private String credential;
@@ -95,6 +97,7 @@ class PostgresOrderCloseConcurrencyTest {
         jdbc.update("DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE session_id = ?)", SESSION_ID);
         jdbc.update("DELETE FROM orders WHERE session_id = ?", SESSION_ID);
         jdbc.update("DELETE FROM customer_session_grants WHERE session_id = ?", SESSION_ID);
+        jdbc.update("DELETE FROM payments WHERE session_id = ?", SESSION_ID);
         jdbc.update("DELETE FROM package_menu_items WHERE package_id = 990001");
         jdbc.update("DELETE FROM menu_items WHERE id = ?", MENU_ID);
         jdbc.update("DELETE FROM menu_categories WHERE id = 990001");
@@ -258,7 +261,91 @@ class PostgresOrderCloseConcurrencyTest {
         }
     }
 
-    private void waitForSessionLockWait() throws Exception {
+    @Test
+    void orderBillRequestAndPaymentSerializeOnTheSessionLock() throws Exception {
+        CountDownLatch locked = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+        try {
+            var order = CompletableFuture.runAsync(() -> transactions.executeWithoutResult(status -> {
+                customerAccess.requireSession(SESSION_ID, credential, true);
+                locked.countDown();
+                await(release);
+                ordering.placeOrder(SESSION_ID, credential,
+                        new PlaceOrderRequest(List.of(new OrderItemRequest(MENU_ID, 1))));
+            }), executor);
+            assertThat(locked.await(5, TimeUnit.SECONDS)).isTrue();
+            var request = CompletableFuture.runAsync(() -> billing.request(SESSION_ID, credential), executor);
+            var payment = CompletableFuture.supplyAsync(() -> {
+                try { pay(); return true; }
+                catch (com.buffetrestaurant.exception.DuplicateResourceException exception) { return false; }
+            }, executor);
+            waitForSessionLockWait(2);
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM payments WHERE session_id=?", Integer.class, SESSION_ID)).isZero();
+            release.countDown();
+            order.join();
+            request.join();
+            // PostgreSQL may grant either waiter first. A payment ahead of Request Bill must fail.
+            if (!payment.join()) pay();
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM orders WHERE session_id=?", Integer.class, SESSION_ID)).isOne();
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM payments WHERE session_id=?", Integer.class, SESSION_ID)).isOne();
+            assertThatExceptionOfType(com.buffetrestaurant.exception.DuplicateResourceException.class)
+                    .isThrownBy(() -> ordering.placeOrder(SESSION_ID, credential,
+                            new PlaceOrderRequest(List.of(new OrderItemRequest(MENU_ID, 1)))));
+        } finally { release.countDown(); executor.shutdownNow(); }
+    }
+
+    @Test
+    void paymentWaitsForBillRequestToCommit() throws Exception {
+        CountDownLatch locked = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            var request = CompletableFuture.runAsync(() -> transactions.executeWithoutResult(status -> {
+                billing.request(SESSION_ID, credential);
+                locked.countDown();
+                await(release);
+            }), executor);
+            assertThat(locked.await(5, TimeUnit.SECONDS)).isTrue();
+            var payment = CompletableFuture.runAsync(this::pay, executor);
+            waitForSessionLockWait();
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM payments WHERE session_id=?", Integer.class, SESSION_ID)).isZero();
+            release.countDown();
+            request.join(); payment.join();
+            assertThat(jdbc.queryForObject("SELECT payment_status FROM payments WHERE session_id=?", String.class, SESSION_ID)).isEqualTo("PAID");
+        } finally { release.countDown(); executor.shutdownNow(); }
+    }
+
+    @Test
+    void paymentRechecksCompletedStateAfterWaitingForClose() throws Exception {
+        billing.request(SESSION_ID, credential);
+        CountDownLatch locked = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            var close = CompletableFuture.runAsync(() -> transactions.executeWithoutResult(status -> {
+                sessions.closeSession(SESSION_ID);
+                locked.countDown(); await(release);
+            }), executor);
+            assertThat(locked.await(5, TimeUnit.SECONDS)).isTrue();
+            var payment = CompletableFuture.supplyAsync(() -> {
+                try { pay(); return true; }
+                catch (IllegalStateException exception) { return false; }
+            }, executor);
+            waitForSessionLockWait();
+            release.countDown(); close.join();
+            assertThat(payment.join()).isFalse();
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM payments WHERE session_id=?", Integer.class, SESSION_ID)).isZero();
+        } finally { release.countDown(); executor.shutdownNow(); }
+    }
+
+    private void pay() {
+        payments.pay(new com.buffetrestaurant.dto.request.CreatePaymentRequest(SESSION_ID,
+                com.buffetrestaurant.domain.enums.PaymentMethod.CASH));
+    }
+
+    private void waitForSessionLockWait() throws Exception { waitForSessionLockWait(1); }
+    private void waitForSessionLockWait(int minimum) throws Exception {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
         while (System.nanoTime() < deadline) {
             Integer blocked = jdbc.queryForObject(
@@ -266,7 +353,7 @@ class PostgresOrderCloseConcurrencyTest {
                     + "AND pid <> pg_backend_pid() AND state = 'active' AND wait_event_type = 'Lock' "
                     + "AND query LIKE '%dining_sessions%'",
                     Integer.class);
-            if (blocked != null && blocked > 0) return;
+            if (blocked != null && blocked >= minimum) return;
             Thread.sleep(25);
         }
         throw new AssertionError("Worker did not reach the database session lock");

@@ -14,6 +14,18 @@ Contract: [Customer bill request](../contracts/customer-bill-request.md) · [Can
 
 ## ผลตรวจ
 
+### แก้รีวิว PR #21 ของศิระพัทธ์ — 6 ตุลาคม 2026
+
+- บังคับ `Order → Request Bill → Payment → Close` ฝั่ง server: ก่อนขอคิดบิล Payment ตอบ 409 และไม่มีแถว Payment เพิ่ม ดูยอดล่วงหน้าได้
+- Payment ใช้ PESSIMISTIC_WRITE แถว DiningSession เดียวกับ Order/Request Bill/Close แล้ว refresh และตรวจ ACTIVE + bill_requested_at หลังได้ lock ภายใน transaction เดียวกับบันทึก PAID
+- หน้า Billing อ่าน Staff session จาก API เดิมและปิดปุ่มรับชำระก่อนขอคิดบิล ให้กดดูบิลอีกครั้งหลังลูกค้าขอ ไม่มีการเปลี่ยน Payment DTO หรือ migration
+- เพิ่ม H2/API tests ก่อนขอ→409, ขอแล้ว→201 PAID, หลัง PAID→Order 409/รอบยัง ACTIVE และ PostgreSQL tests สามคำขอพร้อมกัน, Payment รอ Request Bill commit, Payment รอ Close แล้ว re-check COMPLETED
+- ผลรอบแก้: backend 302/302 ไม่มี failures/errors/skipped; PostgreSQL concurrency 8/8, frontend 109/109, Billing UI regression 7/7, lint 0 errors/4 warnings เดิม และ build ผ่าน
+- ฐานรอบนี้เป็น PostgreSQL 18.6 container แยก `buffet-pr21-review-pg` ที่ port 15433 มี marker buffet-disposable-test-only; Payment role ไม่ใช่ superuser ไม่แตะฐานเว็บทดลองของผู้ใช้หรือ Supabase
+- ภาพ/browser evidence ด้านล่างเป็นรอบ implementation เดิม ไม่ได้อ้างว่ารัน browser flow ใหม่ในรอบแก้รีวิวนี้
+
+### ผลรอบ implementation เดิม
+
 Implementation commits: `1133186` Manager, `d56cc60` Bill request backend, `1472f4e` Customer/Staff UI; เอกสารและ evidence ใน commit ถัดมา รักษา commits เดิมของ PR #20 ทั้งสามชุดไว้
 
 | ชุดตรวจ | ผล | สภาพแวดล้อม |

@@ -8,6 +8,12 @@ V14 เพิ่ม `dining_sessions.bill_requested_at TIMESTAMP WITH TIME ZONE 
 
 ## API
 
+### Payment หลังคำขอคิดบิล
+
+`POST /api/v1/payments` รับชำระได้เฉพาะรอบ `ACTIVE` ที่มี `bill_requested_at` แล้ว หากยังไม่ขอคิดบิลจะคืน `409 ErrorResponse` โดยไม่สร้าง Payment พนักงานยังดูยอดล่วงหน้าได้ แต่หน้า Billing ปิดปุ่มรับชำระจนพบคำขอจริงจาก Staff session API ให้กดดูบิลใหม่หลังลูกค้าขอคิดบิล
+
+Payment ล็อกแถว DiningSession ด้วย `PESSIMISTIC_WRITE` ใน transaction เดียวกับการบันทึก PAID แล้ว refresh/re-check ACTIVE และเวลาขอหลังได้ lock ใช้แถวเดียวกับ Order, Request Bill และ Close การชำระไม่เปิดรับ Order กลับและไม่ปิดโต๊ะอัตโนมัติ ไม่เพิ่ม migration หรือเปลี่ยน DTO ของ Payment
+
 | Method / path | ผล |
 | --- | --- |
 | POST `/api/v1/dining-sessions/{sessionId}/bill-request` | ล็อกแถว session แบบเดียวกับ Order/close บันทึกเวลาครั้งแรก กดซ้ำคืนเวลาเดิม |
