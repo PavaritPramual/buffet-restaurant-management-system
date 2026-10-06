@@ -59,5 +59,10 @@
       "path": "test/browser/step3-concurrency.cjs",
       "sha256": "2e72f8c207a91dabaddf107e0fced851f638cc1ca1a4affd8c37cb6fd64d4770"
     }
-  ]
+  ],
+  "testedPatch": {
+    "path": "test/evidence/sirapat-step3-recheck-2026-10-06/tested-recheck.patch",
+    "format": "unified diff with zero context; git apply --unidiff-zero when applying",
+    "sha256": "fb784214d8230f04526a497af99882b186be483f353a56cfb8ef60c8fb907f49"
+  }
 }

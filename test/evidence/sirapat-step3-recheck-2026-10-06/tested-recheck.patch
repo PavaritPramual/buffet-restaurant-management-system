@@ -2,10 +2,7 @@ diff --git a/code/frontend/src/features/admin/AdminShell.test.tsx b/code/fronten
 index 65fe433..f408250 100644
 --- a/code/frontend/src/features/admin/AdminShell.test.tsx
 +++ b/code/frontend/src/features/admin/AdminShell.test.tsx
-@@ -73,6 +73,68 @@ describe('AdminShell', () => {
-     expect(screen.getByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
-   })
- 
+@@ -75,0 +76,62 @@ describe('AdminShell', () => {
 +  it('submits login once while the request is pending', async () => {
 +    vi.mocked(authApi.current).mockRejectedValue(new Error('not signed in'))
 +    let resolve!: (user: UserContext) => void
@@ -68,17 +65,11 @@ index 65fe433..f408250 100644
 +    expect(screen.queryByRole('alert')).toBeNull()
 +  })
 +
-   it.each(['/kitchen', '/kitchen/', '/KITCHEN'])('keeps kitchen login on matched route %s', async (path) => {
-     vi.mocked(authApi.current).mockResolvedValue(kitchen)
-     renderShell(path)
 diff --git a/test/browser/step3-core-flow.cjs b/test/browser/step3-core-flow.cjs
 index e834dd9..7145638 100644
 --- a/test/browser/step3-core-flow.cjs
 +++ b/test/browser/step3-core-flow.cjs
-@@ -50,6 +50,15 @@ async function main() {
-     }
-     const confirm = async page => page.getByRole('dialog').getByRole('button', { name:'ยืนยัน', exact:true }).click()
-     scenario = 'real staff logins and role matrix'
+@@ -52,0 +53,9 @@ async function main() {
 +    const invalidLogin = ctx.anonymous.page
 +    await invalidLogin.goto(web + '/admin')
 +    await invalidLogin.getByLabel('ชื่อผู้ใช้', { exact:true }).fill(run + '-unknown')
@@ -88,22 +79,10 @@ index e834dd9..7145638 100644
 +    assert.equal((await invalidResponse).status(),401)
 +    await invalidLogin.getByRole('alert').waitFor()
 +    assert.equal((await ctx.anonymous.request.get(api + '/auth/me')).status(),401)
-     for (const [name, role] of Object.entries(roles)) {
-       const page = ctx[name].page
-       await page.goto(web + '/admin')
-@@ -64,7 +73,7 @@ async function main() {
-         assert.equal((await ctx[name].request.get(api + endpoint, { headers:{'X-User-Role':'MANAGER'} })).status(), expected)
-       }
-     }
+@@ -67 +76 @@ async function main() {
 -    pass(scenario, 'Four independent cookie contexts; anonymous and spoofed-header denial')
 +    pass(scenario, 'Four independent cookie contexts; invalid login, anonymous and spoofed-header denial')
-     scenario = 'direct URL case and trailing slash guards'
-     for (const name of ['supervisor','staff','kitchen']) {
-       await ctx[name].page.goto(web + '/ADMIN/MENU/')
-@@ -125,6 +134,33 @@ async function main() {
-     assert.equal((await request('phoneB','get','/dining-sessions/customer-context')).sessionId,sessionId)
-     assert.equal((await ctx.anonymous.request.get(api+`/dining-sessions/${sessionId}/orders`)).status(),401)
-     pass(scenario,{sessionId,phones:2,qrReuseStatus:404})
+@@ -127,0 +137,27 @@ async function main() {
 +    scenario = 'same-tab fresh QR resets cart and reload restores cookie without re-exchange'
 +    const timeOrigin = await a.evaluate(() => performance.timeOrigin)
 +    await a.getByRole('button',{name:'เพิ่ม '+item.name,exact:true}).click()
@@ -131,13 +110,7 @@ index e834dd9..7145638 100644
 +    assert.equal((await request('phoneB','get','/dining-sessions/customer-context')).sessionId,sessionId)
 +    await shot('phoneA','customer-rescan-restored-360.png')
 +    pass(scenario,{sessionId,sameDocument:true,rescanExchanges,cartReset:true,phones:2})
-     scenario = 'single confirmed order and actual Kitchen Serving transitions'
-     let orderPosts=0
-     a.on('request',r=>{if(r.method()==='POST' && /\/orders$/.test(r.url())) orderPosts++})
-@@ -183,10 +219,18 @@ async function main() {
-     await manager.getByRole('link',{name:'สต็อก',exact:true}).click()
-     await manager.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
-     await shot('manager','manager-expired-1280.png')
+@@ -185,0 +222,8 @@ async function main() {
 +    assert.equal((await ctx.manager.request.get(api+'/stock')).status(),401)
 +    await request('supervisor','post','/auth/logout')
 +    await ctx.supervisor.page.getByRole('button',{name:'โหลดข้อมูลใหม่',exact:true}).click()
@@ -146,11 +119,6 @@ index e834dd9..7145638 100644
 +    await staff.getByRole('button',{name:'ออกจากระบบ',exact:true}).click()
 +    await staff.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
 +    assert.equal((await ctx.staff.request.get(api+'/orders/ready')).status(),401)
-     await kitchen.getByRole('button',{name:'ออกจากระบบ'}).click()
-     await kitchen.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
-     assert.equal((await ctx.kitchen.request.get(api+'/orders/incoming')).status(),401)
+@@ -189 +233 @@ async function main() {
 -    pass(scenario,'Real server logout -> next UI API401; Manager hidden; Kitchen logout')
 +    pass(scenario,'Real server logout -> UI API401 for Manager/Supervisor; Staff/Kitchen UI logout revokes access')
-     scenario = 'Swagger customer bill contract'
-     const specResponse=await ctx.anonymous.request.get(new URL('/v3/api-docs',api).href)
-     assert(specResponse.ok())
