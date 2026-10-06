@@ -1,6 +1,8 @@
 @startuml
 title Session billing, payment recovery and separate close
 actor "SERVICE_STAFF" as Staff
+actor Customer
+participant "CustomerBillingService" as CustomerBilling
 participant "Billing UI" as UI
 participant "BillingPreviewService" as Billing
 participant "BillingContextProvider" as Context
@@ -8,6 +10,14 @@ participant "BillingEngine" as Engine
 participant "PaymentService" as Payment
 participant "DiningSessionService" as Session
 database DB
+Customer -> CustomerBilling : POST dining-sessions/{id}/bill-request\nHttpOnly customer cookie + allowed Origin
+CustomerBilling -> DB : lock ACTIVE session / set bill_requested_at once
+note over CustomerBilling,DB : Same row lock as Order/close.\nLater Orders return 409; existing orders continue.
+CustomerBilling -> Context : trusted opening snapshot / counts
+CustomerBilling -> Engine : calculate(context)
+CustomerBilling --> Customer : REQUESTED + BillSummary
+Customer -> CustomerBilling : GET bill-status (poll 5 seconds while visible)
+CustomerBilling --> Customer : REQUESTED / PAID + backend amount
 Staff -> UI : select session
 UI -> Billing : POST billing/preview {sessionId}
 Billing -> Billing : require SERVICE_STAFF

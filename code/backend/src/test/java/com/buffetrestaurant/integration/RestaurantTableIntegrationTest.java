@@ -102,12 +102,11 @@ class RestaurantTableIntegrationTest {
         mockMvc.perform(patch("/api/v1/tables/" + saved.getId() + "/status")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(saved.getId()))
-                .andExpect(jsonPath("$.status").value("OCCUPIED"));
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409));
 
         RestaurantTable updated = tableRepository.findById(saved.getId()).orElseThrow();
-        assertThat(updated.getStatus()).isEqualTo(TableStatus.OCCUPIED);
+        assertThat(updated.getStatus()).isEqualTo(TableStatus.AVAILABLE);
     }
 
     @Test

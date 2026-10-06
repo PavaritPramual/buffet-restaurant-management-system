@@ -70,6 +70,7 @@ export default function StaffTablesPage() {
             <StatusBadge tone={table.status === 'AVAILABLE' ? 'success' : 'info'}>{labels[table.status]}</StatusBadge>
           </div>
           <p>รองรับ {table.capacity} คน</p>
+          {session?.billRequestedAt && <StatusBadge tone="warning">ขอคิดบิล</StatusBadge>}
           {session && <p className="staff-table-session-meta">ผู้ใหญ่ {session.adultCount} · เด็ก {session.childCount}<br />เริ่ม {new Date(session.startTime).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}</p>}
           {table.status === 'AVAILABLE'
             ? <Button className="staff-table-action" onClick={() => setSelectedTable(String(table.id))}>เปิดโต๊ะ</Button>

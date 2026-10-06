@@ -1,169 +1,146 @@
 @startuml er_diagram
-title Entity Relationship Diagram (ERD) - Buffet Restaurant Management System
-
+title Step 2 implementation - V1-V12 baseline + V14 bill request proposed
 hide circle
 skinparam linetype ortho
 skinparam shadowing false
-skinparam roundcorner 5
 
-entity "users" as users {
-    * id : BIGINT <<PK, generated>>
-    --
-    * username : VARCHAR(50) <<UK>>
-    * password : VARCHAR(255)
-    * role : VARCHAR(30)
-    * active : BOOLEAN
-    * created_at : TIMESTAMP
-    updated_at : TIMESTAMP
-}
-
-entity "user_profiles" as user_profiles {
-    * id : BIGINT <<PK, generated>>
-    --
-    * user_id : BIGINT <<FK, UK>>
-    * first_name : VARCHAR(100)
-    * last_name : VARCHAR(100)
-    phone_number : VARCHAR(20)
-    email : VARCHAR(100)
-}
-
-entity "restaurant_tables" as restaurant_tables {
-    * id : BIGINT <<PK, generated>>
-    --
-    * table_number : VARCHAR(20) <<UK>>
-    * capacity : INT
-    * status : VARCHAR(20)
+entity "app_users" as app_users {
+  * id : BIGINT <<PK>>
+  * username : CHARACTER VARYING(80) <<UK>>
+  * password_hash : CHARACTER VARYING(100)
+  * role : CHARACTER VARYING(30)
+  * active : BOOLEAN
+  * created_at : TIMESTAMP WITH TIME ZONE
 }
 
 entity "buffet_packages" as buffet_packages {
-    * id : BIGINT <<PK, generated>>
-    --
-    * name : VARCHAR(100)
-    * price : DECIMAL(10,2)
-    description : TEXT
-    * active : BOOLEAN
-}
-
-entity "soups" as soups {
-    * id : BIGINT <<PK, generated>>
-    --
-    * name : VARCHAR(100)
-    * active : BOOLEAN
-}
-
-entity "menu_categories" as menu_categories {
-    * id : BIGINT <<PK, generated>>
-    --
-    * name : VARCHAR(100)
-}
-
-entity "menu_items" as menu_items {
-    * id : BIGINT <<PK, generated>>
-    --
-    * category_id : BIGINT <<FK>>
-    * name : VARCHAR(100)
-    description : TEXT
-    * available : BOOLEAN
-}
-
-entity "package_menu_items" as package_menu_items {
-    * package_id : BIGINT <<PK, FK>>
-    * menu_item_id : BIGINT <<PK, FK>>
-}
-
-entity "dining_sessions" as dining_sessions {
-    * id : BIGINT <<PK, generated>>
-    --
-    * table_id : BIGINT <<FK>>
-    * package_id : BIGINT <<FK>>
-    * soup_id : BIGINT <<FK>>
-    * adult_count : INT
-    * child_count : INT
-    * package_price_at_open : DECIMAL(10,2)
-    * session_token : VARCHAR(100) <<UK>>
-    * start_time : TIMESTAMP
-    end_time : TIMESTAMP
-    * status : VARCHAR(20)
+  * id : BIGINT <<PK>>
+  * name : CHARACTER VARYING(100)
+  * price : NUMERIC(10,2)
+  description : TEXT
+  * active : BOOLEAN
 }
 
 entity "customer_session_grants" as customer_session_grants {
-    * id : BIGINT <<PK, generated>>
-    --
-    * session_id : BIGINT <<FK>>
-    * token_hash : VARCHAR(64) <<UK>>
-    * created_at : TIMESTAMP WITH TIME ZONE
-    * expires_at : TIMESTAMP WITH TIME ZONE
+  * id : BIGINT <<PK>>
+  * session_id : BIGINT <<FK>>
+  * token_hash : CHARACTER VARYING(64) <<UK>>
+  * created_at : TIMESTAMP WITH TIME ZONE
+  * expires_at : TIMESTAMP WITH TIME ZONE
 }
 
-entity "orders" as orders {
-    * id : BIGINT <<PK, generated>>
-    --
-    * session_id : BIGINT <<FK>>
-    * status : VARCHAR(20)
-    * created_at : TIMESTAMP
+entity "dining_sessions" as dining_sessions {
+  * id : BIGINT <<PK>>
+  * table_id : BIGINT <<FK>>
+  * package_id : BIGINT <<FK>>
+  * soup_id : BIGINT <<FK>>
+  * adult_count : INTEGER
+  * child_count : INTEGER
+  * session_token : CHARACTER VARYING(100) <<UK>>
+  * start_time : TIMESTAMP WITHOUT TIME ZONE
+  end_time : TIMESTAMP WITHOUT TIME ZONE
+  bill_requested_at : TIMESTAMP WITH TIME ZONE <<nullable, V14>>
+  * status : CHARACTER VARYING(20)
+  * package_price_at_open : NUMERIC(10,2)
+}
+
+entity "menu_categories" as menu_categories {
+  * id : BIGINT <<PK>>
+  * name : CHARACTER VARYING(100)
+}
+
+entity "menu_items" as menu_items {
+  * id : BIGINT <<PK>>
+  * category_id : BIGINT <<FK>>
+  * name : CHARACTER VARYING(100)
+  description : TEXT
+  * available : BOOLEAN
+  image_url : CHARACTER VARYING(500)
 }
 
 entity "order_items" as order_items {
-    * id : BIGINT <<PK, generated>>
-    --
-    * order_id : BIGINT <<FK>>
-    * menu_item_id : BIGINT <<FK>>
-    * quantity : INT
-    note : VARCHAR(255)
+  * id : BIGINT <<PK>>
+  * order_id : BIGINT <<FK>>
+  * menu_item_id : BIGINT <<FK>>
+  * item_name : CHARACTER VARYING(100)
+  * quantity : INTEGER
+  note : CHARACTER VARYING(255)
+}
+
+entity "orders" as orders {
+  * id : BIGINT <<PK>>
+  * session_id : BIGINT <<FK>>
+  * table_number : CHARACTER VARYING(20)
+  * status : CHARACTER VARYING(20)
+  * created_at : TIMESTAMP WITH TIME ZONE
+}
+
+entity "package_menu_items" as package_menu_items {
+  * package_id : BIGINT <<FK,PK>>
+  * menu_item_id : BIGINT <<FK,PK>>
 }
 
 entity "payments" as payments {
-    * id : BIGINT <<PK, generated>>
-    --
-    * session_id : BIGINT <<FK, UK>>
-    * amount : DECIMAL(10,2)
-    * payment_method : VARCHAR(20)
-    * payment_status : VARCHAR(20)
-    * paid_at : TIMESTAMP
+  * id : BIGINT <<PK>>
+  * session_id : BIGINT <<FK,UK>>
+  * amount : NUMERIC(10,2)
+  * payment_method : CHARACTER VARYING(20)
+  * payment_status : CHARACTER VARYING(20)
+  paid_at : TIMESTAMP WITH TIME ZONE
+}
+
+entity "restaurant_tables" as restaurant_tables {
+  * id : BIGINT <<PK>>
+  * table_number : CHARACTER VARYING(20) <<UK>>
+  * capacity : INTEGER
+  * status : CHARACTER VARYING(20)
+}
+
+entity "soups" as soups {
+  * id : BIGINT <<PK>>
+  * name : CHARACTER VARYING(100)
+  * active : BOOLEAN
 }
 
 entity "stock_items" as stock_items {
-    * id : BIGINT <<PK, generated>>
-    --
-    * name : VARCHAR(100)
-    * unit : VARCHAR(30)
-    * current_stock : DECIMAL(10,2)
-    * minimum_stock : DECIMAL(10,2)
-    * opening_target_stock : DECIMAL(10,2)
-    * active : BOOLEAN
+  * id : BIGINT <<PK>>
+  * sku : CHARACTER VARYING(40) <<UK>>
+  * name : CHARACTER VARYING(120)
+  * unit : CHARACTER VARYING(24)
+  * quantity : NUMERIC(12,3)
+  * low_stock_threshold : NUMERIC(12,3)
+  * updated_at : TIMESTAMP WITH TIME ZONE
 }
 
 entity "stock_transactions" as stock_transactions {
-    * id : BIGINT <<PK, generated>>
-    --
-    * stock_item_id : BIGINT <<FK>>
-    * user_id : BIGINT <<FK>>
-    * type : VARCHAR(20)
-    * quantity : DECIMAL(10,2)
-    * balance_after : DECIMAL(10,2)
-    reason : VARCHAR(255)
-    * created_at : TIMESTAMP
+  * id : BIGINT <<PK>>
+  * stock_item_id : BIGINT <<FK>>
+  * transaction_type : CHARACTER VARYING(20)
+  * quantity_delta : NUMERIC(12,3)
+  * balance_after : NUMERIC(12,3)
+  * reason : CHARACTER VARYING(255)
+  actor_user_id : BIGINT <<FK>>
+  * created_at : TIMESTAMP WITH TIME ZONE
 }
 
-' Relationships
-users ||--|| user_profiles : "1:1 has profile"
-dining_sessions ||--o| payments : "1:0..1 billed as"
-
-restaurant_tables ||--o{ dining_sessions : "hosts"
-buffet_packages ||--o{ dining_sessions : "applied to"
-soups ||--o{ dining_sessions : "selected in"
-
-menu_categories ||--o{ menu_items : "contains"
-
-dining_sessions ||--o{ orders : "places"
-dining_sessions ||--o{ customer_session_grants : "grants access to"
-orders ||--|{ order_items : "consists of"
-menu_items ||--o{ order_items : "ordered in"
-
-stock_items ||--o{ stock_transactions : "audited by"
-users ||--o{ stock_transactions : "performed by"
-
-buffet_packages ||--o{ package_menu_items : "links"
-menu_items ||--o{ package_menu_items : "included in"
+entity "user_profiles" as user_profiles {
+  * user_id : BIGINT <<FK,PK>>
+  * display_name : CHARACTER VARYING(120)
+  email : CHARACTER VARYING(254)
+}
+dining_sessions ||--o{ customer_session_grants : "session_id"
+buffet_packages ||--o{ dining_sessions : "package_id"
+soups ||--o{ dining_sessions : "soup_id"
+restaurant_tables ||--o{ dining_sessions : "table_id"
+menu_categories ||--o{ menu_items : "category_id"
+menu_items ||--o{ order_items : "menu_item_id"
+orders ||--o{ order_items : "order_id"
+dining_sessions ||--o{ orders : "session_id"
+menu_items ||--o{ package_menu_items : "menu_item_id"
+buffet_packages ||--o{ package_menu_items : "package_id"
+dining_sessions ||--o| payments : "session_id"
+app_users o|--o{ stock_transactions : "actor_user_id"
+stock_items ||--o{ stock_transactions : "stock_item_id"
+app_users ||--o| user_profiles : "user_id"
 
 @enduml

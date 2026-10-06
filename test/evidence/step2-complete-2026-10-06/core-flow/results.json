@@ -1,0 +1,102 @@
+{
+  "executedAt": "2026-10-06T06:50:02.461Z",
+  "environment": "Docker Compose + isolated PostgreSQL 18; actual session providers; seed data only",
+  "results": [
+    {
+      "name": "Create staff accounts through Manager UI",
+      "result": "PASS",
+      "detail": "SERVICE_STAFF/KITCHEN_STAFF/SUPERVISOR"
+    },
+    {
+      "name": "Real cookie role matrix and spoofed headers",
+      "result": "PASS",
+      "detail": "All four staff roles plus anonymous"
+    },
+    {
+      "name": "Master data guards reject anonymous and spoofed mutation privileges",
+      "result": "PASS",
+      "detail": "Real cookie checks for Table/Package/Soup"
+    },
+    {
+      "name": "Case and trailing slash guards",
+      "result": "PASS",
+      "detail": "Staff redirected; Kitchen allowed"
+    },
+    {
+      "name": "Manager creates table/package/soup/stock through real UI",
+      "result": "PASS",
+      "detail": {
+        "tableId": 2,
+        "packageId": 2,
+        "soupId": 2,
+        "stockItemId": 5
+      }
+    },
+    {
+      "name": "Open via Staff UI; unpaid close rejected",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 2,
+        "tableId": 2
+      }
+    },
+    {
+      "name": "Real QR exchange and single order",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 2,
+        "orderId": 2,
+        "qrReuseStatus": 404
+      }
+    },
+    {
+      "name": "Kitchen and Serving complete actual persisted order",
+      "result": "PASS",
+      "detail": {
+        "orderId": 2,
+        "status": "SERVED"
+      }
+    },
+    {
+      "name": "Customer request bill freezes orders and alerts Staff",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 2,
+        "rejectedOrderStatus": 409
+      }
+    },
+    {
+      "name": "Customer sees recorded PAID and matching backend amount",
+      "result": "PASS",
+      "detail": {
+        "amount": 997.5
+      }
+    },
+    {
+      "name": "Payment refresh; explicit close returns AVAILABLE and revokes customer",
+      "result": "PASS",
+      "detail": {
+        "paymentId": 2,
+        "amount": 997.5
+      }
+    },
+    {
+      "name": "Stock UI receiving, confirmed adjustment and audit balance",
+      "result": "PASS",
+      "detail": {
+        "stockItemId": 5,
+        "balance": 1
+      }
+    },
+    {
+      "name": "Logout invalidates real staff session",
+      "result": "PASS",
+      "detail": "API 401"
+    },
+    {
+      "name": "Swagger available",
+      "result": "PASS",
+      "detail": "HTTP 200"
+    }
+  ]
+}

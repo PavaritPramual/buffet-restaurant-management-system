@@ -30,7 +30,10 @@ class PostgresDiningSessionMigrationTest {
     private JdbcTemplate jdbc;
 
     @Test
-    void flywayThroughV8AndHibernateValidationStartOnPostgres() {
+    void flywayThroughV14AndHibernateValidationStartOnPostgres() {
+        assertThat(jdbc.queryForObject("SELECT data_type FROM information_schema.columns WHERE table_schema='public' AND table_name='dining_sessions' AND column_name='bill_requested_at'", String.class)).isEqualTo("timestamp with time zone");
+        assertThat(jdbc.queryForObject("SELECT is_nullable FROM information_schema.columns WHERE table_schema='public' AND table_name='dining_sessions' AND column_name='bill_requested_at'", String.class)).isEqualTo("YES");
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM flyway_schema_history WHERE version='14' AND success", Integer.class)).isOne();
         assertThat(jdbc.queryForObject(
                 "SELECT count(*) FROM public.flyway_schema_history WHERE version = '8' AND success",
                 Integer.class)).isEqualTo(1);

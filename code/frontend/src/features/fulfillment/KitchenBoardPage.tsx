@@ -51,7 +51,7 @@ export default function KitchenBoardPage() {
     setUpdatingId(order.orderId)
     setError('')
     try {
-      const updated = await updateOrderStatus(order.orderId, targetStatus, 'KITCHEN_STAFF')
+      const updated = await updateOrderStatus(order.orderId, targetStatus)
       setOrders((current) => updated.status === 'READY' || updated.status === 'SERVED'
         ? current.filter((entry) => entry.orderId !== order.orderId)
         : current.map((entry) => (entry.orderId === order.orderId ? updated : entry)))

@@ -51,6 +51,23 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 class DiningSessionIntegrationTest {
+    @Test
+    void customerPackageIsBoundToActiveCredentialAndDoesNotExposeSessionSecrets() throws Exception {
+        String token = openThroughApiAndReadToken();
+        long id = sessionRepository.findAll().get(0).getId();
+        Cookie cookie = new Cookie("customer_session", customerAccessService.exchange(token).credential());
+        mockMvc.perform(get("/api/v1/dining-sessions/" + id + "/package"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/v1/dining-sessions/" + id + "/package").cookie(cookie))
+                .andExpect(status().isOk()).andExpect(jsonPath("name").exists())
+                .andExpect(jsonPath("sessionToken").doesNotExist())
+                .andExpect(jsonPath("packagePriceAtOpen").doesNotExist());
+        mockMvc.perform(get("/api/v1/dining-sessions/" + (id + 1) + "/package").cookie(cookie))
+                .andExpect(status().isNotFound());
+        jdbcTemplate.update("UPDATE dining_sessions SET status='COMPLETED' WHERE id=?", id);
+        mockMvc.perform(get("/api/v1/dining-sessions/" + id + "/package").cookie(cookie))
+                .andExpect(status().isNotFound());
+    }
     @Autowired
     private MockMvc mockMvc;
 

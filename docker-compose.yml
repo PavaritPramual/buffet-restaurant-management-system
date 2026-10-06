@@ -9,6 +9,13 @@ services:
         required: false
     environment:
       SERVER_PORT: "8080"
+      DINING_SESSION_STAFF_ACCESS_PROVIDER: session
+      FULFILLMENT_ACCESS_PROVIDER: session
+      MASTER_DATA_ACCESS_PROVIDER: session
+      ORDERING_SESSION_PROVIDER: database
+      MENU_ADMIN_ACCESS_PROVIDER: session
+      BILLING_CONTEXT_PROVIDER: database
+      PAYMENT_STATUS_PROVIDER: database
   frontend:
     build:
       context: ./code/frontend

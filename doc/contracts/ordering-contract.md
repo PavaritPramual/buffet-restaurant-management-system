@@ -25,6 +25,8 @@ The current public QR entry point is `POST /api/v1/dining-sessions/qr-exchange` 
 
 Customer QR route: `/customer/qr#token={oneTimeToken}`. The browser removes the fragment immediately and sends the token only in the JSON body of `POST /api/v1/dining-sessions/qr-exchange`. On success the backend rotates the displayed QR and issues a random `customer_session` credential in an `HttpOnly` cookie, storing only its hash. Each phone may redeem the newly displayed QR for its own credential. Menu and order requests use the cookie, require an `ACTIVE` session, and must match the path session ID. Missing/invalid cookie returns 401, mismatched or closed session returns 404. A numeric session ID alone does not authorize customer access. State-changing customer requests require an allowed `Origin`; missing/disallowed Origin returns 403.
 
+Customer package lookup uses `GET /api/v1/dining-sessions/{sessionId}/package` with the same scoped cookie, ACTIVE/session-ID checks and no-store response. It returns the existing BuffetPackage DTO for the package bound to the session; the Customer UI uses its name. This is catalog data, not the locked Billing price or a Staff session response. Customer no longer calls `/buffet-packages/{id}`, which is a Staff/Manager/Supervisor master-data read. Order DTO/state and Payment contracts are unchanged.
+
 Order request: `{"items":[{"menuItemId":1,"quantity":2}]}`. Quantity must be positive; duplicate item IDs, unavailable items, items outside the package, and inactive sessions are rejected. The saved order snapshots the item's name and table number. Errors use the shared `ErrorResponse` fields. The Order response matches `OrderFulfillmentContext`: `orderId`, `sessionId`, `tableNumber`, `items`, `status`, and `createdAt`.
 
 Menu item input includes `categoryId`, `name`, optional `description`, `available`, `packageIds`, and optional `imageUrl`. The URL may use HTTP(S) or an absolute site path. The frontend displays an image only when `imageUrl` is set. Image files themselves are hosted elsewhere; this module stores only the URL. The admin page is `/admin/menu` and supports category/item CRUD and ten-item pagination; Auth must protect it during integration.
@@ -33,9 +35,9 @@ A menu item without order history may be deleted. A menu item referenced by `ord
 
 ## Integration seams
 
-Menu categories, menu items, package access, orders and order items use JPA persistence and Flyway V4 after Package/Soup V3. The runtime `SessionContextProvider` verifies the active session ID and token from the database. The fixed-token fixture is limited to tests. Staff session operations fail closed until a staff authorization provider is configured; local/test may use a fixture provider.
+Menu categories, menu items, package access, orders and order items use JPA persistence and Flyway V4 after Package/Soup V3. The database `SessionContextProvider` verifies the customer credential hash, ACTIVE session and path session ID. Compose uses real session authorization for Staff/Fulfillment/Menu and database providers for Ordering/Billing/Payment. Fixture providers are limited to explicit tests/local profiles.
 
-Run locally with `--spring.profiles.active=local`. Never enable a fixture provider in a deployed environment.
+For the integrated runtime use Docker Compose or the provider variables in `.env.example`. The local fixture profile is only for historical module experiments; it is not evidence of authenticated integration. Never enable a fixture provider in a deployed environment.
 
 PostgreSQL migration `V5__restrict_menu_and_order_access.sql` enables RLS, defines policies for the backend datasource role, and removes direct table and sequence privileges from Supabase `anon` and `authenticated` roles. Methus must still review the migration before shared deployment.
 

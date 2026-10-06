@@ -31,6 +31,8 @@ server:
   port: ${SERVER_PORT:8080}
 
 app:
+  master-data:
+    access-provider: ${MASTER_DATA_ACCESS_PROVIDER:session}
   bootstrap-admin:
     enabled: ${BOOTSTRAP_ADMIN_ENABLED:false}
     username: ${BOOTSTRAP_ADMIN_USERNAME:}
@@ -45,7 +47,7 @@ app:
   dining-session:
     staff-access-provider: ${DINING_SESSION_STAFF_ACCESS_PROVIDER:disabled}
   fulfillment:
-    # Production-safe default. Authentication must replace this provider with a real staff-role check.
+    # Compose enables the session provider; standalone runtime must opt in explicitly.
     access-provider: ${FULFILLMENT_ACCESS_PROVIDER:disabled}
   billing:
     context-provider: ${BILLING_CONTEXT_PROVIDER:disabled}

@@ -14,6 +14,9 @@ public interface DiningSessionRepository extends JpaRepository<DiningSession, Lo
     @Query("select diningSession from DiningSession diningSession where diningSession.sessionToken = :token")
     Optional<DiningSession> findBySessionTokenForUpdate(@Param("token") String token);
 
+    boolean existsByRestaurantTableId(Long tableId);
+    boolean existsByRestaurantTableIdAndStatus(Long tableId, DiningSessionStatus status);
+
     java.util.List<DiningSession> findByStatusOrderByStartTimeDesc(DiningSessionStatus status);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

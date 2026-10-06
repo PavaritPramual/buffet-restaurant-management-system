@@ -57,6 +57,12 @@ public class DiningSession {
     @Column(name = "status", nullable = false, length = 20)
     private DiningSessionStatus status = DiningSessionStatus.ACTIVE;
 
+    @Column(name = "bill_requested_at")
+    private java.time.OffsetDateTime billRequestedAt;
+
+    public java.time.OffsetDateTime getBillRequestedAt() { return billRequestedAt; }
+    public void requestBill() { if (billRequestedAt == null) billRequestedAt = java.time.OffsetDateTime.now(java.time.ZoneOffset.UTC); }
+
     protected DiningSession() {
     }
 

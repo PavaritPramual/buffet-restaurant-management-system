@@ -1,0 +1,18 @@
+# Only combine with docker-compose.yml after creating a disposable PostgreSQL database.
+# Explicit port is mandatory so this override cannot fall through to shared Supabase.
+services:
+  backend:
+    environment:
+      SPRING_PROFILES_ACTIVE: demo
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:${STEP2_TEST_PG_PORT:?Set the disposable PostgreSQL port}/buffet_test_runtime
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ci-disposable-only
+      SPRING_FLYWAY_LOCATIONS: classpath:db/migration/common,classpath:db/migration/postgresql
+      APP_MASTER_DATA_ACCESS_PROVIDER: session
+      APP_MENU_ADMIN_ACCESS_PROVIDER: session
+      APP_ORDERING_SESSION_PROVIDER: database
+      APP_DINING_SESSION_STAFF_ACCESS_PROVIDER: session
+      APP_FULFILLMENT_ACCESS_PROVIDER: session
+      APP_BILLING_CONTEXT_PROVIDER: database
+      APP_PAYMENT_STATUS_PROVIDER: database

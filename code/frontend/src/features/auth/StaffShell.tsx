@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, NavLink, Outlet, useMatch, useNavigate } from 'react-router-dom'
 import { authApi, getErrorMessage, roleLabels } from '../admin/api'
 import type { UserContext } from '../admin/api'
 import './staff-shell.css'
 
 export default function StaffShell() {
-  const location = useLocation()
+  const kitchenMatch = useMatch('/kitchen')
   const navigate = useNavigate()
   const [user, setUser] = useState<UserContext | null>(null)
   const [checking, setChecking] = useState(true)
@@ -50,7 +50,7 @@ export default function StaffShell() {
     return <Navigate to="/admin/stock" replace />
   }
 
-  const isKitchenRoute = location.pathname === '/kitchen'
+  const isKitchenRoute = kitchenMatch !== null
   if (isKitchenRoute && user.role !== 'KITCHEN_STAFF') return <Navigate to="/staff/tables" replace />
   if (!isKitchenRoute && user.role === 'KITCHEN_STAFF') return <Navigate to="/kitchen" replace />
 
@@ -62,6 +62,12 @@ export default function StaffShell() {
         <button className="admin-logout" title="ออกจากระบบ" aria-label="ออกจากระบบ" disabled={loggingOut} onClick={() => void handleLogout()}>↗</button>
       </div>
     </header>
+    <nav className="staff-shell-nav" aria-label="งานพนักงาน">
+      {user.role === 'SERVICE_STAFF' ? <>
+        <NavLink to="/staff/tables">โต๊ะและรอบกิน</NavLink>
+        <NavLink to="/staff/serving">งานเสิร์ฟ</NavLink>
+      </> : <NavLink to="/kitchen">งานครัว</NavLink>}
+    </nav>
     {error && <p className="admin-error staff-shell-error" role="alert">ออกจากระบบไม่สำเร็จ: {error}</p>}
     <Outlet />
   </div>

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, useNavigate } from 'react-router-dom'
-import { afterEach, expect, it, vi } from 'vitest'
+import { beforeEach, afterEach, expect, it, vi } from 'vitest'
 import MenuAdminPage from './MenuAdminPage'
 import CustomerOrderingPage from './CustomerOrderingPage'
 import FoundationApp from '../../FoundationApp'
@@ -12,14 +12,15 @@ import { customerApiClient } from '../../api/client'
 vi.mock('./api', async () => ({
   ...await vi.importActual<typeof import('./api')>('./api'),
   getCategories: vi.fn(), getBuffetPackages: vi.fn(), getMenuItems: vi.fn(),
-  redeemQr: vi.fn(), getCustomerContext: vi.fn(), getBuffetPackage: vi.fn(),
-  getMenu: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn(),
+  redeemQr: vi.fn(), getCustomerContext: vi.fn(), getCustomerPackage: vi.fn(),
+  getBillStatus: vi.fn(), requestBill: vi.fn(), getMenu: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn(),
 }))
 vi.mock('../admin/api', async () => ({
   ...await vi.importActual<typeof import('../admin/api')>('../admin/api'),
   authApi: { current: vi.fn(), login: vi.fn(), logout: vi.fn() },
   stockApi: { overview: vi.fn(), history: vi.fn() }, usersApi: { list: vi.fn(), create: vi.fn() },
 }))
+beforeEach(() => { vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, dueAmount: 299, paidAmount: 0, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })) })
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.resetAllMocks() })
 const category = { id: 3, name: 'ของทอด' }
 const buffetPackage = { id: 7, name: 'Standard', price: 299, description: null, active: true }
@@ -51,7 +52,7 @@ it('keeps the latest sorted catalog when an older request completes last', async
 
 it('does not lose a confirmed order when an earlier refresh returns afterwards', async () => {
   vi.mocked(api.getCustomerContext).mockResolvedValue({ sessionId: 1, packageId: 7, tableNumber: 'T01', sessionStatus: 'ACTIVE' })
-  vi.mocked(api.getBuffetPackage).mockResolvedValue(buffetPackage)
+  vi.mocked(api.getCustomerPackage).mockResolvedValue(buffetPackage)
   vi.mocked(api.getMenu).mockResolvedValue([item])
   const refresh = deferred<api.Order[]>()
   vi.mocked(api.getOrders).mockResolvedValueOnce([]).mockReturnValueOnce(refresh.promise)
@@ -123,7 +124,7 @@ function ScanControls() {
 it('rejects a reused A scan without displaying an obsolete session after A-B-A', async () => {
   const actual = await vi.importActual<typeof import('./api')>('./api')
   vi.mocked(api.redeemQr).mockImplementation(actual.redeemQr)
-  vi.mocked(api.getBuffetPackage).mockResolvedValue(buffetPackage)
+  vi.mocked(api.getCustomerPackage).mockResolvedValue(buffetPackage)
   vi.mocked(api.getMenu).mockResolvedValue([item])
   vi.mocked(api.getOrders).mockResolvedValue([])
   const responseA = deferred<{ data: api.SessionContext }>()
@@ -174,7 +175,7 @@ it('keeps loading until the latest catalog request completes', async () => {
 
 it('ignores an earlier refresh failure after placing an order and allows a fresh status update', async () => {
   vi.mocked(api.getCustomerContext).mockResolvedValue({ sessionId: 1, packageId: 7, tableNumber: 'T01', sessionStatus: 'ACTIVE' })
-  vi.mocked(api.getBuffetPackage).mockResolvedValue(buffetPackage)
+  vi.mocked(api.getCustomerPackage).mockResolvedValue(buffetPackage)
   vi.mocked(api.getMenu).mockResolvedValue([item])
   const refresh = deferred<api.Order[]>()
   const order: api.Order = { orderId: 99, sessionId: 1, tableNumber: 'T01', status: 'RECEIVED', createdAt: '', items: [{ menuItemId: 10, name: 'ไก่ทอด', quantity: 1 }] }

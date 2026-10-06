@@ -1,5 +1,11 @@
 # Menu and Ordering schema audit — 4 October 2026
 
+## การรับรองโดยปวริศช์ — 6 ตุลาคม 2026
+
+รับรอง `image_url`, table/item-name snapshots, timezone timestamps, positive quantity และ supporting indexes ที่ implement อยู่ ให้ใช้ [canonical Data Dictionary](step2-schema-approved.md) และ [ERD](../diagrams/er-diagram.puml) ที่ปรับตรงกับ schema จริง ข้อความ pending และ V9 absent ด้านล่างเป็นผลตรวจในอดีต ไม่ใช่สถานะปัจจุบัน
+
+Supabase และ JDBC ของแอปตรวจพบ V1–V12 success ทั้งหมด V9 มี installed_rank 11 หลัง V10/V11; Flyway validate ผ่าน checksum ทั้ง 12 และ pending=0 โดย `outOfOrder=false` ไม่มีการ repair หรือแก้ไฟล์ migration ในงานนี้ รายงาน integration ใหม่อยู่ใน [Step 2 close report](../testing/pavarit-step2-close-report.md) PR รวมยังต้องผ่านรีวิวก่อนปิด Step 2
+
 Scope: the five Menu/Order tables in develop `727413e`, their JPA mappings, and historical unmerged PR #11. This PR adds verification/documentation and changes no applied migration or canonical decision.
 
 Sources read on 4 October (Asia/Bangkok): [Notion ERD](https://app.notion.com/p/b5f90b8ff96482578bc2814d9aa43996), [Data Dictionary](https://app.notion.com/p/c6690b8ff96482c9b097011ad5104984), [schema task](https://app.notion.com/p/45f90b8ff96483c78f6f011499e6c0bb), and [PR #11 files](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/11/files). SQL descriptions below refer to repository Flyway V4/V7; they are not deployment instructions.

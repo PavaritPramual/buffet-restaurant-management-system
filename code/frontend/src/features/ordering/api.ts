@@ -43,8 +43,13 @@ export async function getCustomerContext({ retryFailedQr = false }: { retryFaile
     } catch (cause) { if (scan === latestQrScan) throw cause }
   }
 }
+// Bill flow is separate from DiningSessionStatus: PAID still requires staff close.
+export type CustomerBillState = 'NOT_REQUESTED' | 'REQUESTED' | 'PAID'
+export interface CustomerBillStatus { sessionId: number; status: CustomerBillState; requestedAt: string | null; dueAmount: number; paidAmount: number; bill: { sessionId: number; subtotalAmount: number; discountAmount: number; totalAmount: number } }
+export async function getBillStatus(id: number) { return (await customerApiClient.get<CustomerBillStatus>(`/dining-sessions/${id}/bill-status`)).data }
+export async function requestBill(id: number) { return (await customerApiClient.post<CustomerBillStatus>(`/dining-sessions/${id}/bill-request`)).data }
 export async function getMenu(sessionId: number) { return (await customerApiClient.get<MenuItem[]>(`/dining-sessions/${sessionId}/menu`)).data }
-export async function getBuffetPackage(id: number) { return (await apiClient.get<BuffetPackage>(`/buffet-packages/${id}`)).data }
+export async function getCustomerPackage(sessionId: number) { return (await customerApiClient.get<BuffetPackage>(`/dining-sessions/${sessionId}/package`)).data }
 export async function getCategories() { return (await apiClient.get<Category[]>('/menu-categories')).data }
 export async function getBuffetPackages(active = true) { return (await apiClient.get<BuffetPackage[]>('/buffet-packages', { params: { active } })).data }
 export async function saveCategory(id: number | null, name: string) { return (id === null ? await apiClient.post<Category>('/menu-categories', { name }) : await apiClient.put<Category>(`/menu-categories/${id}`, { name })).data }

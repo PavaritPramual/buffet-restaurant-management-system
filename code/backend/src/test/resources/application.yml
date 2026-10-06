@@ -23,6 +23,9 @@ spring:
     validate-on-migrate: true
 
 app:
+  master-data:
+    # Legacy module tests explicitly isolate business rules; integration security tests opt into session.
+    access-provider: disabled
   menu:
     admin-access-provider: fixture
   ordering:

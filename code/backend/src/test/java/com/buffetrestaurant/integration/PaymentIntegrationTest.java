@@ -90,11 +90,22 @@ class PaymentIntegrationTest {
                 """);
 
         staffSession = new MockHttpSession();
+        jdbc.update("UPDATE dining_sessions SET bill_requested_at=CURRENT_TIMESTAMP WHERE id=?", SESSION_ID);
         staffSession.setAttribute(
                 AuthController.USER_CONTEXT_SESSION_KEY,
                 new UserContext(1L, "staff-test", "Test Staff",
                         UserRole.SERVICE_STAFF)
         );
+    }
+
+    @Test
+    void rejectsPaymentBeforeBillRequest() throws Exception {
+        jdbc.update("UPDATE dining_sessions SET bill_requested_at=NULL WHERE id=?", SESSION_ID);
+        mvc.perform(post("/api/v1/payments").session(staffSession)
+                .contentType(MediaType.APPLICATION_JSON).content(paymentRequest(PaymentMethod.CASH)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Request the bill before accepting payment"));
+        assertThat(payments.findBySessionId(SESSION_ID)).isEmpty();
     }
 
     @Test

@@ -45,6 +45,12 @@ class PaymentAuthorizationTest {
     @MockitoBean
     private PaymentRepository paymentRepository;
 
+    @MockitoBean
+    private com.buffetrestaurant.repository.DiningSessionRepository sessions;
+
+    @MockitoBean
+    private jakarta.persistence.EntityManager entityManager;
+
     @Test
     void rejectsRequestsWithoutLogin() throws Exception {
         mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -60,7 +66,7 @@ class PaymentAuthorizationTest {
                         .content("{\"sessionId\":12,\"paymentMethod\":\"CASH\"}"))
                 .andExpect(status().isUnauthorized());
 
-        verifyNoInteractions(contextProvider, paymentRepository);
+        verifyNoInteractions(contextProvider, paymentRepository, sessions, entityManager);
     }
 
     @ParameterizedTest
@@ -91,6 +97,6 @@ class PaymentAuthorizationTest {
                         .content("{\"sessionId\":12,\"paymentMethod\":\"CASH\"}"))
                 .andExpect(status().isForbidden());
 
-        verifyNoInteractions(contextProvider, paymentRepository);
+        verifyNoInteractions(contextProvider, paymentRepository, sessions, entityManager);
     }
 }

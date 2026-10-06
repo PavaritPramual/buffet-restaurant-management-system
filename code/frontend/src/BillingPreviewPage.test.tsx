@@ -24,16 +24,28 @@ beforeEach(() => {
   vi.resetAllMocks()
   const missing = new AxiosError('not found')
   Object.assign(missing, { response: { status: 404 } })
-  vi.mocked(apiClient.get).mockRejectedValue(missing)
+  vi.mocked(apiClient.get).mockImplementation(async (url) => {
+    if (url === '/dining-sessions/12') return { data: { sessionId: 12, sessionStatus: 'ACTIVE', billRequestedAt: '2026-10-06T00:00:00Z' } }
+    throw missing
+  })
 })
 describe('Billing preview', () => {
+  it('disables payment before a bill request even though preview succeeds', async () => {
+    vi.mocked(apiClient.post).mockResolvedValue({ data: bill })
+    vi.mocked(apiClient.get).mockResolvedValue({ data: { sessionId: 12, sessionStatus: 'ACTIVE', billRequestedAt: null } })
+    renderPage()
+    submit('12')
+    await screen.findByText('ยอดสุทธิ: 997.50 บาท')
+    expect((screen.getByRole('button', { name: 'บันทึกการชำระ' }) as HTMLButtonElement).disabled).toBe(true)
+    expect(apiClient.get).not.toHaveBeenCalledWith('/payments/sessions/12')
+  })
   it('sends only sessionId and displays the server total', async () => {
     vi.mocked(apiClient.post).mockResolvedValue({ data: bill })
     renderPage()
     submit('12')
     expect(await screen.findByText('ยอดสุทธิ: 997.50 บาท')).toBeTruthy()
     expect(apiClient.post).toHaveBeenCalledWith('/billing/preview', { sessionId: 12 })
-    expect(screen.getByRole('button', { name: 'บันทึกการชำระ' })).toBeTruthy()
+    await waitFor(() => expect((screen.getByRole('button', { name: 'บันทึกการชำระ' }) as HTMLButtonElement).disabled).toBe(false))
     expect(apiClient.post).toHaveBeenCalledTimes(1)
   })
   it('rejects invalid input without calling the API', async () => {

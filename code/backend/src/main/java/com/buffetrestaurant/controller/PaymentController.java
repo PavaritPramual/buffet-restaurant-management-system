@@ -40,13 +40,14 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    @Operation(summary = "Record a staff-confirmed payment")
+    @Operation(summary = "Record a staff-confirmed payment",
+            description = "Requires ACTIVE session with a bill request. Locks the session with Order, Bill Request and Close before re-checking and recording payment.")
     @ApiResponse(responseCode = "201", description = "Payment recorded as PAID")
     @ApiResponse(responseCode = "400", description = "Invalid payment or inactive session")
     @ApiResponse(responseCode = "401", description = "Login required")
     @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required")
     @ApiResponse(responseCode = "404", description = "Session not found")
-    @ApiResponse(responseCode = "409", description = "Payment already recorded or data conflict")
+    @ApiResponse(responseCode = "409", description = "Bill not requested, payment already recorded or data conflict")
     @ApiResponse(responseCode = "503", description = "Billing provider unavailable")
     @PostMapping
     public ResponseEntity<PaymentResult> pay(

@@ -23,6 +23,8 @@ class DiningSessionMigrationTest {
                 .migrate();
 
         JdbcTemplate jdbc = new JdbcTemplate(new DriverManagerDataSource(url, "sa", ""));
+        assertThat(jdbc.queryForObject("SELECT data_type FROM information_schema.columns WHERE lower(table_name)='dining_sessions' AND lower(column_name)='bill_requested_at'", String.class)).isEqualTo("timestamp with time zone");
+        assertThat(jdbc.queryForObject("SELECT is_nullable FROM information_schema.columns WHERE lower(table_name)='dining_sessions' AND lower(column_name)='bill_requested_at'", String.class)).isEqualTo("YES");
         assertThat(jdbc.queryForObject(
                 "SELECT COUNT(*) FROM information_schema.table_constraints "
                         + "WHERE lower(table_name) = 'dining_sessions' AND constraint_type = 'FOREIGN KEY'",

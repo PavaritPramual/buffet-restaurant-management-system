@@ -32,6 +32,27 @@ public class StockService {
         this.adjustmentProcessor = adjustmentProcessor;
     }
 
+    @Transactional
+    public StockItemResponse createItem(@Valid com.buffetrestaurant.dto.request.StockItemRequest request) {
+        if (items.findBySku(request.sku().trim()).isPresent()) {
+            throw new com.buffetrestaurant.exception.DuplicateResourceException("Stock SKU already exists");
+        }
+        return StockItemResponse.from(items.saveAndFlush(new StockItem(request.sku().trim(), request.name().trim(), request.unit().trim(), java.math.BigDecimal.ZERO, request.lowStockThreshold())));
+    }
+
+    @Transactional
+    public StockItemResponse updateItem(Long id, @Valid com.buffetrestaurant.dto.request.StockItemRequest request) {
+        StockItem item = findItem(id);
+        if (items.findBySku(request.sku().trim()).filter(other -> !other.getId().equals(id)).isPresent()) {
+            throw new com.buffetrestaurant.exception.DuplicateResourceException("Stock SKU already exists");
+        }
+        if (transactions.existsByStockItemId(id) && (!item.getSku().equals(request.sku().trim()) || !item.getUnit().equals(request.unit().trim()))) {
+            throw new com.buffetrestaurant.exception.DuplicateResourceException("SKU and unit cannot change after stock transactions exist");
+        }
+        item.updateDetails(request.sku().trim(), request.name().trim(), request.unit().trim(), request.lowStockThreshold());
+        return StockItemResponse.from(items.saveAndFlush(item));
+    }
+
     @Transactional(readOnly = true)
     public List<StockItemResponse> overview() {
         return items.findAllByOrderByNameAsc().stream().map(StockItemResponse::from).toList();

@@ -14,6 +14,7 @@ public record DiningSessionResponse(
         Integer adultCount,
         Integer childCount,
         OffsetDateTime startTime,
-        OffsetDateTime endTime
+        OffsetDateTime endTime,
+        OffsetDateTime billRequestedAt
 ) {
 }

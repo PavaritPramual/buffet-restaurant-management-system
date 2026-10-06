@@ -34,7 +34,7 @@ describe('StaffServingPage', () => {
     render(<StaffServingPage />)
     expect(await screen.findByText(/ออเดอร์ #5/)).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'เสิร์ฟแล้ว' }))
-    await waitFor(() => expect(api.updateOrderStatus).toHaveBeenCalledWith(5, 'SERVED', 'SERVICE_STAFF'))
+    await waitFor(() => expect(api.updateOrderStatus).toHaveBeenCalledWith(5, 'SERVED'))
     expect(await screen.findByText('เสิร์ฟออเดอร์ #5 แล้ว')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'เสิร์ฟแล้ว' })).toBeNull()
   })

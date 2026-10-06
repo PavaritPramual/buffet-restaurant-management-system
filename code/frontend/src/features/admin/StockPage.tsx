@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { ConfirmDialog } from '../../components/common'
 import type { FormEvent } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { getErrorMessage, stockApi } from './api'
@@ -26,6 +27,8 @@ export default function StockPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [confirming, setConfirming] = useState(false)
+  const inFlight = useRef(false)
 
   async function loadData() {
     setLoading(true)
@@ -44,7 +47,14 @@ export default function StockPage() {
 
   async function submitChange(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!selected) return
+    if (!selected || inFlight.current) return
+    if (mode === 'ADJUSTMENT') { setConfirming(true); return }
+    await saveChange()
+  }
+
+  async function saveChange() {
+    if (!selected || inFlight.current) return
+    inFlight.current = true
     setSaving(true)
     setError('')
     try {
@@ -57,6 +67,8 @@ export default function StockPage() {
     } catch (requestError) {
       setError(getErrorMessage(requestError))
     } finally {
+      inFlight.current = false
+      setConfirming(false)
       setSaving(false)
     }
   }
@@ -75,6 +87,7 @@ export default function StockPage() {
       <div className={lowCount > 0 ? 'metric-warning' : ''}><span>ถึงหรือต่ำกว่าจุดเตือน</span><strong>{lowCount}</strong></div>
     </div>
     {error && <p className="admin-error" role="alert">{error}</p>}
+    <ConfirmDialog open={confirming} title="ยืนยันปรับยอดสต็อก" description={`ปรับ ${selected?.name ?? ''} จำนวน ${amount} ${selected?.unit ?? ''} เหตุผล: ${reason}`} busy={saving} onCancel={() => setConfirming(false)} onConfirm={() => void saveChange()} />
     <section className="admin-section">
       <div className="admin-section-heading"><h2>วัตถุดิบคงเหลือ</h2><span>{loading ? 'กำลังโหลด...' : `${items.length} รายการ`}</span></div>
       <div className="admin-table-wrap"><table className="admin-table">

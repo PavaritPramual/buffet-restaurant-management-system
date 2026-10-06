@@ -76,6 +76,7 @@ export default function AdminShell() {
       <p className="admin-eyebrow">เมนูหลัก</p>
       <nav className="admin-nav" aria-label="เมนูผู้ดูแล">
         {(user.role === 'MANAGER' || user.role === 'SUPERVISOR') && <NavLink to="/admin/stock">สต็อก</NavLink>}
+        {user.role === 'MANAGER' && <><NavLink to="/admin/tables">โต๊ะ</NavLink><NavLink to="/admin/packages">แพ็กเกจ</NavLink><NavLink to="/admin/soups">น้ำซุป</NavLink><NavLink to="/admin/stock-items">รายการสต็อก</NavLink></>}
         {user.role === 'MANAGER' && <NavLink to="/admin/users">พนักงาน</NavLink>}
         {user.role === 'MANAGER' && <NavLink to="/admin/menu">เมนูอาหาร</NavLink>}
       </nav>

@@ -35,7 +35,7 @@ describe('KitchenBoardPage', () => {
     render(<KitchenBoardPage />)
     expect(await screen.findByText('รับออเดอร์แล้ว')).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'เริ่มเตรียมอาหาร' }))
-    await waitFor(() => expect(api.updateOrderStatus).toHaveBeenCalledWith(1, 'PREPARING', 'KITCHEN_STAFF'))
+    await waitFor(() => expect(api.updateOrderStatus).toHaveBeenCalledWith(1, 'PREPARING'))
     expect(await screen.findByText('กำลังเตรียม')).toBeTruthy()
     expect(screen.getByRole('button', { name: 'พร้อมเสิร์ฟแล้ว' })).toBeTruthy()
   })
@@ -47,7 +47,7 @@ describe('KitchenBoardPage', () => {
     vi.mocked(api.updateOrderStatus).mockResolvedValue({ orderId: 2, sessionId: 1, tableNumber: 'A02', status: 'READY', createdAt: '2026-09-18T10:00:00+07:00', items: [{ menuItemId: 101, name: 'Sliced Pork', quantity: 1 }] })
     render(<KitchenBoardPage />)
     fireEvent.click(await screen.findByRole('button', { name: 'พร้อมเสิร์ฟแล้ว' }))
-    await waitFor(() => expect(api.updateOrderStatus).toHaveBeenCalledWith(2, 'READY', 'KITCHEN_STAFF'))
+    await waitFor(() => expect(api.updateOrderStatus).toHaveBeenCalledWith(2, 'READY'))
     await waitFor(() => expect(screen.queryByText(/ออเดอร์ #2/)).toBeNull())
   })
 

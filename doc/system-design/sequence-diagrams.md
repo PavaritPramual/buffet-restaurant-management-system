@@ -35,7 +35,8 @@
 	- `ChildRateCalculationStrategy`: คำนวณส่วนลดตามเรตราคาเด็ก
 	- `PromotionDiscountStrategy`: คำนวณส่วนลดพิเศษตามโปรโมชันของร้าน
 2. **การบันทึกการชำระเงิน**: ลูกค้าชำระเงินผ่านช่องทางใดช่องทางหนึ่ง (CASH, QR, CARD) และพนักงานบริการเป็นผู้ยืนยันการรับชำระ
-3. **Transaction & Resource Release**: เมื่อบันทึก `Payment` เรียบร้อยแล้ว ระบบจะ:
+3. **ขอคิดบิล**: Customer cookie ของรอบ ACTIVE เรียก POST bill-request บันทึก bill_requested_at ครั้งเดียวและหยุดรับออเดอร์ใหม่ทุกเครื่อง ใช้ lock แถวรอบเดียวกับ Order/close หน้า Customer อ่าน GET bill-status และยอดจาก BillingEngine/ราคา snapshot; Staff เห็น badge แล้วรับชำระบนหน้าเดิม
+4. **Transaction & Resource Release**: เมื่อบันทึก `Payment` แล้วรอบยัง ACTIVE พนักงานต้องกด close แยก และระบบตรวจ PAID ของรอบเดียวกันก่อน:
 	- เปลี่ยนสถานะ `DiningSession` เป็น `COMPLETED` พร้อมประทับเวลา `endTime`
 	- ยกเลิกสิทธิ์ cookie ลูกค้าทุกเครื่องและไม่ให้แลก QR ของรอบที่ปิดแล้ว
 	- คืนสถานะของ `RestaurantTable` ให้เป็น `AVAILABLE` เพื่อเตรียมพร้อมรับลูกค้ากลุ่มถัดไป

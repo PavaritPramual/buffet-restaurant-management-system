@@ -31,6 +31,19 @@ public class StockController {
         this.users = users;
     }
 
+    @PostMapping("/items")
+    public ResponseEntity<StockItemResponse> createItem(@Valid @RequestBody com.buffetrestaurant.dto.request.StockItemRequest body, HttpServletRequest request) {
+        users.requireAnyRole(request, UserRole.MANAGER);
+        var item = stockService.createItem(body);
+        return ResponseEntity.created(java.net.URI.create("/api/v1/stock/items/" + item.id())).body(item);
+    }
+
+    @org.springframework.web.bind.annotation.PutMapping("/items/{id}")
+    public StockItemResponse updateItem(@PathVariable Long id, @Valid @RequestBody com.buffetrestaurant.dto.request.StockItemRequest body, HttpServletRequest request) {
+        users.requireAnyRole(request, UserRole.MANAGER);
+        return stockService.updateItem(id, body);
+    }
+
     @GetMapping
     public List<StockItemResponse> overview(HttpServletRequest request) {
         users.requireAnyRole(request, UserRole.MANAGER, UserRole.SUPERVISOR);

@@ -23,9 +23,20 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     private final RestaurantTableRepository tableRepository;
     private final TableMapper tableMapper;
 
-    public RestaurantTableServiceImpl(RestaurantTableRepository tableRepository, TableMapper tableMapper) {
+    public RestaurantTableServiceImpl(RestaurantTableRepository tableRepository, TableMapper tableMapper, com.buffetrestaurant.repository.DiningSessionRepository sessions) {
+        this.sessions = sessions;
         this.tableRepository = tableRepository;
         this.tableMapper = tableMapper;
+    }
+
+    private final com.buffetrestaurant.repository.DiningSessionRepository sessions;
+
+    private RestaurantTable lockForMaintenance(Long id) {
+        RestaurantTable table = tableRepository.findByIdForUpdate(id).orElseThrow(() -> new ResourceNotFoundException("Restaurant table not found with id: " + id));
+        if (sessions.existsByRestaurantTableIdAndStatus(id, com.buffetrestaurant.domain.enums.DiningSessionStatus.ACTIVE)) {
+            throw new com.buffetrestaurant.exception.DuplicateResourceException("Cannot change a table with an active dining session");
+        }
+        return table;
     }
 
     @Override
@@ -63,7 +74,7 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     @Override
     @Transactional
     public TableResponse updateTable(Long id, UpdateTableRequest request) {
-        RestaurantTable table = findTableOrThrow(id);
+        RestaurantTable table = lockForMaintenance(id);
 
         if (tableRepository.existsByTableNumberAndIdNot(request.tableNumber(), id)) {
             throw new DuplicateResourceException("Table number '" + request.tableNumber() + "' is already in use by another table");
@@ -83,7 +94,8 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     @Override
     @Transactional
     public TableResponse updateTableStatus(Long id, UpdateTableStatusRequest request) {
-        RestaurantTable table = findTableOrThrow(id);
+        RestaurantTable table = lockForMaintenance(id);
+        if (request.status() == TableStatus.OCCUPIED) throw new com.buffetrestaurant.exception.DuplicateResourceException("Use open dining session to occupy a table");
         table.setStatus(request.status());
         RestaurantTable updated = tableRepository.save(table);
         return tableMapper.toResponse(updated);
@@ -92,7 +104,8 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     @Override
     @Transactional
     public void deleteTable(Long id) {
-        RestaurantTable table = findTableOrThrow(id);
+        RestaurantTable table = lockForMaintenance(id);
+        if (sessions.existsByRestaurantTableId(id)) throw new com.buffetrestaurant.exception.DuplicateResourceException("Cannot delete a table with dining history");
         if (TableStatus.OCCUPIED.equals(table.getStatus())) {
             throw new IllegalStateException("Cannot delete table while it is occupied");
         }

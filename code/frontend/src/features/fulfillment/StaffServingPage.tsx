@@ -37,7 +37,7 @@ export default function StaffServingPage() {
     setServingId(order.orderId)
     setError(''); setNotice('')
     try {
-      await updateOrderStatus(order.orderId, 'SERVED', 'SERVICE_STAFF')
+      await updateOrderStatus(order.orderId, 'SERVED')
       setOrders((current) => current.filter((entry) => entry.orderId !== order.orderId))
       setNotice(`เสิร์ฟออเดอร์ #${order.orderId} แล้ว`)
     } catch (cause) {
