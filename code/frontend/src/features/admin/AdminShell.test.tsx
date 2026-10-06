@@ -46,6 +46,22 @@ function renderShell(path: string) {
 }
 
 describe('AdminShell', () => {
+  it.each(['/kitchen', '/kitchen/', '/KITCHEN'])('keeps kitchen login on matched route %s', async (path) => {
+    vi.mocked(authApi.current).mockResolvedValue(kitchen)
+    renderShell(path)
+    expect(await screen.findByText('หน้าครัว')).toBeTruthy()
+    expect(screen.queryByRole('link', { name: 'งานเสิร์ฟ' })).toBeNull()
+  })
+
+  it.each(['/kitchen', '/kitchen/', '/KITCHEN'])('blocks service staff from matched kitchen route %s', async (path) => {
+    vi.mocked(authApi.current).mockResolvedValue(staff)
+    renderShell(path)
+    expect(await screen.findByText('หน้าโต๊ะพนักงาน')).toBeTruthy()
+    expect(screen.queryByText('หน้าครัว')).toBeNull()
+    fireEvent.click(screen.getByRole('link', { name: 'งานเสิร์ฟ' }))
+    expect(await screen.findByText('หน้าเสิร์ฟ')).toBeTruthy()
+  })
+
   it('shows manager navigation and the requested page after restoring a session', async () => {
     vi.mocked(authApi.current).mockResolvedValue(manager)
 

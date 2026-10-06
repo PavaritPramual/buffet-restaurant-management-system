@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Card, ConfirmDialog, EmptyState, ErrorAlert, LoadingState, PageHeader, RefreshIcon, StatusBadge } from '../../components/common'
-import { getApiError, getBuffetPackage, getCustomerContext, getMenu, getOrders, placeOrder, redeemQr } from './api'
+import { getApiError, getCustomerPackage, getCustomerContext, getMenu, getOrders, placeOrder, redeemQr } from './api'
 import type { MenuItem, Order, SessionContext } from './api'
 import type { OrderStatus } from '../../contracts/shared'
 import type { StatusBadgeTone } from '../../components/common'
@@ -74,7 +74,7 @@ export default function CustomerOrderingPage() {
         if (!isCurrent()) return
         acceptedContext.current = context
         const [nextMenu, nextOrders, buffetPackage] = await Promise.all([
-          getMenu(context.sessionId), getOrders(context.sessionId), getBuffetPackage(context.packageId),
+          getMenu(context.sessionId), getOrders(context.sessionId), getCustomerPackage(context.sessionId),
         ])
         if (isCurrent()) {
           setSession(context); setPackageName(buffetPackage.name); setMenu(nextMenu); setOrders(nextOrders); setError('')

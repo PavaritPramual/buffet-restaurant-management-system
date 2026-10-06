@@ -10,7 +10,7 @@ import type { MenuItem, SessionContext } from './api'
 
 vi.mock('./api', async () => {
   const actual = await vi.importActual<typeof import('./api')>('./api')
-  return { ...actual, redeemQr: vi.fn(), getCustomerContext: vi.fn(), getBuffetPackage: vi.fn(), getMenu: vi.fn(), getCategories: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn() }
+  return { ...actual, redeemQr: vi.fn(), getCustomerContext: vi.fn(), getCustomerPackage: vi.fn(), getMenu: vi.fn(), getCategories: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn() }
 })
 
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.resetAllMocks() })
@@ -38,7 +38,7 @@ function deferred<T>() {
 }
 
 function mockSessionDetails() {
-  vi.mocked(api.getBuffetPackage).mockImplementation(async (id) => ({ id, name: id === 1 ? 'Standard' : 'Premium', price: 299, description: null, active: true }))
+  vi.mocked(api.getCustomerPackage).mockImplementation(async (id) => ({ id, name: id === 1 ? 'Standard' : 'Premium', price: 299, description: null, active: true }))
   vi.mocked(api.getMenu).mockImplementation(async (id) => id === 1 ? [chicken] : [])
   vi.mocked(api.getOrders).mockResolvedValue([])
 }
@@ -119,7 +119,7 @@ describe('CustomerOrderingPage', () => {
 
   it('redeems the QR fragment without placing the token in an API URL', async () => {
     vi.mocked(api.redeemQr).mockResolvedValue({ sessionId: 1, packageId: 1, tableNumber: 'T01', sessionStatus: 'ACTIVE' })
-    vi.mocked(api.getBuffetPackage).mockResolvedValue({ id: 1, name: 'Standard', price: 299, description: null, active: true })
+    vi.mocked(api.getCustomerPackage).mockResolvedValue({ id: 1, name: 'Standard', price: 299, description: null, active: true })
     vi.mocked(api.getMenu).mockResolvedValue([])
     vi.mocked(api.getOrders).mockResolvedValue([])
     renderPage()
@@ -196,7 +196,7 @@ describe('CustomerOrderingPage', () => {
   it('shows menu images and creates an order with duplicate-submit protection', async () => {
     vi.mocked(api.getMenu).mockResolvedValue([{ id: 10, categoryId: 1, categoryName: 'ของทอด', name: 'ไก่ทอด', description: 'ทอดใหม่ทุกจาน', available: true, packageIds: [1], imageUrl: '/images/chicken.jpg' }])
     vi.mocked(api.redeemQr).mockResolvedValue({ sessionId: 1, packageId: 1, tableNumber: 'T01', sessionStatus: 'ACTIVE' })
-    vi.mocked(api.getBuffetPackage).mockResolvedValue({ id: 1, name: 'Standard', price: 299, description: null, active: true })
+    vi.mocked(api.getCustomerPackage).mockResolvedValue({ id: 1, name: 'Standard', price: 299, description: null, active: true })
     vi.mocked(api.getOrders).mockResolvedValue([])
     vi.mocked(api.placeOrder).mockResolvedValue({ orderId: 7, sessionId: 1, tableNumber: 'T01', status: 'RECEIVED', createdAt: '2026-09-24T10:00:00+07:00', items: [{ menuItemId: 10, name: 'ไก่ทอด', quantity: 1 }] })
     renderPage()
@@ -216,7 +216,7 @@ describe('CustomerOrderingPage', () => {
 
   it('shows an actionable empty state when no menu is available', async () => {
     vi.mocked(api.redeemQr).mockResolvedValue({ sessionId: 1, packageId: 1, tableNumber: 'T01', sessionStatus: 'ACTIVE' })
-    vi.mocked(api.getBuffetPackage).mockResolvedValue({ id: 1, name: 'Standard', price: 299, description: null, active: true })
+    vi.mocked(api.getCustomerPackage).mockResolvedValue({ id: 1, name: 'Standard', price: 299, description: null, active: true })
     vi.mocked(api.getMenu).mockResolvedValue([]); vi.mocked(api.getOrders).mockResolvedValue([])
     renderPage()
     expect(await screen.findByText('ยังไม่มีเมนูในหมวดนี้')).toBeTruthy()

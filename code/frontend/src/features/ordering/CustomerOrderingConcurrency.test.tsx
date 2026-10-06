@@ -8,7 +8,7 @@ import { customerApiClient } from '../../api/client'
 
 vi.mock('./api', async () => ({
   ...await vi.importActual<typeof import('./api')>('./api'),
-  getCustomerContext: vi.fn(), redeemQr: vi.fn(), getBuffetPackage: vi.fn(),
+  getCustomerContext: vi.fn(), redeemQr: vi.fn(), getCustomerPackage: vi.fn(),
   getMenu: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn(),
 }))
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.resetAllMocks() })
@@ -24,7 +24,7 @@ function deferred<T>() {
 }
 function details() {
   vi.mocked(api.getCustomerContext).mockResolvedValue(sessionA)
-  vi.mocked(api.getBuffetPackage).mockImplementation(async (id) => ({ id, name: id === 7 ? 'Standard' : 'Premium', price: 299, description: null, active: true }))
+  vi.mocked(api.getCustomerPackage).mockImplementation(async (id) => ({ id, name: id === 1 ? 'Standard' : 'Premium', price: 299, description: null, active: true }))
   vi.mocked(api.getMenu).mockResolvedValue([item])
 }
 async function confirm() {

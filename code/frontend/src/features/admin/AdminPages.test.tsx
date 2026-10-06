@@ -39,6 +39,27 @@ function renderInShell(page: React.ReactNode, user: UserContext) {
 }
 
 describe('Admin stock and user pages', () => {
+  it('requires confirmation and prevents duplicate adjustment submissions', async () => {
+    vi.mocked(stockApi.overview).mockResolvedValue([item])
+    vi.mocked(stockApi.history).mockResolvedValue(history)
+    let complete!: (value: StockTransaction) => void
+    vi.mocked(stockApi.adjust).mockReturnValue(new Promise((resolve) => { complete = resolve }))
+    renderInShell(<StockPage />, manager)
+    fireEvent.click(await screen.findByRole('button', { name: 'ปรับยอด' }))
+    fireEvent.change(screen.getByLabelText('ผลต่างที่ปรับ (กก.)'), { target: { value: '-1' } })
+    fireEvent.change(screen.getByLabelText('เหตุผล'), { target: { value: 'ตรวจนับ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกรายการ' }))
+    expect(stockApi.adjust).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'ยกเลิก' }))
+    expect(stockApi.adjust).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกรายการ' }))
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))
+    fireEvent.click(screen.getByRole('button', { name: 'กำลังดำเนินการ…' }))
+    expect(stockApi.adjust).toHaveBeenCalledTimes(1)
+    complete({ ...history[0], quantityDelta: -1, balanceAfter: 11 })
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  })
+
   it('shows stock history and permits supervisor stock-in with a required reason', async () => {
     vi.mocked(stockApi.overview).mockResolvedValue([item])
     vi.mocked(stockApi.history).mockResolvedValue(history)

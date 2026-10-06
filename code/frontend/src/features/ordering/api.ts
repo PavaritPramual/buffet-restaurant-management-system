@@ -44,7 +44,7 @@ export async function getCustomerContext({ retryFailedQr = false }: { retryFaile
   }
 }
 export async function getMenu(sessionId: number) { return (await customerApiClient.get<MenuItem[]>(`/dining-sessions/${sessionId}/menu`)).data }
-export async function getBuffetPackage(id: number) { return (await apiClient.get<BuffetPackage>(`/buffet-packages/${id}`)).data }
+export async function getCustomerPackage(sessionId: number) { return (await customerApiClient.get<BuffetPackage>(`/dining-sessions/${sessionId}/package`)).data }
 export async function getCategories() { return (await apiClient.get<Category[]>('/menu-categories')).data }
 export async function getBuffetPackages(active = true) { return (await apiClient.get<BuffetPackage[]>('/buffet-packages', { params: { active } })).data }
 export async function saveCategory(id: number | null, name: string) { return (id === null ? await apiClient.post<Category>('/menu-categories', { name }) : await apiClient.put<Category>(`/menu-categories/${id}`, { name })).data }
