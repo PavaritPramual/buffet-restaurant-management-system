@@ -1,97 +1,79 @@
 @startuml
-title Class Diagram - Table & Dining Session Management
-
-skinparam classAttributeIconSize 0
+!pragma layout smetana
 skinparam shadowing false
-
-package "Domain" {
-    class RestaurantTable {
-        - id : Long
-        - tableNumber : String
-        - capacity : Integer
-        - status : TableStatus
-        + isAvailable() : Boolean
-        + occupy() : void
-        + makeAvailable() : void
-    }
-
-    class DiningSession {
-        - id : Long
-        - adultCount : Integer
-        - childCount : Integer
-        - sessionToken : String
-        - startTime : LocalDateTime
-        - endTime : LocalDateTime
-        - status : DiningSessionStatus
-        + startSession() : void
-        + closeSession() : void
-        + invalidateToken() : void
-    }
-
-    class BuffetPackage {
-        - id : Long
-        - name : String
-        - price : BigDecimal
-        - active : Boolean
-    }
-
-    class Soup {
-        - id : Long
-        - name : String
-        - active : Boolean
-    }
-
-    enum TableStatus {
-        AVAILABLE
-        OCCUPIED
-    }
-
-    enum DiningSessionStatus {
-        ACTIVE
-        COMPLETED
-        CANCELLED
-    }
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Tahoma
+title Table / DiningSession / customer grants - actual classes
+class RestaurantTable {
+ id : Long
+ tableNumber : String
+ capacity : Integer
+ status : TableStatus
+ +isAvailable() : boolean
+ +occupy() : void
+ +makeAvailable() : void
 }
-
-package "Repository" {
-    interface RestaurantTableRepository {
-        + findById(id : Long) : Optional<RestaurantTable>
-        + findByStatus(status : TableStatus) : List<RestaurantTable>
-        + save(table : RestaurantTable) : RestaurantTable
-    }
-
-    interface DiningSessionRepository {
-        + findById(id : Long) : Optional<DiningSession>
-        + findBySessionToken(token : String) : Optional<DiningSession>
-        + save(session : DiningSession) : DiningSession
-    }
-
-    interface BuffetPackageRepository {
-        + findById(id : Long) : Optional<BuffetPackage>
-        + findAll() : List<BuffetPackage>
-    }
-
-    interface SoupRepository {
-        + findById(id : Long) : Optional<Soup>
-        + findAll() : List<Soup>
-    }
+class DiningSession {
+ id : Long
+ adultCount : Integer
+ childCount : Integer
+ packagePriceAtOpen : BigDecimal
+ sessionToken : String
+ startTime : LocalDateTime
+ endTime : LocalDateTime
+ billRequestedAt : OffsetDateTime
+ status : DiningSessionStatus
+ +requestBill() : void
+ +rotateQrToken(token) : void
+ +complete(endTime) : void
 }
-
-package "Service" {
-    interface DiningSessionService {
-        + getAvailableTables() : List<TableResponseDTO>
-        + openSession(request : OpenSessionRequestDTO) : DiningSessionResponseDTO
-        + closeSession(sessionId : Long) : void
-    }
+class CustomerSessionGrant {
+ tokenHash : String
+ createdAt : OffsetDateTime
+ expiresAt : OffsetDateTime
 }
-
+class BuffetPackage {
+ price : BigDecimal
+ active : boolean
+}
+class Soup {
+ active : boolean
+}
+interface DiningSessionService
+class DiningSessionServiceImpl {
+ +openSession(request) : DiningSessionResponse
+ +closeSession(id) : DiningSessionResponse
+}
+class CustomerSessionAccessService {
+ +exchange(qrToken) : ExchangeResult
+ +requireContext(credential) : CustomerSessionResponse
+ +requireSession(id, credential, forOrder) : SessionContextSnapshot
+}
+class CustomerBillingService {
+ +request(id, credential) : CustomerBillStatusResponse
+ +status(id, credential) : CustomerBillStatusResponse
+}
+interface DiningSessionBillingReader
+interface PaymentStatusLookup
+interface DiningSessionRepository {
+ +findByIdForUpdate(id)
+ +findBySessionTokenForUpdate(token)
+}
 RestaurantTable "1" -- "0..*" DiningSession
 BuffetPackage "1" -- "0..*" DiningSession
 Soup "1" -- "0..*" DiningSession
-
-DiningSessionService --> RestaurantTableRepository
-DiningSessionService --> DiningSessionRepository
-DiningSessionService --> BuffetPackageRepository
-DiningSessionService --> SoupRepository
-
+DiningSession "1" -- "0..*" CustomerSessionGrant
+DiningSessionService <|.. DiningSessionServiceImpl
+DiningSessionServiceImpl --> DiningSessionRepository
+DiningSessionServiceImpl --> PaymentStatusLookup : same-session PAID
+CustomerSessionAccessService --> DiningSessionRepository : QR / order locks
+CustomerBillingService --> DiningSessionRepository : bill-request lock
+DiningSessionBillingReader ..> DiningSession : read snapshot
+note bottom of DiningSession
+ ACTIVE -> COMPLETED only after PAID + separate close.
+ CANCELLED is declared in enum; no cancel endpoint implemented.
+ Bill request keeps ACTIVE but blocks new Orders.
+ QR token is Staff-only; customers receive no snapshot/QR token.
+end note
 @enduml

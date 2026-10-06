@@ -1,4 +1,10 @@
 @startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Tahoma
+
 title Billing strategies and public response boundary
 interface BillCalculationStrategy {
  +calculate(context) : BigDecimal
@@ -31,7 +37,7 @@ class BillSummary <<public DTO>> {
 BillCalculationStrategy <|.. StandardBillCalculation
 BillCalculationStrategy <|.. ChildRateCalculationStrategy
 DiscountCalculationStrategy <|.. PromotionDiscountStrategy
-StandardBillCalculation o-- ChildRateCalculationStrategy : delegates child amount
+StandardBillCalculation o-- BillCalculationStrategy : delegates child amount
 BillingEngine o-- BillCalculationStrategy : pricing
 BillingEngine o-- DiscountCalculationStrategy : discount
 BillingEngine --> BillCalculation
@@ -41,6 +47,6 @@ note bottom of BillingEngine
  Strategies are immutable/stateless and injected.
  Calculate exactly, round payable total once HALF_UP.
  Composition replaces the obsolete addStrategy list design;
- API/architecture owners must review this design delta.
+ Current baseline 472fba4; Final owners still review their evidence.
 end note
 @enduml

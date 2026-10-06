@@ -1,10 +1,16 @@
 @startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Tahoma
+
 title Domain Model - Buffet Restaurant Management System
 
 skinparam classAttributeIconSize 0
 skinparam shadowing false
 
-class User {
+class UserAccount {
     id
     username
     role
@@ -22,6 +28,7 @@ class DiningSession {
     id
     adultCount
     childCount
+    billRequestedAt
     packagePriceAtOpen
     sessionToken
     startTime
@@ -57,7 +64,8 @@ class MenuCategory {
 class MenuItem {
     id
     name
-    price
+    description
+    imageUrl
     available
 }
 
@@ -85,10 +93,9 @@ class StockItem {
     id
     name
     unit
-    currentStock
-    minimumStock
-    openingTargetStock
-    active
+    sku
+    quantity
+    lowStockThreshold
 }
 
 class StockTransaction {
@@ -111,9 +118,12 @@ DiningSession "1" -- "0..*" CustomerSessionGrant : authorizes >
 Order "1" -- "1..*" OrderItem : consists of >
 MenuItem "1" -- "0..*" OrderItem : ordered as >
 
-DiningSession "1" -- "0..*" Payment : billed for >
+DiningSession "1" -- "0..1" Payment : billed for >
 
 StockItem "1" -- "0..*" StockTransaction : tracked by >
-User "1" -- "0..*" StockTransaction : recorded by >
+UserAccount "1" -- "0..*" StockTransaction : recorded by >
 
+note bottom of StockItem
+ openingTargetStock / active planned for Final; absent in 472fba4.
+end note
 @enduml

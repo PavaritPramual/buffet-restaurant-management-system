@@ -1,0 +1,39 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Tahoma
+title Runtime component layers - develop 472fba4 (7 Oct 2026)
+top to bottom direction
+component "React views / shared components\nCustomer / Staff / Kitchen / Manager" as Web
+package "Spring Boot REST application" {
+ component "Controllers\nHTTP / Bean Validation / response DTOs" as C
+ component "Application services\nTable/Session: DiningSessionServiceImpl / CustomerSessionAccessService\nCatalog/Ordering: MenuCatalogServiceImpl / CustomerOrderingServiceImpl\nFulfillment: OrderFulfillmentServiceImpl / OrderStateFactory\nBilling/Payment: BillingEngine / PaymentServiceImpl / CustomerBillingService\nAuth/Stock: AuthService / StockService / StockTransactionTemplate" as S
+ component "Cross-module contracts\nSessionContextProvider\nDiningSessionBillingReader\nPaymentStatusLookup" as Contracts
+ component "Session access providers\nSessionUserContextProvider\nStaff / Fulfillment / Payment / Menu" as Auth
+ component "DTO mappers\nTable / DiningSession\nCatalog / Ordering" as M
+ component "Spring Data JPA repositories\nEntity queries / pessimistic row locks" as Repo
+ component "Domain entities\nTables / Sessions / Orders\nPayments / Users / Stock" as E
+}
+database "PostgreSQL\nSupabase Session Pooler + SSL" as DB
+component "Flyway\ncommon + postgresql V1-V14" as Fly
+Web --> C : JSON / staff login session / customer cookie
+C --> S : use cases
+S --> Repo : transactions / queries
+Repo --> DB : JDBC
+Repo --> E : JPA mapping
+S ..> Contracts : provider collaboration
+S --> Auth : API authorization
+S --> M : public response mapping
+Fly --> DB : schema version / checksum
+note bottom of Contracts
+ Ordering -> SessionContextProvider -> customer/session access
+ Billing -> DiningSessionBillingReader -> opening-price snapshot
+ Close -> PaymentStatusLookup -> same-session PAID
+ Runtime: database/session. Fixtures: explicit demo/tests only.
+end note
+note bottom of Auth
+ Source exception: SessionUserContextProvider imports AuthController constant.
+ Track in SOLID/C03; diagram does not certify all layering or public deployment.
+end note
+@enduml

@@ -1,42 +1,39 @@
 # Sequence diagrams
 
-ต้นทาง: [Sequence diagrams ใน Notion](https://app.notion.com/p/3d7cb2e9d47a803fbb26e1b7e5dbdf65) · ย้ายเมื่อ 28 กันยายน 2026 · เป็น design baseline; ดู [สถานะเทียบกับโค้ด](README.md#สถานะเทียบกับโค้ด)
+อ้าง develop472fba4 / 7 ตุลาคม2026 จาก [System Design](README.md) sourceและpreviewที่ปรับดู [diagram index](../diagrams/README.md) ประวัติbaseline28ก.ย.ยังอยู่Git history ไม่มี Order.nextState()/BillCalculator ในruntimeปัจจุบัน
 
-# Sequence Diagrams — Buffet Restaurant Management System
-แสดง Interaction ระหว่าง Actors, Boundary (Controllers), Control (Services), Entity (Repositories/Domains) ตามสถาปัตยกรรม **Layered Architecture** และแสดงการทำงานของ **Design Patterns** ที่เกี่ยวข้องอย่างสมบูรณ์
----
-## Scenario 1: Open Dining Session & QR Code Generation
-พนักงานบริการ (Service Staff) ตรวจสอบโต๊ะว่าง เปิดรอบการรับประทาน (Dining Session) ระบุจำนวนคน เลือก Buffet Package และน้ำซุป ระบบเปลี่ยนสถานะโต๊ะเป็น `OCCUPIED` และสร้าง `sessionToken` สำหรับ QR Code ประจำโต๊ะ
-[PlantUML: sequence-open-session](../diagrams/sequence-open-session.puml)
-### คำอธิบาย Flow Scenario 1:
-1. **ตรวจสอบโต๊ะว่าง**: พนักงานบริการเรียกดูโต๊ะที่มีสถานะ `AVAILABLE`
-2. **เปิด Session**: พนักงานส่งข้อมูลเปิดโต๊ะ (โต๊ะ, จำนวนผู้ใหญ่, จำนวนเด็ก, รหัสแพ็กเกจ, รหัสน้ำซุป)
-3. **ตรวจสอบและล็อกโต๊ะ**: Service ตรวจสอบความถูกต้องและปรับสถานะโต๊ะเป็น `OCCUPIED` ทันทีเพื่อป้องกัน Race Condition
-4. **สร้าง Dining Session & QR**: ระบบสร้าง `DiningSession` และรหัส QR แบบใช้แลกครั้งเดียว Staff UI สร้างลิงก์ `/customer/qr#token=...` จาก response แล้วแสดง QR ให้ลูกค้า
----
-## Scenario 2: Customer Ordering & Kitchen Order Flow (GoF State Pattern)
-ลูกค้าสแกน QR สั่งอาหารรอบต่อรอบ (เมนูถูกกรองตาม Package) $`\rightarrow`$ ครัวรับออเดอร์และปรุงอาหารตาม **State Pattern** (`RECEIVED` $`\rightarrow`$ `PREPARING` $`\rightarrow`$ `READY`) โดยครัวไม่สามารถกดยืนยัน SERVED ได้ $`\rightarrow`$ พนักงานบริการนำส่งและกดยืนยัน `SERVED`
-[PlantUML: sequence-ordering-kitchen](../diagrams/sequence-ordering-kitchen.puml)
-### คำอธิบาย Flow Scenario 2:
-1. **แลก QR และดูเมนูตามสิทธิ์**: หน้า Customer ล้าง fragment ทันที แล้วส่งรหัสใน body ของ `POST /api/v1/dining-sessions/qr-exchange` Backend หมุนรหัส QR และออก cookie `HttpOnly` แยกต่อเครื่อง คำขอดูเมนูและสั่งอาหารใช้ cookie เพื่อตรวจรอบที่ยัง `ACTIVE` ก่อนคืนเฉพาะเมนูของ Package
-2. **สร้าง Order**: คำสั่งอาหารถูกสร้างและกำหนด State เริ่มต้นเป็น `ReceivedState` (`RECEIVED`)
-3. **การเปลี่ยน State โดยห้องครัว**:
-	- เมื่อกดรับออเดอร์ `Order.nextState()` จะเปลี่ยนสถานะเป็น `PreparingState` (`PREPARING`)
-	- เมื่อปรุงเสร็จ `Order.nextState()` จะเปลี่ยนสถานะเป็น `ReadyState` (`READY`)
-	- *ข้อกำหนด*: สิทธิ์ในครัวสิ้นสุดที่ `READY` เท่านั้น
-4. **การเปลี่ยน State โดยพนักงานบริการ**: พนักงานบริการนำอาหารไปส่งที่โต๊ะ และกดยืนยันเสิร์ฟ ส่งผลให้ `Order.nextState()` ขยับเข้าสู่ `ServedState` (`SERVED`)
----
-## Scenario 3: Billing, Calculation (Strategy Pattern) & Payment Processing
-ลูกค้าขอเช็กบิล $`\rightarrow`$ พนักงานบริการเรียกดูยอดบิล $`\rightarrow`$ ระบบคำนวณราคาด้วย **Strategy Pattern** (Standard, Child Rate, Promotion) $`\rightarrow`$ ลูกค้าเลือกวิธีชำระ (CASH / QR / CARD) $`\rightarrow`$ พนักงานบันทึกการชำระเงิน $`\rightarrow`$ พนักงานกดปิดรอบแยกหลังตรวจ `PAID` ของรอบเดียวกัน แล้วระบบปิด `DiningSession` (`COMPLETED`) และคืนโต๊ะเป็น `AVAILABLE`
-[PlantUML: sequence-billing-payment](../diagrams/sequence-billing-payment.puml)
-### คำอธิบาย Flow Scenario 3:
-1. **คำนวณบิลด้วย Strategy Pattern**: `BillCalculator` รับ Session แล้วประมวลผลคำนวณค่าบริการตาม Strategy ต่าง ๆ อย่างยืดหยุ่น:
-	- `StandardCalculationStrategy`: คำนวณผู้ใหญ่ตามราคาเต็มของ Package
-	- `ChildRateCalculationStrategy`: คำนวณส่วนลดตามเรตราคาเด็ก
-	- `PromotionDiscountStrategy`: คำนวณส่วนลดพิเศษตามโปรโมชันของร้าน
-2. **การบันทึกการชำระเงิน**: ลูกค้าชำระเงินผ่านช่องทางใดช่องทางหนึ่ง (CASH, QR, CARD) และพนักงานบริการเป็นผู้ยืนยันการรับชำระ
-3. **ขอคิดบิล**: Customer cookie ของรอบ ACTIVE เรียก POST bill-request บันทึก bill_requested_at ครั้งเดียวและหยุดรับออเดอร์ใหม่ทุกเครื่อง ใช้ lock แถวรอบเดียวกับ Order/close หน้า Customer อ่าน GET bill-status และยอดจาก BillingEngine/ราคา snapshot; Staff เห็น badge แล้วรับชำระบนหน้าเดิม
-4. **Transaction & Resource Release**: เมื่อบันทึก `Payment` แล้วรอบยัง ACTIVE พนักงานต้องกด close แยก และระบบตรวจ PAID ของรอบเดียวกันก่อน:
-	- เปลี่ยนสถานะ `DiningSession` เป็น `COMPLETED` พร้อมประทับเวลา `endTime`
-	- ยกเลิกสิทธิ์ cookie ลูกค้าทุกเครื่องและไม่ให้แลก QR ของรอบที่ปิดแล้ว
-	- คืนสถานะของ `RestaurantTable` ให้เป็น `AVAILABLE` เพื่อเตรียมพร้อมรับลูกค้ากลุ่มถัดไป
+## 1. เปิดรอบกิน
+
+[Source](../diagrams/sequence-open-session.puml) · [SVG](../diagrams/previews/sequence-open-session.svg)
+
+DiningSessionController → DiningSessionServiceImpl ตรวจ SERVICE_STAFF จาก login ล็อกโต๊ะ AVAILABLE ตรวจจำนวนคน/package/soup active สร้าง snapshotราคาและQR32bytes จากSecureRandom โต๊ะOCCUPIEDกับรอบACTIVE saveในtransactionเดียว Staff DTOส่งQRtokenให้ Staffสร้างfragmentlink ไม่ส่งcookieลูกค้าในขั้นนี้
+
+## 2. แลก QR และเข้าถึงรอบกิน
+
+[Source](../diagrams/sequence-qr-exchange.puml) · [SVG](../diagrams/previews/sequence-qr-exchange.svg)
+
+Fragmentไม่เป็นHTTPrequest path หน้าCustomerล้างfragmentทันที POST tokenในbodyใช้ครั้งเดียว BackendหมุนQRและออกHttpOnlycookie เก็บhash+expiry8h ต่อเครื่องในgrant การreloadอ่านcustomer-contextด้วยcookie QRใหม่ในแท็บเดิมต้องclearcart/orders/sessionและignoreคำตอบเก่า InvalidQRแสดงerrorไม่fallbackรอบเก่า Same-token in-flightPromiseช่วยStrictMode ไม่cachetokenที่แลกแล้ว
+
+## 3. Ordering / Kitchen / Serving
+
+[Baseline source](../diagrams/sequence-ordering-kitchen.puml) · [State implementation](../design-patterns.md#state--order-fulfillment)
+
+CustomerOrderingServiceImpl ใช้ SessionContextProviderตรวจรอบACTIVE เมนูตามpackageและquantity ก่อนwriteผ่านrequireSessionForOrderล็อกsessionเดียวกับclose/billrequest
+
+OrderFulfillmentServiceImpl resolve OrderStatusผ่านOrderStateFactoryและตรวจcurrent.next()ก่อนเปลี่ยน persisted enum ไม่ใช่ให้CustomerOrderมีnextState() ครัว RECEIVED→PREPARING→READY และServiceStaff READY→SERVED baselineภาพOrderingยังต้องศรัณย์/ศิระพัทธ์ตรวจFinalว่าตรงcookie/lockนี้
+
+## 4. ขอคิดบิล ชำระ และ close
+
+[Source](../diagrams/sequence-billing-payment.puml) · [SVG](../diagrams/previews/sequence-billing-payment.svg)
+
+Customerขอคิดบิลด้วยcookieและOrigin ล็อกsession refresh/recheckสิทธิ์ ตั้งbillRequestedAtครั้งแรก SessionยังACTIVEแต่Ordersใหม่409 ทุกมือถือยังอ่านบิลได้ หน้าสถานะpoll5sขณะvisible
+
+BillingContextProvider→DiningSessionBillingReaderอ่านsnapshotตอนเปิด/counts จากDB BillingEngineประกอบStandardBillCalculation/ChildRateCalculationStrategy/PromotionDiscountStrategy ไม่รับยอดจากbrowser
+
+PaymentServiceImplล็อกsessionเดียวกัน ต้องACTIVEและขอคิดบิลแล้ว ไม่มีpaymentเดิม คำนวณtrustedamount บันทึกPAID/paidAtและunique sessionId LostPOSTresponseให้GETexistingpaymentเพื่อตรวจ ไม่auto-retryPOST
+
+Paymentไม่closeเอง Staffกดcloseแยก DiningSessionServiceImplล็อกsession ตรวจPaymentStatusLookupที่sessionIdตรงและPAID แล้วล็อกtable/deletegrants/COMPLETED/AVAILABLEในtransactionเดียว Afterclosecookieเดิมถูกปฏิเสธ
+
+## หลักฐานและสิ่งที่รอ
+
+CIของbaselineตรวจorder/bill/payment/closeconcurrencyบนPostgreSQLทิ้งได้ [รายงาน](../testing/sirapat-step3-premerge-report.md) Publicdeployment/release/browserใหม่ยังต้องตรวจเพิ่ม ไม่อ้างว่าภาพนี้เป็นE2Eที่deployแล้ว
