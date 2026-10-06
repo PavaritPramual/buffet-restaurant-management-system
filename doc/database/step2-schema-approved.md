@@ -4,6 +4,8 @@
 
 ## การตัดสินใจ
 
+**Customer Billing extension:** V14 เพิ่ม `bill_requested_at` ที่แถวรอบกิน nullable/default NULL แบบ TIMESTAMP WITH TIME ZONE ไม่เพิ่มสถานะรอบใหม่ เมื่อขอแล้ว Order ใหม่ถูกปฏิเสธด้วย 409 แต่ Payment/close ยังแยกกัน V13/V14 ยังไม่ apply Supabase และรอ review/deployment
+
 **Security เพิ่มเติม:** PR ปิด Step 2 เสนอ V13 เพื่อ revoke client/PUBLIC grants ที่ตกค้างของ application tables/sequences และเปิด RLS `restaurant_tables` คง columns/FKs และ applied V1–V12 ทุกไฟล์ V13 ผ่านฐาน PostgreSQL แยกแต่ยังไม่ apply Supabase ให้ DB reviewer ตรวจและยืนยัน deployment ก่อนปิดขั้น
 
 - คง `menu_items.image_url` สำหรับรูปเมนู; `orders.table_number` และ `order_items.item_name` เป็น snapshot เพื่อรักษาประวัติหลังแก้ข้อมูลต้นทาง
@@ -90,6 +92,7 @@ Indexes:
 | `session_token` | character varying(100) | NO | — | UK |
 | `start_time` | timestamp without time zone | NO | CURRENT_TIMESTAMP | — |
 | `end_time` | timestamp without time zone | YES | — | — |
+| `bill_requested_at` | timestamp with time zone | YES | NULL | V14 proposed; UTC OffsetDateTime |
 | `status` | character varying(20) | NO | 'ACTIVE'::character varying | — |
 | `package_price_at_open` | numeric(10,2) | NO | — | — |
 

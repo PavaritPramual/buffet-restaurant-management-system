@@ -1,5 +1,7 @@
 # รายงาน integration ปิด Step 2 — ปวริศช์
 
+> รายงานนี้เป็นหลักฐานรอบ PR #20 ที่ปิดโดยไม่ merge งาน Manager/Customer Billing ที่เคยเลื่อนไป Final ในรอบนี้ถูกย้ายกลับ Step 2 และทำแล้ว ดู [รายงานล่าสุด](pavarit-step2-completion-report.md) สำหรับ V14, 296 backend tests, 108 frontend tests และ 14 browser scenarios รวมใหม่
+
 ตรวจวันที่ 6 ตุลาคม 2026 (Asia/Bangkok) จาก develop `888b4ea` บน branch `pavarit_673380278-9_01` โค้ดที่ทดสอบตรงกับ commits `15024d4` (Auth/routes/config) และ `83b9bdf` (integration/security/tests) เอกสารและภาพแนบใน commit ถัดมา
 
 ## ผลตรวจ

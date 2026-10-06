@@ -1,0 +1,6 @@
+{
+  "billRequest": true,
+  "billStatus": true,
+  "stockItems": true,
+  "health": "UP"
+}

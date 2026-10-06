@@ -1,5 +1,5 @@
 @startuml er_diagram
-title Step 2 approved implementation - Flyway V1-V12
+title Step 2 implementation - V1-V12 baseline + V14 bill request proposed
 hide circle
 skinparam linetype ortho
 skinparam shadowing false
@@ -39,6 +39,7 @@ entity "dining_sessions" as dining_sessions {
   * session_token : CHARACTER VARYING(100) <<UK>>
   * start_time : TIMESTAMP WITHOUT TIME ZONE
   end_time : TIMESTAMP WITHOUT TIME ZONE
+  bill_requested_at : TIMESTAMP WITH TIME ZONE <<nullable, V14>>
   * status : CHARACTER VARYING(20)
   * package_price_at_open : NUMERIC(10,2)
 }
