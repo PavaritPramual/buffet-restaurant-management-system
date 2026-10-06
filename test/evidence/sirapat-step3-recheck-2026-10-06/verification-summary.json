@@ -1,0 +1,63 @@
+{
+  "sourceCommit": "e1c78f8b9fa75e1e18d9ce22a4681f49ad3dc318",
+  "sourceTree": "base plus tested-recheck.patch and separately hashed new concurrency runner",
+  "frontend": {
+    "passed": 116,
+    "failed": 0,
+    "files": 14,
+    "newCases": 4
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 4,
+    "warningsStatus": "existing"
+  },
+  "build": "PASS",
+  "backendCurrentLocalRerun": false,
+  "backendCi": {
+    "commit": "e1c78f8b9fa75e1e18d9ce22a4681f49ad3dc318",
+    "runId": 37475748916,
+    "passed": 303,
+    "skipped": 0,
+    "failures": 0,
+    "errors": 0
+  },
+  "browser": {
+    "coreFlowGroups": 12,
+    "coreFlowHttpMocks": false,
+    "controlledConcurrencyGroups": 3,
+    "controlledConcurrencyHttpMocks": true,
+    "newVisuallyInspectedScreenshots": 15
+  },
+  "priorStateFixtures": {
+    "newRun": false,
+    "states": 12,
+    "sourceEvidence": "test/evidence/sirapat-step3-2026-10-06/ui-state-fixtures"
+  },
+  "docsLocalLinks": "PASS",
+  "slides": {
+    "newRender": false,
+    "priorValidatedPptxSha256": "bf34d5909ee49092bd1791a54d85b158e0469e4f6792136c95e94f34399eca9a",
+    "slides": 6,
+    "finalNumbersAndPublicUrls": "PENDING"
+  },
+  "publicAcceptance": "PENDING",
+  "sourceHashes": [
+    {
+      "path": "code/frontend/src/features/admin/AdminShell.tsx",
+      "sha256": "5ae2b387c8fe70c81b81aabf637820b1db21961c9afde3c2e4a00d7023432bc6"
+    },
+    {
+      "path": "code/frontend/src/features/admin/AdminShell.test.tsx",
+      "sha256": "5d238a5b0bf6f06918d02ed9c40b95d97b71835786c3bf4b35728271eed0a504"
+    },
+    {
+      "path": "test/browser/step3-core-flow.cjs",
+      "sha256": "681cd629d93d935a01870ec6c3f26e52d2d1dddcb2019fac0b9262d55cab140a"
+    },
+    {
+      "path": "test/browser/step3-concurrency.cjs",
+      "sha256": "2e72f8c207a91dabaddf107e0fced851f638cc1ca1a4affd8c37cb6fd64d4770"
+    }
+  ]
+}

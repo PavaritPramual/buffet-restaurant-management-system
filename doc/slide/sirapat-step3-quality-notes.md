@@ -2,6 +2,8 @@
 
 สถานะ: contribution รอบเริ่มงาน 6 ตุลาคม 2026; public release ยังรอ
 
+หมายเหตุสำหรับการรวมชุด Final: PPTX/PDF นี้เป็นร่างรอบเริ่มงานและยังคงผล local112/274/27skippedตามภาพเดิม ไม่ใช่ตัวเลขตรวจซ้ำล่าสุด หลังตรวจเพิ่ม frontendเป็น116 และ CoreFlow12+concurrencyfixtures3; CIของe1c78f8ผ่านPG303/303 ดู [รายงานตรวจซ้ำ](../testing/sirapat-step3-recheck-report.md) และ PR#22 สำหรับ CI ของ head ล่าสุด ให้เปลี่ยนตัวเลข/ภาพ/URLในชุดรวมหลัง release จริงและให้เจ้าของยืนยันก่อนซ้อม
+
 ## 1. ศิระพัทธ์ — การทดสอบและคุณภาพ UI
 
 - Menu / Ordering · Customer QR · Shared UI

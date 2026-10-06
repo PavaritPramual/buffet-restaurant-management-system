@@ -2,6 +2,8 @@
 
 สถานะ: ทำงานส่วนที่เริ่มได้และมีผลตรวจ local แล้ว **ยังไม่ผ่าน Final/public release**
 
+รายงานนี้เก็บ snapshot รอบเริ่มงาน 20:37–20:58 เวลาไทย ตัวเลข 112/274 และภาพ 23 ภาพเป็นผลรอบนั้น ดู [รายงานตรวจซ้ำ](sirapat-step3-recheck-report.md) สำหรับผล 116 frontend, Core Flow 12 กลุ่ม และ concurrency fixtures 3 กลุ่มที่ตรวจเพิ่ม ไม่ใช้สไลด์ร่าง/ผล local แทน release acceptance
+
 ## ขอบเขตและฐานที่ใช้
 
 อ่าน [Step 3](https://app.notion.com/p/37e90b8ff964834fad3701e2d8115de2), [Regression task](https://app.notion.com/p/1cc90b8ff96482af882481112591accd), UI Guide และ Stock/Profile tasks แล้ว ยืนยัน PR #21 merge อยู่จริง และ fast-forward สาขา `sirapat_673380293-3_01` จาก `9490a8c` ถึง develop `54e35383597f10ef1afb2e7e46ce8bbc1c0d5306` โดย working tree เริ่มต้นสะอาด
@@ -56,7 +58,7 @@ QR StrictMode/same-tab rescan/remount/stale-response covered by current automate
 
 - **เมธัส:** Stock target/active และ Profile first/last/phone พร้อม DTO/migrations/UI; ศิระพัทธ์ตรวจ UI/tests หลัง owner ส่ง code ตามcontractที่reviewแล้ว
 - **ธีรเมธ:** publicHTTPS URL, test accounts/test scope, deployed commit และยืนยัน real providers/schema; เมื่อพร้อมให้รันpublicCoreFlowและStock/Profileร่วมกับทีม
-- **PostgreSQL/CI:** รัน fresh/upgrade/grants/concurrency บนmarked disposableฐานและตรวจCIที่PRheadใหม่; 27skippedรอบนี้ยังไม่ผ่านreleasegate
+- **PostgreSQL/CI:** [CI ของ head e1c78f8](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37475748916) ผ่าน backend/PostgreSQL 303/303, 0 skipped และ frontend112/112 พร้อม lint/build แล้ว; 27skippedข้างบนเป็นผล local เท่านั้น ต้องตรวจ CI ของ PR head ใหม่และ release/migrations รุ่นสุดท้ายอีกครั้ง
 - **ปวริศช์/ศรัณย์:** reviewer E2E/traceability/API, requirement matrix/docsรวม; main/release/deployed revisionต้องตรงกัน
 - **Slides:** รวมทั้ง5คนและPDFชุดส่ง ซ้อมด้วยบัญชี/QRจริง ตัวเลขpublic/URLsเติมเมื่อมีผลจริง
 

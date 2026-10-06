@@ -50,6 +50,15 @@ async function main() {
     }
     const confirm = async page => page.getByRole('dialog').getByRole('button', { name:'ยืนยัน', exact:true }).click()
     scenario = 'real staff logins and role matrix'
+    const invalidLogin = ctx.anonymous.page
+    await invalidLogin.goto(web + '/admin')
+    await invalidLogin.getByLabel('ชื่อผู้ใช้', { exact:true }).fill(run + '-unknown')
+    await invalidLogin.getByLabel('รหัสผ่าน', { exact:true }).fill(run + '-invalid')
+    const invalidResponse = invalidLogin.waitForResponse(r => r.url().endsWith('/auth/login') && r.request().method() === 'POST')
+    await invalidLogin.getByRole('button', { name:'เข้าสู่ระบบ', exact:true }).click()
+    assert.equal((await invalidResponse).status(),401)
+    await invalidLogin.getByRole('alert').waitFor()
+    assert.equal((await ctx.anonymous.request.get(api + '/auth/me')).status(),401)
     for (const [name, role] of Object.entries(roles)) {
       const page = ctx[name].page
       await page.goto(web + '/admin')
@@ -64,7 +73,7 @@ async function main() {
         assert.equal((await ctx[name].request.get(api + endpoint, { headers:{'X-User-Role':'MANAGER'} })).status(), expected)
       }
     }
-    pass(scenario, 'Four independent cookie contexts; anonymous and spoofed-header denial')
+    pass(scenario, 'Four independent cookie contexts; invalid login, anonymous and spoofed-header denial')
     scenario = 'direct URL case and trailing slash guards'
     for (const name of ['supervisor','staff','kitchen']) {
       await ctx[name].page.goto(web + '/ADMIN/MENU/')
@@ -125,6 +134,33 @@ async function main() {
     assert.equal((await request('phoneB','get','/dining-sessions/customer-context')).sessionId,sessionId)
     assert.equal((await ctx.anonymous.request.get(api+`/dining-sessions/${sessionId}/orders`)).status(),401)
     pass(scenario,{sessionId,phones:2,qrReuseStatus:404})
+    scenario = 'same-tab fresh QR resets cart and reload restores cookie without re-exchange'
+    const timeOrigin = await a.evaluate(() => performance.timeOrigin)
+    await a.getByRole('button',{name:'เพิ่ม '+item.name,exact:true}).click()
+    await a.getByRole('button',{name:'ยืนยันการสั่ง',exact:true}).click()
+    await a.getByRole('dialog').waitFor()
+    await staff.reload()
+    await staff.locator('a[href*="/customer/qr#token="]').waitFor()
+    const replacementQr = await qr()
+    assert.notEqual(replacementQr,firstQr)
+    let rescanExchanges = 0
+    a.on('request',r=>{if(r.method()==='POST' && r.url().endsWith('/dining-sessions/qr-exchange')) rescanExchanges++})
+    const exchanged = a.waitForResponse(r=>r.url().endsWith('/dining-sessions/qr-exchange') && r.request().method()==='POST')
+    await a.goto(replacementQr)
+    assert.equal((await exchanged).status(),200)
+    await a.getByRole('button',{name:'เพิ่ม '+item.name,exact:true}).waitFor()
+    assert.equal(await a.evaluate(() => performance.timeOrigin),timeOrigin,'Rescan must be same-document navigation')
+    assert.equal(new URL(a.url()).hash,'')
+    assert.equal(await a.getByRole('dialog').count(),0)
+    assert(await a.getByRole('button',{name:'ยืนยันการสั่ง',exact:true}).isDisabled())
+    assert.equal(rescanExchanges,1,'StrictMode must not redeem a one-use QR twice')
+    await a.reload()
+    await a.getByRole('button',{name:'เพิ่ม '+item.name,exact:true}).waitFor()
+    assert.equal(rescanExchanges,1,'Reload must restore the cookie rather than re-exchange the used token')
+    assert.equal((await request('phoneA','get','/dining-sessions/customer-context')).sessionId,sessionId)
+    assert.equal((await request('phoneB','get','/dining-sessions/customer-context')).sessionId,sessionId)
+    await shot('phoneA','customer-rescan-restored-360.png')
+    pass(scenario,{sessionId,sameDocument:true,rescanExchanges,cartReset:true,phones:2})
     scenario = 'single confirmed order and actual Kitchen Serving transitions'
     let orderPosts=0
     a.on('request',r=>{if(r.method()==='POST' && /\/orders$/.test(r.url())) orderPosts++})
@@ -183,10 +219,18 @@ async function main() {
     await manager.getByRole('link',{name:'สต็อก',exact:true}).click()
     await manager.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
     await shot('manager','manager-expired-1280.png')
+    assert.equal((await ctx.manager.request.get(api+'/stock')).status(),401)
+    await request('supervisor','post','/auth/logout')
+    await ctx.supervisor.page.getByRole('button',{name:'โหลดข้อมูลใหม่',exact:true}).click()
+    await ctx.supervisor.page.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
+    assert.equal((await ctx.supervisor.request.get(api+'/stock')).status(),401)
+    await staff.getByRole('button',{name:'ออกจากระบบ',exact:true}).click()
+    await staff.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
+    assert.equal((await ctx.staff.request.get(api+'/orders/ready')).status(),401)
     await kitchen.getByRole('button',{name:'ออกจากระบบ'}).click()
     await kitchen.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
     assert.equal((await ctx.kitchen.request.get(api+'/orders/incoming')).status(),401)
-    pass(scenario,'Real server logout -> next UI API401; Manager hidden; Kitchen logout')
+    pass(scenario,'Real server logout -> UI API401 for Manager/Supervisor; Staff/Kitchen UI logout revokes access')
     scenario = 'Swagger customer bill contract'
     const specResponse=await ctx.anonymous.request.get(new URL('/v3/api-docs',api).href)
     assert(specResponse.ok())

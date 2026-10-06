@@ -73,6 +73,68 @@ describe('AdminShell', () => {
     expect(screen.getByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
   })
 
+  it('submits login once while the request is pending', async () => {
+    vi.mocked(authApi.current).mockRejectedValue(new Error('not signed in'))
+    let resolve!: (user: UserContext) => void
+    vi.mocked(authApi.login).mockReturnValue(new Promise<UserContext>((done) => { resolve = done }))
+    renderShell('/admin/stock')
+    fireEvent.change(await screen.findByLabelText('ชื่อผู้ใช้'), { target: { value: 'manager' } })
+    fireEvent.change(screen.getByLabelText('รหัสผ่าน'), { target: { value: 'test-password' } })
+    const button = screen.getByRole('button', { name: 'เข้าสู่ระบบ' })
+    fireEvent.submit(button.closest('form')!)
+    fireEvent.submit(button.closest('form')!)
+    expect(authApi.login).toHaveBeenCalledTimes(1)
+    expect((screen.getByRole('button', { name: 'กำลังเข้าสู่ระบบ...' }) as HTMLButtonElement).disabled).toBe(true)
+    await act(async () => resolve(manager))
+    expect(await screen.findByText('หน้า stock')).toBeTruthy()
+  })
+
+  it('ignores a login response after session expiry and permits a new login', async () => {
+    vi.mocked(authApi.current).mockRejectedValue(new Error('not signed in'))
+    let resolve!: (user: UserContext) => void
+    vi.mocked(authApi.login).mockReturnValueOnce(new Promise<UserContext>((done) => { resolve = done }))
+      .mockResolvedValueOnce({ ...manager, role: 'SUPERVISOR' })
+    renderShell('/admin/stock')
+    fireEvent.change(await screen.findByLabelText('ชื่อผู้ใช้'), { target: { value: 'manager' } })
+    fireEvent.change(screen.getByLabelText('รหัสผ่าน'), { target: { value: 'test-password' } })
+    fireEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }))
+    act(() => window.dispatchEvent(new Event('auth:session-expired')))
+    await act(async () => resolve(manager))
+    expect(screen.queryByText('หน้า stock')).toBeNull()
+    expect((screen.getByLabelText('รหัสผ่าน') as HTMLInputElement).value).toBe('')
+    fireEvent.change(screen.getByLabelText('รหัสผ่าน'), { target: { value: 'new-test-password' } })
+    fireEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }))
+    expect(await screen.findByText('หน้า stock')).toBeTruthy()
+    expect(authApi.login).toHaveBeenCalledTimes(2)
+    expect(screen.queryByRole('link', { name: 'พนักงาน' })).toBeNull()
+  })
+
+  it('submits logout once while the request is pending', async () => {
+    vi.mocked(authApi.current).mockResolvedValue(manager)
+    let resolve!: () => void
+    vi.mocked(authApi.logout).mockReturnValue(new Promise<void>((done) => { resolve = done }))
+    renderShell('/admin/stock')
+    const button = await screen.findByRole('button', { name: 'ออกจากระบบ' })
+    fireEvent.click(button); fireEvent.click(button)
+    expect(authApi.logout).toHaveBeenCalledTimes(1)
+    expect((button as HTMLButtonElement).disabled).toBe(true)
+    await act(async () => resolve())
+    expect(await screen.findByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
+  })
+
+  it('ignores a logout failure after session expiry', async () => {
+    vi.mocked(authApi.current).mockResolvedValue(manager)
+    let reject!: (error: Error) => void
+    vi.mocked(authApi.logout).mockReturnValue(new Promise<void>((_, fail) => { reject = fail }))
+    renderShell('/admin/stock')
+    fireEvent.click(await screen.findByRole('button', { name: 'ออกจากระบบ' }))
+    act(() => window.dispatchEvent(new Event('auth:session-expired')))
+    await act(async () => reject(new Error('old logout failed')))
+    expect(screen.getByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
+    expect(screen.queryByText('หน้า stock')).toBeNull()
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+
   it.each(['/kitchen', '/kitchen/', '/KITCHEN'])('keeps kitchen login on matched route %s', async (path) => {
     vi.mocked(authApi.current).mockResolvedValue(kitchen)
     renderShell(path)
