@@ -1,0 +1,59 @@
+# Design patterns
+
+Code baseline `472fba4f25a27fa2e3cd1e1213151ce971646f3a` ตรวจ 7 ตุลาคม2026 แหล่งเกณฑ์ [Requirements](https://app.notion.com/p/3cfcb2e9d47a81ed9ad9d2abb8a174fd) และใบงานวิชาใน workspace ลิงก์ source ตรึง SHA/บรรทัดเพื่อให้ตรวจซ้ำได้ งานนี้จัดทำเอกสาร ไม่แก้ production source หรืออ้างว่า SOLID ผ่านครบทั้งระบบ
+
+## Enterprise / Architectural Patterns
+
+| Pattern | ปัญหาที่แก้ | ไฟล์/คลาสที่ใช้จริง | Diagram |
+|---|---|---|---|
+| Layered Architecture | ลดการผูกHTTP/กฎธุรกิจ/DBไว้ในคลาสเดียว | [DiningSessionController.java:22](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/controller/DiningSessionController.java#L22) → [DiningSessionServiceImpl.java:36](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java#L36) → [DiningSessionRepository.java:12](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/repository/DiningSessionRepository.java#L12) | [Component](diagrams/component.puml) / [SVG](diagrams/previews/component.svg) |
+| MVC | ViewแยกจากModelและHTTP orchestration | Reactviews +RestControllers +Domain/services; ไม่ใช่Thymeleaf ModelAndView | [Component](diagrams/component.puml) |
+| Repository | query/lock/persistenceไม่กระจายลงControllers | [DiningSessionRepository.java:13](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/repository/DiningSessionRepository.java#L13) SpringDataJPA abstractdataaccess | [Table/Session](diagrams/class-table-session.puml) |
+| Service Layer | ทุกขั้นเปิด/closeใช้transactionเดียว กฎไม่อยู่UI | [DiningSessionServiceImpl.java:35](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java#L35) + CustomerOrderingServiceImpl/PaymentServiceImpl | [Open](diagrams/sequence-open-session.puml), [Payment](diagrams/sequence-billing-payment.puml) |
+| DTO / Mapper | ไม่serializeEntities/QR/grantsผิดaudience | [DiningSessionMapper.java:10](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/mapper/DiningSessionMapper.java#L10) + [OrderingMapper.java:13](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/mapper/OrderingMapper.java#L13) CustomerSessionResponseแยกStaffDTO | [Table/Session](diagrams/class-table-session.puml) |
+| Dependency Injection | wiringruntimeadapters/strategiesแยกจากusecase | [BillingConfig.java:27](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/config/BillingConfig.java#L27) + [CustomerOrderingServiceImpl.java:32](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerOrderingServiceImpl.java#L32) | [Strategy](diagrams/class-billing-strategy.puml) |
+
+Componentเป็นruntimecollaboration ส่วนsourceยังมีlayering/DIgapตาม [SOLID](solid-analysis.md#ข้อจำกัดที่ต้องปิดก่อนรับรอง-final) ไม่อ้างว่าการมีSpringDIทำให้ทุกserviceขึ้นกับinterfaceแล้ว
+
+## Behavioral Patterns — ใช้กลุ่มเดียวครบ3แบบ
+
+| Pattern | ปัญหาที่แก้ | ไฟล์/คลาสที่ใช้จริง | Class Diagram |
+|---|---|---|---|
+| State | ป้องกันข้าม/ย้อนstatus และแยกKitchen/Servingtransition | OrderState, ReceivedState, PreparingState, ReadyState, ServedState, OrderStateFactory, OrderFulfillmentServiceImpl | [source](diagrams/class-order-state.puml) / [SVG](diagrams/previews/class-order-state.svg) |
+| Strategy | เปลี่ยนpricing/discount/childrateโดยcomposition ไม่รับยอดหน้าเว็บ | BillCalculationStrategy, StandardBillCalculation, ChildRateCalculationStrategy, DiscountCalculationStrategy, PromotionDiscountStrategy, BillingEngine | [source](diagrams/class-billing-strategy.puml) / [SVG](diagrams/previews/class-billing-strategy.svg) |
+| Template Method | stock-inและadjustmentต้องvalidatebalance/save/auditเหมือนกัน | StockTransactionTemplate, StockInProcessor, StockAdjustmentProcessor, StockService | [source](diagrams/class-stock-template.puml) / [SVG](diagrams/previews/class-stock-template.svg) |
+
+### State — Order Fulfillment
+
+- Context: [OrderFulfillmentServiceImpl.java:52](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/impl/OrderFulfillmentServiceImpl.java#L52) resolve [OrderStateFactory.java:11](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateFactory.java#L11) จาก CustomerOrder.status แล้ว compare requestedtargetกับcurrent.next().status ก่อนpersist
+- Statecontract: [OrderState.java:14](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/state/OrderState.java#L14) concrete4singletonstates RECEIVED→PREPARING→READY→SERVED ทุกstateรู้nextที่ถูกต้องหนึ่งตัว TerminalServed.next throwsBusinessRuleExceptionตามcontract
+- Actorcheckเป็นอีกชั้น: KITCHEN_STAFFถึงREADY; SERVICE_STAFFเลือกSERVED MANAGER/SUPERVISORไม่มีสิทธิ์สองflow ไม่ใช้X-User-Roleขยายสิทธิ์
+- Entityเก็บenumStringไม่ใช่Stateobject ไม่ใช้ชื่อOrder.nextState()/constructorassignStateจากbaselineเดิม
+- Tests: [OrderStateTest.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/test/java/com/buffetrestaurant/service/state/OrderStateTest.java) · [SessionFulfillmentIntegrationTest.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/test/java/com/buffetrestaurant/integration/SessionFulfillmentIntegrationTest.java)
+- Tradeoff: factoryswitchต้องแก้เมื่อเพิ่มenum เป็นclosed4stateworkflowและsharedcontractเปลี่ยนร่วมหลายโมดูล Patternนี้ไม่ใช่ใบรับรองconcurrentfulfillmentทุกกรณี
+
+### Strategy — Billing
+
+- Context/Orchestrator: [BillingEngine.java:21](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingEngine.java#L21) injectBillCalculationStrategy pricing +DiscountCalculationStrategy discount
+- StandardBillCalculationคืนadultfullprice+childsubtotal โดยconstructorรับBillCalculationStrategyเป็นchildStrategy runtimeBillingConfigเลือกChildRateCalculationStrategy(rate0.5) DiscountStrategyเลือกPromotionDiscountStrategy
+- [BillingConfig.java:18](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/config/BillingConfig.java#L18) เป็นcompositionปัจจุบัน ไม่มีaddStrategylistในruntime ต้องไม่วาดinheritChildRateextendsStandard
+- BillingContextอ่านจากDiningSessionBillingReader snapshot/counts/status discountContextเป็นความรับผิดชอบBilling Databaseproviderปัจจุบันส่งnullpromotion ไม่อ้างว่าAdminจัดโปรโมชั่นสำเร็จ
+- EngineคำนวณpreciseBigDecimalแล้วroundHALF_UP2decimalคืนinternalBillCalculation PublicBillSummaryมีsessionId/subtotalAmount/discountAmount/totalAmount ไม่ส่งintermediateprecision เงินPaymentใช้recordedamount
+- Tests: [BillingEngineTest.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/test/java/com/buffetrestaurant/service/billing/BillingEngineTest.java) · [StandardBillCalculationTest.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/test/java/com/buffetrestaurant/service/billing/StandardBillCalculationTest.java) · [PaymentIntegrationTest.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/test/java/com/buffetrestaurant/integration/PaymentIntegrationTest.java) · [PostgresPaymentIntegrationTest.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/test/java/com/buffetrestaurant/integration/PostgresPaymentIntegrationTest.java)
+- ข้อจำกัด: Strategyไม่รับผิดชอบHTTPauthorization/DBlocking PaymentServiceต้องlock/ACTIVE/requested/idmatches/duplicateก่อนคำนวณ ไม่มีPaymentGatewayในscope
+
+### Template Method — Stock
+
+- Abstractclass: [StockTransactionTemplate.java:15](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/StockTransactionTemplate.java#L15) templateคือ [StockTransactionTemplate.java:27](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/StockTransactionTemplate.java#L27)
+- ลำดับfinal: requireactor→calculateDelta→current+delta→rejectnegativebalance→apply/saveitem→userreference→transactionwithtype/delta/balance/reason/actor
+- Primitivehooks: calculateDelta(BigDecimal) และ transactionType() ในStockInProcessor/StockAdjustmentProcessor TypeจริงIN/ADJUSTMENT Adjustmentเป็นsigneddelta ไม่ใช่setcountedstockอัตโนมัติ
+- [StockService.java:62](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/StockService.java#L62) เป็นownerของ@Transactionalและrepositoryrowlockก่อนprocess Templateไม่ได้เปิดtransactionเอง ทั้งยอดและauditจึงcommit/rollbackพร้อมกัน
+- Reason/quantityBeanValidationอยู่requestDTOและService @Validated ไม่ใช่hookvalidateที่ไม่มีในcode บัญชีManager/Supervisorใช้APIตามAuthcontract
+- Tests: [StockTransactionTemplateTest.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/test/java/com/buffetrestaurant/service/StockTransactionTemplateTest.java) · [AuthStockIntegrationTest.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/test/java/com/buffetrestaurant/integration/AuthStockIntegrationTest.java) · [PostgresStockSecurityIntegrationTest.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/test/java/com/buffetrestaurant/integration/PostgresStockSecurityIntegrationTest.java)
+- ข้อจำกัด: Stocktarget/activeยังไม่implementและStockServiceยังinjectconcreteprocessors ดูDgap เมธัสต้องปรับdocs/testsหลังฟีเจอร์Finalmerge
+
+## สรุปการตรวจและงานที่ยังเหลือ
+
+ทั้ง3patternเป็นBehavioralและถูกเรียกจากservicesจริง มีtestsในCIbaseline ไม่ใช่patternที่ใส่diagramอย่างเดียว OwnerState/Strategy/Templateยังต้องยืนยันreport/slideตนและFinalrelease testsใหม่ งานนี้ไม่เปลี่ยนpatternbehaviorหรือAPI
+
+Reviewer: ศรัณย์ตรวจState/API/diagramและconstructor gaps ศิระพัทธ์ตรวจความครบหลักฐาน ส่วนธีรเมธ/เมธัสยืนยันBilling/Stockก่อนรวมrelease ดู [Requirement Matrix](planning/step3-requirement-matrix.md)

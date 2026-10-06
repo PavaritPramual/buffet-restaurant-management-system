@@ -1,281 +1,205 @@
 # Buffet Restaurant Management System
 
-ระบบจัดการร้านอาหารบุฟเฟต์สำหรับการเปิดโต๊ะ สั่งอาหาร ติดตามงานครัว ชำระเงิน และจัดการสต็อก พัฒนาด้วย Spring Boot, React และ Supabase PostgreSQL ตาม Layered Architecture
+ระบบจัดการร้านบุฟเฟต์แบบ Walk-in ครอบคลุมเปิดโต๊ะ เลือกแพ็กเกจ/น้ำซุป และให้ลูกค้าสแกน QR เพื่อสั่งอาหาร
+ครัวรับและเตรียมออเดอร์ พนักงานเสิร์ฟ รับชำระ แล้วกดปิดรอบแยกเพื่อคืนโต๊ะ
+Manager จัดการข้อมูลร้าน ผู้ใช้ และสต็อก โดย backend ตรวจสิทธิ์และคำนวณยอดจากข้อมูลจริง
+พัฒนาด้วย Spring Boot, React และ PostgreSQL สำหรับวิชา CP353002 Principles of Software Design and Development
 
-## สมาชิกและ Branch
+## สถานะปัจจุบัน
 
-| สมาชิก | รหัสนักศึกษา | Section | Branch | Feature Owner |
-|---|---:|---:|---|---|
-| ปวริศช์ ประมวล | 673380278-9 | 01 | `pavarit_673380278-9_01` | Table, Dining Session, Buffet Package/Soup |
-| ศิระพัทธ์ วงศ์วิวัฒน์เสรี | 673380293-3 | 01 | `sirapat_673380293-3_01` | Menu Catalog, Customer Ordering |
-| ศรัณย์ พาพรชัย | 673380515-1 | 02 | `sarun_673380515-1_02` | Kitchen, Serving, Order State |
-| ธีรเมธ สายคำ | 673380273-9 | 02 | `teeramet_673380273-9_02` | Billing, Payment, Deployment |
-| เมธัส มณีวิจิตร | 673380300-2 | 01 | `methus_673380300-2_01` | Authentication, Stock, Admin Shell |
+Code baseline `develop 472fba4` ณ 7 ตุลาคม2026: Step2ปิดแล้วและPR#22รวมlocalregression/AdminShell/testpreparation
+เอกสารและสไลด์ปวริศช์ชุดนี้รอreview **ยังไม่ใช่ Final ที่พร้อมส่ง** Public deployment, Stock target/active, Profileละเอียด, SOLID gaps, Gitเกณฑ์รายคน และreleaseยังต้องปิด
+ดู [Requirement Matrix](doc/planning/step3-requirement-matrix.md), [Step3 plan](doc/planning/step3-final-plan.md) และ [Notionสด](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6)
 
-## Repository Structure
+## สมาชิกและหน้าที่
 
-```text
-code/   source code and configuration
-test/   shared fixtures, evidence, and test reports
-doc/    contracts, diagrams, documentation, and slides
-img/    project media
-```
-
-## Git Workflow
-
-```text
-personal branch -> Pull Request -> develop -> release Pull Request -> main
-```
-
-- สมาชิกแต่ละคนต้องสร้างและ push personal branch ด้วยบัญชี GitHub ของตนเอง
-- ห้าม push feature ตรงเข้า `main` หรือ `develop`
-- ทุก Pull Request ต้องมี reviewer อย่างน้อยหนึ่งคน
-- Commit message ใช้รูปแบบ `<type>: <description>`
+| ลำดับ | สมาชิก | รหัสนักศึกษา | Section | Personal branch | Feature / Final responsibility |
+|---:|---|---|---:|---|---|
+| 1 | ปวริศช์ ประมวล | 673380278-9 | 01 | `pavarit_673380278-9_01` | Table/Package/Soup/DiningSession, integration, architecture/docs/Git/release |
+| 2 | ศิระพัทธ์ วงศ์วิวัฒน์เสรี | 673380293-3 | 01 | `sirapat_673380293-3_01` | Menu/Ordering, Customer/sharedUI, regression/traceability |
+| 3 | ศรัณย์ พาพรชัย | 673380515-1 | 02 | `sarun_673380515-1_02` | Kitchen/Serving/State, API/DTO/serialization audit |
+| 4 | ธีรเมธ สายคำ | 673380273-9 | 02 | `teeramet_673380273-9_02` | Billing/Payment/Strategy, productiondeployment/runbook |
+| 5 | เมธัส มณีวิจิตร | 673380300-2 | 01 | `methus_673380300-2_01` | Auth/User/Stock/TemplateMethod/AdminShell, DBtoolingและFinalextensions |
 
 ## Tech Stack
 
-- Java 17, Spring Boot 3.x, Maven
-- Supabase PostgreSQL, Spring Data JPA, Flyway
-- React, Vite, TypeScript, Tailwind CSS
-- Axios, React Router
-- JUnit 5, Mockito, Spring Boot Test
+- Java17+, Spring Boot **3.5.16**, Maven wrapper, SpringDataJPA/Hibernate, Flyway, springdocOpenAPI
+- PostgreSQLผ่าน Supabase **Session Pooler5432+SSL**; H2ใช้เฉพาะdemo/isolatedtests
+- React19, TypeScript6, Vite8, ReactRouter7, Axios, Tailwind4, qrcode.react4
+- JUnit5/Mockito/SpringBootTest, Vitest/TestingLibrary, Oxlint และGitHubActions
+- SharedUI: Noto Sans Thai, primary `#9A3412`, background `#FFFDF9`, components/shellเดิม
+- StaffAuthใช้ Spring **HTTPsession cookie** ไม่ใช้SupabaseAuth JWT ลูกค้าใช้QRแลกHttpOnlycustomergrant ไม่สร้างCustomeraccount
 
-## Run Backend
+## Architecture
 
-```bash
-cd code/backend
-./mvnw test
-./mvnw spring-boot:run
-```
+Controller → Service → Repository → Domain/DB ViewคือReactและDTO/Mapperเป็นขอบเขตJSON Servicesเป็นเจ้าของtransactions
+Orderingอ่านสิทธิ์ผ่านSessionContextProvider Billingอ่านopeningprice/countsผ่านDiningSessionBillingReader closeอ่านPaymentStatusLookup
+ไม่รับราคา/ยอดชำระจากbrowser และไม่ใช้X-User-Roleเพิ่มสิทธิ์
 
-บน Windows ใช้ `mvnw.cmd` แทน `./mvnw` ได้ จากนั้นเปิด:
+[Component source](doc/diagrams/component.puml) · [SVG preview](doc/diagrams/previews/component.svg) · [System Design](doc/system-design/README.md)
+[SOLIDพร้อมไฟล์/บรรทัดและgaps](doc/solid-analysis.md) · [Enterprise/Behavioral Patterns](doc/design-patterns.md)
 
-- Health API: `http://localhost:8080/api/v1/system/health`
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
+## ERD และ Data Dictionary
 
-## Run Frontend
+[ERD source](doc/diagrams/er-diagram.puml) · [canonical Data Dictionary V1–V14](doc/database/step2-schema-approved.md) · [Diagram index](doc/diagrams/README.md)
+มีTables/Packages/Soups/Sessions/Grants/Menu/Orders/Payments/Users/Profile/Stockและtransactions
+Session snapshotราคาเมื่อเปิด billrequestหยุดOrderใหม่ PAIDยังต้องStaffcloseแยก ดู [Bill/Payment sequence](doc/diagrams/sequence-billing-payment.puml)
 
-```bash
-cd code/frontend
-cp .env.example .env
-npm ci
-npm run dev
-```
+## Installation / Setup
 
-Frontend เปิดที่ `http://localhost:5173` และใช้ `VITE_API_BASE_URL` เป็น API endpoint
+ต้องมี Git, Java17+, Node24/npm และDockerComposeถ้าจะใช้containers Cloneและเลือกpersonalbranchของตน
+ไฟล์ตัวอย่างอยู่ `code/backend/.env.example` กับ `code/frontend/.env.example`
+คัดลอกเป็น `.env` ในโฟลเดอร์เดียวกันและใส่ค่าของสภาพแวดล้อมตน backend import optional `.env` เมื่อรันจาก `code/backend`
+DB host/user/passwordใช้ค่าจากSupabaseSessionPooler ไม่ใช่REST service-role APIkey ห้ามcommit.env/secrets และVITE_*เป็นค่าที่browserอ่านได้
 
-## Supabase Convention
+### Providers ของระบบรวม
 
-ใช้ Session pooler พอร์ต `5432` และบังคับ SSL ห้าม commit ไฟล์ `.env` หรือข้อมูลลับลง repository ตัวอย่างชื่อ environment variables อยู่ใน `code/backend/.env.example`
+ตั้งค่าให้ตรง `.env.example`/Compose:
 
 ```dotenv
-SUPABASE_DB_HOST=your-session-pooler-host
-SUPABASE_DB_PORT=5432
-SUPABASE_DB_NAME=postgres
-SUPABASE_DB_USERNAME=postgres.your-project-ref
-SUPABASE_DB_PASSWORD=change-me
+DINING_SESSION_STAFF_ACCESS_PROVIDER=session
+FULFILLMENT_ACCESS_PROVIDER=session
+MASTER_DATA_ACCESS_PROVIDER=session
+MENU_ADMIN_ACCESS_PROVIDER=session
+ORDERING_SESSION_PROVIDER=database
+BILLING_CONTEXT_PROVIDER=database
+PAYMENT_STATUS_PROVIDER=database
 ```
 
-Backend โหลดค่าฐานข้อมูลจาก `code/backend/.env` ผ่าน Spring config import แบบ optional
-และบังคับ SSL ด้วย `sslmode=require` จึงไม่ต้องใส่ secret ใน `application.yml`
+Standaloneบางprovider defaultdisabledและตอบ503เพื่อfailclosed จึงต้องตั้งค่าข้างต้นให้ครบ ไม่ใช้fixtureprovidersในระบบรวม
+Frontendค่าlocal `VITE_API_BASE_URL=http://localhost:8080/api/v1` และ `CORS_ALLOWED_ORIGINS=http://localhost:5173` ตามbackendoriginconfig Axiosส่งcredentials
 
-### Database migration convention
+### Database migrations
 
-- ไฟล์ migration อยู่ที่ `code/backend/src/main/resources/db/migration/`
-- ใช้ชื่อ `V<ลำดับ>__<คำอธิบายสั้นแบบ snake_case>.sql` เช่น `V1__baseline.sql`
-- migration ที่ apply แล้วห้ามแก้ไข ให้เพิ่ม version ใหม่แทน
-- ใช้ schema `public` และให้ Flyway เป็นผู้จัดการ schema; JPA ใช้ `ddl-auto: validate`
-- `V1__baseline.sql` เป็น migration เปล่าสำหรับยืนยันการทำงานของ Flyway เท่านั้น
-	ไม่สร้างตารางของ Table, Order, Billing หรือโมดูลอื่น
+Flywayเป็นผู้จัดการschema JPAใช้ `ddl-auto: validate` และ `open-in-view: false`
+Locations `db/migration/common` + `h2` หรือ `postgresql` ตามenvironment **ห้ามแก้migrationที่applyแล้ว**
+V1baselineเปล่า V2tables V3packages/soups V4menu/order V5fulfillmentsnapshot V6sessions/grants V7ordersFK V8pricesnapshot V9payments V10auth V11stock V12paymentprivileges V13tableprivileges V14billrequest
+ตรวจคำอธิบายไฟล์จริงจาก [migrations](code/backend/src/main/resources/db/migration) ไม่เดาจากinstalled_rank
 
-หลังใส่ค่าจริงใน `.env` ให้รันจาก `code/backend`:
+SupabaseกลางV1–V14ได้รับรองและapplyตาม [Step2 completion report](doc/testing/pavarit-step2-completion-report.md) กับหน้าStep2 วันที่6ต.ค. V9เคยลงหลังV10/V11แต่validateปกติผ่านโดยไม่เปิดoutOfOrderค้างไว้
+นี่เป็นผลประวัติ ไม่ได้ตรวจฐานกลางสดจากPRdocsนี้ FinalStock/Profileต้องforwardmigrationเลขว่างจริง reviewและขออนุมัติฐานกลางใหม่
+Startup defaultFlywayenabledอาจapplypendingmigrations อย่าเริ่มimageใหม่ชี้ฐานกลางก่อนรับรอง pendingfiles ไม่repairhistoryให้ผ่านเฉยๆ
 
-```bash
-mvnw.cmd spring-boot:run
-```
+ProvisionManagerแรกบนระบบจริงใช้ `BOOTSTRAP_ADMIN_ENABLED`, `BOOTSTRAP_ADMIN_USERNAME`, `BOOTSTRAP_ADMIN_PASSWORD` และoptionaldisplay/email ตามตัวอย่าง
+Runnerทำเฉพาะapp_usersว่าง BCryptผ่านAuthService **ปิดbootstrapหลังเตรียมบัญชีแล้ว** ไม่ใช้บัญชีdemoในproduction
 
-จากนั้นตรวจใน Supabase SQL Editor:
+## How to Run
 
-```sql
-select installed_rank, version, description, success
-from public.flyway_schema_history
-order by installed_rank;
-```
+### แบบlocal Compose (ฐานตาม .env)
 
-ควรพบแถว `1 | baseline | true` ซึ่งยืนยันว่าเกิดตาราง `flyway_schema_history`
-โดยไม่ต้องมีตาราง business ใด ๆ ใน migration นี้
-
-### Authentication and stock demo
-
-สำหรับลองหน้า Admin โดยไม่ใช้ Supabase ให้รัน backend ด้วย H2 demo profile จาก `code/backend`:
-
-```bash
-mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=demo 
-```
-
-Profile นี้ใช้ Flyway migrations ชุด common/H2 และ seed ข้อมูลซ้ำได้เมื่อเริ่มระบบใหม่
-(account และ stock item ที่มีแล้วจะไม่ถูกสร้างซ้ำ; initial stock ถูกบันทึกเป็น transaction)
-บัญชี demo คือ `admin` / `admin123` ใช้กับ demo เท่านั้น ห้ามนำรหัสนี้ไปใช้กับระบบจริง
-จากนั้นเปิด frontend และเข้า `http://localhost:5173/admin/stock` หรือ `/admin/users`.
-
-API login ใช้ HTTP session cookie: `POST /api/v1/auth/login`, `GET /api/v1/auth/me`
-และ `POST /api/v1/auth/logout` ส่วน stock ใช้ `GET /api/v1/stock`,
-`POST /api/v1/stock/{id}/in`, `POST /api/v1/stock/{id}/adjustments` และ
-`GET /api/v1/stock/transactions`. ทุก movement บันทึก actor, reason, delta และ balance หลังทำรายการ
-ใน `stock_transactions`.
-
-Migration ปัจจุบันคือ V1–V12 และถูก apply บน Supabase แล้วทั้งหมด ณ 6 ตุลาคม 2026
-รวม V9 rank 11 หลัง V10/V11; ก่อนเพิ่ม V13 Flyway validate ผ่าน 12 checksum และ pending=0 ด้วย outOfOrder=false
-PR ปิด Step 2 เสนอ V13 เพื่อปิด grants ของ restaurant_tables ที่ตกค้าง V13 ยังไม่ apply ฐานกลาง
-และต้องผ่านรีวิว/ตรวจสิทธิ์กับ checksum ก่อน deployment ห้ามเริ่ม image ที่มี V13 บนฐานกลางก่อนรับรอง
-ไม่มีการ repair หรือแก้ applied migration ในงานปิด Step 2
-ดู [Data Dictionary ที่รับรอง](doc/database/step2-schema-approved.md) และ [รายงาน integration](doc/testing/pavarit-step2-close-report.md)
-Stock opening_target_stock/active และ Profile แบบละเอียดเลื่อนไป Final ยังไม่ implement
-
-Role flow: MANAGER/SUPERVISOR อ่านและทำ stock-in/adjustment; MANAGER จัดการ users/menu
-SERVICE_STAFF เปิดโต๊ะ/เสิร์ฟ/รับชำระ/ปิดรอบ ส่วน KITCHEN_STAFF เตรียมอาหารและเปลี่ยนถึง READY
-Fulfillment ใช้ login cookie จริง ไม่รับสิทธิ์จาก X-User-Role หน้า Staff มี navigation โต๊ะกับงานเสิร์ฟ
-และมี logout/session-expired guard ที่ตรวจตาม route matcher รวม case/trailing slash
-
-Compose ตั้ง providers ครบ: DINING_SESSION_STAFF_ACCESS_PROVIDER=session,
-FULFILLMENT_ACCESS_PROVIDER=session, MASTER_DATA_ACCESS_PROVIDER=session, MENU_ADMIN_ACCESS_PROVIDER=session,
-ORDERING_SESSION_PROVIDER=database, BILLING_CONTEXT_PROVIDER=database,
-PAYMENT_STATUS_PROVIDER=database รัน standalone ให้กำหนดค่าเดียวกันจาก .env.example
-ไม่ใช้ fixture providers ในระบบรวม
-
-สำหรับฐาน production ที่ยังไม่มี account ให้ provision manager แรกโดยตั้ง
-`BOOTSTRAP_ADMIN_ENABLED=true`, `BOOTSTRAP_ADMIN_USERNAME` และ `BOOTSTRAP_ADMIN_PASSWORD`
-(อย่างน้อย 8 ตัวอักษร) พร้อม `BOOTSTRAP_ADMIN_DISPLAY_NAME`/`BOOTSTRAP_ADMIN_EMAIL` ตามต้องการ
-runner จะทำงานเฉพาะเมื่อ `app_users` ยังว่าง ใช้ BCrypt ผ่าน `AuthService` และไม่สร้างซ้ำ
-เมื่อมีผู้ใช้แล้ว ปิด `BOOTSTRAP_ADMIN_ENABLED` หลัง bootstrap.
-
-## System Design
-
-เอกสารแบบออกแบบที่ย้ายจาก Notion อยู่ที่ [doc/system-design/README.md](doc/system-design/README.md) พร้อม [PlantUML ที่แก้ไขได้](doc/diagrams/README.md) และ [Data Dictionary](doc/database/data-dictionary-design.md) โปรดดูสถานะเทียบกับโค้ดในหน้า System Design ก่อนใช้เป็นหลักฐาน implementation
-
-## Shared Contracts
-
-- Canonical contract: `doc/contracts/shared-contracts.md`
-- Canonical fixtures: `test/fixtures/`
-- API enums ใช้ uppercase JSON string เท่านั้น
-- Entity ต้องใช้ `@Enumerated(EnumType.STRING)` ห้ามใช้ `EnumType.ORDINAL`
-
-## Current Foundation Boundary
-
-Foundation นี้ยังไม่รวม RestaurantTable CRUD, BuffetPackage, DiningSession, QR, Close Session หรือ Payment integration
-
-## Run with Docker Compose
-
-ต้องติดตั้ง Docker และ Docker Compose และเปิด Docker daemon ไว้
-
-รันจาก root repository:
+จากroot:
 
 ```bash
 docker compose up --build
 ```
 
-เปิดบริการ:
+Composeมีbackend/frontendเท่านั้น **ไม่มีPostgreSQLcontainer** Databaseใช้ที่backend.envระบุ ซึ่งปกติคือSupabaseกลาง
+frontendยังเป็นVitedevserver ไม่ใช่productiondeployment เปิด frontend/loginที่ [localhost:5173/login](http://localhost:5173/login)
+Health [localhost:8080/api/v1/system/health](http://localhost:8080/api/v1/system/health) และ [Swagger](http://localhost:8080/swagger-ui.html)
+Stop `docker compose down` ดูlogsด้วย `docker compose logs backend` / `frontend`
 
-- Frontend: http://localhost:5173
-- Backend health: http://localhost:8080/api/v1/system/health
-- Swagger UI: http://localhost:8080/swagger-ui.html
-
-Health endpoint ควรตอบ:
-
-```json
-{"status":"UP","service":"buffet-restaurant-backend"}
-```
-
-Compose มีเฉพาะ backend และ frontend ไม่มี PostgreSQL container
-Frontend ใช้ Vite development server
-
-### Environment
-
-- `SERVER_PORT`: พอร์ต backend ภายใน container กำหนดเป็น `8080`
-- `CORS_ALLOWED_ORIGINS`: origin ที่ backend อนุญาต เปลี่ยนได้ผ่าน `code/backend/.env` หากไม่กำหนดจะใช้ `http://localhost:5173` เป็นค่าเริ่มต้นจาก Java
-- `VITE_API_BASE_URL`: URL ที่ browser ใช้เรียก API กำหนดเป็น `http://localhost:8080/api/v1`
-
-หลังเปลี่ยนค่าใน `code/backend/.env` ให้รัน `docker compose up -d --force-recreate backend` เพื่อให้ backend รับค่าใหม่
-
-Compose อ่าน `code/backend/.env` ถ้ามี และส่งค่าเข้า backend ตอนรัน
-ใช้ `.env.example` เป็นตัวอย่าง ห้าม commit `.env` หรือใส่ secrets ใน Dockerfile
-ห้ามใส่ secrets ในตัวแปร `VITE_*` เพราะเป็นค่าฝั่ง frontend
-
-Backend ปกติใช้ Supabase datasource จาก `.env`; `demo` profile ใช้ H2 ในเครื่องและไม่ต้องตั้งค่า Supabase
-สำหรับ automated tests ใช้ H2 จาก `src/test/resources/application.yml`.
-
-### Verify CORS
-
-เปิด http://localhost:5173 แล้วเปิด Developer Tools (F12) > Console และรัน:
-
-หากไม่สามารถ copy & paste ในช่อง console ให้ใช้คำสั่งนี้:
-
-```
-allow pasting
-```
-
-เพื่อให้ browser อนุญาตให้วางใน console ได้
-
-```javascript
-await fetch('http://localhost:8080/api/v1/system/health', {
-  headers: { 'Content-Type': 'application/json' }
-}).then(response => response.json())
-```
-
-ควรได้ `status: "UP"` โดยไม่มี CORS error
-
-### Stop
-
-กด Ctrl+C ใน terminal ที่รัน Compose แล้วลบ containers/network ด้วย:
+### แยก backend / frontend
 
 ```bash
-docker compose down
+cd code/backend
+./mvnw spring-boot:run
 ```
 
-### Troubleshooting
-
-- ติดต่อ Docker ไม่ได้: ตรวจว่า Docker daemon ทำงานและผู้ใช้มีสิทธิ์เข้าถึง
-- Port already allocated: ตรวจว่าพอร์ต 8080 หรือ 5173 ถูกโปรแกรมอื่นใช้อยู่หรือไม่
-- CORS error: เปิด frontend ด้วย `http://localhost:5173` ให้ตรงกับ origin ที่อนุญาต
-- Connection refused: รอ backend เริ่มทำงานเสร็จ เพราะ `depends_on` ไม่ได้รอให้ backend พร้อมรับคำขอ
-- Build ดาวน์โหลด dependency ไม่สำเร็จ: ตรวจการเชื่อมต่ออินเทอร์เน็ตและข้อความ error แล้วลอง build ใหม่
-- แก้ source หรือ configuration แล้ว: รัน `docker compose up --build` ใหม่
-
-ดู log แยกบริการได้ด้วย:
+Windowsใช้ `mvnw.cmd` จากcode/backend และenv/providersข้างต้น Frontendอีกterminal:
 
 ```bash
-docker compose logs backend
-docker compose logs frontend
+cd code/frontend
+npm ci
+npm run dev
 ```
 
-## Billing / Payment runtime setup
+### DemoบนH2แยก ไม่ใช้ฐานกลาง
 
-After Auth/session/schema are ready, copy the non-secret provider settings from
-`code/backend/.env.example` into your local deployment environment:
+PowerShellจากcode/backend:
 
-```env
-DINING_SESSION_STAFF_ACCESS_PROVIDER=session
-BILLING_CONTEXT_PROVIDER=database
-PAYMENT_STATUS_PROVIDER=database
+```powershell
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=demo" "-Dspring-boot.run.arguments=--app.menu.admin-access-provider=session --app.ordering.session-provider=database --app.fulfillment.access-provider=session"
 ```
 
-Defaults remain disabled (fail closed). JDBC/Hibernate and Flyway use the same datasource
-and DB role configured by SUPABASE_DB_USERNAME. This is a database login, not a Supabase
-REST service_role key. If deployment separates migration and runtime roles, owners must
-explicitly grant the actual runtime role and test it; do not add auth.uid() policies to
-our Spring session authorization flow.
+Demoใช้H2memory+common/H2migrations+seed; restartแล้วข้อมูลหาย Managerตัวอย่าง `admin/admin123` เป็นข้อมูลdemoที่ประกาศในDemoDataSeeder
+สร้างบัญชีSERVICE_STAFF/KITCHEN_STAFFผ่านManagerก่อนทดลองครบทุกrole คำสั่งนี้overridefixturedefaultsของdemoprofileให้ใช้login/customergrantจริง; ถ้ารันdemoprofileเปล่า Menu/Ordering/Fulfillmentเป็นfixtures จึงไม่ใช่หลักฐานintegration
 
-V9 creates payments. V12 is a **proposed forward migration** aligning policy/grants with
-the migration/JDBC role and resolving the identity sequence through pg_get_serial_sequence.
-Do not change applied V9. Methus must confirm V12 is available and inspect central
-flyway_schema_history before merge/apply. If V10/V11 already ran without V9, V12 cannot
-create the missing payments table by itself: coordinate a versioned forward creation plan.
-Do not enable out-of-order migrations or run shared DB migrations to bypass that gate.
+### Flowแต่ละrole
 
-For an isolated H2 browser smoke run use `doc/billing/billing-demo-checklist.md`.
-For PostgreSQL payment/duplicate/security verification use the guarded disposable DB setup
-in `doc/billing/pr19-review-verification.md`. Never use central Supabase for automated tests.
+- MANAGER: `/login` → Admin shell ข้อมูลร้าน/User/Stock เพิ่มmasterdataไม่ได้เพิ่มยอดStockทันที ใช้stock-in/adjustmentsเพื่อaudit
+- SERVICE_STAFF: เปิดโต๊ะ →sessiondetails/QR →หน้าเสิร์ฟ →Billing/Payment→close
+- KITCHEN_STAFF: incomingOrders→PREPARING→READY ส่วนSERVEเป็นหน้าที่SERVICE_STAFF
+- SUPERVISOR: Stockoverview/history/stock-in/adjustment ไม่เปิดโต๊ะ/ชำระ/ครัว
+- Customer: StaffQR `/customer/qr#token=...` →POSTexchange→cookie →สั่งก่อนbillrequest →ขอคิดบิล/ดูสถานะ
+- เวลาManagerเพิ่มข้อมูลในCompose ข้อมูลเก็บในDBของ.env ไม่เก็บไว้เฉพาะbrowser DemoH2เป็นmemoryคนละฐาน
 
-Public BillSummary now contains sessionId/subtotalAmount/discountAmount/totalAmount only;
-precise rounding intermediates are internal. PaymentResult adds the recorded amount.
-These contract and strategy-composition changes require Sarun/Pavarit/Sirapat review.
+## API Documentation
+
+- Local [Swagger UI](http://localhost:8080/swagger-ui.html) / [OpenAPI JSON](http://localhost:8080/v3/api-docs)
+- [Shared Contracts](doc/contracts/shared-contracts.md), [Ordering contract](doc/contracts/ordering-contract.md), [API conventions](doc/contracts/api-conventions.md)
+- [QR exchange sequence](doc/diagrams/sequence-qr-exchange.puml), [Billing/Payment integration](doc/diagrams/sequence-billing-payment.puml)
+- Staffใช้login session Customerใช้HttpOnlygrant cookie QRtokenอยู่fragmentแล้วส่งในPOSTbody ไม่มีGET tokenในURL
+- CustomerSessionResponseไม่มีQRtoken/ราคาsnapshot ErrorResponse/enumsใช้formatกลาง URLpublicSwaggerยังpending
+
+## How to Run Tests
+
+BackendH2 / unit / integration:
+
+```bash
+cd code/backend
+./mvnw test
+```
+
+PostgreSQLmigration/security/concurrencyมีguardและต้องใช้ **DBทิ้งได้เท่านั้น** รันH2เฉยๆอาจskipPostgreSQL suites จึงห้ามอ้างว่า303ผ่านจากคำสั่งนี้เพียงอย่างเดียว
+ดู [CI workflow](.github/workflows/ci.yml) ที่เตรียมmarked databases/user/roleด้วย `disposable-postgres-ci.sql` และ [PostgreSQL verification](doc/billing/pr19-review-verification.md)
+กำหนดMENU_TEST_PG_URL/DINING_TEST_PG_URL/PAYMENT_TEST_PG_URLและALLOW_DESTRUCTIVE_DB_TESTSเฉพาะenvironmentทิ้งได้ที่มีmarker ไม่ชี้Supabaseกลาง
+
+Frontend:
+
+```bash
+cd code/frontend
+npm ci
+npm test
+node --test ../../test/browser/step3-runtime-config.test.cjs
+npm run lint
+npm run build
+```
+
+[CIของdevelop472fba4](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37503690105): backend+PostgreSQL303/303 frontend116/116 URLguards6/6 lint0errors/4existingwarnings buildผ่าน
+[PR#22 report](doc/testing/sirapat-step3-premerge-report.md) แยกlocalH2 realHTTP/cookies14PASS ก่อนmerge/hashตรงhead617d742 ออกจากhistoricalUIfixtures และpublicที่ยังไม่ตรวจ
+งานdocsนี้ใช้CIbaseline ไม่อ้างว่ารันbackend/frontendใหม่ ดู [docs verification](doc/testing/pavarit-step3-docs-report.md)
+
+## Deployment URL
+
+**ยังไม่มีpublic URLที่รับรองในbaselineนี้** แผนธีรเมธคือRenderFreeWebService URLเดียว HTTPS SpringBootเสิร์ฟReactproductionและAPI `/api/v1`
+ต้องรองรับSPArefreshโดยไม่เปลี่ยนAPI404เป็นเว็บ Securecustomer/staffcookies allowedOriginจริง portจากRenderและprovidersจริง
+SupabaseSessionPooler+SSL ข้อมูลคงอยู่หลังredeploy StaffHTTPsessionในmemoryต้องloginใหม่หลังrestart CustomergrantpersistในDBแต่อายุ/สถานะยังต้องตรวจ
+PublicCoreFlow/TTL/coldstart/redeploy/rollback/deployedSHAต้องผ่านก่อนใส่URLจริง ไม่มีการdeployจากPRเอกสารนี้
+
+## Project Structure
+
+```text
+code/
+  backend/     Spring Boot Controllers, Services, Repositories, Domain, DTOs, tests, Flyway
+  frontend/    React views, shared UI, services, tests, Vite config
+test/
+  fixtures/    controlled shared contract samples
+  browser/     real HTTP browser scripts and runtime URL guards
+  evidence/    reports, sanitized inventories and screenshots
+  reports/     ignored temporary outputs
+doc/
+  contracts/ database/ diagrams/ system-design/ testing/ planning/
+  solid-analysis.md
+  design-patterns.md
+  slide/       editable PPTX, PDF previews and notes
+img/           project media
+.github/       CI configuration
+docker-compose.yml
+```
+
+## Git workflow และชุดนำเสนอ
+
+Personalbranch →reviewedPR→develop →reviewedreleasePR→main ทุกคนใช้บัญชีตน Commitเป็นงานที่มีความหมาย ไม่เติมจำนวน
+[Git auditล่าสุด](doc/planning/step3-git-audit.md) แสดงทั้งห้าบัญชี branches/PRreviews/candidatecommitcounts และข้อขาดจริง
+[สไลด์ปวริศช์ PPTX](doc/slide/pavarit-step3-architecture.pptx) / [PDF](doc/slide/pavarit-step3-architecture.pdf) / [Notes](doc/slide/pavarit-step3-architecture-notes.md)
+[สไลด์ศิระพัทธ์](doc/slide/sirapat-step3-quality-premerge.pptx) อีกสามคนและสไลด์ทีม/release/ซ้อมยังต้องส่งครบก่อนFinal
