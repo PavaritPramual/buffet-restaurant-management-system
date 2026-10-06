@@ -33,7 +33,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.support.TransactionTemplate;
 
-@SpringBootTest(properties = "app.ordering.session-provider=database")
+@SpringBootTest(properties = {"app.ordering.session-provider=database", "app.billing.context-provider=database"})
 @ActiveProfiles("test")
 @EnabledIfEnvironmentVariable(named = "DINING_TEST_PG_URL", matches = ".+")
 @EnabledIfEnvironmentVariable(named = "ALLOW_DESTRUCTIVE_DB_TESTS", matches = "true")
@@ -59,6 +59,7 @@ class PostgresOrderCloseConcurrencyTest {
     @Autowired private DiningSessionService sessions;
     @MockitoBean private PaymentStatusLookup paymentStatusLookup;
 
+    @Autowired private com.buffetrestaurant.service.CustomerBillingService billing;
     private String credential;
 
     @BeforeEach
@@ -185,6 +186,76 @@ class PostgresOrderCloseConcurrencyTest {
                 Integer.class, SESSION_ID)).isZero();
         assertThat(jdbc.queryForObject("SELECT status FROM dining_sessions WHERE id = ?",
                 String.class, SESSION_ID)).isEqualTo("COMPLETED");
+    }
+
+    @Test
+    void orderHoldingSessionLockCommitsBeforeBillRequest() throws Exception {
+        CountDownLatch orderLocked = new CountDownLatch(1);
+        CountDownLatch releaseOrder = new CountDownLatch(1);
+        CountDownLatch closeStarted = new CountDownLatch(1);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            CompletableFuture<Void> order = CompletableFuture.runAsync(() -> transactions.executeWithoutResult(status -> {
+                customerAccess.requireSession(SESSION_ID, credential, true);
+                orderLocked.countDown();
+                await(releaseOrder);
+                ordering.placeOrder(SESSION_ID, credential,
+                        new PlaceOrderRequest(List.of(new OrderItemRequest(MENU_ID, 1))));
+            }), executor);
+            assertThat(orderLocked.await(5, TimeUnit.SECONDS)).isTrue();
+            CompletableFuture<Void> close = CompletableFuture.runAsync(() -> {
+                closeStarted.countDown();
+                billing.request(SESSION_ID, credential);
+            }, executor);
+            assertThat(closeStarted.await(5, TimeUnit.SECONDS)).isTrue();
+            waitForSessionLockWait();
+            releaseOrder.countDown();
+            order.join();
+            close.join();
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM orders WHERE session_id = ?",
+                    Integer.class, SESSION_ID)).isOne();
+            assertThat(jdbc.queryForObject("SELECT status FROM dining_sessions WHERE id = ?",
+                    String.class, SESSION_ID)).isEqualTo("ACTIVE");
+        } finally {
+            releaseOrder.countDown();
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    void billRequestHoldingSessionLockRejectsLaterOrder() throws Exception {
+        CountDownLatch closeLocked = new CountDownLatch(1);
+        CountDownLatch releaseClose = new CountDownLatch(1);
+        CountDownLatch orderStarted = new CountDownLatch(1);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            CompletableFuture<Void> close = CompletableFuture.runAsync(() -> transactions.executeWithoutResult(status -> {
+                billing.request(SESSION_ID, credential);
+                closeLocked.countDown();
+                await(releaseClose);
+            }), executor);
+            assertThat(closeLocked.await(5, TimeUnit.SECONDS)).isTrue();
+            CompletableFuture<Boolean> order = CompletableFuture.supplyAsync(() -> {
+                orderStarted.countDown();
+                try {
+                    ordering.placeOrder(SESSION_ID, credential,
+                            new PlaceOrderRequest(List.of(new OrderItemRequest(MENU_ID, 1))));
+                    return true;
+                } catch (com.buffetrestaurant.exception.DuplicateResourceException exception) {
+                    return false;
+                }
+            }, executor);
+            assertThat(orderStarted.await(5, TimeUnit.SECONDS)).isTrue();
+            waitForSessionLockWait();
+            releaseClose.countDown();
+            close.join();
+            assertThat(order.join()).isFalse();
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM orders WHERE session_id = ?",
+                    Integer.class, SESSION_ID)).isZero();
+        } finally {
+            releaseClose.countDown();
+            executor.shutdownNow();
+        }
     }
 
     private void waitForSessionLockWait() throws Exception {

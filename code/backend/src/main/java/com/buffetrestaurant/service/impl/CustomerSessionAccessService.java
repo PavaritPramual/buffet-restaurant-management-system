@@ -86,6 +86,9 @@ public class CustomerSessionAccessService {
         if (session.getStatus() != DiningSessionStatus.ACTIVE) {
             throw new ResourceNotFoundException("Active dining session not found");
         }
+        if (forOrder && session.getBillRequestedAt() != null) {
+            throw new com.buffetrestaurant.exception.DuplicateResourceException("This session has requested its bill and no longer accepts orders");
+        }
         return new SessionContextSnapshot(session.getId(), session.getBuffetPackage().getId(),
                 session.getRestaurantTable().getTableNumber(), session.getStatus());
     }
