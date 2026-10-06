@@ -23,8 +23,8 @@ Snapshot Notion 7 ตุลาคม 2026 ก่อน PRเอกสารป�
 ### งานที่ต้องทำ
 - [ ] ทำตารางข้อกำหนด → หลักฐาน → เจ้าของ → สถานะ จากใบงานรายวิชา ให้ครอบคลุมคะแนนและไฟล์ส่ง
 - [ ] ทำ Component Diagram ของ modules/providers จริง โดยแสดง Controller → Service → Repository และขอบเขต Table/Session, Ordering, Fulfillment, Billing/Payment, Auth/Stock
-- [ ] รวม doc/[solid-analysis.md](http://solid-analysis.md) ครบ S/O/L/I/D พร้อมไฟล์ บรรทัด และเหตุผล อ้าง commit รุ่นส่ง
-- [ ] รวม doc/[design-patterns.md](http://design-patterns.md) ให้มี Pattern \| ปัญหาที่แก้ \| ไฟล์/คลาส \| Class Diagram ครบ Enterprise Patterns และ State/Strategy/Template Method
+- [ ] รวม [solid-analysis.md](../solid-analysis.md) ครบ S/O/L/I/D พร้อมไฟล์ บรรทัด และเหตุผล อ้าง commit รุ่นส่ง
+- [ ] รวม [design-patterns.md](../design-patterns.md) ให้มี Pattern \| ปัญหาที่แก้ \| ไฟล์/คลาส \| Class Diagram ครบ Enterprise Patterns และ State/Strategy/Template Method
 - [ ] ปรับ README ครบชื่อ/คำอธิบาย สมาชิกและหน้าที่ Stack Architecture ERD Setup/Run API Tests Deployment URL และ Project Structure
 - [ ] ตรวจ Git ทั้ง 5 คน: branch ถูกชื่อ บัญชีผู้เขียน meaningful commits ≥15 ต่อคน การกระจายเวลา PR/reviewer และสิทธิ์ให้อาจารย์เข้าถึง; บันทึกข้อขาดจริง ไม่สร้าง commits เติมยอดหรือ push แทนกัน
 - [ ] รวม slides ต้นฉบับและ PDF ใน doc/slide/ พร้อมลิงก์ภาพ/diagram ที่ใช้
