@@ -38,7 +38,7 @@
 | C22 Component/Deployment/State | [Component](../diagrams/component.puml); [State](../diagrams/order-fulfillment-state-diagram.md) | ปวริศช์/ธีรเมธ/ศรัณย์ | Component PRนี้ Stateมี Deployment diagram/runtimeยังรอ |
 | C23 READMEทุกหัวข้อ | [README](../../README.md) | ปวริศช์ / ศิระพัทธ์ | จัดทำ PRนี้ publicURLยังระบุ pending ตามจริง |
 | C24 Dockerfile/Compose/publicdeploy | [Compose](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/docker-compose.yml); backend/frontend Dockerfiles | ธีรเมธ / ปวริศช์ | local Composeมี ยังรอ production singleURL build+HTTPS+rollback |
-| C25 Slide/doc/slide/ | [Pavarit](../slide/pavarit-step3-architecture.pptx); [Sirapat](../slide/sirapat-step3-quality-premerge.pptx) | ทุกคน ปวริศช์รวม / ศิระพัทธ์ | สองคนมีต้นฉบับ/PDF อีกสามคนและรวมชุด final/ซ้อมยังรอ |
+| C25 Slide/doc/slide/ | [Canva/version guide](../slide/README.md); [เนื้อหาชุดทีม40หน้า](../slide/team-final-canva-content.md) | ทุกคน ปวริศช์รวม / ศิระพัทธ์ | ใช้Canvaต้นฉบับ+PDFexportเป็นเวอร์ชัน ไม่ใช้PPTX; ร่าง32หลัก+8ภาคผนวกครบ แต่รออนุมัติส่งเข้าCanva/ownerreview/ตรวจภาพ/PDFและซ้อม ยังไม่ผ่านFinal |
 | C26 deployจริงทุกคนอธิบาย/release | [Final plan](step3-final-plan.md) | ทุกคน ปวริศช์ประสาน | รอ publicregression/release reviewed/main/deployedSHA/ซ้อม ส่งURLจริง |
 
 ## System scope ที่เลื่อนไป Final และ blocker

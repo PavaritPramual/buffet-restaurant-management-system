@@ -1,5 +1,11 @@
 # ปวริศช์ — Step3 documentation verification
 
+## เปลี่ยนแนวทางสไลด์ — อัปเดต7ตุลาคม2026
+
+ใช้Canvaเป็นต้นฉบับและเครื่องมือพรีเซนต์ของทั้งทีม PDFต้องexportจากCanvaและเก็บแต่ละเวอร์ชัน Reviewerไม่ต้องตรวจPPTX/PDF/notesร่างเดิม ดู [สถานะสไลด์ปัจจุบัน](../slide/README.md) และ [ร่างชุดทีม40หน้า](../slide/team-final-canva-content.md)
+
+เนื้อหาทีม32หน้าหลัก+8ภาคผนวกพร้อมnotes/owner/107referencesแล้ว การส่งไฟล์เข้าCanvaถูกautomaticapprovalreviewปฏิเสธ จึงรออนุมัติเฉพาะไฟล์ ไม่อ้างว่าCanva/PDFexport/visualQAเสร็จ ผลPPTX/PDF6หน้าด้านล่างเป็น **ผลประวัติก่อนเปลี่ยนแนวทาง** ไม่ใช่เกณฑ์รับรองสไลด์รุ่นทีม
+
 ตรวจ 7 ตุลาคม2026 Code baseline `472fba4f25a27fa2e3cd1e1213151ce971646f3a` หลัง PR#22 merge งานรอบนี้เป็นเอกสารและสไลด์ ไม่เปลี่ยน runtime/API/DTO/Entity/migration/CI และไม่เชื่อม Supabase เพื่อรัน migration
 
 ## สิ่งส่งมอบ

@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-07",
+  "code_baseline": "472fba4f25a27fa2e3cd1e1213151ce971646f3a",
+  "docs_reference_commit": "0f1a05c38bc6baa5436369d45a6545ea030a64d1",
+  "main_slides": 32,
+  "appendix_slides": 8,
+  "notes": 40,
+  "owners": 5,
+  "source_references": 107,
+  "unique_source_files_verified_at_commit": 60,
+  "local_markdown_links_checked": 89,
+  "markdown_sha256": "d1d1eaeb13b149d8287caab1a88158bcb45f6a3ee0c2779cc1cded23c0432d88",
+  "runtime_changes": 0,
+  "canva_upload": "blocked_by_automatic_approval_review_pending_specific_user_approval",
+  "canva_visual_review": false,
+  "canva_pdf_export": false,
+  "new_tests_run": false,
+  "pptx_review_required": false,
+  "errors": []
+}
