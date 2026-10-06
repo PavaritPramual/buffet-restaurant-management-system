@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Card, ConfirmDialog, EmptyState, ErrorAlert, LoadingState, PageHeader, RefreshIcon, StatusBadge } from '../../components/common'
-import { getApiError, getCustomerPackage, getCustomerContext, getMenu, getOrders, placeOrder, redeemQr } from './api'
-import type { MenuItem, Order, SessionContext } from './api'
+import { getBillStatus, requestBill, getApiError, getCustomerPackage, getCustomerContext, getMenu, getOrders, placeOrder, redeemQr } from './api'
+import type { CustomerBillStatus, MenuItem, Order, SessionContext } from './api'
 import type { OrderStatus } from '../../contracts/shared'
 import type { StatusBadgeTone } from '../../components/common'
 import './ordering.css'
@@ -42,6 +42,13 @@ export default function CustomerOrderingPage() {
   const [error, setError] = useState('')
   const [orderError, setOrderError] = useState('')
   const [historyError, setHistoryError] = useState('')
+  const [bill, setBill] = useState<CustomerBillStatus | null>(null)
+  const [billError, setBillError] = useState('')
+  const [billConfirming, setBillConfirming] = useState(false)
+  const [billBusy, setBillBusy] = useState(false)
+  const billInflight = useRef(false)
+  const billRevision = useRef(0)
+  const canOrder = bill?.status === 'NOT_REQUESTED' && !billBusy
   const [notice, setNotice] = useState('')
 
   useLayoutEffect(() => {
@@ -50,6 +57,7 @@ export default function CustomerOrderingPage() {
       processedHash.current = location.hash
       setScan({ id: ++scanEpoch.current, token: tokenFromHash(location.hash) })
       acceptedContext.current = null; submittingEpoch.current = null; refreshingEpoch.current = null
+      ++billRevision.current; billInflight.current = false; setBill(null); setBillError(''); setBillConfirming(false); setBillBusy(false)
       setReloadAttempt(0); setRefreshing(false)
       setSession(null); setPackageName(''); setMenu([]); setOrders([]); setCart({})
       setCategory('all'); setError(''); setOrderError(''); setHistoryError(''); setNotice(''); setConfirming(false)
@@ -73,17 +81,51 @@ export default function CustomerOrderingPage() {
       .then(async (context) => {
         if (!isCurrent()) return
         acceptedContext.current = context
-        const [nextMenu, nextOrders, buffetPackage] = await Promise.all([
-          getMenu(context.sessionId), getOrders(context.sessionId), getCustomerPackage(context.sessionId),
+        const [nextMenu, nextOrders, buffetPackage, initialBill] = await Promise.all([
+          getMenu(context.sessionId), getOrders(context.sessionId), getCustomerPackage(context.sessionId), getBillStatus(context.sessionId),
         ])
         if (isCurrent()) {
-          setSession(context); setPackageName(buffetPackage.name); setMenu(nextMenu); setOrders(nextOrders); setError('')
+          setBill(initialBill); setSession(context); setPackageName(buffetPackage.name); setMenu(nextMenu); setOrders(nextOrders); setError('')
         }
       })
       .catch((cause) => { if (isCurrent()) setError(getApiError(cause)) })
       .finally(() => { if (isCurrent()) setLoading(false) })
     return () => { active = false }
   }, [scan, reloadAttempt])
+
+  useEffect(() => {
+    if (!session) return
+    let active = true, running = false
+    const epoch = scanEpoch.current
+    async function poll() {
+      if (running || document.visibilityState === 'hidden') return
+      running = true
+      const revision = billRevision.current
+      try {
+        const result = await getBillStatus(session!.sessionId)
+        if (active && epoch === scanEpoch.current && revision === billRevision.current) {
+          setBill(result); setBillError('')
+          if (result.status !== 'NOT_REQUESTED') { setCart({}); setConfirming(false) }
+        }
+      } catch (cause) {
+        if (active && epoch === scanEpoch.current && revision === billRevision.current) { setBill(null); setBillError(getApiError(cause)) }
+      } finally { running = false }
+    }
+    void poll()
+    const timer = window.setInterval(() => void poll(), 5000)
+    return () => { active = false; window.clearInterval(timer) }
+  }, [session])
+
+  async function askBill() {
+    if (!session || billInflight.current || submittingEpoch.current !== null) return
+    const epoch = scanEpoch.current
+    billInflight.current = true; ++billRevision.current; setBillBusy(true); setBillError('')
+    try {
+      const result = await requestBill(session.sessionId)
+      if (epoch === scanEpoch.current) { setBill(result); setCart({}); setConfirming(false); setBillConfirming(false) }
+    } catch (cause) { if (epoch === scanEpoch.current) setBillError(getApiError(cause)) }
+    finally { if (epoch === scanEpoch.current) { billInflight.current = false; setBillBusy(false); ++billRevision.current } }
+  }
 
   const visibleMenu = category === 'all' ? menu : menu.filter((item) => item.categoryId === category)
   const categories = useMemo(() => Array.from(new Map(menu.map((item) => [item.categoryId, { id: item.categoryId, name: item.categoryName }])).values()), [menu])
@@ -97,7 +139,7 @@ export default function CustomerOrderingPage() {
 
   async function submit() {
     const epoch = scanEpoch.current
-    if (!session || submittingEpoch.current === epoch || count === 0) return
+    if (!session || !canOrder || submittingEpoch.current === epoch || count === 0) return
     submittingEpoch.current = epoch
     setSubmitting(true); setOrderError(''); setNotice('')
     try {
@@ -134,10 +176,16 @@ export default function CustomerOrderingPage() {
     <PageHeader eyebrow="สั่งอาหารผ่าน QR" title="เลือกเมนูที่ชอบ" description={session ? `โต๊ะ ${session.tableNumber} · ${packageName}` : 'ตรวจสอบ QR ของรอบการรับประทาน'} />
     {error && <ErrorAlert message={error} />}
     {orderError && <ErrorAlert message={orderError} />}
+    {billError && <ErrorAlert message={billError} />}
     {historyError && <ErrorAlert message={historyError} />}
     {notice && <div className="ordering-notice" role="status">{notice}</div>}
     {!loading && !session && error && <Card className="customer-retry"><p>ลองโหลดอีกครั้ง หาก QR หมดสิทธิ์ให้ขอ QR ใหม่จากพนักงานค่ะ</p><Button onClick={retryLoad}>ลองอีกครั้ง</Button></Card>}
     {loading ? <LoadingState label="กำลังตรวจสอบรอบการรับประทานและโหลดเมนู…" /> : session && <>
+      <Card><h2>บิลของโต๊ะ</h2>{bill ? <>
+        <p role="status">{bill.status === 'PAID' ? 'ชำระแล้ว · รอพนักงานปิดรอบกิน' : bill.status === 'REQUESTED' ? 'ขอคิดบิลแล้ว · รอพนักงานรับชำระ' : 'ยอดคำนวณจากแพ็กเกจและจำนวนคนของรอบกิน'}</p>
+        <p>ยอดรวม ฿{Number(bill.bill.totalAmount).toLocaleString('th-TH', { minimumFractionDigits: 2 })}</p>
+        <Button disabled={bill.status !== 'NOT_REQUESTED' || billBusy || submitting} onClick={() => setBillConfirming(true)}>ขอคิดบิล</Button>
+      </> : <p>กำลังตรวจสอบสถานะบิล ก่อนรับคำสั่งซื้อใหม่</p>}</Card>
       <nav className="category-chips" aria-label="หมวดหมู่เมนู">
         <button className={category === 'all' ? 'active' : ''} onClick={() => setCategory('all')}>ทั้งหมด</button>
         {categories.filter((entry) => menu.some((item) => item.categoryId === entry.id)).map((entry) => <button key={entry.id} className={category === entry.id ? 'active' : ''} onClick={() => setCategory(entry.id)}>{entry.name}</button>)}
@@ -146,15 +194,16 @@ export default function CustomerOrderingPage() {
         {visibleMenu.map((item) => <Card key={item.id} className="menu-card">
           {item.imageUrl ? <img src={item.imageUrl} alt={item.name} loading="lazy" /> : <div className="menu-image-placeholder" aria-hidden="true">🍽️</div>}
           <div className="menu-card-body"><small>{item.categoryName}</small><h2>{item.name}</h2>{item.description && <p className="menu-description">{item.description}</p>}
-            <div className="quantity-stepper"><Button variant="secondary" aria-label={`ลด ${item.name}`} onClick={() => changeQuantity(item.id, -1)} disabled={submitting || !cart[item.id]}>−</Button><span aria-live="polite">{cart[item.id] ?? 0}</span><Button aria-label={`เพิ่ม ${item.name}`} disabled={submitting} onClick={() => changeQuantity(item.id, 1)}>+</Button></div>
+            <div className="quantity-stepper"><Button variant="secondary" aria-label={`ลด ${item.name}`} onClick={() => changeQuantity(item.id, -1)} disabled={!canOrder || submitting || !cart[item.id]}>−</Button><span aria-live="polite">{cart[item.id] ?? 0}</span><Button aria-label={`เพิ่ม ${item.name}`} disabled={!canOrder || submitting} onClick={() => changeQuantity(item.id, 1)}>+</Button></div>
           </div>
         </Card>)}
       </section>}
-      <Card className="cart-card"><div><h2>ตะกร้าอาหาร</h2><p>{count ? `${count} รายการ · ${cartItems.map((item) => `${item.name} × ${item.quantity}`).join(', ')}` : 'ยังไม่ได้เลือกเมนู'}</p></div><Button size="lg" disabled={!count || submitting} onClick={() => setConfirming(true)}>ยืนยันการสั่ง</Button></Card>
+      <Card className="cart-card"><div><h2>ตะกร้าอาหาร</h2><p>{count ? `${count} รายการ · ${cartItems.map((item) => `${item.name} × ${item.quantity}`).join(', ')}` : 'ยังไม่ได้เลือกเมนู'}</p></div><Button size="lg" disabled={!canOrder || !count || submitting} onClick={() => setConfirming(true)}>ยืนยันการสั่ง</Button></Card>
       <section className="order-history" ref={historyRef} tabIndex={-1} aria-label="สถานะคำสั่งซื้อ"><div className="section-title"><div><h2>สถานะคำสั่งซื้อ</h2><p>ติดตามรายการที่ส่งเข้าครัวแล้ว</p></div><Button variant="secondary" disabled={refreshing} aria-busy={refreshing} className="ui-icon-button" aria-label="อัปเดตสถานะคำสั่งซื้อ" title="อัปเดตสถานะคำสั่งซื้อ" onClick={refreshOrders}><RefreshIcon /></Button></div>
         {orders.length === 0 ? <EmptyState title="ยังไม่มีคำสั่งซื้อ" /> : <div className="order-list">{orders.map((order) => <Card key={order.orderId} className="order-card"><div><strong>คำสั่งซื้อ #{order.orderId}</strong><p>{order.items.map((item) => `${item.name} × ${item.quantity}`).join(', ')}</p></div><StatusBadge tone={orderStatusPresentation[order.status].tone}>{orderStatusPresentation[order.status].label}</StatusBadge></Card>)}</div>}
       </section>
     </>}
+    <ConfirmDialog open={billConfirming} title="ยืนยันขอคิดบิล" description="หลังยืนยัน ทุกเครื่องของโต๊ะนี้จะสั่งอาหารเพิ่มไม่ได้ รายการที่ส่งแล้วจะดำเนินการต่อ และพนักงานจะรับชำระก่อนปิดรอบกิน" busy={billBusy} onCancel={() => setBillConfirming(false)} onConfirm={() => void askBill()} />
     <ConfirmDialog open={confirming} title="ยืนยันการสั่งอาหาร" description={`ส่ง ${count} รายการเข้าครัว เมื่อยืนยันแล้วจะติดตามสถานะได้ด้านล่าง`} busy={submitting} onCancel={() => setConfirming(false)} onConfirm={() => void submit()} />
   </main>
 }

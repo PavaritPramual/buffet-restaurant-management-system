@@ -83,6 +83,7 @@ export default function DiningSessionPage() {
             </>
           )}
         </Card>
+        {session.billRequestedAt && <Card><p role="status">ลูกค้าขอคิดบิลแล้ว · หยุดรับออเดอร์ใหม่</p></Card>}
         <Card className="staff-session-qr-card">
           <div className="section-title"><h2>QR สำหรับลูกค้า</h2><Button variant="secondary" className="ui-icon-button" aria-label="อัปเดต QR" title="อัปเดต QR" onClick={() => void refreshQr()}><RefreshIcon /></Button></div>
           {customerUrl ? <>

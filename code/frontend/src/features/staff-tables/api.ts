@@ -4,7 +4,7 @@ import { getApiError } from '../../api/errors'
 export interface StaffSession {
   sessionId: number; sessionToken: string; packageId: number; tableId: number; tableNumber: string; soupId: number
   sessionStatus: 'ACTIVE' | 'COMPLETED' | 'CANCELLED'; adultCount: number; childCount: number
-  startTime: string; endTime: string | null
+  startTime: string; endTime: string | null; billRequestedAt?: string | null
 }
 
 export { getApiError }

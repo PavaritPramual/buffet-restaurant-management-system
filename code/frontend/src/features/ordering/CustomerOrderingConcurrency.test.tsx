@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom'
-import { afterEach, expect, it, vi } from 'vitest'
+import { beforeEach, afterEach, expect, it, vi } from 'vitest'
 import CustomerOrderingPage from './CustomerOrderingPage'
 import * as api from './api'
 import { customerApiClient } from '../../api/client'
@@ -9,8 +9,9 @@ import { customerApiClient } from '../../api/client'
 vi.mock('./api', async () => ({
   ...await vi.importActual<typeof import('./api')>('./api'),
   getCustomerContext: vi.fn(), redeemQr: vi.fn(), getCustomerPackage: vi.fn(),
-  getMenu: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn(),
+  getBillStatus: vi.fn(), requestBill: vi.fn(), getMenu: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn(),
 }))
+beforeEach(() => { vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })) })
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.resetAllMocks() })
 const sessionA: api.SessionContext = { sessionId: 1, packageId: 7, tableNumber: 'T01', sessionStatus: 'ACTIVE' }
 const sessionB: api.SessionContext = { sessionId: 2, packageId: 8, tableNumber: 'T02', sessionStatus: 'ACTIVE' }

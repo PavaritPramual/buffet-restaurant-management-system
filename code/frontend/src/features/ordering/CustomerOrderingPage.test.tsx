@@ -2,7 +2,7 @@
 import { StrictMode } from 'react'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
 import { customerApiClient } from '../../api/client'
 import CustomerOrderingPage from './CustomerOrderingPage'
 import * as api from './api'
@@ -10,9 +10,10 @@ import type { MenuItem, SessionContext } from './api'
 
 vi.mock('./api', async () => {
   const actual = await vi.importActual<typeof import('./api')>('./api')
-  return { ...actual, redeemQr: vi.fn(), getCustomerContext: vi.fn(), getCustomerPackage: vi.fn(), getMenu: vi.fn(), getCategories: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn() }
+  return { ...actual, redeemQr: vi.fn(), getCustomerContext: vi.fn(), getCustomerPackage: vi.fn(), getMenu: vi.fn(), getCategories: vi.fn(), getBillStatus: vi.fn(), requestBill: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn() }
 })
 
+beforeEach(() => { vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })) })
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.resetAllMocks() })
 
 const sessionA: SessionContext = { sessionId: 1, packageId: 1, tableNumber: 'T01', sessionStatus: 'ACTIVE' }
@@ -38,6 +39,7 @@ function deferred<T>() {
 }
 
 function mockSessionDetails() {
+  vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } }))
   vi.mocked(api.getCustomerPackage).mockImplementation(async (id) => ({ id, name: id === 1 ? 'Standard' : 'Premium', price: 299, description: null, active: true }))
   vi.mocked(api.getMenu).mockImplementation(async (id) => id === 1 ? [chicken] : [])
   vi.mocked(api.getOrders).mockResolvedValue([])
@@ -222,4 +224,32 @@ describe('CustomerOrderingPage', () => {
     expect(await screen.findByText('ยังไม่มีเมนูในหมวดนี้')).toBeTruthy()
     expect(screen.getByText('ลองเลือกหมวดอื่นหรือสอบถามพนักงานได้ค่ะ')).toBeTruthy()
   })
+})
+
+it('confirms bill request once and disables ordering for the session', async () => {
+  vi.mocked(api.redeemQr).mockResolvedValue(sessionA)
+  mockSessionDetails()
+  const pending = deferred<api.CustomerBillStatus>()
+  vi.mocked(api.requestBill).mockReturnValue(pending.promise)
+  renderPage()
+  await screen.findByText('โต๊ะ T01 · Standard')
+  fireEvent.click(screen.getByRole('button', { name: 'เพิ่ม ไก่ทอด' }))
+  fireEvent.click(screen.getByRole('button', { name: 'ขอคิดบิล' }))
+  const confirm = screen.getByRole('button', { name: 'ยืนยัน' })
+  fireEvent.click(confirm); fireEvent.click(confirm)
+  expect(api.requestBill).toHaveBeenCalledTimes(1)
+  pending.resolve({ sessionId: 1, status: 'REQUESTED', requestedAt: '2026-10-06T06:00:00Z', bill: { sessionId: 1, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })
+  await screen.findByText('ขอคิดบิลแล้ว · รอพนักงานรับชำระ')
+  expect((screen.getByRole('button', { name: 'เพิ่ม ไก่ทอด' }) as HTMLButtonElement).disabled).toBe(true)
+  expect(screen.getByText('ยังไม่ได้เลือกเมนู')).toBeTruthy()
+})
+it('shows paid status and fails closed when bill lookup fails', async () => {
+  vi.mocked(api.redeemQr).mockResolvedValue(sessionA); mockSessionDetails()
+  vi.mocked(api.getBillStatus).mockResolvedValue({ sessionId: 1, status: 'PAID', requestedAt: null, bill: { sessionId: 1, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })
+  renderPage(); await screen.findByText('ชำระแล้ว · รอพนักงานปิดรอบกิน')
+  expect((screen.getByRole('button', { name: 'ขอคิดบิล' }) as HTMLButtonElement).disabled).toBe(true)
+  cleanup()
+  vi.mocked(api.getBillStatus).mockRejectedValue({ response: { data: { message: 'อ่านบิลไม่ได้' } } })
+  renderPage(); await screen.findByText('อ่านบิลไม่ได้')
+  expect(screen.queryByRole('button', { name: 'เพิ่ม ไก่ทอด' })).toBeNull()
 })

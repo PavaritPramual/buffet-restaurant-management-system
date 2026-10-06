@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, useNavigate } from 'react-router-dom'
-import { afterEach, expect, it, vi } from 'vitest'
+import { beforeEach, afterEach, expect, it, vi } from 'vitest'
 import MenuAdminPage from './MenuAdminPage'
 import CustomerOrderingPage from './CustomerOrderingPage'
 import FoundationApp from '../../FoundationApp'
@@ -13,13 +13,14 @@ vi.mock('./api', async () => ({
   ...await vi.importActual<typeof import('./api')>('./api'),
   getCategories: vi.fn(), getBuffetPackages: vi.fn(), getMenuItems: vi.fn(),
   redeemQr: vi.fn(), getCustomerContext: vi.fn(), getCustomerPackage: vi.fn(),
-  getMenu: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn(),
+  getBillStatus: vi.fn(), requestBill: vi.fn(), getMenu: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn(),
 }))
 vi.mock('../admin/api', async () => ({
   ...await vi.importActual<typeof import('../admin/api')>('../admin/api'),
   authApi: { current: vi.fn(), login: vi.fn(), logout: vi.fn() },
   stockApi: { overview: vi.fn(), history: vi.fn() }, usersApi: { list: vi.fn(), create: vi.fn() },
 }))
+beforeEach(() => { vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })) })
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.resetAllMocks() })
 const category = { id: 3, name: 'ของทอด' }
 const buffetPackage = { id: 7, name: 'Standard', price: 299, description: null, active: true }
