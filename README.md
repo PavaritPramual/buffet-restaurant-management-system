@@ -124,23 +124,24 @@ API login ใช้ HTTP session cookie: `POST /api/v1/auth/login`, `GET /api/v1
 `GET /api/v1/stock/transactions`. ทุก movement บันทึก actor, reason, delta และ balance หลังทำรายการ
 ใน `stock_transactions`.
 
-Migration review: `V10__create_user_and_stock_tables.sql` เป็น schema กลางที่ทดสอบบน H2;
-`V11__restrict_flyway_and_stock_access.sql` ใช้เฉพาะ PostgreSQL เปิด RLS ให้ backend datasource role
-และ revoke privileges ของ `PUBLIC`, `anon`, `authenticated` จาก `flyway_schema_history`
-และตาราง auth/stock. V6–V8 มีอยู่ใน migration history ปัจจุบัน ส่วน Payment V9 ยังไม่มีใน checkout นี้
-และห้ามระบุว่าอยู่ใน develop แล้ว. เนื่องจาก Flyway ใช้ `outOfOrder=false` ต้องตกลงกับ Payment owner
-ให้นำ V9 ขึ้นก่อน V10/V11 หรือกำหนดเลขใหม่ก่อน apply migration ใด ๆ ลงฐานกลาง; หากใช้ V10/V11 ก่อน
-V9 ที่เพิ่มภายหลังจะไม่ถูกรันตามลำดับปกติ. H2 integration run ยืนยัน migration V1–V8 และ V10;
-V11 และ concurrent stock มี PostgreSQL Testcontainers tests ซึ่งต้องใช้ Docker. ก่อนใช้ shared Supabase
-ให้ปวริศช์ review V11 และ schema delta ใน [auth-stock schema delta](doc/database/auth-stock-schema-delta.md)
-รวมถึงอนุมัติการเลื่อน `opening_target_stock` และ active/inactive lifecycle หรือกำหนดงาน follow-up
-ให้ตรงกับแบบ; จนกว่าจะตกลงกัน ห้ามถือว่า Stock schema ครบตาม design baseline.
+Migration ปัจจุบันคือ V1–V12 และถูก apply บน Supabase แล้วทั้งหมด ณ 6 ตุลาคม 2026
+รวม V9 rank 11 หลัง V10/V11; ก่อนเพิ่ม V13 Flyway validate ผ่าน 12 checksum และ pending=0 ด้วย outOfOrder=false
+PR ปิด Step 2 เสนอ V13 เพื่อปิด grants ของ restaurant_tables ที่ตกค้าง V13 ยังไม่ apply ฐานกลาง
+และต้องผ่านรีวิว/ตรวจสิทธิ์กับ checksum ก่อน deployment ห้ามเริ่ม image ที่มี V13 บนฐานกลางก่อนรับรอง
+ไม่มีการ repair หรือแก้ applied migration ในงานปิด Step 2
+ดู [Data Dictionary ที่รับรอง](doc/database/step2-schema-approved.md) และ [รายงาน integration](doc/testing/pavarit-step2-close-report.md)
+Stock opening_target_stock/active และ Profile แบบละเอียดเลื่อนไป Final ยังไม่ implement
 
-Role flow: ทุก stock read จำกัดเฉพาะ `MANAGER` และ `SUPERVISOR`; roles นี้ทำ stock-in/adjustment ได้ด้วย;
-`MANAGER` เท่านั้นที่อ่าน/สร้าง users และแก้ menu catalog. Login เปลี่ยน session ID หลังยืนยันตัวตน.
-หน้า Staff Tables, Dining Session, Kitchen และ Serving ใช้ authenticated shell ร่วมกันเพื่อตรวจ `/auth/me`,
-แสดง logout และกลับหน้า login เมื่อ session หมดอายุ; การอนุญาตของ DiningSession/Ordering/Fulfillment API
-ยังใช้ provider ของเจ้าของ feature และยังไม่ได้เชื่อมกับ Auth session ใน PR นี้. QR flow ไม่เปลี่ยน.
+Role flow: MANAGER/SUPERVISOR อ่านและทำ stock-in/adjustment; MANAGER จัดการ users/menu
+SERVICE_STAFF เปิดโต๊ะ/เสิร์ฟ/รับชำระ/ปิดรอบ ส่วน KITCHEN_STAFF เตรียมอาหารและเปลี่ยนถึง READY
+Fulfillment ใช้ login cookie จริง ไม่รับสิทธิ์จาก X-User-Role หน้า Staff มี navigation โต๊ะกับงานเสิร์ฟ
+และมี logout/session-expired guard ที่ตรวจตาม route matcher รวม case/trailing slash
+
+Compose ตั้ง providers ครบ: DINING_SESSION_STAFF_ACCESS_PROVIDER=session,
+FULFILLMENT_ACCESS_PROVIDER=session, MASTER_DATA_ACCESS_PROVIDER=session, MENU_ADMIN_ACCESS_PROVIDER=session,
+ORDERING_SESSION_PROVIDER=database, BILLING_CONTEXT_PROVIDER=database,
+PAYMENT_STATUS_PROVIDER=database รัน standalone ให้กำหนดค่าเดียวกันจาก .env.example
+ไม่ใช้ fixture providers ในระบบรวม
 
 สำหรับฐาน production ที่ยังไม่มี account ให้ provision manager แรกโดยตั้ง
 `BOOTSTRAP_ADMIN_ENABLED=true`, `BOOTSTRAP_ADMIN_USERNAME` และ `BOOTSTRAP_ADMIN_PASSWORD`

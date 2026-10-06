@@ -117,6 +117,14 @@ Owner: เมธัส — Authentication
 | `role` | string | No | `UserRole` |
 | `active` | boolean | No | สถานะบัญชี |
 
+## Fulfillment authorization (Step 2 integration)
+
+Runtime ใช้ `SessionOrderFulfillmentAccessProvider` ผ่าน `SessionUserContextProvider` จาก login cookie ของพนักงาน ไม่รับสิทธิ์จาก `X-User-Role` หรือ `X-User-Id` Kitchen board และ RECEIVED → PREPARING → READY จำกัด KITCHEN_STAFF; ready board และ READY → SERVED จำกัด SERVICE_STAFF เท่านั้น MANAGER/SUPERVISOR ใช้สอง flow นี้ไม่ได้ ไม่มี login คืน 401 และ role ผิดคืน 403 Endpoint, DTO และ Order states เดิมคงเดิม
+
+Table/Package/Soup master-data endpoints ใช้ session guard: SERVICE_STAFF/MANAGER/SUPERVISOR อ่านได้ และ MANAGER เท่านั้นที่แก้ข้อมูล GET/HEAD ใช้สิทธิ์อ่านเดียวกัน Customer อ่านเมนูผ่าน QR grant ไม่ใช้ master-data endpoints นี้ `MASTER_DATA_ACCESS_PROVIDER=session` เป็นค่า runtime; ค่า disabled ใน test resources แยก business-rule tests เดิมจาก integration security tests ที่เปิด session guard ชัดเจน ห้ามปิด guard ใน runtime
+
+Compose เปิด Fulfillment/DiningSession/Menu authorization เป็น session และ Ordering/Billing/Payment data provider เป็น database Standalone ใช้ตัวแปรจาก `.env.example`; disabled providers ปฏิเสธคำขอเมื่อยังไม่กำหนด runtime Fixture providers ใช้เฉพาะ tests/profile ที่ระบุชัด ไม่ใช้ใน demo Core Flow ที่รับรอง
+
 ## Shared Enums
 
 | Enum | Values |

@@ -1,5 +1,7 @@
 # Data Dictionary (design baseline)
 
+> **สถานะ 6 ตุลาคม 2026:** หน้านี้เก็บ baseline เดิมเพื่อเทียบประวัติ ให้ใช้ [Data Dictionary ที่รับรองสำหรับ Step 2](step2-schema-approved.md) และ [ERD ปัจจุบัน](../diagrams/er-diagram.puml) เป็นแบบของ implementation V1–V12 ปวริศช์รับรอง extensions ที่มีอยู่และเลื่อน Stock target/active กับ Profile แบบละเอียดไป Final โดยไม่แก้ migration ที่ apply แล้ว
+
 ต้นทาง: [Data Dictionary & Migration ใน Notion](https://app.notion.com/p/3d8cb2e9d47a81d9aa4cdcec37b26c9d) · ย้ายเมื่อ 28 กันยายน 2026
 
 เอกสารนี้อธิบาย **แบบออกแบบ** เดิมของ 14 ตาราง และส่วนต่างที่ implement ใน PR #16 ส่วน SQL DDL รวมก้อนใน Notion เป็น reference เท่านั้น การเปลี่ยนฐานข้อมูลจริงต้องใช้ Flyway migration ตามลำดับใน [backend](../../code/backend/src/main/resources/db/migration) ตรวจ [schema delta](menu-ordering-schema-delta.md) เมื่อเทียบ Menu/Ordering กับแบบออกแบบ

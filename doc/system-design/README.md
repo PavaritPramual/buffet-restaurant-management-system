@@ -1,5 +1,7 @@
 # System Design
 
+สถานะ implementation ณ 6 ตุลาคม 2026: ใช้ [ERD ปัจจุบัน](../diagrams/er-diagram.puml), [Data Dictionary ที่ปวริศช์รับรอง](../database/step2-schema-approved.md) และ [รายงานปิด Step 2](../testing/pavarit-step2-close-report.md) สำหรับ schema/สิทธิ์/runtime ปัจจุบัน เอกสาร baseline เก็บไว้เพื่ออธิบาย design เดิม งาน Stock target/active และ Profile แบบละเอียดเลื่อนไป Final ตาม Tasks ไม่ถือว่า implement แล้ว
+
 เอกสารนี้ย้ายแบบออกแบบระบบร้านบุฟเฟต์จาก [System Design ใน Notion](https://app.notion.com/p/3cfcb2e9d47a811ba912e01c6bcb449e) มาเก็บเป็นไฟล์ที่ version control ได้ใน repository (ตรวจต้นทาง 28 กันยายน 2026) ไฟล์ PlantUML อยู่ใน [รายการแผนภาพ](../diagrams/README.md) และแก้ไขได้โดยตรง
 
 ## ขอบเขตและผู้ใช้งาน

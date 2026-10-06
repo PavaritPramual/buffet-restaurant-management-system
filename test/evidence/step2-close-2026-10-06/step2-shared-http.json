@@ -1,0 +1,11 @@
+{
+  "healthStatus": 200,
+  "healthBody": "{\"status\":\"UP\",\"service\":\"buffet-restaurant-backend\"}",
+  "swaggerStatus": 200,
+  "corsOrigin": [
+    "http://localhost:5173"
+  ],
+  "corsCredentials": [
+    "true"
+  ]
+}
