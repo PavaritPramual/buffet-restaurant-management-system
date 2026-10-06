@@ -2,6 +2,8 @@ package com.buffetrestaurant.service;
 
 import com.buffetrestaurant.domain.enums.DiningSessionStatus;
 import com.buffetrestaurant.domain.enums.PaymentStatus;
+import com.buffetrestaurant.domain.enums.CustomerBillStatus;
+import java.math.BigDecimal;
 import com.buffetrestaurant.dto.response.BillSummary;
 import com.buffetrestaurant.dto.response.CustomerBillStatusResponse;
 import com.buffetrestaurant.repository.DiningSessionRepository;
@@ -54,11 +56,14 @@ public class CustomerBillingService {
         var payment = payments.findBySessionId(id);
         var calculation = engine.calculate(contextProvider.findBySessionId(id));
         var subtotal = calculation.subtotalNoneDiscount().setScale(2, RoundingMode.HALF_UP);
-        var total = payment.filter(p -> p.getPaymentStatus() == PaymentStatus.PAID)
-                .map(p -> p.getAmount()).orElse(calculation.totalAmount());
+        var paid = payment.filter(p -> p.getPaymentStatus() == PaymentStatus.PAID);
+        // A recorded payment fixes the final net bill total. It is never an outstanding balance.
+        var total = paid.map(p -> p.getAmount()).orElse(calculation.totalAmount());
         var bill = new BillSummary(id, subtotal, subtotal.subtract(total), total);
-        String status = payment.filter(p -> p.getPaymentStatus() == PaymentStatus.PAID).isPresent() ? "PAID"
-                : session.getBillRequestedAt() == null ? "NOT_REQUESTED" : "REQUESTED";
-        return new CustomerBillStatusResponse(id, status, session.getBillRequestedAt(), bill);
+        CustomerBillStatus status = paid.isPresent() ? CustomerBillStatus.PAID
+                : session.getBillRequestedAt() == null ? CustomerBillStatus.NOT_REQUESTED : CustomerBillStatus.REQUESTED;
+        var zero = BigDecimal.ZERO.setScale(2);
+        return new CustomerBillStatusResponse(id, status, session.getBillRequestedAt(), bill,
+                paid.isPresent() ? zero : total, paid.map(p -> p.getAmount()).orElse(zero));
     }
 }

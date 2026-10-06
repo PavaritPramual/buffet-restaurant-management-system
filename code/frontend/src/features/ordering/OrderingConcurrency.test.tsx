@@ -20,7 +20,7 @@ vi.mock('../admin/api', async () => ({
   authApi: { current: vi.fn(), login: vi.fn(), logout: vi.fn() },
   stockApi: { overview: vi.fn(), history: vi.fn() }, usersApi: { list: vi.fn(), create: vi.fn() },
 }))
-beforeEach(() => { vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })) })
+beforeEach(() => { vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, dueAmount: 299, paidAmount: 0, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })) })
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.resetAllMocks() })
 const category = { id: 3, name: 'ของทอด' }
 const buffetPackage = { id: 7, name: 'Standard', price: 299, description: null, active: true }

@@ -8,6 +8,31 @@ V14 เพิ่ม `dining_sessions.bill_requested_at TIMESTAMP WITH TIME ZONE 
 
 ## API
 
+### Customer response semantics
+
+`status` ใช้ Java enum `CustomerBillStatus` และ frontend union ที่ตรงกัน เป็นสถานะของ bill flow แยกจาก `DiningSessionStatus` และ `PaymentStatus` ไม่เพิ่มสถานะ session หรือคอลัมน์ฐานข้อมูล
+
+| Bill status | สั่งเพิ่ม | dueAmount | paidAmount | รอบกิน |
+| --- | --- | --- | --- | --- |
+| NOT_REQUESTED | ได้ | ยอดสุทธิที่ต้องจ่าย | 0 | ACTIVE |
+| REQUESTED | ไม่ได้ | ยอดสุทธิที่ต้องจ่าย | 0 | ACTIVE |
+| PAID | ไม่ได้ | 0 | ยอด PAID ที่บันทึกจริง | ยัง ACTIVE จน Staff กด close |
+
+`bill.totalAmount` หมายถึงยอดสุทธิของบิลเสมอ ไม่ใช่ยอดค้างชำระ ก่อนจ่ายคำนวณจากราคา snapshot ผ่าน BillingEngine หลังจ่ายใช้ยอด Payment ที่บันทึกไว้เป็นยอดสุทธิสุดท้ายของบิล โดยแสดงยอดค้างจาก `dueAmount` และยอดที่จ่ายแล้วจาก `paidAmount` เท่านั้น ไม่เปลี่ยน DTO `BillSummary` หรือ `PaymentResult` ของโมดูล Billing/Payment
+
+ตัวอย่างบิล 997.50 บาทหลังจ่าย:
+
+```json
+{
+  "sessionId": 1,
+  "status": "PAID",
+  "requestedAt": "2026-10-06T07:00:00Z",
+  "bill": {"sessionId": 1, "subtotalAmount": 997.50, "discountAmount": 0.00, "totalAmount": 997.50},
+  "dueAmount": 0.00,
+  "paidAmount": 997.50
+}
+```
+
 ### Payment หลังคำขอคิดบิล
 
 `POST /api/v1/payments` รับชำระได้เฉพาะรอบ `ACTIVE` ที่มี `bill_requested_at` แล้ว หากยังไม่ขอคิดบิลจะคืน `409 ErrorResponse` โดยไม่สร้าง Payment พนักงานยังดูยอดล่วงหน้าได้ แต่หน้า Billing ปิดปุ่มรับชำระจนพบคำขอจริงจาก Staff session API ให้กดดูบิลใหม่หลังลูกค้าขอคิดบิล

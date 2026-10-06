@@ -13,7 +13,7 @@ vi.mock('./api', async () => {
   return { ...actual, redeemQr: vi.fn(), getCustomerContext: vi.fn(), getCustomerPackage: vi.fn(), getMenu: vi.fn(), getCategories: vi.fn(), getBillStatus: vi.fn(), requestBill: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn() }
 })
 
-beforeEach(() => { vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })) })
+beforeEach(() => { vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, dueAmount: 299, paidAmount: 0, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })) })
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.resetAllMocks() })
 
 const sessionA: SessionContext = { sessionId: 1, packageId: 1, tableNumber: 'T01', sessionStatus: 'ACTIVE' }
@@ -39,7 +39,7 @@ function deferred<T>() {
 }
 
 function mockSessionDetails() {
-  vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } }))
+  vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, dueAmount: 299, paidAmount: 0, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } }))
   vi.mocked(api.getCustomerPackage).mockImplementation(async (id) => ({ id, name: id === 1 ? 'Standard' : 'Premium', price: 299, description: null, active: true }))
   vi.mocked(api.getMenu).mockImplementation(async (id) => id === 1 ? [chicken] : [])
   vi.mocked(api.getOrders).mockResolvedValue([])
@@ -238,15 +238,19 @@ it('confirms bill request once and disables ordering for the session', async () 
   const confirm = screen.getByRole('button', { name: 'ยืนยัน' })
   fireEvent.click(confirm); fireEvent.click(confirm)
   expect(api.requestBill).toHaveBeenCalledTimes(1)
-  pending.resolve({ sessionId: 1, status: 'REQUESTED', requestedAt: '2026-10-06T06:00:00Z', bill: { sessionId: 1, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })
+  pending.resolve({ sessionId: 1, status: 'REQUESTED', requestedAt: '2026-10-06T06:00:00Z', dueAmount: 299, paidAmount: 0, bill: { sessionId: 1, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })
   await screen.findByText('ขอคิดบิลแล้ว · รอพนักงานรับชำระ')
+  expect(screen.getByText('ยอดค้างชำระ ฿299.00')).toBeTruthy()
   expect((screen.getByRole('button', { name: 'เพิ่ม ไก่ทอด' }) as HTMLButtonElement).disabled).toBe(true)
   expect(screen.getByText('ยังไม่ได้เลือกเมนู')).toBeTruthy()
 })
 it('shows paid status and fails closed when bill lookup fails', async () => {
   vi.mocked(api.redeemQr).mockResolvedValue(sessionA); mockSessionDetails()
-  vi.mocked(api.getBillStatus).mockResolvedValue({ sessionId: 1, status: 'PAID', requestedAt: null, bill: { sessionId: 1, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })
+  vi.mocked(api.getBillStatus).mockResolvedValue({ sessionId: 1, status: 'PAID', requestedAt: '2026-10-06T06:00:00Z', dueAmount: 0, paidAmount: 299, bill: { sessionId: 1, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })
   renderPage(); await screen.findByText('ชำระแล้ว · รอพนักงานปิดรอบกิน')
+  expect(screen.getByText('ยอดรวม ฿299.00')).toBeTruthy()
+  expect(screen.getByText('ยอดค้างชำระ ฿0.00')).toBeTruthy()
+  expect(screen.getByText('ชำระแล้ว ฿299.00')).toBeTruthy()
   expect((screen.getByRole('button', { name: 'ขอคิดบิล' }) as HTMLButtonElement).disabled).toBe(true)
   cleanup()
   vi.mocked(api.getBillStatus).mockRejectedValue({ response: { data: { message: 'อ่านบิลไม่ได้' } } })

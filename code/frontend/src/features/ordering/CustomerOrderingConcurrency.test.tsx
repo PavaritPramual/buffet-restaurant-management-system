@@ -11,7 +11,7 @@ vi.mock('./api', async () => ({
   getCustomerContext: vi.fn(), redeemQr: vi.fn(), getCustomerPackage: vi.fn(),
   getBillStatus: vi.fn(), requestBill: vi.fn(), getMenu: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn(),
 }))
-beforeEach(() => { vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })) })
+beforeEach(() => { vi.mocked(api.getBillStatus).mockImplementation(async id => ({ sessionId: id, status: "NOT_REQUESTED", requestedAt: null, dueAmount: 299, paidAmount: 0, bill: { sessionId: id, subtotalAmount: 299, discountAmount: 0, totalAmount: 299 } })) })
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.resetAllMocks() })
 const sessionA: api.SessionContext = { sessionId: 1, packageId: 7, tableNumber: 'T01', sessionStatus: 'ACTIVE' }
 const sessionB: api.SessionContext = { sessionId: 2, packageId: 8, tableNumber: 'T02', sessionStatus: 'ACTIVE' }

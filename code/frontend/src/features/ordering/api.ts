@@ -43,7 +43,9 @@ export async function getCustomerContext({ retryFailedQr = false }: { retryFaile
     } catch (cause) { if (scan === latestQrScan) throw cause }
   }
 }
-export interface CustomerBillStatus { sessionId: number; status: 'NOT_REQUESTED' | 'REQUESTED' | 'PAID'; requestedAt: string | null; bill: { sessionId: number; subtotalAmount: number; discountAmount: number; totalAmount: number } }
+// Bill flow is separate from DiningSessionStatus: PAID still requires staff close.
+export type CustomerBillState = 'NOT_REQUESTED' | 'REQUESTED' | 'PAID'
+export interface CustomerBillStatus { sessionId: number; status: CustomerBillState; requestedAt: string | null; dueAmount: number; paidAmount: number; bill: { sessionId: number; subtotalAmount: number; discountAmount: number; totalAmount: number } }
 export async function getBillStatus(id: number) { return (await customerApiClient.get<CustomerBillStatus>(`/dining-sessions/${id}/bill-status`)).data }
 export async function requestBill(id: number) { return (await customerApiClient.post<CustomerBillStatus>(`/dining-sessions/${id}/bill-request`)).data }
 export async function getMenu(sessionId: number) { return (await customerApiClient.get<MenuItem[]>(`/dining-sessions/${sessionId}/menu`)).data }

@@ -184,6 +184,8 @@ export default function CustomerOrderingPage() {
       <Card><h2>บิลของโต๊ะ</h2>{bill ? <>
         <p role="status">{bill.status === 'PAID' ? 'ชำระแล้ว · รอพนักงานปิดรอบกิน' : bill.status === 'REQUESTED' ? 'ขอคิดบิลแล้ว · รอพนักงานรับชำระ' : 'ยอดคำนวณจากแพ็กเกจและจำนวนคนของรอบกิน'}</p>
         <p>ยอดรวม ฿{Number(bill.bill.totalAmount).toLocaleString('th-TH', { minimumFractionDigits: 2 })}</p>
+        <p>ยอดค้างชำระ ฿{Number(bill.dueAmount).toLocaleString('th-TH', { minimumFractionDigits: 2 })}</p>
+        {bill.status === 'PAID' && <p>ชำระแล้ว ฿{Number(bill.paidAmount).toLocaleString('th-TH', { minimumFractionDigits: 2 })}</p>}
         <Button disabled={bill.status !== 'NOT_REQUESTED' || billBusy || submitting} onClick={() => setBillConfirming(true)}>ขอคิดบิล</Button>
       </> : <p>กำลังตรวจสอบสถานะบิล ก่อนรับคำสั่งซื้อใหม่</p>}</Card>
       <nav className="category-chips" aria-label="หมวดหมู่เมนู">

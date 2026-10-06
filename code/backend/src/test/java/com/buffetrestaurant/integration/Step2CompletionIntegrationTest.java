@@ -73,11 +73,21 @@ class Step2CompletionIntegrationTest {
         String payment = "{\"sessionId\":940001,\"paymentMethod\":\"CASH\"}";
         mvc.perform(post("/api/v1/payments").session(staff).contentType(MediaType.APPLICATION_JSON).content(payment))
                 .andExpect(status().isConflict());
+        mvc.perform(get("/api/v1/dining-sessions/940001/bill-status").cookie(customer))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("NOT_REQUESTED"))
+                .andExpect(jsonPath("$.bill.totalAmount").value(997.50))
+                .andExpect(jsonPath("$.dueAmount").value(997.50)).andExpect(jsonPath("$.paidAmount").value(0));
         assertThat(jdbc.queryForObject("SELECT count(*) FROM payments WHERE session_id=940001", Integer.class)).isZero();
         mvc.perform(post("/api/v1/dining-sessions/940001/bill-request").cookie(customer).header("Origin","http://localhost:5173"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("REQUESTED"))
+                .andExpect(jsonPath("$.bill.totalAmount").value(997.50))
+                .andExpect(jsonPath("$.dueAmount").value(997.50)).andExpect(jsonPath("$.paidAmount").value(0));
         mvc.perform(post("/api/v1/payments").session(staff).contentType(MediaType.APPLICATION_JSON).content(payment))
                 .andExpect(status().isCreated()).andExpect(jsonPath("$.paymentStatus").value("PAID"));
+        mvc.perform(get("/api/v1/dining-sessions/940001/bill-status").cookie(customer))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("PAID"))
+                .andExpect(jsonPath("$.bill.totalAmount").value(997.50))
+                .andExpect(jsonPath("$.dueAmount").value(0)).andExpect(jsonPath("$.paidAmount").value(997.50));
         mvc.perform(post("/api/v1/dining-sessions/940001/orders").cookie(customer).header("Origin","http://localhost:5173")
                 .contentType(MediaType.APPLICATION_JSON).content("{\"items\":[{\"menuItemId\":1,\"quantity\":1}]}"))
                 .andExpect(status().isConflict());
@@ -85,6 +95,13 @@ class Step2CompletionIntegrationTest {
         assertThat(jdbc.queryForObject("SELECT status FROM dining_sessions WHERE id=940001", String.class)).isEqualTo("ACTIVE");
     }
     @Autowired jakarta.persistence.EntityManager entityManager;
+    @Test void openApiDefinesBillStateEnumAndSeparateAmounts() throws Exception {
+        mvc.perform(get("/v3/api-docs")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.components.schemas.CustomerBillStatusResponse.properties.status.enum",
+                        org.hamcrest.Matchers.containsInAnyOrder("NOT_REQUESTED", "REQUESTED", "PAID")))
+                .andExpect(jsonPath("$.components.schemas.CustomerBillStatusResponse.properties.dueAmount.type").value("number"))
+                .andExpect(jsonPath("$.components.schemas.CustomerBillStatusResponse.properties.paidAmount.type").value("number"));
+    }
     @Test void priceSnapshotAndPaidStatusUseRecordedAmountWithoutClosing() throws Exception {
         jdbc.update("UPDATE buffet_packages SET price=999 WHERE id=940001"); entityManager.clear();
         mvc.perform(get("/api/v1/dining-sessions/940001/bill-status").cookie(customer)).andExpect(status().isOk()).andExpect(jsonPath("$.bill.totalAmount").value(997.50));

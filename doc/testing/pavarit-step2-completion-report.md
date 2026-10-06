@@ -14,6 +14,14 @@ Contract: [Customer bill request](../contracts/customer-bill-request.md) · [Can
 
 ## ผลตรวจ
 
+### แก้รีวิว DTO/API ของศรัณย์ — 6 ตุลาคม 2026
+
+- Customer bill `status` เปลี่ยนจาก String เป็น enum CustomerBillStatus โดย JSON ยังใช้ NOT_REQUESTED/REQUESTED/PAID เดิม อธิบายชัดว่า PAID ไม่ปิด session
+- เพิ่ม dueAmount/paidAmount แยกยอดค้างกับยอดที่จ่ายจริง และกำหนด bill.totalAmount เป็นยอดสุทธิของบิลเสมอ ไม่ใช้เป็นยอดค้าง หลัง PAID ยอดรวมยังคงเป็นยอดบิลสุดท้าย แต่ dueAmount เป็นศูนย์
+- หน้า Customer แสดงยอดรวม ยอดค้างชำระ และยอดชำระแล้วแยกกัน ปรับ frontend type/fixtures/contract พร้อม JSON ตัวอย่าง ไม่มีการเปลี่ยน PaymentResult, BillSummary หรือ migration
+- API integration assertions ครอบคลุมยอดทั้ง NOT_REQUESTED/REQUESTED/PAID และ OpenAPI enum/amount fields; frontend regression ตรวจข้อความยอดก่อน/หลังจ่าย
+- Backend verify 303/303 ไม่มี failures/errors/skipped บน H2/PostgreSQL แยก (port15433 container buffet-pr21-sarun-pg), frontend109/109, lint0errors/4warningsเดิม และ build ผ่าน ไม่แตะ Supabase หรือฐานเว็บของผู้ใช้ ภาพ browser ด้านล่างยังเป็นหลักฐานรอบเดิม
+
 ### แก้รีวิว PR #21 ของศิระพัทธ์ — 6 ตุลาคม 2026
 
 - บังคับ `Order → Request Bill → Payment → Close` ฝั่ง server: ก่อนขอคิดบิล Payment ตอบ 409 และไม่มีแถว Payment เพิ่ม ดูยอดล่วงหน้าได้
