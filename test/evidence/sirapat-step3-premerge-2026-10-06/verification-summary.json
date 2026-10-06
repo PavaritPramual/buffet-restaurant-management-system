@@ -1,0 +1,79 @@
+{
+  "sourceCommit": "a351fbaf5878f3ad1d68ae3906bd63eb337ffe20",
+  "sourceTree": "dirty working tree; pair with source diff",
+  "startedAt": "2026-10-06T15:08:02.126Z",
+  "finishedAt": "2026-10-06T15:08:41.582Z",
+  "environment": "local-h2",
+  "httpMocks": false,
+  "coreFlow": {
+    "passed": 14,
+    "failed": 0
+  },
+  "nodeUrlGuards": {
+    "passed": 6,
+    "failed": 0
+  },
+  "localFrontend": {
+    "passed": 116,
+    "files": 14,
+    "lintErrors": 0,
+    "existingWarnings": 4,
+    "build": "PASS"
+  },
+  "screenshotReview": {
+    "count": 17,
+    "allReviewed": true,
+    "qrCardMasked": true,
+    "sha256": {
+      "customer-confirm-360.png": "9b52bc17c77023538718043fa623eea5bfb7a4ace3dd636908c2eff9b541e834",
+      "customer-order-360.png": "049ad5793bc92f6d85df6f57efd472c9c71ad4d0a2db2c603d6b2278eec4929c",
+      "customer-paid-360.png": "040f835238ebf957ec7d8fdcb25e3f9b891aa68fcb3882231d3909a5b7703db2",
+      "customer-rescan-restored-360.png": "5f639583eb7317fbdecac15e181ca3330bdf02bf389b60c602279bb1d42fe598",
+      "customer-second-phone-requested-360.png": "b5a310023a9496c3487a96e69897bb2ad41545952ded635803358cb3fa008039",
+      "kitchen-768.png": "9362415965a9477a6e762ff77e84b0860723150cbf9caa4474862bf25f630a3e",
+      "kitchen-expired-768.png": "415ac53af3632465499c8a753551184023e38443229ca16d51b4b7cafd398fd6",
+      "kitchen-preparing-768.png": "b07fde27ec88c9200796650d9bdeb2c8a085823bac49536428f55ab3926ef71a",
+      "manager-expired-1280.png": "59d2c14c8d986d1705d1dcc612eaecf746c5d19e5d3268cd421cec5988447f19",
+      "manager-menu-after-delete-1280.png": "56f41903a4f6c360b9352795d68fecea89e36a003d4f69c51b406dea535299fc",
+      "manager-menu-created-edited-1280.png": "56f41903a4f6c360b9352795d68fecea89e36a003d4f69c51b406dea535299fc",
+      "manager-menu-delete-confirm-1280.png": "e7562f4fd33af81531f20f1abeaeb62b3e0dd802461c4ce8110b18d715b2eeeb",
+      "manager-tables-1280.png": "59bae7ef3831e0b4fd2c538ce72b6de8d975ce44194f689155e860f5468d2c97",
+      "staff-expired-768.png": "36d5dd092574324c1a8c9d03c4a124c28c8cdd7f4f8a1f186cbefc7dbb81220a",
+      "staff-paid-768.png": "ad1ef155cb8dceff64fc1f68585516cdd41b39d51d331a6c9f8c441a43e3c0b9",
+      "staff-serving-768.png": "03a2718271db74399db9843fbc000b74d91ca0b64d2d25d97df60e33a5be9d30",
+      "staff-unpaid-close-768.png": "22e8f7596d1f28ec0493d91786fa14a11eb1290209f6e6df6ad15a66cb01e81c"
+    }
+  },
+  "sourceHashes": {
+    "test/browser/step3-core-flow.cjs": "20a2b85dce2427c1fa206da587e5127d07c7fd8911fba29792dbcb17ecaa2824",
+    "test/browser/step3-runtime-config.cjs": "5124f7a7a6238104db691206f1a7bc99dcdf03c03242e1d7f040c12eff178373",
+    "test/browser/step3-runtime-config.test.cjs": "c4a4c76b11cf08e35d9a6be67ab41415096a50af3ec5bba9de4d8bb5016ba6e7",
+    ".github/workflows/ci.yml": "4865e704ed1d54168eac53eada5533b9174c7b186e1d1f6e88369fecf8ad5a15",
+    "code/frontend/src/features/admin/AdminShell.tsx": "5ae2b387c8fe70c81b81aabf637820b1db21961c9afde3c2e4a00d7023432bc6",
+    "code/frontend/src/features/admin/AdminShell.test.tsx": "5d238a5b0bf6f06918d02ed9c40b95d97b71835786c3bf4b35728271eed0a504"
+  },
+  "testedPatchSha256": "a2e39206d2c932f85a58a1ab9dbc004322477fc0be9e0765cf18a619eb97cd7f",
+  "slides": {
+    "count": 6,
+    "editablePptx": "doc/slide/sirapat-step3-quality-premerge.pptx",
+    "pptxSha256": "cb1649ff3f39fdb8012bd389bf9a0f22472fb789f0e648f0553d01403d3c4b3f",
+    "pdfSha256": "eecb90efbdfb91d4744d58f57f500572394ea376e285cbcc31dceb284e959b42",
+    "renderedAllPagesReviewed": true,
+    "nativePowerPointQA": false
+  },
+  "ciBeforeEdit": {
+    "sourceCommit": "a351fbaf5878f3ad1d68ae3906bd63eb337ffe20",
+    "runUrl": "https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37478993077",
+    "backendPassed": 303,
+    "backendSkipped": 0,
+    "frontendPassed": 116
+  },
+  "currentPrChecks": "https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/22/checks",
+  "uxIssue": "https://github.com/PavaritPramual/buffet-restaurant-management-system/issues/23",
+  "pending": [
+    "Public HTTPS/runtime/schema/deployed commit and timed TTL expiry",
+    "Stock/Profile owner implementation and integrated review",
+    "Reviewer approval, release revision and final team slides/rehearsal"
+  ],
+  "note": "Previous fixture/concurrency/state runs are historical; not rerun or counted here. Source module hashes pair with the working diff. CI of the pushed PR head must pass separately."
+}

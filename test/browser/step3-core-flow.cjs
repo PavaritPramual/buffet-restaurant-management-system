@@ -1,19 +1,13 @@
 // Real HTTP/cookies only. Creates run-specific test data; never modifies existing IDs.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright')
 const assert = require('node:assert/strict')
+const { validateRuntimeUrls } = require('./step3-runtime-config.cjs')
 const fs = require('node:fs/promises')
 const path = require('node:path')
 const { execFileSync } = require('node:child_process')
 const web = process.env.FINAL_WEB_URL || 'http://localhost:5175'
 const api = process.env.FINAL_API_URL || 'http://localhost:8085/api/v1'
 const mode = process.env.FINAL_ENVIRONMENT
-assert(['local-h2', 'local-postgres', 'public'].includes(mode), 'Set FINAL_ENVIRONMENT explicitly')
-for (const address of [web, api]) {
-  const url = new URL(address)
-  assert(!url.username && !url.password && !url.search && !url.hash, 'URLs must not contain credentials/query/fragment')
-  if (mode === 'public') assert.equal(url.protocol, 'https:', 'Public acceptance requires HTTPS')
-  else assert(['localhost', '127.0.0.1'].includes(url.hostname), 'Local runs require loopback URLs')
-}
+validateRuntimeUrls(mode, web, api)
 assert.equal(process.env.FINAL_ALLOW_TEST_DATA, 'true', 'Explicit approved test-data scope required')
 const required = name => { assert(process.env[name], `Missing ${name}`); return process.env[name] }
 const roles = { manager: 'MANAGER', supervisor: 'SUPERVISOR', staff: 'SERVICE_STAFF', kitchen: 'KITCHEN_STAFF' }
@@ -22,6 +16,7 @@ const credentials = Object.fromEntries(Object.keys(roles).map(name => {
   return [name, { username: required(`FINAL_${key}_USERNAME`), password: required(`FINAL_${key}_PASSWORD`) }]
 }))
 const releaseCommit = mode === 'public' ? required('FINAL_DEPLOYED_COMMIT') : null
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright')
 const output = path.resolve(process.env.FINAL_EVIDENCE_DIR || 'test/reports/step3-core-flow')
 const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
 const sourceTree = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim() ? 'dirty working tree; pair with source diff' : 'clean'
@@ -101,9 +96,78 @@ async function main() {
     const soup = await createMaster('/admin/soups','/soups', { 'ชื่อรายการ':run })
     const table = await createMaster('/admin/tables','/tables', { 'หมายเลขโต๊ะ':run, 'ความจุ':4 })
     await shot('manager','manager-tables-1280.png')
-    const category = await request('manager','post','/menu-categories', {name:run})
-    const item = await request('manager','post','/menu-items', {categoryId:category.id,name:run+' หมู',available:true,packageIds:[pack.id]})
-    pass(scenario, {tableId:table.id,packageId:pack.id,menuSetup:'Existing Manager domain API; not evidence of Menu CRUD UI'})
+    pass(scenario, {tableId:table.id,packageId:pack.id})
+    scenario = 'Manager category and Menu CRUD through UI'
+    await manager.goto(web + '/admin/menu')
+    await manager.getByRole('heading',{name:'จัดการเมนูอาหาร',exact:true}).waitFor()
+    async function saveMenu(endpoint, method, button, notice) {
+      const pending = manager.waitForResponse(r => new URL(r.url()).pathname.endsWith(endpoint) && r.request().method() === method)
+      await manager.getByRole('button',{name:button,exact:true}).click()
+      const response = await pending
+      assert.equal(response.status(), method === 'POST' ? 201 : 200)
+      await manager.getByText(notice,{exact:true}).waitFor()
+      return response.json()
+    }
+    const categoryRow = name => manager.locator('.category-list li').filter({has:manager.getByText(name,{exact:true})})
+    async function menuRow(name) {
+      // Find the run's own row even when the approved tenant has multiple pages.
+      await manager.locator('.menu-table table').waitFor()
+      while (!await manager.getByRole('button',{name:'ก่อนหน้า',exact:true}).isDisabled()) {
+        await manager.getByRole('button',{name:'ก่อนหน้า',exact:true}).click()
+        await manager.locator('.menu-table table').waitFor()
+      }
+      for (let page = 0; page < 100; page++) {
+        const row = manager.locator('.menu-table tr').filter({has:manager.getByText(name,{exact:true})})
+        if (await row.count()) return row
+        const next = manager.getByRole('button',{name:'ถัดไป',exact:true})
+        assert(!await next.isDisabled(), `Run-specific menu row must exist: ${name}`)
+        await next.click(); await manager.locator('.menu-table table').waitFor()
+      }
+      assert.fail('Run-specific menu not found within 100 pages')
+    }
+    await manager.getByLabel('ชื่อหมวดหมู่',{exact:true}).fill(run)
+    let category = await saveMenu('/menu-categories','POST','เพิ่มหมวดหมู่','บันทึกหมวดหมู่แล้ว')
+    await categoryRow(category.name).getByRole('button',{name:'แก้ไข',exact:true}).click()
+    await manager.getByLabel('ชื่อหมวดหมู่',{exact:true}).fill(run+' หมวด')
+    category = await saveMenu('/menu-categories/'+category.id,'PUT','บันทึกการแก้ไข','บันทึกหมวดหมู่แล้ว')
+    async function createMenu(name) {
+      await manager.getByLabel('ชื่อเมนู',{exact:true}).fill(name)
+      await manager.getByLabel('รายละเอียดเมนู (ถ้ามี)',{exact:true}).fill('Created through Manager UI')
+      await manager.getByRole('combobox',{name:'หมวดหมู่',exact:true}).selectOption(String(category.id))
+      await manager.getByRole('checkbox',{name:pack.name,exact:true}).check()
+      return saveMenu('/menu-items','POST','บันทึกเมนู','บันทึกเมนูแล้ว')
+    }
+    let item = await createMenu(run+' หมูร่าง')
+    await (await menuRow(item.name)).getByRole('button',{name:'แก้ไข',exact:true}).click()
+    await manager.getByLabel('ชื่อเมนู',{exact:true}).fill(run+' หมู')
+    await manager.getByLabel('รายละเอียดเมนู (ถ้ามี)',{exact:true}).fill('Edited through Manager UI')
+    item = await saveMenu('/menu-items/'+item.id,'PUT','บันทึกเมนู','บันทึกเมนูแล้ว')
+    await manager.reload()
+    await categoryRow(category.name).waitFor()
+    await (await menuRow(item.name)).waitFor()
+    await shot('manager','manager-menu-created-edited-1280.png')
+    const storedItem = await request('manager','get','/menu-items/'+item.id)
+    assert.equal(storedItem.description,'Edited through Manager UI')
+    assert.deepEqual(storedItem.packageIds,[pack.id])
+    const disposableItem = await createMenu(run+' ลบทดสอบ')
+    await (await menuRow(disposableItem.name)).getByRole('button',{name:'ลบ',exact:true}).click()
+    await shot('manager','manager-menu-delete-confirm-1280.png')
+    let deleted = manager.waitForResponse(r => r.url().endsWith('/menu-items/'+disposableItem.id) && r.request().method() === 'DELETE')
+    await confirm(manager); assert.equal((await deleted).status(),204)
+    await manager.getByText('ลบข้อมูลแล้ว',{exact:true}).waitFor()
+    assert.equal(await manager.getByText(disposableItem.name,{exact:true}).count(),0)
+    await manager.getByLabel('ชื่อหมวดหมู่',{exact:true}).fill(run+' ลบหมวด')
+    const disposableCategory = await saveMenu('/menu-categories','POST','เพิ่มหมวดหมู่','บันทึกหมวดหมู่แล้ว')
+    await categoryRow(disposableCategory.name).getByRole('button',{name:'ลบ',exact:true}).click()
+    deleted = manager.waitForResponse(r => r.url().endsWith('/menu-categories/'+disposableCategory.id) && r.request().method() === 'DELETE')
+    await confirm(manager); assert.equal((await deleted).status(),204)
+    await manager.getByText('ลบข้อมูลแล้ว',{exact:true}).waitFor()
+    await manager.reload()
+    await (await menuRow(item.name)).waitFor()
+    assert.equal(await categoryRow(disposableCategory.name).count(),0)
+    assert.equal((await ctx.manager.request.get(api+'/menu-items/'+disposableItem.id)).status(),404)
+    await shot('manager','manager-menu-after-delete-1280.png')
+    pass(scenario,{categoryId:category.id,menuItemId:item.id,createUpdateDelete:'UI only; real HTTP responses and persisted reload',deletedItemId:disposableItem.id,deletedCategoryId:disposableCategory.id})
     scenario = 'open actual session and reject unpaid close'
     const staff = ctx.staff.page, kitchen = ctx.kitchen.page, a = ctx.phoneA.page, b = ctx.phoneB.page
     await staff.reload()
@@ -213,24 +277,52 @@ async function main() {
     assert.equal((await request('staff','get',`/tables/${table.id}`)).status,'AVAILABLE')
     for(const name of ['phoneA','phoneB']) assert([401,404].includes((await ctx[name].request.get(api+`/dining-sessions/${sessionId}/orders`)).status()))
     pass(scenario,{sessionId,tableStatus:'AVAILABLE',phonesRevoked:2})
-    scenario = 'employee expiry and logout hide protected UI'
+    scenario = 'four-role protected API401 hides mounted UI'
     // Invalidate the same real cookie from another client in its context, then request via UI.
     await request('manager','post','/auth/logout')
+    const manager401 = manager.waitForResponse(r => r.url().includes('/stock') && r.status() === 401)
     await manager.getByRole('link',{name:'สต็อก',exact:true}).click()
+    await manager401
     await manager.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
     await shot('manager','manager-expired-1280.png')
     assert.equal((await ctx.manager.request.get(api+'/stock')).status(),401)
     await request('supervisor','post','/auth/logout')
+    const supervisor401 = ctx.supervisor.page.waitForResponse(r => r.url().includes('/stock') && r.status() === 401)
     await ctx.supervisor.page.getByRole('button',{name:'โหลดข้อมูลใหม่',exact:true}).click()
+    await supervisor401
     await ctx.supervisor.page.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
     assert.equal((await ctx.supervisor.request.get(api+'/stock')).status(),401)
-    await staff.getByRole('button',{name:'ออกจากระบบ',exact:true}).click()
+    await staff.getByRole('link',{name:'งานเสิร์ฟ',exact:true}).click()
+    await staff.getByRole('heading',{name:'ออเดอร์พร้อมเสิร์ฟ',exact:true}).waitFor()
+    await request('staff','post','/auth/logout')
+    const staff401 = staff.waitForResponse(r => r.url().endsWith('/orders/ready') && r.status() === 401)
+    await staff.getByRole('button',{name:'อัปเดต',exact:true}).click()
+    await staff401
     await staff.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
+    assert.equal(await staff.getByRole('heading',{name:'ออเดอร์พร้อมเสิร์ฟ',exact:true}).count(),0)
+    await shot('staff','staff-expired-768.png')
     assert.equal((await ctx.staff.request.get(api+'/orders/ready')).status(),401)
-    await kitchen.getByRole('button',{name:'ออกจากระบบ'}).click()
+    await request('kitchen','post','/auth/logout')
+    const kitchen401 = kitchen.waitForResponse(r => r.url().endsWith('/orders/incoming') && r.status() === 401)
+    await kitchen.getByRole('button',{name:'อัปเดต',exact:true}).click()
+    await kitchen401
     await kitchen.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
+    assert.equal(await kitchen.getByRole('heading',{name:'ออเดอร์ที่รอดำเนินการ',exact:true}).count(),0)
+    await shot('kitchen','kitchen-expired-768.png')
     assert.equal((await ctx.kitchen.request.get(api+'/orders/incoming')).status(),401)
-    pass(scenario,'Real server logout -> UI API401 for Manager/Supervisor; Staff/Kitchen UI logout revokes access')
+    pass(scenario,'All four mounted shells receive real protected HTTP401 after server-side invalidation; no UI logout or HTTP mocks; not a timed TTL-expiry test')
+    scenario = 'Staff and Kitchen explicit UI logout revokes access'
+    for (const name of ['staff','kitchen']) {
+      const page = ctx[name].page
+      await page.getByLabel('ชื่อผู้ใช้',{exact:true}).fill(credentials[name].username)
+      await page.getByLabel('รหัสผ่าน',{exact:true}).fill(credentials[name].password)
+      await page.getByRole('button',{name:'เข้าสู่ระบบ',exact:true}).click()
+      await page.waitForURL(`**${name === 'staff' ? '/staff/tables' : '/kitchen'}`)
+      await page.getByRole('button',{name:'ออกจากระบบ',exact:true}).click()
+      await page.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
+      assert.equal((await ctx[name].request.get(api+(name === 'staff'?'/orders/ready':'/orders/incoming'))).status(),401)
+    }
+    pass(scenario,'Separate successful login and UI logout for both roles; protected APIs return HTTP401')
     scenario = 'Swagger customer bill contract'
     const specResponse=await ctx.anonymous.request.get(new URL('/v3/api-docs',api).href)
     assert(specResponse.ok())

@@ -1,5 +1,7 @@
 # ศิระพัทธ์ — ตรวจซ้ำ Step 3 วันที่ 6 ตุลาคม 2026
 
+รายงานนี้เป็น snapshot รอบ21:12–21:25. ดู [ผลก่อน merge](sirapat-step3-premerge-report.md) สำหรับ public URL guard, Menu CRUD ผ่าน UI, protected401 ทั้ง4roles, ร่างสไลด์ปรับตัวเลข และ UX issue #23.
+
 สถานะ: **งานเตรียมและ local regression ที่ทำได้โดยอิสระพร้อมส่งตรวจแล้ว แต่ส่วนศิระพัทธ์ยังไม่จบ Final** ยังต้องตรวจ Stock/Profile ของเมธัส, deployment ของธีรเมธ, docs/slides รวมของปวริศช์ และ release revision หลังทีมส่งงาน
 
 ## ฐานและสิ่งที่ตรวจสด
