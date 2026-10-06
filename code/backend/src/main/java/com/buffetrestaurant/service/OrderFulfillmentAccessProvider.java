@@ -3,11 +3,9 @@ package com.buffetrestaurant.service;
 /**
  * Authorization seam for order fulfillment actions.
  *
- * <p>The Authentication module (เมธัส) must provide the production implementation, backed by
- * real staff login, and verify the current caller's role before returning from either method.
- * Until then this is satisfied by {@code DisabledOrderFulfillmentAccessProvider} (fails closed)
- * or, for local/test use only, {@code FixtureOrderFulfillmentAccessProvider} (reads a staff role
- * from the {@code X-User-Role} header).</p>
+ * <p>SessionOrderFulfillmentAccessProvider enforces real login: kitchen staff prepare/ready,
+ * service staff serve. The disabled provider fails closed when integration is not enabled.
+ * The header-based fixture is only for isolated legacy tests, never deployed authorization.</p>
  */
 public interface OrderFulfillmentAccessProvider {
 
