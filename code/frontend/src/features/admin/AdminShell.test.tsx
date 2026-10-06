@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { AxiosError, AxiosHeaders } from 'axios'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
@@ -46,6 +46,33 @@ function renderShell(path: string) {
 }
 
 describe('AdminShell', () => {
+  it.each(['MANAGER', 'SUPERVISOR'] as const)('removes %s data when a protected API reports an expired session', async (role) => {
+    vi.mocked(authApi.current).mockResolvedValue({ ...manager, role })
+    renderShell('/admin/stock')
+    expect(await screen.findByText('หน้า stock')).toBeTruthy()
+    await act(async () => {
+      await apiClient.get('/stock', {
+        adapter: (config) => Promise.reject(new AxiosError('Unauthorized', 'ERR_BAD_REQUEST', config, undefined, {
+          config, data: {}, headers: new AxiosHeaders(), status: 401, statusText: 'Unauthorized',
+        })),
+      }).catch(() => undefined)
+    })
+    expect(await screen.findByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
+    expect(screen.queryByText('หน้า stock')).toBeNull()
+    expect(screen.queryByRole('link', { name: 'สต็อก' })).toBeNull()
+  })
+
+  it('ignores a session restore response that arrives after session expiry', async () => {
+    let resolve!: (user: UserContext) => void
+    vi.mocked(authApi.current).mockReturnValue(new Promise<UserContext>((done) => { resolve = done }))
+    renderShell('/admin/stock')
+    act(() => window.dispatchEvent(new Event('auth:session-expired')))
+    expect(await screen.findByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
+    await act(async () => resolve(manager))
+    expect(screen.queryByText('หน้า stock')).toBeNull()
+    expect(screen.getByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
+  })
+
   it.each(['/kitchen', '/kitchen/', '/KITCHEN'])('keeps kitchen login on matched route %s', async (path) => {
     vi.mocked(authApi.current).mockResolvedValue(kitchen)
     renderShell(path)
