@@ -47,6 +47,10 @@ public class StockItem {
         this.updatedAt = Instant.now();
     }
 
+    public void updateDetails(String sku, String name, String unit, BigDecimal threshold) {
+        this.sku = sku; this.name = name; this.unit = unit; this.lowStockThreshold = threshold;
+    }
+
     public void applyDelta(BigDecimal delta) {
         this.quantity = this.quantity.add(delta);
         this.updatedAt = Instant.now();

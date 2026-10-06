@@ -33,13 +33,14 @@ class RestaurantTableServiceTest {
     @Mock
     private RestaurantTableRepository tableRepository;
 
+    @Mock private com.buffetrestaurant.repository.DiningSessionRepository sessions;
     private TableMapper tableMapper;
     private RestaurantTableService tableService;
 
     @BeforeEach
     void setUp() {
         tableMapper = new TableMapper();
-        tableService = new RestaurantTableServiceImpl(tableRepository, tableMapper);
+        tableService = new RestaurantTableServiceImpl(tableRepository, tableMapper, sessions);
     }
 
     @Test
@@ -153,7 +154,7 @@ class RestaurantTableServiceTest {
     void updateTable_whenTableExistsAndNumberNotDuplicated_updatesAndReturnsTableResponse() {
         // Given
         RestaurantTable existing = new RestaurantTable(1L, "T01", 4, TableStatus.AVAILABLE);
-        when(tableRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(tableRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(existing));
         when(tableRepository.existsByTableNumberAndIdNot("T01-NEW", 1L)).thenReturn(false);
 
         RestaurantTable updated = new RestaurantTable(1L, "T01-NEW", 6, TableStatus.AVAILABLE);
@@ -173,7 +174,7 @@ class RestaurantTableServiceTest {
     @Test
     void updateTable_whenTableDoesNotExist_throwsResourceNotFoundException() {
         // Given
-        when(tableRepository.findById(999L)).thenReturn(Optional.empty());
+        when(tableRepository.findByIdForUpdate(999L)).thenReturn(Optional.empty());
         UpdateTableRequest request = new UpdateTableRequest("T99", 4);
 
         // When & Then
@@ -186,7 +187,7 @@ class RestaurantTableServiceTest {
     void updateTable_whenTableNumberDuplicatedOnAnotherTable_throwsDuplicateResourceException() {
         // Given
         RestaurantTable existing = new RestaurantTable(1L, "T01", 4, TableStatus.AVAILABLE);
-        when(tableRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(tableRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(existing));
         when(tableRepository.existsByTableNumberAndIdNot("T02", 1L)).thenReturn(true);
 
         UpdateTableRequest request = new UpdateTableRequest("T02", 6);
@@ -202,7 +203,7 @@ class RestaurantTableServiceTest {
     void updateTable_whenDatabaseConstraintViolationOccurs_throwsDuplicateResourceException() {
         // Given
         RestaurantTable existing = new RestaurantTable(1L, "T01", 4, TableStatus.AVAILABLE);
-        when(tableRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(tableRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(existing));
         when(tableRepository.existsByTableNumberAndIdNot("T02", 1L)).thenReturn(false);
         when(tableRepository.saveAndFlush(existing))
                 .thenThrow(new DataIntegrityViolationException("duplicate key value violates unique constraint"));
@@ -216,28 +217,28 @@ class RestaurantTableServiceTest {
     }
 
     @Test
-    void updateTableStatus_whenTableExists_updatesStatusAndReturnsTableResponse() {
+    void updateTableStatus_whenTableExists_returnsAvailableWithoutOpeningSession() {
         // Given
         RestaurantTable existing = new RestaurantTable(1L, "T01", 4, TableStatus.AVAILABLE);
-        when(tableRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(tableRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(existing));
 
-        RestaurantTable updated = new RestaurantTable(1L, "T01", 4, TableStatus.OCCUPIED);
+        RestaurantTable updated = new RestaurantTable(1L, "T01", 4, TableStatus.AVAILABLE);
         when(tableRepository.save(existing)).thenReturn(updated);
 
-        UpdateTableStatusRequest request = new UpdateTableStatusRequest(TableStatus.OCCUPIED);
+        UpdateTableStatusRequest request = new UpdateTableStatusRequest(TableStatus.AVAILABLE);
 
         // When
         TableResponse result = tableService.updateTableStatus(1L, request);
 
         // Then
-        assertThat(result.status()).isEqualTo(TableStatus.OCCUPIED);
+        assertThat(result.status()).isEqualTo(TableStatus.AVAILABLE);
         verify(tableRepository).save(existing);
     }
 
     @Test
     void updateTableStatus_whenTableDoesNotExist_throwsResourceNotFoundException() {
         // Given
-        when(tableRepository.findById(999L)).thenReturn(Optional.empty());
+        when(tableRepository.findByIdForUpdate(999L)).thenReturn(Optional.empty());
         UpdateTableStatusRequest request = new UpdateTableStatusRequest(TableStatus.OCCUPIED);
 
         // When & Then
@@ -250,7 +251,7 @@ class RestaurantTableServiceTest {
     void deleteTable_whenTableIsAvailable_deletesSuccessfully() {
         // Given
         RestaurantTable table = new RestaurantTable(1L, "T01", 4, TableStatus.AVAILABLE);
-        when(tableRepository.findById(1L)).thenReturn(Optional.of(table));
+        when(tableRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(table));
 
         // When
         tableService.deleteTable(1L);
@@ -263,7 +264,7 @@ class RestaurantTableServiceTest {
     void deleteTable_whenTableIsOccupied_throwsIllegalStateException() {
         // Given
         RestaurantTable table = new RestaurantTable(1L, "T01", 4, TableStatus.OCCUPIED);
-        when(tableRepository.findById(1L)).thenReturn(Optional.of(table));
+        when(tableRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(table));
 
         // When & Then
         assertThatThrownBy(() -> tableService.deleteTable(1L))
@@ -275,7 +276,7 @@ class RestaurantTableServiceTest {
     @Test
     void deleteTable_whenTableDoesNotExist_throwsResourceNotFoundException() {
         // Given
-        when(tableRepository.findById(999L)).thenReturn(Optional.empty());
+        when(tableRepository.findByIdForUpdate(999L)).thenReturn(Optional.empty());
 
         // When & Then
         assertThatThrownBy(() -> tableService.deleteTable(999L))

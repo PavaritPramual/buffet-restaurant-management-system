@@ -4,6 +4,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import DesignSystemPage from './DesignSystemPage'
 import AdminShell, { ManagerRoute } from './features/admin/AdminShell'
 import StockPage from './features/admin/StockPage'
+import MasterDataPage from './features/admin/MasterDataPage'
 import UsersPage from './features/admin/UsersPage'
 import CustomerOrderingPage from './features/ordering/CustomerOrderingPage'
 import MenuAdminPage from './features/ordering/MenuAdminPage'
@@ -30,6 +31,10 @@ export default function FoundationApp() {
       <Route index element={<Navigate to="stock" replace />} />
       <Route path="stock" element={<StockPage />} />
       <Route element={<ManagerRoute />}>
+        <Route path="tables" element={<MasterDataPage key="tables" kind="tables" />} />
+        <Route path="packages" element={<MasterDataPage key="packages" kind="buffet-packages" />} />
+        <Route path="soups" element={<MasterDataPage key="soups" kind="soups" />} />
+        <Route path="stock-items" element={<MasterDataPage key="stock" kind="stock" />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="menu" element={<MenuAdminPage />} />
       </Route>

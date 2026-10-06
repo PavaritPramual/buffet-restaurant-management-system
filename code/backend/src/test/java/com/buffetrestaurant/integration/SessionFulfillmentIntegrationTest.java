@@ -71,7 +71,7 @@ class SessionFulfillmentIntegrationTest {
         }
         mvc.perform(put("/api/v1/tables/929001").session(session).header("X-User-Role", "MANAGER")
                 .contentType(MediaType.APPLICATION_JSON).content("{\"tableNumber\":\"ROLE-IT\",\"capacity\":4}"))
-                .andExpect(status().is(role == UserRole.MANAGER ? 200 : 403));
+                .andExpect(status().is(role == UserRole.MANAGER ? 409 : 403));
         for (String path : new String[] {"buffet-packages", "soups"}) {
             mvc.perform(patch("/api/v1/" + path + "/929001/active").session(session)
                     .header("X-User-Role", "MANAGER").contentType(MediaType.APPLICATION_JSON).content("{\"active\":false}"))
