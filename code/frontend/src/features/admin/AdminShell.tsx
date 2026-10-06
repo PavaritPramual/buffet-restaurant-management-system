@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Navigate, NavLink, Outlet, useOutletContext } from 'react-router-dom'
 import { authApi, getErrorMessage, roleLabels } from './api'
@@ -14,38 +14,62 @@ export default function AdminShell() {
   const [submitting, setSubmitting] = useState(false)
   const [logoutError, setLogoutError] = useState('')
   const [loggingOut, setLoggingOut] = useState(false)
+  const authRevision = useRef(0)
+  const loginPending = useRef(false)
+  const logoutPending = useRef(false)
 
   useEffect(() => {
+    const revision = ++authRevision.current
+    let active = true
+    const isCurrent = () => active && revision === authRevision.current
+    const handleSessionExpired = () => {
+      ++authRevision.current
+      setUser(null); setChecking(false); setPassword('')
+      setError(''); setLogoutError('')
+      loginPending.current = false; logoutPending.current = false
+      setSubmitting(false); setLoggingOut(false)
+    }
+    window.addEventListener('auth:session-expired', handleSessionExpired)
     authApi.current()
-      .then(setUser)
-      .catch(() => setUser(null))
-      .finally(() => setChecking(false))
+      .then((current) => { if (isCurrent()) setUser(current) })
+      .catch(() => { if (isCurrent()) setUser(null) })
+      .finally(() => { if (isCurrent()) setChecking(false) })
+    return () => {
+      active = false
+      window.removeEventListener('auth:session-expired', handleSessionExpired)
+    }
   }, [])
 
   async function handleLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (loginPending.current) return
+    loginPending.current = true
+    const revision = ++authRevision.current
     setSubmitting(true)
     setError('')
     try {
-      setUser(await authApi.login(username, password))
-      setPassword('')
+      const current = await authApi.login(username, password)
+      if (revision === authRevision.current) { setUser(current); setPassword('') }
     } catch (requestError) {
-      setError(getErrorMessage(requestError))
+      if (revision === authRevision.current) setError(getErrorMessage(requestError))
     } finally {
-      setSubmitting(false)
+      if (revision === authRevision.current) { loginPending.current = false; setSubmitting(false) }
     }
   }
 
   async function handleLogout() {
+    if (logoutPending.current) return
+    logoutPending.current = true
+    const revision = ++authRevision.current
     setLoggingOut(true)
     setLogoutError('')
     try {
       await authApi.logout()
-      setUser(null)
+      if (revision === authRevision.current) setUser(null)
     } catch (requestError) {
-      setLogoutError(getErrorMessage(requestError))
+      if (revision === authRevision.current) setLogoutError(getErrorMessage(requestError))
     } finally {
-      setLoggingOut(false)
+      if (revision === authRevision.current) { logoutPending.current = false; setLoggingOut(false) }
     }
   }
 

@@ -78,5 +78,7 @@ jobs:
           cache-dependency-path: code/frontend/package-lock.json
       - run: npm ci
       - run: npm test
+      - name: Verify public browser runtime URL guards
+        run: node --test ../../test/browser/step3-runtime-config.test.cjs
       - run: npm run lint
       - run: npm run build
