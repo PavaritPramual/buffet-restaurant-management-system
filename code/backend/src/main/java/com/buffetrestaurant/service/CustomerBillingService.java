@@ -8,9 +8,9 @@ import com.buffetrestaurant.dto.response.BillSummary;
 import com.buffetrestaurant.dto.response.CustomerBillStatusResponse;
 import com.buffetrestaurant.repository.DiningSessionRepository;
 import com.buffetrestaurant.repository.PaymentRepository;
-import com.buffetrestaurant.service.impl.CustomerSessionAccessService;
+import com.buffetrestaurant.service.CustomerSessionVerifier;
 import com.buffetrestaurant.service.billing.BillingContextProvider;
-import com.buffetrestaurant.service.billing.BillingEngine;
+import com.buffetrestaurant.service.billing.BillCalculator;
 import com.buffetrestaurant.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
@@ -22,13 +22,13 @@ import java.math.RoundingMode;
 @Transactional(readOnly = true)
 public class CustomerBillingService {
     private final EntityManager entityManager;
-    private final CustomerSessionAccessService access;
+    private final CustomerSessionVerifier access;
     private final DiningSessionRepository sessions;
     private final PaymentRepository payments;
     private final BillingContextProvider contextProvider;
-    private final BillingEngine engine;
-    public CustomerBillingService(CustomerSessionAccessService access, DiningSessionRepository sessions,
-            PaymentRepository payments, BillingContextProvider contextProvider, BillingEngine engine,
+    private final BillCalculator engine;
+    public CustomerBillingService(CustomerSessionVerifier access, DiningSessionRepository sessions,
+            PaymentRepository payments, BillingContextProvider contextProvider, BillCalculator engine,
             EntityManager entityManager) {
         this.access = access;
         this.sessions = sessions;
@@ -39,11 +39,11 @@ public class CustomerBillingService {
     }
     @Transactional
     public CustomerBillStatusResponse request(Long id, String credential) {
-        access.requireSession(id, credential, false);
+        access.requireSession(id, credential);
         var session = sessions.findByIdForUpdate(id).orElseThrow(() -> new ResourceNotFoundException("Active dining session not found"));
         entityManager.refresh(session, LockModeType.PESSIMISTIC_WRITE);
         // Refresh the cookie check after locking: close may have committed while we waited.
-        access.requireSession(id, credential, false);
+        access.requireSession(id, credential);
         if (session.getStatus() != DiningSessionStatus.ACTIVE) {
             throw new ResourceNotFoundException("Active dining session not found");
         }
@@ -51,7 +51,7 @@ public class CustomerBillingService {
         return status(id, credential);
     }
     public CustomerBillStatusResponse status(Long id, String credential) {
-        access.requireSession(id, credential, false);
+        access.requireSession(id, credential);
         var session = sessions.findById(id).orElseThrow(() -> new ResourceNotFoundException("Active dining session not found"));
         var payment = payments.findBySessionId(id);
         var calculation = engine.calculate(contextProvider.findBySessionId(id));

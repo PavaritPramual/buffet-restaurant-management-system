@@ -8,7 +8,7 @@ import com.buffetrestaurant.dto.request.StockInRequest;
 import com.buffetrestaurant.dto.response.UserContext;
 import com.buffetrestaurant.repository.StockItemRepository;
 import com.buffetrestaurant.repository.UserAccountRepository;
-import com.buffetrestaurant.service.AuthService;
+import com.buffetrestaurant.service.UserAdministrationService;
 import com.buffetrestaurant.service.StockService;
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Profile;
 public class DemoDataSeeder {
     @Bean
     ApplicationRunner seedDemoData(UserAccountRepository users, StockItemRepository stockItems,
-            AuthService authService, StockService stockService) {
+            UserAdministrationService authService, StockService stockService) {
         return args -> {
             if (users.findByUsername("admin").isEmpty()) {
                 authService.createUser(new CreateUserRequest("admin", "admin123", "ผู้จัดการตัวอย่าง",

@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 import java.util.Objects;
 
 /** Orchestrates interchangeable pricing/discount policies; keeps intermediate math internal. */
-public class BillingEngine {
+public class BillingEngine implements BillCalculator {
     private final BillCalculationStrategy pricing;
     private final DiscountCalculationStrategy discount;
 

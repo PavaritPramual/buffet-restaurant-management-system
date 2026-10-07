@@ -2,7 +2,7 @@ package com.buffetrestaurant.controller;
 
 import com.buffetrestaurant.dto.request.LoginRequest;
 import com.buffetrestaurant.dto.response.UserContext;
-import com.buffetrestaurant.service.AuthService;
+import com.buffetrestaurant.service.AuthenticationService;
 import com.buffetrestaurant.service.UserContextProvider;
 import com.buffetrestaurant.common.UserSessionKeys;
 import com.buffetrestaurant.exception.AuthenticationRequiredException;
@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
-    private final AuthService authService;
+    private final AuthenticationService authService;
     private final UserContextProvider users;
 
-    public AuthController(AuthService authService, UserContextProvider users) {
+    public AuthController(AuthenticationService authService, UserContextProvider users) {
         this.authService = authService;
         this.users = users;
     }

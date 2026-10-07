@@ -9,6 +9,7 @@ import com.buffetrestaurant.exception.UnauthorizedException;
 import com.buffetrestaurant.repository.CustomerSessionGrantRepository;
 import com.buffetrestaurant.repository.DiningSessionRepository;
 import com.buffetrestaurant.service.SessionContextProvider.SessionContextSnapshot;
+import com.buffetrestaurant.service.CustomerSessionVerifier;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class CustomerSessionAccessService {
+public class CustomerSessionAccessService implements CustomerSessionVerifier {
     public static final String COOKIE_NAME = "customer_session";
     public static final Duration CREDENTIAL_LIFETIME = Duration.ofHours(8);
     private final DiningSessionRepository sessionRepository;
@@ -91,6 +92,16 @@ public class CustomerSessionAccessService {
         }
         return new SessionContextSnapshot(session.getId(), session.getBuffetPackage().getId(),
                 session.getRestaurantTable().getTableNumber(), session.getStatus());
+    }
+
+    @Override
+    public SessionContextSnapshot requireSession(Long sessionId, String credential) {
+        return requireSession(sessionId, credential, false);
+    }
+
+    @Override
+    public SessionContextSnapshot requireSessionForOrder(Long sessionId, String credential) {
+        return requireSession(sessionId, credential, true);
     }
 
     private CustomerSessionGrant requireActiveGrant(String credential) {
