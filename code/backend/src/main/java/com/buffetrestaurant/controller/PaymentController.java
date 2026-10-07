@@ -3,6 +3,7 @@ package com.buffetrestaurant.controller;
 import com.buffetrestaurant.common.ApiPaths;
 import com.buffetrestaurant.dto.request.CreatePaymentRequest;
 import com.buffetrestaurant.dto.response.PaymentResult;
+import com.buffetrestaurant.dto.response.ErrorResponse;
 import com.buffetrestaurant.service.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(ApiPaths.API_V1 + "/payments")
 @Tag(name = "Payments")
+@SecurityRequirement(name = "staffSessionCookie")
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -28,7 +33,8 @@ public class PaymentController {
     @Operation(summary = "Read the recorded payment for a session",
             description = "Requires a logged-in SERVICE_STAFF. Reading does not create or retry a payment.")
     @ApiResponse(responseCode = "200", description = "Recorded payment")
-    @ApiResponse(responseCode = "400", description = "Invalid session ID")
+    @ApiResponse(responseCode = "400", description = "Invalid session ID",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "401", description = "Login required")
     @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required")
     @ApiResponse(responseCode = "404", description = "No recorded payment for this session")
@@ -43,12 +49,21 @@ public class PaymentController {
     @Operation(summary = "Record a staff-confirmed payment",
             description = "Requires ACTIVE session with a bill request. Locks the session with Order, Bill Request and Close before re-checking and recording payment.")
     @ApiResponse(responseCode = "201", description = "Payment recorded as PAID")
-    @ApiResponse(responseCode = "400", description = "Invalid payment or inactive session")
+    @ApiResponse(responseCode = "400", description = "Invalid payment or inactive session",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "401", description = "Login required")
     @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required")
     @ApiResponse(responseCode = "404", description = "Session not found")
-    @ApiResponse(responseCode = "409", description = "Bill not requested, payment already recorded or data conflict")
+    @ApiResponse(responseCode = "409", description = "Bill not requested, payment already recorded or data conflict",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "503", description = "Billing provider unavailable")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "The amount is calculated from backend session and bill data; clients cannot submit a payable amount.",
+            required = true,
+            content = @io.swagger.v3.oas.annotations.media.Content(
+                    examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                            name = "cashPaymentRequest",
+                            value = "{\"sessionId\":12,\"paymentMethod\":\"CASH\"}")))
     @PostMapping
     public ResponseEntity<PaymentResult> pay(
             @Valid @RequestBody CreatePaymentRequest request

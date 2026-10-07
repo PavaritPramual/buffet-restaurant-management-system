@@ -20,7 +20,7 @@ Field ทุกตัวใน JSON request/response ต้องใช้ `came
   "customerName": "Somchai",
   "tableNumber": "12",
   "totalAmount": 1590.00,
-  "createdAt": "2026-09-18T14:30:00+07:00"
+  "createdAt": "2026-10-07T07:30:00Z"
 }
 ```
 
@@ -89,21 +89,22 @@ Entity ทุกตัวต้องใช้ `@Enumerated(EnumType.STRING)` �
 
 ## 3. รูปแบบวันเวลา — ISO-8601 + Timezone
 
-ทุก field ที่เป็นวันเวลาต้องอยู่ในรูปแบบ **ISO-8601 พร้อม timezone offset** เสมอ (Java type: `OffsetDateTime`)
+ทุก field วันเวลาที่ส่งออกต้องอยู่ในรูปแบบ **ISO-8601 พร้อม timezone** เสมอ `OffsetDateTime` ใช้เมื่อมี offset และ `Instant` ใช้กับ timestamp ที่เป็น UTC
 
 ```
-YYYY-MM-DDTHH:mm:ssXXX
+YYYY-MM-DDTHH:mm:ss[.fraction]Z
 ```
 
 **ตัวอย่าง (ตรงกับที่กำหนดไว้ใน `shared-contracts.md`):**
 
 ```json
 {
-  "createdAt": "2026-09-18T10:00:00+07:00"
+  "createdAt": "2026-10-07T08:09:10Z"
 }
 ```
 
-* ห้ามส่งเวลาแบบไม่มี timezone (เช่น `2026-09-18T14:30:00`)
+* API ปัจจุบัน serialize timestamps เป็น UTC (`Z`) แม้ UI จะแสดงตาม timezone ของเครื่องผู้ใช้
+* ห้ามส่งเวลาแบบไม่มี timezone (เช่น `2026-10-07T14:30:00`)
 * ห้ามส่งเป็น timestamp (epoch millis) ยกเว้นมีการตกลงเฉพาะกรณีและระบุไว้ใน field นั้นๆ อย่างชัดเจน
 
 ---
@@ -141,13 +142,13 @@ YYYY-MM-DDTHH:mm:ssXXX
 * `409 Conflict` — ข้อมูลขัดแย้ง (เช่น ซ้ำ unique key)
 * `500 Internal Server Error` — ข้อผิดพลาดฝั่ง server (ไม่ควรเกิดขึ้นจาก validation)
 
-`GlobalExceptionHandler.java` มี handler สำหรับ `400`, `401`, `403`, `404`, `409`, `503` และ `500` แล้ว ทุกกรณีใช้ `ErrorResponse` รูปแบบเดียวกัน
+`GlobalExceptionHandler.java` มี handler สำหรับ `400`, `401`, `403`, `404`, `409`, `503` และ `500`; exception ที่ผ่าน handler ใช้ `ErrorResponse` รูปแบบเดียวกัน Endpoint ที่ตั้งใจคืน body ว่าง เช่น `GET /api/v1/auth/me` เมื่อไม่มี session จะระบุเป็นกรณียกเว้นใน contract ของ endpoint
 
 ---
 
 ## 6. รูปแบบ ErrorResponse
 
-ทุก error response ต้องใช้โครงสร้างเดียวกันนี้ ตรงกับ `ErrorResponse` (Java record) ที่มีอยู่จริงใน `dto/response/ErrorResponse.java`:
+ทุก exception response ที่ผ่าน `GlobalExceptionHandler` ใช้โครงสร้างเดียวกันนี้ ตรงกับ `ErrorResponse` (Java record) ที่มีอยู่จริงใน `dto/response/ErrorResponse.java`:
 
 ```java
 public record ErrorResponse(
@@ -161,7 +162,7 @@ public record ErrorResponse(
 
 ```json
 {
-  "timestamp": "2026-09-18T14:30:00+07:00",
+  "timestamp": "2026-10-07T08:09:10Z",
   "status": 400,
   "error": "Bad Request",
   "message": "Malformed request or unsupported enum value",
@@ -173,7 +174,7 @@ public record ErrorResponse(
 
 | Field | ประเภท | คำอธิบาย |
 |---|---|---|
-| `timestamp` | string | ISO-8601 พร้อม timezone |
+| `timestamp` | string | ISO-8601 UTC พร้อม timezone (`Z`) |
 | `status` | number | HTTP status code |
 | `error` | string | HTTP reason phrase แบบ Title Case (เช่น `"Bad Request"`, `"Not Found"`) — **ไม่ใช่** `UPPER_SNAKE_CASE` เพราะ `GlobalExceptionHandler` ใช้ค่าจาก Spring `HttpStatus.getReasonPhrase()` โดยตรง (ยืนยันโดย `EnumErrorResponseTest`) |
 | `message` | string | คำอธิบาย error โดยรวม (human-readable) |
@@ -182,6 +183,8 @@ public record ErrorResponse(
 > **หมายเหตุ:** โครงสร้างปัจจุบันไม่มี field แยกรายฟิลด์ (เช่น `fieldErrors`) — ทุก validation error ทั้งหมดถูกรวมไว้ใน `message` เดียว ถ้า Module ใดต้องการ field-level detail เพิ่มเติม ต้องเสนอแก้ `ErrorResponse.java` และแจ้งทุก Module ก่อน ไม่ใช่เพิ่มเองใน DTO เฉพาะจุด
 
 Controller จะคืน DTO โดยตรงหรือห่อด้วย `ResponseEntity<DTO>` ก็ได้เมื่อ HTTP status เป็น `200` และ JSON body มี shape เดียวกัน ใช้ `ResponseEntity` เมื่อต้องกำหนด status/header เช่น `201 Location`, `Set-Cookie` หรือ `Cache-Control` ข้อผิดพลาดทั้งหมดใช้ `ErrorResponse` จาก handler กลาง
+
+ข้อยกเว้นที่ระบุชัด: `GET /api/v1/auth/me` ตอบ `401` แบบไม่มี body เพื่อให้ frontend ตรวจ session ต่อได้โดยไม่แสดง error message; การ login ที่ไม่ผ่านและ auth failures ที่ผ่าน handler ยังคงใช้ `ErrorResponse`
 
 ---
 
@@ -205,7 +208,7 @@ Response `200 OK`
     { "menuItemId": 45, "name": "Tom Yum Soup", "quantity": 1 }
   ],
   "status": "RECEIVED",
-  "createdAt": "2026-09-18T14:30:00+07:00"
+  "createdAt": "2026-10-07T08:09:10Z"
 }
 ```
 
@@ -229,7 +232,7 @@ Response `200 OK`
     { "menuItemId": 45, "name": "Tom Yum Soup", "quantity": 1 }
   ],
   "status": "PREPARING",
-  "createdAt": "2026-09-18T14:30:00+07:00"
+  "createdAt": "2026-10-07T08:09:10Z"
 }
 ```
 
@@ -245,7 +248,7 @@ Response `400 Bad Request`
 
 ```json
 {
-  "timestamp": "2026-09-18T14:31:00+07:00",
+  "timestamp": "2026-10-07T08:09:11Z",
   "status": 400,
   "error": "Bad Request",
   "message": "Malformed request or unsupported enum value",
@@ -269,3 +272,25 @@ Response `400 Bad Request`
 - [x] ค่า enum ตรงกับ backend และ frontend — ตรวจสอบกับ `domain/enums/*.java` และ `contracts/shared.ts` แล้ว (ทั้งสองฝั่งตรงกัน)
 - [x] ไม่มี contract ที่ขัดกับ `shared-contracts.md` — base path `/api/v1`, ID เป็น JSON number, `ErrorResponse` ตรงกับ DTO จริง และ handler ครอบคลุม status ที่ใช้อยู่
 - [ ] ปวริศช์และ Feature Owner อย่างน้อย 1 คน review — ยังไม่ผ่าน รอ PR review
+
+---
+
+## 10. Contract audit — Stock/Profile, billing and serialization (7 October 2026)
+
+The audited implementation is `origin/develop` at baseline `0dbbe1b`; these are current wire contracts, not claims about a deployed release.
+
+| API | Request / response contract | Status and errors |
+|---|---|---|
+| `POST /api/v1/stock/items` | `sku`, `name`, `unit`, `lowStockThreshold`; threshold is a JSON number / Java `BigDecimal`, precision up to 3 decimals | `201` with `Location`; validation/duplicate errors use `ErrorResponse` (`400`/`409`) |
+| `PUT /api/v1/stock/items/{id}` | Same metadata fields; quantity is never set here | `200`; invalid/not found/conflict use `ErrorResponse` |
+| `POST /api/v1/stock/{itemId}/in` | Positive numeric `quantity` (up to 3 decimals) and non-blank `reason` | `200`; invalid amount/reason/balance is `400 ErrorResponse`; missing item is `404 ErrorResponse` |
+| `POST /api/v1/stock/{itemId}/adjustments` | Non-zero signed numeric `quantityDelta` (up to 3 decimals) and non-blank `reason` | `200`; invalid amount/reason/balance is `400 ErrorResponse` |
+| `POST /api/v1/admin/users` | `username`, `password`, `displayName`, nullable/optional `email`, and `role`; optional email is validated as an email address | `201`; invalid fields are `400 ErrorResponse`; duplicate username is `409 ErrorResponse`; password is never returned |
+| `GET /api/v1/admin/users` | Returns `id`, `username`, `displayName`, nullable `email`, and `role` | `200`; errors use `ErrorResponse` |
+| `GET /api/v1/auth/me`, `POST /api/v1/auth/login` | `UserContext` is `userId`, `username`, `displayName`, `role` | `/me` without a session intentionally returns empty `401`; login errors use `ErrorResponse` |
+
+Stock and package prices are JSON numbers (`BigDecimal` on the backend, `number` in the frontend); frontend form strings are converted to numbers before sending. Stock response quantities and transaction deltas are also JSON numbers. Enum values are case-sensitive uppercase strings. `Instant` values and API-created `OffsetDateTime` timestamps use UTC `Z`; session start/end values are mapped from the UTC database clock.
+
+Staff login issues the `JSESSIONID` cookie. Customer QR exchange accepts its one-time token only in the `POST /api/v1/dining-sessions/qr-exchange` body, then sets an HttpOnly `customer_session` cookie; customer context/bill calls use that cookie and do not return it. Examples use only synthetic IDs and contain no live QR, cookie, password, or session-token values. The public deployment URL is still unconfirmed, so the public Swagger endpoint has not been checked.
+
+Billing preview accepts only `{"sessionId":12}`. Payment accepts only `sessionId` and `paymentMethod`; amount is calculated server-side. `BillSummary.totalAmount` is the net total, while customer bill status reports numeric `dueAmount` and `paidAmount` separately. Payment and session close are separate staff actions; closing requires a recorded PAID payment.

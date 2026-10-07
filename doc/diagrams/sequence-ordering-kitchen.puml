@@ -21,6 +21,7 @@ control "CustomerOrderingServiceImpl" as S
 participant "SessionContextProvider" as P
 database "CustomerOrderRepository" as R
 control "OrderFulfillmentServiceImpl" as F
+participant "SessionOrderFulfillmentAccessProvider" as Access
 participant "OrderStateFactory / OrderState" as State
 Customer -> C : POST session orders / customer cookie
 C -> S : placeOrder(sessionId, credential, request)
@@ -29,21 +30,37 @@ P -> P : check grant / ACTIVE / bill request / lock session
 S -> S : package membership / availability / item snapshot
 S -> R : save CustomerOrder / status RECEIVED
 R --> C : OrderResponse
-Kitchen -> F : incoming / login session
+Kitchen -> F : GET /orders/incoming (JSESSIONID)
+F -> Access : requireKitchenAccess()
+Access --> F : authenticated KITCHEN_STAFF
 F -> R : RECEIVED and PREPARING orders
-Kitchen -> F : advanceStatus(orderId, PREPARING)
+Kitchen -> F : PATCH status PREPARING (JSESSIONID)
+F -> Access : requireKitchenAccess()
+Access --> F : authenticated KITCHEN_STAFF
 F -> State : forStatus(current).next()
 State --> F : expected PREPARING
 F -> R : updateStatus / save
-Kitchen -> F : advanceStatus(orderId, READY)
+Kitchen -> F : PATCH status READY (JSESSIONID)
+F -> Access : requireKitchenAccess()
+Access --> F : authenticated KITCHEN_STAFF
 F -> State : forStatus(PREPARING).next()
 F -> R : updateStatus READY / save
-Staff -> F : ready orders / login session
-Staff -> F : advanceStatus(orderId, SERVED)
+Staff -> F : GET /orders/ready (JSESSIONID)
+F -> Access : requireServiceStaffAccess()
+Access --> F : authenticated SERVICE_STAFF
+Staff -> F : PATCH status SERVED (JSESSIONID)
+F -> Access : requireServiceStaffAccess()
+Access --> F : authenticated SERVICE_STAFF
 F -> State : forStatus(READY).next()
 F -> R : updateStatus SERVED / save
+note over Access
+Missing login -> 401 ErrorResponse.
+Wrong role -> 403 ErrorResponse; X-User-Role is not authority.
+Access denial happens before order status is written.
+end note
 note over F,State
 State singleton objects stay in service logic.
 Entity stores enum; no Order.setState / Order.nextState.
+Only the matching staff role may pass access-provider checks.
 end note
 @enduml

@@ -242,7 +242,7 @@ public OrderState next() {
 
 ช่วงนำเสนอ 12 นาที ใช้หน้านี้ประมาณ 40 วินาที
 
-เริ่มจากปัญหาว่ากฎ transition จะกระจัดกระจายใน service ถ้าใช้เงื่อนไขทุกคู่ State ให้แต่ละสถานะรู้ next หนึ่งตัว ส่วน actor authorization อยู่ provider อีกชั้น Entity เก็บ enum STRING ไม่เก็บ State object
+ปัญหาคือ client ส่งสถานะปลายทางใดก็ได้และกฎอาจกระจัดกระจายใน service State ทำให้แต่ละสถานะรู้ next ที่ถูกต้องหนึ่งตัว Context คือ OrderFulfillmentServiceImpl; Factory resolve จาก enum; Received/Preparing/Ready/Served เป็น transition classes ส่วน actor authorization อยู่ SessionOrderFulfillmentAccessProvider อีกชั้น Entity เก็บ enum STRING ไม่เก็บ State object Unit/API tests ครอบคลุมทางผ่าน, skip, reverse, terminal และ role ที่ผิด
 
 ## หน้า 12 — Strategy แยกนโยบายคำนวณจากงานรับชำระ
 
@@ -592,7 +592,7 @@ private List<OrderItem> items = new ArrayList<>();
 
 ### คำพูดประกอบ
 
-ตัวอย่าง OneToMany เป็นโค้ดจริง CustomerOrder รายการ order_items อยู่ใน aggregate ของ Order ส่วน Session อ้างข้อมูลแม่ Table Package Soup แบบ ManyToOne LAZY โดยไม่มี cascade ที่จะลบข้อมูลแม่ตามรอบกิน ประวัติจริงต้องพิจารณาทั้ง JPA และ FK
+ตัวอย่าง OneToMany เป็นโค้ดจริง CustomerOrder เป็นเจ้าของ lifecycle ของ OrderItem จึง cascade persist/update และ orphan delete เฉพาะ child ส่วน OrderItem.order เป็น ManyToOne LAZY ไม่มี cascade กลับไปลบ parent ความสัมพันธ์ Session กับ Table/Package/Soup เป็น ManyToOne LAZY ไม่มี cascade ที่จะลบข้อมูลแม่ตามรอบกิน ประวัติจริงต้องพิจารณาทั้ง JPA และ FK ดู rationale เพิ่มใน architecture/JPA note
 
 ## หน้า 31 — FK รักษาประวัติเมื่อข้อมูลต้นทางถูกลบ
 
@@ -765,7 +765,7 @@ Transaction boundary อยู่ use case ที่ต้องเปลี่�
 
 ### คำพูดประกอบ
 
-FulfillmentServiceเป็นContext OrderStateคือinterface statesสี่singleton implementations Entityเก็บenum ไม่เก็บStateobject
+FulfillmentServiceเป็นContext OrderStateคือinterface statesสี่singleton implementations และ service พึ่ง OrderFulfillmentAccessProvider; session implementation ตรวจ role จริง Entityเก็บenum ไม่เก็บStateobject
 
 ## หน้า 39 — Service ตรวจ next ก่อนบันทึกสถานะ
 
@@ -773,6 +773,7 @@ FulfillmentServiceเป็นContext OrderStateคือinterface statesสี�
 
 - Factory แปลง enum เป็น State
 - เทียบ next กับคำขอของผู้ใช้
+- ตรวจสิทธิ์ staff session ก่อนแก้ไข
 - เปลี่ยน Entity เมื่อ transition ถูกต้อง
 
 ### ตัวอย่างจากโค้ดจริง
@@ -788,7 +789,7 @@ if (next.status() != requestedStatus) {
 
 ### คำพูดประกอบ
 
-ตัวอย่างจาก OrderFulfillmentServiceImpl ซึ่งเป็น Context ที่ใช้ pattern จริง เลือก State จาก status เรียก next และเทียบ requested status ก่อน updateStatus ไม่สาธิต skip ด้วยการ set enum โดยตรง Factory switch เป็น tradeoff ของ workflow สี่สถานะที่เป็น shared contract
+ตัวอย่างจาก OrderFulfillmentServiceImpl ซึ่งเป็น Context ที่ใช้ pattern จริง เลือก State จาก status เรียก next และเทียบ requested status ก่อน updateStatus ขณะเดียวกัน access provider ตรวจ KITCHEN_STAFF หรือ SERVICE_STAFF; role ผิดได้ 403 และไม่เขียนสถานะ ไม่สาธิต skip ด้วยการ set enum โดยตรง Factory switch เป็น tradeoff ของ workflow สี่สถานะที่เป็น shared contract
 
 ## หน้า 40 — State Diagram แสดงลำดับ Order และสิทธิ์
 
@@ -804,7 +805,7 @@ if (next.status() != requestedStatus) {
 
 ### คำพูดประกอบ
 
-สถานะRECEIVEDPREPARINGREADYเป็นหน้าที่ครัว READYไปSERVEDเป็นServiceStaff SERVEDterminal skip/reverseถูกปฏิเสธ
+สถานะRECEIVEDPREPARINGREADYเป็นหน้าที่ครัว READYไปSERVEDเป็นServiceStaff SERVEDterminal skip/reverseถูกปฏิเสธ ทดสอบ roleผิดได้403และสถานะเดิมไม่เปลี่ยน
 
 ## หน้า 41 — Class Diagram แสดง composition ของ Strategy
 
@@ -1305,7 +1306,7 @@ return adultTotal.add(childTotal);
 
 - ราคาเป็น DECIMAL 10,2
 - Stock เป็น DECIMAL 12,3
-- paidAt และ billRequestedAt มี timezone
+- API timestamps เป็น ISO-8601 UTC (`Z`)
 
 ### ตัวอย่างจากโค้ดจริง
 
@@ -1319,7 +1320,7 @@ private BigDecimal packagePriceAtOpen;
 
 ### คำพูดประกอบ
 
-packagePriceAtOpenและPackageprecision10scale2ตรงกัน Stockใช้12,3 start/endSessionยังLocalDateTimeห้ามบอกว่าทุกtimestampเป็นtimezone Paymentใช้OffsetDateTimeและnullablepaid_atก่อนPAID bill_requested_atใช้TIMESTAMPWITHTIMEZONE ข้อมูลตามcanonicaldictionaryปัจจุบัน
+packagePriceAtOpenและPackageprecision10scale2ตรงกัน Stockใช้12,3 Session start/end เก็บLocalDateTimeภายใน แต่serviceใช้UTC Clockและmapperส่งออกเป็นOffsetDateTime UTC; Stockใช้Instant Payment/billRequestedAtใช้OffsetDateTime UTC JSON จึงมี timezone Z ไม่ใช่เวลาไร้เขตเวลา ตรวจ enum เป็นuppercaseและเงิน/stock decimal เป็นJSON numberตาม API contract
 
 ## หน้า 65 — ระบบที่ตรวจแล้วรันด้วย frontend กับ backend แยก
 

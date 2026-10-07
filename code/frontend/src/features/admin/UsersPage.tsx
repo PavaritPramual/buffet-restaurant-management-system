@@ -37,7 +37,7 @@ export default function UsersPage() {
     setSaving(true)
     setError('')
     try {
-      await usersApi.create({ username, password, displayName, email, role })
+      await usersApi.create({ username, password, displayName, email: email.trim() || null, role })
       setUsername('')
       setPassword('')
       setDisplayName('')

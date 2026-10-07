@@ -38,3 +38,11 @@ Paginated Admin findAll(PageRequest) uses default mapping and may issue extra se
 - Customer frontend: fragment removal, StrictMode, latest scan, consumed-QR retry, confirmation and duplicate-submit protection.
 
 Review: ปวริศช์ architecture/integration, ศรัณย์ API/DTO, เมธัส mapping/schema. Final docs cite reviewed release commit, not baseline alone.
+
+## Order and OrderItem cascade/fetch rationale
+
+`CustomerOrder.items` is the aggregate-owned collection: `@OneToMany(mappedBy = "order", cascade = ALL, orphanRemoval = true, fetch = LAZY)`. Creating the order and its line snapshots is one service operation, so persisting the parent should persist only its dependent `OrderItem` rows. Removing an item from the collection deletes that owned row; it does not cascade to a `MenuItem`, session, or another order. The current API does not expose order deletion, so cascade is a persistence-lifecycle rule and not permission to erase historical orders.
+
+`OrderItem.order` is `@ManyToOne(fetch = LAZY, optional = false)` with no cascade. The order is the shared lifecycle owner; saving or deleting one line must not create/delete the parent. The database FK uses `ON DELETE CASCADE` only when the parent order is deliberately deleted; the menu FK uses `ON DELETE RESTRICT` so menu history remains valid. `menuItemId` and `itemName` are scalar/snapshot fields rather than an eager JPA association.
+
+Both collection and parent links are lazy to avoid loading order graphs for unrelated reads. The order response mapper reads line snapshots inside service transactions, and `spring.jpa.open-in-view=false` prevents serialization from triggering hidden database queries. `CustomerOrderingServiceImpl` builds the order and adds its items before saving; `OrderFulfillmentIntegrationTest` checks returned order line data. We have not run a query-count benchmark, so this is a lifecycle/fetch rationale, not a claim that every path is free of N+1 queries.

@@ -154,8 +154,9 @@ class PaymentIntegrationTest {
                 .andExpect(jsonPath("$.sessionId").value(SESSION_ID))
                 .andExpect(jsonPath("$.paymentMethod").value(method.name()))
                 .andExpect(jsonPath("$.paymentStatus").value("PAID"))
+                .andExpect(jsonPath("$.amount").isNumber())
                 .andExpect(jsonPath("$.amount").value(997.50))
-                .andExpect(jsonPath("$.paidAt").isNotEmpty());
+                .andExpect(jsonPath("$.paidAt").value(org.hamcrest.Matchers.endsWith("Z")));
 
         Payment saved = payments.findBySessionId(SESSION_ID).orElseThrow();
 

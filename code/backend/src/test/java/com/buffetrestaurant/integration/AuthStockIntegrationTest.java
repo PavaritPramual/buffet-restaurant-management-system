@@ -129,6 +129,29 @@ class AuthStockIntegrationTest {
     }
 
     @Test
+    void userProfileEmailValidationMatchesOptionalFrontendEmailField() throws Exception {
+        MockHttpSession manager = login("manager");
+        mockMvc.perform(post("/api/v1/admin/users").session(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"bad-email\",\"password\":\"password123\","
+                                + "\"displayName\":\"Bad Email\",\"email\":\"not-an-email\",\"role\":\"SERVICE_STAFF\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message").isNotEmpty())
+                .andExpect(jsonPath("$.timestamp").value(org.hamcrest.Matchers.endsWith("Z")))
+                .andExpect(jsonPath("$.path").value("/api/v1/admin/users"));
+
+        mockMvc.perform(post("/api/v1/admin/users").session(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"no-email\",\"password\":\"password123\","
+                                + "\"displayName\":\"No Email\",\"email\":null,\"role\":\"SERVICE_STAFF\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.username").value("no-email"))
+                .andExpect(jsonPath("$.displayName").value("No Email"))
+                .andExpect(jsonPath("$.role").value("SERVICE_STAFF"));
+    }
+
+    @Test
     void loginStockInAdjustmentAndHistoryUseTheSameAuditTrail() throws Exception {
         mockMvc.perform(get("/api/v1/stock")).andExpect(status().isUnauthorized());
         mockMvc.perform(get("/api/v1/stock/transactions")).andExpect(status().isUnauthorized());
@@ -143,26 +166,29 @@ class AuthStockIntegrationTest {
 
         mockMvc.perform(post("/api/v1/stock/" + stockItem.getId() + "/in").session(session)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"quantity\":\"2.500\",\"reason\":\"Supplier delivery\"}"))
+                        .content("{\"quantity\":2.500,\"reason\":\"Supplier delivery\"}"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.quantityDelta").isNumber())
+                .andExpect(jsonPath("$.balanceAfter").isNumber())
+                .andExpect(jsonPath("$.createdAt").value(org.hamcrest.Matchers.endsWith("Z")))
                 .andExpect(jsonPath("$.balanceAfter").value(12.5));
         mockMvc.perform(post("/api/v1/stock/" + stockItem.getId() + "/adjustments").session(session)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"quantityDelta\":\"-1.250\",\"reason\":\"Spillage\"}"))
+                        .content("{\"quantityDelta\":-1.250,\"reason\":\"Spillage\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.balanceAfter").value(11.25));
 
         mockMvc.perform(post("/api/v1/stock/" + stockItem.getId() + "/in").session(session)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"quantity\":\"0\",\"reason\":\"Invalid receipt\"}"))
+                        .content("{\"quantity\":0,\"reason\":\"Invalid receipt\"}"))
                 .andExpect(status().isBadRequest());
         mockMvc.perform(post("/api/v1/stock/" + stockItem.getId() + "/adjustments").session(session)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"quantityDelta\":\"-30\",\"reason\":\"Count correction\"}"))
+                        .content("{\"quantityDelta\":-30,\"reason\":\"Count correction\"}"))
                 .andExpect(status().isBadRequest());
         mockMvc.perform(post("/api/v1/stock/" + stockItem.getId() + "/adjustments").session(session)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"quantityDelta\":\"1\",\"reason\":\"  \"}"))
+                        .content("{\"quantityDelta\":1,\"reason\":\"  \"}"))
                 .andExpect(status().isBadRequest());
 
         assertThat(stockItems.findById(stockItem.getId()).orElseThrow().getQuantity())

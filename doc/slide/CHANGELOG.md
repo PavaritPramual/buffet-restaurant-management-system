@@ -1,5 +1,11 @@
 # Slide version history
 
+## Contract and State review — 7 October 2026
+
+- Updated working speaker-note source for Order State context/classes, real session role checks, rejected-transition evidence, Order/OrderItem cascade/fetch rationale, and UTC/date/number serialization.
+- Refreshed PlantUML State class/ordering sequence sources to show the session access provider; regenerated Canva/SVG/PPTX/PDF exports are still pending. No public deployment URL is available to confirm live behavior.
+- This is a source-note update only; Canva remains the deck source and has not been edited or exported in this review.
+
 ## v02b-draft — แก้รีวิว PR #24 วันที่ 7 ตุลาคม 2026
 
 - แก้ User/Profile ให้เป็น list/create + basic displayName/email, แยก CustomerMenu/AdminMenu และ cardinality UserAccount–UserProfile เป็น 1 ต่อ 0..1

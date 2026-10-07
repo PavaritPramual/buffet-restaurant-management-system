@@ -1,0 +1,40 @@
+# Contract, State and Delivery Audit
+
+**Audit date:** 7 October 2026  
+**Code baseline reviewed:** `origin/develop` at `0dbbe1b`  
+**Scope:** Stock/Profile DTO and API contracts, OpenAPI, JSON serialization, Kitchen/Serving fulfillment, JPA rationale and slide source notes.
+
+This is a local source-and-test audit, not a release certification. The checked-in implementation was compared across backend DTOs/controllers, frontend API/types/forms, tests and documentation. A public deployment and the externally maintained Canva/export files were not available for verification.
+
+## Checklist result
+
+| Checklist item | Result | Evidence / limits |
+|---|---|---|
+| Stock/Profile DTO/API agreement | **PASS — local contract** | Stock quantity, threshold, transaction deltas and package price are JSON numbers backed by `BigDecimal`; frontend form strings are converted before sending. Create-user email is optional/null and validated when supplied. `UserContext` now matches `userId`, `username`, `displayName`, `role`; staff profile responses expose only `id`, `username`, `displayName`, nullable `email`, `role`. The actual Profile surface is list/create only; no edit/delete endpoint is claimed. Validation, role and HTTP outcomes are documented in `shared-contracts.md` and `api-conventions.md`. |
+| OpenAPI cookies, bill/payment/close and credential exposure | **PASS — schema tests** | OpenAPI describes staff `JSESSIONID` and customer `customer_session` cookie schemes; the QR exchange token is a write-only POST-body field. Bill `dueAmount`/`paidAmount`, payment input/result, session close and error schemas/examples are present. Payment amount is server-calculated and omitted from the request schema. Examples use synthetic values; no live QR token, cookie, password or session credential is included. `OpenApiContractIntegrationTest` verifies the cookie schemes, endpoint security, numeric bill amount fields, QR token write-only behavior and timestamp schema. |
+| Timezone, enums and numeric JSON | **PASS — source/tests** | API timestamp examples and documented output use UTC `Z`; session timestamps are mapped from the UTC clock. Shared enum spelling is uppercase and case-sensitive. Backend JSON tests verify enum rejection and error response shape; Payment and Step 2 integration tests cover numeric amount serialization and UTC assertions. Frontend build and tests cover numeric form serialization. |
+| Kitchen/Serving State diagrams and real roles | **SOURCE UPDATED; render pending** | State, class and sequence PlantUML sources describe `RECEIVED → PREPARING → READY → SERVED`, with Kitchen responsible through READY and Service Staff for SERVED. The order-state source remains the baseline and was rechecked against the implementation. PlantUML SVG previews were not regenerated in this environment, so linked previews may remain stale. |
+| State Pattern explanation and allowed/rejected transitions | **PASS — docs/tests** | Documentation explains the context (`OrderFulfillmentServiceImpl`), persisted state, factory and concrete states. Tests cover allowed progression, skipped/reversed/terminal transitions, unauthorized roles, anonymous requests and unknown orders. |
+| Public deployment flow and role enforcement | **BLOCKED — no public URL** | Local session-backed integration tests exercise login cookies and role enforcement, including attempts to spoof `X-User-Role`; they do not prove behavior on a public deployment. The repository README says there is no confirmed public URL. |
+| Order/OrderItem cascade/fetch rationale, SOLID examples and slides | **SOURCE UPDATED; external delivery pending** | The architecture note explains aggregate-owned `Order.items` cascade/orphan removal, lazy loading, no reverse cascade, FK behavior and the query caveat; it records concrete SOLID examples and limits. Speaker-note source was updated for State, cascade/fetch and UTC/number serialization. Canva was not synchronized and PPTX/PDF exports were not created or checked. |
+
+## Validation performed
+
+| Validation | Result |
+|---|---|
+| Frontend `npm run build` | Passed |
+| Frontend full `npm test` | 14 files, 117 tests passed |
+| Backend focused contract, billing, State and integration tests | 55 tests passed; includes Stock/Profile auth, Payment, order fulfillment, session-backed roles, Step 2 bill flow, OpenAPI and State tests |
+| Backend enum/error contract tests | 5 tests passed |
+| `git diff --check` | Passed |
+
+These are focused test runs, not the entire backend suite and not a deployed-browser test.
+
+## Follow-up needed to close remaining items
+
+1. Provide the confirmed public deployment URL and arrange role test accounts through a secure channel. Verify the end-to-end order progression, wrong-role denials, payment, close and public Swagger against the deployed build/deployed SHA.
+2. Render the updated PlantUML sources and replace stale previews after reviewing their output.
+3. Sync the approved slide source into the team's Canva deck, then export and review the matching PPTX and PDF. The checked-in speaker notes are not evidence that Canva/export artifacts changed.
+4. Have the relevant API/feature owners review the contract changes before release.
+
+No deployment, commit, Canva edit, or export was performed as part of this audit.
