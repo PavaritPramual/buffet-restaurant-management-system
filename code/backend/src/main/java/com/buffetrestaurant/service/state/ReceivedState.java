@@ -3,9 +3,9 @@ package com.buffetrestaurant.service.state;
 import com.buffetrestaurant.domain.enums.OrderStatus;
 
 /** Initial state: the kitchen has not started preparing the order yet. */
-final class ReceivedState implements OrderState {
+public final class ReceivedState implements OrderState {
 
-    static final ReceivedState INSTANCE = new ReceivedState();
+    public static final ReceivedState INSTANCE = new ReceivedState();
 
     private ReceivedState() {
     }
