@@ -237,7 +237,8 @@ class PaymentIntegrationTest {
     void rejectsClosingWithoutPayment() throws Exception {
         mvc.perform(post("/api/v1/dining-sessions/" + SESSION_ID + "/close")
                         .session(staffSession))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("กรุณาบันทึกการชำระเงินก่อนปิดรอบกิน"));
 
         assertThat(jdbc.queryForObject(
                 "SELECT status FROM dining_sessions WHERE id = ?",
