@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 @ConditionalOnProperty(name = "app.menu.admin-access-provider", havingValue = "session")
 public class SessionMenuAdminAccessProvider implements MenuAdminAccessProvider {
-    private final SessionUserContextProvider users;
+    private final UserContextProvider users;
 
-    public SessionMenuAdminAccessProvider(SessionUserContextProvider users) {
+    public SessionMenuAdminAccessProvider(UserContextProvider users) {
         this.users = users;
     }
 

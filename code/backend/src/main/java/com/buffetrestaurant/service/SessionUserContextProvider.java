@@ -1,6 +1,6 @@
 package com.buffetrestaurant.service;
 
-import com.buffetrestaurant.controller.AuthController;
+import com.buffetrestaurant.common.UserSessionKeys;
 import com.buffetrestaurant.domain.enums.UserRole;
 import com.buffetrestaurant.dto.response.UserContext;
 import com.buffetrestaurant.exception.AuthenticationRequiredException;
@@ -13,11 +13,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Component
-public class SessionUserContextProvider {
+public class SessionUserContextProvider implements UserContextProvider {
 
     public UserContext requireAuthenticated(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        Object context = session == null ? null : session.getAttribute(AuthController.USER_CONTEXT_SESSION_KEY);
+        Object context = session == null ? null : session.getAttribute(UserSessionKeys.USER_CONTEXT_SESSION_KEY);
         if (context instanceof UserContext userContext) return userContext;
         throw new AuthenticationRequiredException();
     }

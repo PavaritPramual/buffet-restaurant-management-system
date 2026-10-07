@@ -6,7 +6,7 @@ import com.buffetrestaurant.dto.response.StockItemResponse;
 import com.buffetrestaurant.dto.response.StockTransactionResponse;
 import com.buffetrestaurant.dto.response.UserContext;
 import com.buffetrestaurant.domain.enums.UserRole;
-import com.buffetrestaurant.service.SessionUserContextProvider;
+import com.buffetrestaurant.service.UserContextProvider;
 import com.buffetrestaurant.service.StockService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/stock")
 public class StockController {
     private final StockService stockService;
-    private final SessionUserContextProvider users;
+    private final UserContextProvider users;
 
-    public StockController(StockService stockService, SessionUserContextProvider users) {
+    public StockController(StockService stockService, UserContextProvider users) {
         this.stockService = stockService;
         this.users = users;
     }

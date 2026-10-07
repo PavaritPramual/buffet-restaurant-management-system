@@ -1,6 +1,6 @@
 package com.buffetrestaurant.integration;
 
-import com.buffetrestaurant.controller.AuthController;
+import com.buffetrestaurant.common.UserSessionKeys;
 import com.buffetrestaurant.domain.Payment;
 import com.buffetrestaurant.domain.enums.PaymentMethod;
 import com.buffetrestaurant.domain.enums.PaymentStatus;
@@ -92,7 +92,7 @@ class PaymentIntegrationTest {
         staffSession = new MockHttpSession();
         jdbc.update("UPDATE dining_sessions SET bill_requested_at=CURRENT_TIMESTAMP WHERE id=?", SESSION_ID);
         staffSession.setAttribute(
-                AuthController.USER_CONTEXT_SESSION_KEY,
+                UserSessionKeys.USER_CONTEXT_SESSION_KEY,
                 new UserContext(1L, "staff-test", "Test Staff",
                         UserRole.SERVICE_STAFF)
         );
@@ -134,7 +134,7 @@ class PaymentIntegrationTest {
                 .andExpect(status().isUnauthorized());
         for (UserRole role : new UserRole[]{UserRole.KITCHEN_STAFF, UserRole.SUPERVISOR, UserRole.MANAGER}) {
             MockHttpSession other = new MockHttpSession();
-            other.setAttribute(AuthController.USER_CONTEXT_SESSION_KEY,
+            other.setAttribute(UserSessionKeys.USER_CONTEXT_SESSION_KEY,
                     new UserContext(2L, "other", "Other", role));
             mvc.perform(post("/api/v1/dining-sessions/" + SESSION_ID + "/close").session(other))
                     .andExpect(status().isForbidden());

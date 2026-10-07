@@ -14,7 +14,6 @@ import com.buffetrestaurant.service.billing.BillingEngine;
 import com.buffetrestaurant.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.RoundingMode;
@@ -22,20 +21,21 @@ import java.math.RoundingMode;
 @Service
 @Transactional(readOnly = true)
 public class CustomerBillingService {
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
     private final CustomerSessionAccessService access;
     private final DiningSessionRepository sessions;
     private final PaymentRepository payments;
     private final BillingContextProvider contextProvider;
     private final BillingEngine engine;
     public CustomerBillingService(CustomerSessionAccessService access, DiningSessionRepository sessions,
-            PaymentRepository payments, BillingContextProvider contextProvider, BillingEngine engine) {
+            PaymentRepository payments, BillingContextProvider contextProvider, BillingEngine engine,
+            EntityManager entityManager) {
         this.access = access;
         this.sessions = sessions;
         this.payments = payments;
         this.contextProvider = contextProvider;
         this.engine = engine;
+        this.entityManager = entityManager;
     }
     @Transactional
     public CustomerBillStatusResponse request(Long id, String credential) {

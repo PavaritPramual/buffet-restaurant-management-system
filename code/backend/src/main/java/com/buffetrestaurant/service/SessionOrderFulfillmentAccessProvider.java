@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 @ConditionalOnProperty(name = "app.fulfillment.access-provider", havingValue = "session")
 public class SessionOrderFulfillmentAccessProvider implements OrderFulfillmentAccessProvider {
-    private final SessionUserContextProvider users;
+    private final UserContextProvider users;
 
-    public SessionOrderFulfillmentAccessProvider(SessionUserContextProvider users) {
+    public SessionOrderFulfillmentAccessProvider(UserContextProvider users) {
         this.users = users;
     }
 
