@@ -70,12 +70,12 @@ class FixtureOrderFulfillmentAccessProviderTest {
     }
 
     @Test
-    void requireKitchenAccess_whenRoleIsSupervisorOrManager_allowsAccess() {
-        when(request.getHeader("X-User-Role")).thenReturn("SUPERVISOR");
-        assertThatCode(() -> accessProvider.requireKitchenAccess()).doesNotThrowAnyException();
-
-        when(request.getHeader("X-User-Role")).thenReturn("MANAGER");
-        assertThatCode(() -> accessProvider.requireKitchenAccess()).doesNotThrowAnyException();
+    void supervisorAndManagerCannotUseEitherBoardEvenInFixture() {
+        for (String role : new String[]{"SUPERVISOR", "MANAGER"}) {
+            when(request.getHeader("X-User-Role")).thenReturn(role);
+            assertThatThrownBy(() -> accessProvider.requireKitchenAccess()).isInstanceOf(ForbiddenException.class);
+            assertThatThrownBy(() -> accessProvider.requireServiceStaffAccess()).isInstanceOf(ForbiddenException.class);
+        }
     }
 
     @Test

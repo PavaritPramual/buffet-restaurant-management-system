@@ -9,13 +9,13 @@ import static org.mockito.Mockito.when;
 import com.buffetrestaurant.domain.enums.UserRole;
 import com.buffetrestaurant.dto.request.CreateUserRequest;
 import com.buffetrestaurant.repository.UserAccountRepository;
-import com.buffetrestaurant.service.AuthService;
+import com.buffetrestaurant.service.UserAdministrationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.DefaultApplicationArguments;
 
 class BootstrapAdminConfigTest {
     private final UserAccountRepository users = mock(UserAccountRepository.class);
-    private final AuthService authService = mock(AuthService.class);
+    private final UserAdministrationService authService = mock(UserAdministrationService.class);
     private final BootstrapAdminConfig config = new BootstrapAdminConfig();
 
     @Test
@@ -30,7 +30,7 @@ class BootstrapAdminConfigTest {
     }
 
     @Test
-    void doesNothingAfterUsersExistAndDelegatesCredentialValidationToAuthService() throws Exception {
+    void doesNothingAfterUsersExistAndDelegatesCredentialValidationToUserAdministrationService() throws Exception {
         when(users.count()).thenReturn(1L);
         config.bootstrapInitialManager(users, authService, "first-manager", "initial-secret",
                 "Restaurant Manager", "").run(new DefaultApplicationArguments());

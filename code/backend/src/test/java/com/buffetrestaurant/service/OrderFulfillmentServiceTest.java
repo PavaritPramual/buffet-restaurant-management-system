@@ -38,7 +38,12 @@ class OrderFulfillmentServiceTest {
 
     @BeforeEach
     void setUp() {
-        fulfillmentService = new OrderFulfillmentServiceImpl(orderRepository, new OrderingMapper(), accessProvider);
+        fulfillmentService = new OrderFulfillmentServiceImpl(orderRepository, new OrderingMapper(), accessProvider,
+                new com.buffetrestaurant.service.state.RegistryOrderStateResolver(List.of(
+                        com.buffetrestaurant.service.state.ReceivedState.INSTANCE,
+                        com.buffetrestaurant.service.state.PreparingState.INSTANCE,
+                        com.buffetrestaurant.service.state.ReadyState.INSTANCE,
+                        com.buffetrestaurant.service.state.ServedState.INSTANCE)));
     }
 
     private CustomerOrder orderWithStatus(Long id, OrderStatus status) {

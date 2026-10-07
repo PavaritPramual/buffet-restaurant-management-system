@@ -10,7 +10,7 @@ import com.buffetrestaurant.repository.CustomerOrderRepository;
 import com.buffetrestaurant.service.OrderFulfillmentAccessProvider;
 import com.buffetrestaurant.service.OrderFulfillmentService;
 import com.buffetrestaurant.service.state.OrderState;
-import com.buffetrestaurant.service.state.OrderStateFactory;
+import com.buffetrestaurant.service.state.OrderStateResolver;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,15 +22,18 @@ public class OrderFulfillmentServiceImpl implements OrderFulfillmentService {
     private final CustomerOrderRepository orderRepository;
     private final OrderingMapper mapper;
     private final OrderFulfillmentAccessProvider accessProvider;
+    private final OrderStateResolver stateResolver;
 
     public OrderFulfillmentServiceImpl(
             CustomerOrderRepository orderRepository,
             OrderingMapper mapper,
-            OrderFulfillmentAccessProvider accessProvider
+            OrderFulfillmentAccessProvider accessProvider,
+            OrderStateResolver stateResolver
     ) {
         this.orderRepository = orderRepository;
         this.mapper = mapper;
         this.accessProvider = accessProvider;
+        this.stateResolver = stateResolver;
     }
 
     @Override
@@ -56,7 +59,7 @@ public class OrderFulfillmentServiceImpl implements OrderFulfillmentService {
             accessProvider.requireKitchenAccess();
         }
         CustomerOrder order = findOrThrow(orderId);
-        OrderState current = OrderStateFactory.forStatus(order.getStatus());
+        OrderState current = stateResolver.resolve(order.getStatus());
         OrderState next = current.next();
         if (next.status() != requestedStatus) {
             throw new BusinessRuleException("Cannot change order " + orderId + " status from " + order.getStatus()

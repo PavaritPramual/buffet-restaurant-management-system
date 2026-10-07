@@ -58,6 +58,16 @@ class AuthStockIntegrationTest {
     }
 
     @Test
+    void malformedSessionCannotReadMeOrStockEvenWithForgedHeader() throws Exception {
+        var session = new MockHttpSession();
+        session.setAttribute(com.buffetrestaurant.common.UserSessionKeys.USER_CONTEXT_SESSION_KEY,
+                new com.buffetrestaurant.dto.response.UserContext(1L, "manager", "Manager", null));
+        mockMvc.perform(get("/api/v1/auth/me").session(session)).andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/v1/stock").session(session).header("X-User-Role", "MANAGER"))
+                .andExpect(status().isUnauthorized()).andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
     void rotatesSessionIdAfterSuccessfulLogin() throws Exception {
         MockHttpSession anonymousSession = new MockHttpSession();
         String anonymousId = anonymousSession.getId();

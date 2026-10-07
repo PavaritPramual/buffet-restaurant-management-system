@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 @ConditionalOnProperty(name = "app.dining-session.staff-access-provider", havingValue = "session")
 public class SessionDiningSessionStaffAccessProvider implements DiningSessionStaffAccessProvider {
-    private final SessionUserContextProvider users;
+    private final UserContextProvider users;
 
-    public SessionDiningSessionStaffAccessProvider(SessionUserContextProvider users) {
+    public SessionDiningSessionStaffAccessProvider(UserContextProvider users) {
         this.users = users;
     }
 

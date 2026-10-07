@@ -12,10 +12,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * Development/test fixture only. Reads the caller's role from an {@code X-User-Role} header
- * (e.g. {@code KITCHEN_STAFF}) instead of a real session/JWT, since the Authentication module has
- * not shipped yet. {@code SUPERVISOR} and {@code MANAGER} are treated as able to act on both
- * boards. Never enable this provider in a deployed environment.
+ * Controlled local/test/demo role-header fixture. It uses the same role matrix
+ * as the runtime session provider, but does not establish real authentication.
+ * Never use it as production security or session/expiry evidence.
  */
 @Component
 @Profile({"local", "test", "demo"})
@@ -25,9 +24,9 @@ public class FixtureOrderFulfillmentAccessProvider implements OrderFulfillmentAc
     static final String ROLE_HEADER = "X-User-Role";
 
     private static final Set<UserRole> KITCHEN_ROLES =
-            EnumSet.of(UserRole.KITCHEN_STAFF, UserRole.SUPERVISOR, UserRole.MANAGER);
+            EnumSet.of(UserRole.KITCHEN_STAFF);
     private static final Set<UserRole> SERVICE_STAFF_ROLES =
-            EnumSet.of(UserRole.SERVICE_STAFF, UserRole.SUPERVISOR, UserRole.MANAGER);
+            EnumSet.of(UserRole.SERVICE_STAFF);
 
     private final HttpServletRequest request;
 

@@ -1,6 +1,6 @@
 # Diagram index — ครบตามใบงานข้อ 9.1
 
-อ้าง develop `472fba4` วันที่7ตุลาคม2026 จำนวน **23 diagram รายละเอียด และ5ภาพย่อสำหรับนำเสนอ** ทุกภาพมี PlantUML source/SVG ภาพ public deployment เป็น design เท่านั้น รอ peer review ไม่ใช้จำนวนไฟล์รับรอง public หรือ Final
+โค้ดปัจจุบันหลัง architecture refactor `de7b5d546a05ad3ccef8c641ee5c53d638a8e039` วันที่7ตุลาคม2026; diagramที่ไม่เปลี่ยนยังอ้าง baseline `472fba4` จำนวน **23 diagram รายละเอียด และ5ภาพย่อสำหรับนำเสนอ** ทุกภาพมี PlantUML source/SVG ภาพ public deployment เป็น design เท่านั้น รอ peer review ไม่ใช้จำนวนไฟล์รับรอง public หรือ Final
 
 [ตารางเทียบโจทย์และหน้าสไลด์](../slide/course-diagram-coverage.md) · [Use Case Descriptions](../system-design/use-cases.md) · [Canonical Data Dictionary](../database/step2-schema-approved.md)
 
@@ -44,3 +44,5 @@ java -Djava.awt.headless=true -jar <plantuml.jar> -nbthread 1 -tsvg -charset UTF
 ```
 
 Order Entity เก็บ enum ไม่เก็บ State object; Context อยู่ FulfillmentService ภาพ Auth ใช้ UserAccount/UserProfile shared PK และ HTTP session ไม่ใช่ Supabase Auth ส่วน Stock adjustment ใช้ signed delta และ audit history
+
+อัปเดต Component และ Class Auth/Session/Stock/Billing/State ตาม contracts/registry จริง. Canva v02b คงเป็นฉบับล่วงหน้าก่อน refactor ไม่แก้สไลด์หรือรับรอง owner/rehearsal จาก PR นี้

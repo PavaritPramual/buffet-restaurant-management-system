@@ -37,16 +37,29 @@ class SessionUserContextProvider {
 }
 class HttpSession
 UserAccount "1" -- "0..1" UserProfile : shared PK / MapsId
-AuthController --> AuthService
+interface AuthenticationService
+interface UserAdministrationService
+interface UserContextProvider
+class UserSessionKeys <<common>>
+class AdminUserController
+AuthenticationService <|.. AuthService
+UserAdministrationService <|.. AuthService
+UserContextProvider <|.. SessionUserContextProvider
+AuthController --> AuthenticationService
+AuthController --> UserContextProvider
+AdminUserController --> UserAdministrationService
+AdminUserController --> UserContextProvider
+AuthController ..> UserSessionKeys
+SessionUserContextProvider ..> UserSessionKeys
 AuthService --> UserAccountRepository
 AuthService --> UserProfileRepository
 AuthController --> HttpSession : UserContext
 SessionUserContextProvider --> HttpSession
 note bottom of AuthService
-AuthService is currently concrete.
+Authentication and user administration have separate contracts.
 Profile is optional in the database (0..1).
 createUser creates both; authenticate requires a profile.
 Only list/create user with basic displayName/email is implemented.
-Do not draw an AuthenticationService interface that does not exist.
+Incomplete session identities return 401; disallowed roles return 403.
 end note
 @enduml

@@ -64,7 +64,7 @@ Frontend แชร์ Promiseเฉพาะ tokenที่กำลังแล
 - State/Strategy/Template Methodมีimplementationและtestsแล้ว ไม่ใช่เพียงintent; ดูparticipantsจริงใน pattern report
 - Stockมี sku/name/unit/quantity/lowStockThreshold; openingTargetStock/active และ Profile first/last/phone ยังเป็นFinal ห้ามถือว่า ERD designเก่าคือcurrentJPA
 - enum DiningSessionStatusประกาศCANCELLEDแต่ไม่มีcancelAPI Order state4ค่า UserRoles4ค่า Stringenum
-- Layering/DI ยังมีช่องว่างที่พบจากsource: CustomerBillingService field-injectedEntityManager และ SessionUserContextProvider import AuthController constant รวมconcreteService dependencies ดู [SOLID gap log](../solid-analysis.md#ข้อจำกัดที่ต้องปิดก่อนรับรอง-final)
+- Architecture refactor แก้ shared session key, constructor injection, policy interfaces และ State registry แล้ว พร้อม tests; รอ review และ release acceptance ดู [SOLID](../solid-analysis.md#ข้อจำกัดที่ต้องปิดก่อนรับรอง-final)
 
 ## Deployment decision สำหรับ Step3 — ยังไม่ implement
 

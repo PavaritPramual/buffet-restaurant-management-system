@@ -12,7 +12,7 @@ import com.buffetrestaurant.repository.StockTransactionRepository;
 import com.buffetrestaurant.repository.UserAccountRepository;
 import java.math.BigDecimal;
 
-public abstract class StockTransactionTemplate {
+public abstract class StockTransactionTemplate implements StockTransactionProcessor {
     private final StockItemRepository items;
     private final StockTransactionRepository transactions;
     private final UserAccountRepository users;
