@@ -1,6 +1,6 @@
 # Order Fulfillment State Diagram
 
-Owner: ศรัณย์. Matches `service/state/*State.java` (`OrderStateFactory`,
+Owner: ศรัณย์. Matches `service/state/*State.java` (`OrderStateResolver` / `RegistryOrderStateResolver`,
 `ReceivedState`, `PreparingState`, `ReadyState`, `ServedState`) and
 `OrderFulfillmentServiceImpl.advanceStatus`.
 
@@ -39,8 +39,12 @@ stateDiagram-v2
 All three reuse the `OrderResponse` shape (`OrderFulfillmentContext`): `orderId`,
 `sessionId`, `tableNumber`, `items`, `status`, `createdAt`.
 
-### Current authorization — develop 472fba4
+### Current authorization — architecture refactor
 
-`SessionOrderFulfillmentAccessProvider` uses `SessionUserContextProvider` and the staff HTTP login session. Production frontend does not send `X-User-Role`; spoofing it cannot grant access. No login returns 401; a logged-in wrong role returns 403. Fixtures apply only to explicitly configured tests/demo, not production authority. MANAGER and SUPERVISOR cannot use the Kitchen/Serving flows.
+`SessionOrderFulfillmentAccessProvider` depends on `UserContextProvider`, implemented by `SessionUserContextProvider` and the staff HTTP login session. Production frontend does not send `X-User-Role`; spoofing it cannot grant access. No login returns 401; a logged-in wrong role returns 403. Fixtures apply only to explicitly configured tests/demo, not production authority. MANAGER and SUPERVISOR cannot use the Kitchen/Serving flows.
 
 [PlantUML state source](state-order.puml) · [SVG preview](previews/state-order.svg) · [class participants](class-order-state.puml)
+
+## State registration
+
+`OrderStateConfig` registers the existing four singleton policies. The immutable registry rejects duplicate/missing statuses at startup and null lookup. Fulfillment injects OrderStateResolver; the static switch factory was removed. Changes to business statuses still require enum/transition/API/UI/permission review. Fixtures now use the same role matrix but do not prove runtime identity.
