@@ -22,7 +22,8 @@ participant "SessionContextProvider" as P
 database "CustomerOrderRepository" as R
 control "OrderFulfillmentServiceImpl" as F
 participant "SessionOrderFulfillmentAccessProvider" as Access
-participant "OrderStateFactory / OrderState" as State
+participant "RegistryOrderStateResolver" as Resolver
+participant "Resolved OrderState" as State
 Customer -> C : POST session orders / customer cookie
 C -> S : placeOrder(sessionId, credential, request)
 S -> P : requireSessionForOrder(sessionId, credential)
@@ -37,13 +38,18 @@ F -> R : RECEIVED and PREPARING orders
 Kitchen -> F : PATCH status PREPARING (JSESSIONID)
 F -> Access : requireKitchenAccess()
 Access --> F : authenticated KITCHEN_STAFF
-F -> State : forStatus(current).next()
+F -> Resolver : resolve(currentStatus)
+Resolver --> F : current state
+F -> State : next()
 State --> F : expected PREPARING
 F -> R : updateStatus / save
 Kitchen -> F : PATCH status READY (JSESSIONID)
 F -> Access : requireKitchenAccess()
 Access --> F : authenticated KITCHEN_STAFF
-F -> State : forStatus(PREPARING).next()
+F -> Resolver : resolve(PREPARING)
+Resolver --> F : PreparingState
+F -> State : next()
+State --> F : expected READY
 F -> R : updateStatus READY / save
 Staff -> F : GET /orders/ready (JSESSIONID)
 F -> Access : requireServiceStaffAccess()
@@ -51,7 +57,10 @@ Access --> F : authenticated SERVICE_STAFF
 Staff -> F : PATCH status SERVED (JSESSIONID)
 F -> Access : requireServiceStaffAccess()
 Access --> F : authenticated SERVICE_STAFF
-F -> State : forStatus(READY).next()
+F -> Resolver : resolve(READY)
+Resolver --> F : ReadyState
+F -> State : next()
+State --> F : expected SERVED
 F -> R : updateStatus SERVED / save
 note over Access
 Missing login -> 401 ErrorResponse.

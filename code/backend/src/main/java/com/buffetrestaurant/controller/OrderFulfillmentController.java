@@ -5,6 +5,7 @@ import com.buffetrestaurant.dto.request.UpdateOrderStatusRequest;
 import com.buffetrestaurant.dto.response.ErrorResponse;
 import com.buffetrestaurant.dto.response.OrderResponse;
 import com.buffetrestaurant.service.OrderFulfillmentService;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,8 +35,13 @@ public class OrderFulfillmentController {
 
     @Operation(summary = "Get orders the kitchen still needs to act on (RECEIVED or PREPARING)",
             description = "Requires KITCHEN_STAFF; MANAGER and SUPERVISOR roles do not grant access.")
-    @ApiResponse(responseCode = "401", description = "Staff login required")
-    @ApiResponse(responseCode = "403", description = "KITCHEN_STAFF role required")
+    @ApiResponse(responseCode = "200", description = "Incoming kitchen orders",
+            content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = OrderResponse.class))))
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "KITCHEN_STAFF role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @GetMapping("/incoming")
     public List<OrderResponse> incoming() {
         return fulfillmentService.getIncomingOrders();
@@ -43,8 +49,13 @@ public class OrderFulfillmentController {
 
     @Operation(summary = "Get orders ready for service staff to serve (READY)",
             description = "Requires SERVICE_STAFF; MANAGER and SUPERVISOR roles do not grant access.")
-    @ApiResponse(responseCode = "401", description = "Staff login required")
-    @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required")
+    @ApiResponse(responseCode = "200", description = "Orders ready for service",
+            content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = OrderResponse.class))))
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @GetMapping("/ready")
     public List<OrderResponse> ready() {
         return fulfillmentService.getReadyOrders();
@@ -55,9 +66,14 @@ public class OrderFulfillmentController {
                     + "SERVICE_STAFF may advance READY to SERVED. No other role may transition an order.")
     @ApiResponse(responseCode = "400", description = "Transition is not the next legal status",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "401", description = "Staff login required")
-    @ApiResponse(responseCode = "403", description = "Role does not permit this transition")
-    @ApiResponse(responseCode = "404", description = "Order not found")
+    @ApiResponse(responseCode = "200", description = "Order transitioned to its next legal status",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderResponse.class)))
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "Role does not permit this transition",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "404", description = "Order not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @PatchMapping("/{id}/status")
     public OrderResponse updateStatus(@PathVariable Long id, @Valid @RequestBody UpdateOrderStatusRequest request) {
         return fulfillmentService.advanceStatus(id, request.status());

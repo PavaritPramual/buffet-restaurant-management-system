@@ -35,10 +35,14 @@ public class BillingController {
     @ApiResponse(responseCode = "200", description = "Bill summary")
     @ApiResponse(responseCode = "400", description = "Invalid session ID or session is not ACTIVE",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "404", description = "Session not found")
-    @ApiResponse(responseCode = "401", description = "Login required")
-    @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required")
-    @ApiResponse(responseCode = "503", description = "Billing session provider is not configured")
+    @ApiResponse(responseCode = "404", description = "Session not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "401", description = "Login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "503", description = "Billing session provider is not configured",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Only the session identifier is accepted; monetary values are resolved from server data.",
             required = true,

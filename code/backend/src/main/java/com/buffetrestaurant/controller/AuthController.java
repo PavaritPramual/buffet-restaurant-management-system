@@ -1,12 +1,15 @@
 package com.buffetrestaurant.controller;
 
 import com.buffetrestaurant.dto.request.LoginRequest;
+import com.buffetrestaurant.dto.response.ErrorResponse;
 import com.buffetrestaurant.dto.response.UserContext;
 import com.buffetrestaurant.service.AuthenticationService;
 import com.buffetrestaurant.service.UserContextProvider;
 import com.buffetrestaurant.common.UserSessionKeys;
 import com.buffetrestaurant.exception.AuthenticationRequiredException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,8 +39,10 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Log in and establish the staff HTTP session cookie")
     @ApiResponse(responseCode = "200", description = "Authenticated user context; session ID is carried only by Set-Cookie")
-    @ApiResponse(responseCode = "400", description = "Missing or invalid request values")
-    @ApiResponse(responseCode = "401", description = "Credentials are invalid")
+    @ApiResponse(responseCode = "400", description = "Missing or invalid request values",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "401", description = "Credentials are invalid",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<UserContext> login(@Valid @RequestBody LoginRequest request, HttpServletRequest servletRequest) {
         UserContext context = authService.authenticate(request.username(), request.password());
         HttpSession session = servletRequest.getSession(true);
@@ -50,7 +55,8 @@ public class AuthController {
     @Operation(summary = "Read the user context for the current staff session")
     @SecurityRequirement(name = "staffSessionCookie")
     @ApiResponse(responseCode = "200", description = "Current user context")
-    @ApiResponse(responseCode = "401", description = "No authenticated session; this endpoint returns an empty body")
+    @ApiResponse(responseCode = "401", description = "No authenticated session; this endpoint returns an empty body",
+            content = @Content)
     public ResponseEntity<UserContext> current(HttpServletRequest request) {
         try {
             return ResponseEntity.ok(users.requireAuthenticated(request));

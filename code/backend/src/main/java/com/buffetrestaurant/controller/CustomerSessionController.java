@@ -2,9 +2,12 @@ package com.buffetrestaurant.controller;
 
 import com.buffetrestaurant.config.CustomerOriginGuard;
 import com.buffetrestaurant.dto.request.ExchangeQrRequest;
+import com.buffetrestaurant.dto.response.ErrorResponse;
 import com.buffetrestaurant.dto.response.CustomerSessionResponse;
 import com.buffetrestaurant.service.impl.CustomerSessionAccessService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -46,8 +49,10 @@ public class CustomerSessionController {
                     + "an HttpOnly customer_session cookie and returns a token-free customer context. "
                     + "No real QR token or cookie value is shown in this API documentation.")
     @ApiResponse(responseCode = "200", description = "Customer context; credential is set as an HttpOnly cookie")
-    @ApiResponse(responseCode = "400", description = "Malformed or invalid QR exchange request")
-    @ApiResponse(responseCode = "403", description = "Origin is not allowed")
+    @ApiResponse(responseCode = "400", description = "Malformed or invalid QR exchange request",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "Origin is not allowed",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<CustomerSessionResponse> exchange(
             @RequestHeader(name = "Origin", required = false) String origin,
             @Valid @RequestBody ExchangeQrRequest request) {
@@ -68,7 +73,8 @@ public class CustomerSessionController {
     @Operation(summary = "Read the active customer session from its HttpOnly cookie")
     @SecurityRequirement(name = "customerSessionCookie")
     @ApiResponse(responseCode = "200", description = "Customer context without the QR credential")
-    @ApiResponse(responseCode = "401", description = "Customer cookie is missing, invalid or expired")
+    @ApiResponse(responseCode = "401", description = "Customer cookie is missing, invalid or expired",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<CustomerSessionResponse> context(
             @CookieValue(name = CustomerSessionAccessService.COOKIE_NAME, required = false) String credential) {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore())

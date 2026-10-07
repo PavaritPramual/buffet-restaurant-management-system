@@ -1,5 +1,6 @@
 package com.buffetrestaurant.controller;
 import com.buffetrestaurant.config.CustomerOriginGuard;
+import com.buffetrestaurant.dto.response.ErrorResponse;
 import com.buffetrestaurant.dto.response.CustomerBillStatusResponse;
 import com.buffetrestaurant.service.CustomerBillingService;
 import com.buffetrestaurant.service.impl.CustomerSessionAccessService;
@@ -30,8 +31,10 @@ public class CustomerBillingController {
                             + "\"requestedAt\":\"2026-10-07T08:00:00Z\",\"bill\":{\"sessionId\":12,"
                             + "\"subtotalAmount\":997.50,\"discountAmount\":0.00,\"totalAmount\":997.50},"
                             + "\"dueAmount\":0.00,\"paidAmount\":997.50}")))
-    @ApiResponse(responseCode = "401", description = "Customer cookie is missing, invalid or expired")
-    @ApiResponse(responseCode = "404", description = "Customer cookie does not authorize this active session")
+    @ApiResponse(responseCode = "401", description = "Customer cookie is missing, invalid or expired",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "404", description = "Customer cookie does not authorize this active session",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<CustomerBillStatusResponse> status(@PathVariable Long sessionId,
             @CookieValue(name = CustomerSessionAccessService.COOKIE_NAME, required = false) String credential) {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(service.status(sessionId, credential));
@@ -47,9 +50,12 @@ public class CustomerBillingController {
                             + "\"requestedAt\":\"2026-10-07T08:00:00Z\",\"bill\":{\"sessionId\":12,"
                             + "\"subtotalAmount\":997.50,\"discountAmount\":0.00,\"totalAmount\":997.50},"
                             + "\"dueAmount\":997.50,\"paidAmount\":0.00}")))
-    @ApiResponse(responseCode = "401", description = "Customer cookie is missing, invalid or expired")
-    @ApiResponse(responseCode = "403", description = "Origin is not allowed")
-    @ApiResponse(responseCode = "404", description = "Customer cookie does not authorize this active session")
+    @ApiResponse(responseCode = "401", description = "Customer cookie is missing, invalid or expired",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "Origin is not allowed",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "404", description = "Customer cookie does not authorize this active session",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<CustomerBillStatusResponse> request(@PathVariable Long sessionId,
             @CookieValue(name = CustomerSessionAccessService.COOKIE_NAME, required = false) String credential,
             @RequestHeader(name = "Origin", required = false) String origin) {

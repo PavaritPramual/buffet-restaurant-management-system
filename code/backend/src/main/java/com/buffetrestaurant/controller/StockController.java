@@ -45,9 +45,12 @@ public class StockController {
     @ApiResponse(responseCode = "201", description = "Stock item created")
     @ApiResponse(responseCode = "400", description = "Invalid fields",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "401", description = "Staff login required")
-    @ApiResponse(responseCode = "403", description = "MANAGER role required")
-    @ApiResponse(responseCode = "409", description = "SKU already exists")
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "MANAGER role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "409", description = "SKU already exists",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<StockItemResponse> createItem(@Valid @RequestBody com.buffetrestaurant.dto.request.StockItemRequest body, HttpServletRequest request) {
         users.requireAnyRole(request, UserRole.MANAGER);
         var item = stockService.createItem(body);
@@ -59,10 +62,14 @@ public class StockController {
     @ApiResponse(responseCode = "200", description = "Stock item updated")
     @ApiResponse(responseCode = "400", description = "Invalid fields",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "401", description = "Staff login required")
-    @ApiResponse(responseCode = "403", description = "MANAGER role required")
-    @ApiResponse(responseCode = "404", description = "Stock item not found")
-    @ApiResponse(responseCode = "409", description = "SKU conflict or item metadata is locked by history")
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "MANAGER role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "404", description = "Stock item not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "409", description = "SKU conflict or item metadata is locked by history",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public StockItemResponse updateItem(@PathVariable Long id, @Valid @RequestBody com.buffetrestaurant.dto.request.StockItemRequest body, HttpServletRequest request) {
         users.requireAnyRole(request, UserRole.MANAGER);
         return stockService.updateItem(id, body);
@@ -71,8 +78,10 @@ public class StockController {
     @GetMapping
     @Operation(summary = "List stock items and current quantities")
     @ApiResponse(responseCode = "200", description = "Stock item list")
-    @ApiResponse(responseCode = "401", description = "Staff login required")
-    @ApiResponse(responseCode = "403", description = "MANAGER or SUPERVISOR role required")
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "MANAGER or SUPERVISOR role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public List<StockItemResponse> overview(HttpServletRequest request) {
         users.requireAnyRole(request, UserRole.MANAGER, UserRole.SUPERVISOR);
         return stockService.overview();
@@ -83,9 +92,12 @@ public class StockController {
     @ApiResponse(responseCode = "200", description = "Stock transaction recorded")
     @ApiResponse(responseCode = "400", description = "Invalid quantity, reason or resulting balance",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "401", description = "Staff login required")
-    @ApiResponse(responseCode = "403", description = "MANAGER or SUPERVISOR role required")
-    @ApiResponse(responseCode = "404", description = "Stock item not found")
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "MANAGER or SUPERVISOR role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "404", description = "Stock item not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<StockTransactionResponse> stockIn(@PathVariable Long itemId,
             @Valid @RequestBody StockInRequest body, HttpServletRequest request) {
         UserContext actor = users.requireAnyRole(request, UserRole.MANAGER, UserRole.SUPERVISOR);
@@ -97,9 +109,12 @@ public class StockController {
     @ApiResponse(responseCode = "200", description = "Stock adjustment recorded")
     @ApiResponse(responseCode = "400", description = "Invalid quantity, reason or resulting balance",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "401", description = "Staff login required")
-    @ApiResponse(responseCode = "403", description = "MANAGER or SUPERVISOR role required")
-    @ApiResponse(responseCode = "404", description = "Stock item not found")
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "MANAGER or SUPERVISOR role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "404", description = "Stock item not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<StockTransactionResponse> adjust(@PathVariable Long itemId,
             @Valid @RequestBody StockAdjustmentRequest body, HttpServletRequest request) {
         UserContext actor = users.requireAnyRole(request, UserRole.MANAGER, UserRole.SUPERVISOR);
@@ -109,8 +124,10 @@ public class StockController {
     @GetMapping("/transactions")
     @Operation(summary = "List stock transaction history, optionally filtered by item")
     @ApiResponse(responseCode = "200", description = "Stock transaction list")
-    @ApiResponse(responseCode = "401", description = "Staff login required")
-    @ApiResponse(responseCode = "403", description = "MANAGER or SUPERVISOR role required")
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "MANAGER or SUPERVISOR role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public List<StockTransactionResponse> history(
             @RequestParam(name = "itemId", required = false) Long itemId, HttpServletRequest request) {
         users.requireAnyRole(request, UserRole.MANAGER, UserRole.SUPERVISOR);

@@ -61,8 +61,10 @@ public class DiningSessionController {
     @ApiResponse(responseCode = "200", description = "Dining session closed")
     @ApiResponse(responseCode = "400", description = "Session cannot be closed in its current state",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "401", description = "Staff login required")
-    @ApiResponse(responseCode = "403", description = "Staff role is not permitted")
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "Staff role is not permitted",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "404", description = "Dining session not found",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<DiningSessionResponse> closeSession(@PathVariable Long id) {

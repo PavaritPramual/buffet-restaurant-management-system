@@ -35,9 +35,12 @@ public class PaymentController {
     @ApiResponse(responseCode = "200", description = "Recorded payment")
     @ApiResponse(responseCode = "400", description = "Invalid session ID",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "401", description = "Login required")
-    @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required")
-    @ApiResponse(responseCode = "404", description = "No recorded payment for this session")
+    @ApiResponse(responseCode = "401", description = "Login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "404", description = "No recorded payment for this session",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public PaymentResult findBySessionId(@PathVariable Long sessionId) {
         return paymentService.findBySessionId(sessionId);
     }
@@ -51,12 +54,16 @@ public class PaymentController {
     @ApiResponse(responseCode = "201", description = "Payment recorded as PAID")
     @ApiResponse(responseCode = "400", description = "Invalid payment or inactive session",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "401", description = "Login required")
-    @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required")
-    @ApiResponse(responseCode = "404", description = "Session not found")
+    @ApiResponse(responseCode = "401", description = "Login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "404", description = "Session not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "409", description = "Bill not requested, payment already recorded or data conflict",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "503", description = "Billing provider unavailable")
+    @ApiResponse(responseCode = "503", description = "Billing provider unavailable",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "The amount is calculated from backend session and bill data; clients cannot submit a payable amount.",
             required = true,

@@ -139,7 +139,7 @@ public BillCalculationStrategy billCalculationStrategy() {
 
 ช่วงนำเสนอ 12 นาที ใช้หน้านี้ประมาณ 20 วินาที
 
-Open Closed ใช้กับจุดที่ต้องเปลี่ยนนโยบายราคา Runtime เลือก child rate 0.5 และ PromotionDiscountStrategy ไม่อ้างว่าเพิ่ม order status ใหม่ได้โดยไม่แก้ factory เพราะ OrderStateFactory มี switch ที่เป็นข้อจำกัดอีกแบบ
+Open Closed ใช้กับจุดที่ต้องเปลี่ยนนโยบายราคา Runtime เลือก child rate 0.5 และ PromotionDiscountStrategy ส่วน State ใช้ `OrderStateResolver` กับ registry ที่ตรวจว่ามี state ครบทุก enum และไม่มีค่าซ้ำ การเพิ่มสถานะยังต้องแก้ enum, transition, API/UI และลงทะเบียน policy ใหม่ จึงไม่อ้างว่าเพิ่มสถานะได้โดยไม่แก้ส่วนที่เกี่ยวข้อง
 
 ## หน้า 08 — L การแทน implementation ต้องรักษาสัญญา
 
@@ -158,6 +158,8 @@ public OrderState next() {
 ```
 
 [ServedState.java บรรทัด 20](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/state/ServedState.java#L20)
+
+ตัวอย่างนี้แสดงการ resolve ผ่าน `OrderStateResolver` ที่ inject เข้า service; implementation ปัจจุบันคือ `RegistryOrderStateResolver` ซึ่งตรวจ registration ตอนประกอบระบบ ไม่ใช่ static factory
 
 ### คำพูดประกอบ
 
@@ -362,13 +364,15 @@ Local frontend5173 backend8080 configureddatabase Composeไม่มีDBcontai
 ### ตัวอย่างจากโค้ดจริง
 
 ```java
-OrderState state = OrderStateFactory.forStatus(OrderStatus.RECEIVED);
+private final OrderStateResolver resolver = new RegistryOrderStateResolver(
+        java.util.List.of(ReceivedState.INSTANCE, PreparingState.INSTANCE, ReadyState.INSTANCE, ServedState.INSTANCE));
+OrderState state = resolver.resolve(OrderStatus.RECEIVED);
 
 assertThat(state.status()).isEqualTo(OrderStatus.RECEIVED);
 assertThat(state.next().status()).isEqualTo(OrderStatus.PREPARING);
 ```
 
-[OrderStateTest.java บรรทัด 14](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/test/java/com/buffetrestaurant/service/state/OrderStateTest.java#L14)
+[OrderStateTest.java บรรทัด 14](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/cb612d9bd396f7ec5b4ca6c70925acf087e305a6/code/backend/src/test/java/com/buffetrestaurant/service/state/OrderStateTest.java#L14)
 
 ### คำพูดประกอบ
 
@@ -771,7 +775,7 @@ FulfillmentServiceเป็นContext OrderStateคือinterface statesสี�
 
 ผู้บรรยาย `sarun_673380515-1_02` · Behavioral Patterns
 
-- Factory แปลง enum เป็น State
+- Injected `OrderStateResolver` resolves the enum through the validated registry
 - เทียบ next กับคำขอของผู้ใช้
 - ตรวจสิทธิ์ staff session ก่อนแก้ไข
 - เปลี่ยน Entity เมื่อ transition ถูกต้อง
@@ -779,17 +783,17 @@ FulfillmentServiceเป็นContext OrderStateคือinterface statesสี�
 ### ตัวอย่างจากโค้ดจริง
 
 ```java
-OrderState current = OrderStateFactory.forStatus(order.getStatus());
+OrderState current = stateResolver.resolve(order.getStatus());
 OrderState next = current.next();
 if (next.status() != requestedStatus) {
     throw new BusinessRuleException("Cannot change order " + orderId + " status from " + order.getStatus()
 ```
 
-[OrderFulfillmentServiceImpl.java บรรทัด 59](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/impl/OrderFulfillmentServiceImpl.java#L59)
+[OrderFulfillmentServiceImpl.java บรรทัด 59](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/cb612d9bd396f7ec5b4ca6c70925acf087e305a6/code/backend/src/main/java/com/buffetrestaurant/service/impl/OrderFulfillmentServiceImpl.java#L59)
 
 ### คำพูดประกอบ
 
-ตัวอย่างจาก OrderFulfillmentServiceImpl ซึ่งเป็น Context ที่ใช้ pattern จริง เลือก State จาก status เรียก next และเทียบ requested status ก่อน updateStatus ขณะเดียวกัน access provider ตรวจ KITCHEN_STAFF หรือ SERVICE_STAFF; role ผิดได้ 403 และไม่เขียนสถานะ ไม่สาธิต skip ด้วยการ set enum โดยตรง Factory switch เป็น tradeoff ของ workflow สี่สถานะที่เป็น shared contract
+ตัวอย่างจาก OrderFulfillmentServiceImpl ซึ่งเป็น Context ที่ใช้ pattern จริง resolve State จาก status ผ่าน `OrderStateResolver` ที่ inject ไว้ (runtime คือ `RegistryOrderStateResolver`) เรียก next และเทียบ requested status ก่อน updateStatus ขณะเดียวกัน access provider ตรวจ KITCHEN_STAFF หรือ SERVICE_STAFF; role ผิดได้ 403 และไม่เขียนสถานะ การเพิ่มสถานะยังต้องแก้ shared enum, transition, API/UI และเพิ่ม registration ให้ครบ
 
 ## หน้า 40 — State Diagram แสดงลำดับ Order และสิทธิ์
 
