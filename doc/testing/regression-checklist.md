@@ -23,7 +23,7 @@ Run this list for changes to Menu, Ordering, Session contracts, API conventions,
 - [x] No automated test touches shared Supabase data or commits secrets.
 - [ ] Full team integration: production Staff/Fulfillment Auth and Billing trigger/payment-close flow work with real adapters.
 
-Checked Menu/Ordering items above refer to the 4 October 2026 verification in [Sirapat report](sirapat-step2-report.md): current frontend 78 passes; earlier full backend 189 passes / 2 Stock-Docker skips, followed by a focused 38-case recheck. Backend code was unchanged by the second Customer-only corrections. The separate Fulfillment checklist below is maintained by its owner and is unchanged.
+Checked Menu/Ordering items above refer to the 4 October 2026 verification in [Sirapat report](sirapat-step2-report.md): frontend 78 passes at that revision; earlier full backend 189 passes / 2 Stock-Docker skips, followed by a focused 38-case recheck. Backend code was unchanged by the second Customer-only corrections. They are historical checkmarks, not current release approval. Fresh integrated-develop verification on 7 October is recorded in the [API/State regression report](sirapat-step3-api-state-regression-report.md); Stock/Profile/public/TTL/release remain pending. The Fulfillment owner still records completion below; its auth criteria now reflect real session-cookie permissions.
 
 ## Order Fulfillment (Kitchen & Serving)
 
@@ -35,8 +35,8 @@ Run this section for changes to `service/state/*State.java`, `OrderFulfillmentSe
 - [ ] Kitchen can move an order `RECEIVED -> PREPARING -> READY`; staff can move `READY -> SERVED`.
 - [ ] Skipping a status (e.g. `RECEIVED -> READY`), reversing one (e.g. `PREPARING -> RECEIVED`), and changing a `SERVED` order are all rejected with a `400 Bad Request` `ErrorResponse`, and the order's stored status is unchanged.
 - [ ] An unknown order id returns `404 Not Found`.
-- [ ] A request to `/orders/incoming`, `/orders/ready`, or `PATCH /orders/{id}/status` with no (or an unrecognized) `X-User-Role` header returns `401 Unauthorized`.
-- [ ] `SERVICE_STAFF` cannot access `/orders/incoming` or start-preparing/mark-ready; `KITCHEN_STAFF` cannot access `/orders/ready` or mark-served. Both cases return `403 Forbidden` and leave the order's status unchanged. `SUPERVISOR`/`MANAGER` can do both.
+- [ ] A request to `/orders/incoming`, `/orders/ready`, or `PATCH /orders/{id}/status` without a valid employee session cookie returns `401 Unauthorized`; a spoofed `X-User-Role` header grants no access.
+- [ ] `SERVICE_STAFF` cannot access `/orders/incoming` or start-preparing/mark-ready; `KITCHEN_STAFF` cannot access `/orders/ready` or mark-served. `SUPERVISOR`/`MANAGER` also cannot perform Kitchen/Serving operations. Wrong-role requests return `403 Forbidden` and leave the stored status unchanged; permission checks precede State-transition checks.
 - [ ] Kitchen board shows table number, items, created time and status for every `RECEIVED`/`PREPARING` order, oldest first, with loading/empty/error states.
 - [ ] Staff serving board shows only `READY` orders, shows each order's created time, and removes an order from the list once marked served.
 - [ ] Both boards refresh automatically (poll) without a manual click — this must actually happen, not just be promised in the on-page copy — in addition to the manual "อัปเดต" button.

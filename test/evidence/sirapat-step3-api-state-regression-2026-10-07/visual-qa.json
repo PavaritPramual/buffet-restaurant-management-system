@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-07",
+  "reviewer": "Sirapat/Codex screenshot inspection",
+  "method": "Viewed all 32 screenshots in 8 contact sheets at original sheet resolution",
+  "screenshots": {"core-flow": 17, "ui-state-fixtures": 12, "concurrency-fixtures": 3},
+  "widths": [360, 768, 1280],
+  "layoutBlockerObserved": false,
+  "knownUxFinding": {
+    "issue": "https://github.com/PavaritPramual/buffet-restaurant-management-system/issues/23",
+    "image": "core-flow/staff-unpaid-close-768.png",
+    "finding": "English unpaid-payment-result message remains; unpaid close stays rejected"
+  },
+  "qrCredentialsMasked": true,
+  "publicAcceptance": false,
+  "limits": "Screenshot inspection at captured states; fixture images do not establish real backend or public behavior"
+}

@@ -1,6 +1,6 @@
 # Final requirement to test traceability
 
-Owner: ศิระพัทธ์. [Test plan](test-plan.md). Baseline: integrated develop 54e3538, 6 October 2026. Test names identify coverage, not proof of release execution. [Step 2](pavarit-step2-close-report.md) is historical; [Step 3 report](sirapat-step3-report.md) records current runs. Public acceptance is pending.
+Owner: ศิระพัทธ์. [Test plan](test-plan.md). Latest integrated baseline: develop cb612d9, 7 October 2026; fresh execution and unmerged PR #26 review are separated in the [API/State and regression report](sirapat-step3-api-state-regression-report.md). The initial baseline 54e3538 and [Step 2](pavarit-step2-close-report.md) are historical. Test names identify coverage, not proof of release execution. Public acceptance is pending.
 
 | ID / requirement | Executable coverage / evidence | Final gate / owner |
 |---|---|---|
@@ -11,7 +11,7 @@ Owner: ศิระพัทธ์. [Test plan](test-plan.md). Baseline: integra
 | QR-02 independent phones, invalid credential/session | DiningSessionIntegrationTest; Step2CompletionIntegrationTest; step3-core-flow.cjs | Public runtime/accounts; two customer contexts |
 | QR-03 same-tab rescan/remount/latest-response | CustomerOrderingPage/CustomerOrderingConcurrency/OrderingConcurrency; step3-core-flow real same-document rescan; step3-concurrency current controlled-delay/remount fixtures | Public release rerun; controlled delay/503 fixtures stay separate from real Core Flow |
 | ORDER-01 valid RECEIVED, invalid order unchanged | OrderingIntegrationTest; CustomerOrderingPage; step3-core-flow.cjs | Full real public flow; API review |
-| ORDER-02 status/history/acknowledgement races | CustomerOrderingConcurrency; OrderFulfillmentIntegrationTest; SessionFulfillmentIntegrationTest | Public Kitchen/Staff transitions and denial |
+| ORDER-02 status/history/acknowledgement races | CustomerOrderingConcurrency; OrderFulfillmentIntegrationTest; SessionFulfillmentIntegrationTest; step3-core-flow.cjs: real HTTP401/403/400/404, skipped/reversed/terminal/unknown-enum transitions, ErrorResponse and unchanged persisted status | Public Kitchen/Staff transitions and denial; latest local evidence in API/State regression report |
 | BILL-01 request stops every phone's orders | Step2CompletionIntegrationTest; PostgresOrderCloseConcurrencyTest; CustomerOrderingPage; step3-core-flow.cjs | Public two-phone polling/badge/409 |
 | BILL-02 request before payment, total/due/paid | PaymentIntegrationTest; Step2CompletionIntegrationTest; BillingPreviewPage/PaymentPanel/CustomerOrderingPage | Public PAID/no duplicate; ธีรเมธ/ศรัณย์ |
 | CLOSE-01 unpaid rejection/close/revocation/locks | DiningSessionIntegrationTest; PaymentIntegrationTest; PostgresOrderCloseConcurrencyTest; step3-core-flow.cjs | Actual PG concurrency + public close |
@@ -24,8 +24,8 @@ Owner: ศิระพัทธ์. [Test plan](test-plan.md). Baseline: integra
 | PROFILE-01 first/last/phone, legacy fallback | Planned owner Auth/API/frontend/migration tests | **Pending เมธัส**; names≤100, phone≤20, new names required; no guessed legacy split |
 | MIGRATION-01 fresh/upgrade/grants/preserve history | MenuOrderingMigrationTest/PostgresMenuOrderingMigrationTest; DiningSessionMigrationTest; PostgresStockSecurityIntegrationTest cover baseline | Final migrations เมธัส; integration ปวริศช์; rerunPG |
 | DEPLOY-01 HTTPS/Origin/deep links/providers/Swagger | Existing CI/local smoke; step3-core-flow public same-origin HTTPS guard before startup; step3-runtime-config.test.cjs (6 URL guard cases in CI) | **Pending public deployment ธีรเมธ**; commit/schema confirmation + release rerun |
-| Automated counts/warnings/skipped/provenance | Surefire/Vitest/lint/build logs; [Initial report](sirapat-step3-report.md); [Recheck report](sirapat-step3-recheck-report.md) | Latest release rerun; no reuse of Step2 counts |
+| Automated counts/warnings/skipped/provenance | Current [API/State regression report](sirapat-step3-api-state-regression-report.md): fresh local backend307 passed/27 skipped, frontend116, guards6; CI is linked separately in the submitted PR/Notion. [Initial report](sirapat-step3-report.md) and [Recheck report](sirapat-step3-recheck-report.md) are historical | Latest release rerun; no reuse of prior-revision counts |
 | Menu SOLID/cascade/fetch contribution | [Module notes](../architecture/sirapat-menu-ordering-solid-jpa.md) | ปวริศช์ integrates; reviewers confirm |
-| Test strategy/QR/frontend slides | Latest draft: doc/slide/sirapat-step3-quality-premerge.pptx/PDF and notes, CI303/303 +116/116, public pending; original draft retained as historical snapshot | Final numbers/URLs + merged deck/PDF + five-person rehearsal |
+| Test strategy/QR/frontend slides | Personal premerge draft doc/slide/sirapat-step3-quality-premerge.pptx/PDF and notes (CI303/303 +116/116) is historical. Team Canva v02b/content remain a draft; current test evidence is in the API/State regression report; public pending | Final revision numbers/URLs + reviewed team deck/PDF + five-person rehearsal |
 
-Requirements: [Step3](https://app.notion.com/p/37e90b8ff964834fad3701e2d8115de2), [Regression](https://app.notion.com/p/1cc90b8ff96482af882481112591accd), [Stock](https://app.notion.com/p/4cc90b8ff96483a8abec0159c87caf26), [Profile](https://app.notion.com/p/15c90b8ff96483d0b384813b365e4c09). Tests and documents do not constitute another person's approval.
+Requirements: [Step3](https://app.notion.com/p/a9e90b8ff9648363a6ab81b48fd70816), [Regression](https://app.notion.com/p/85290b8ff96482c59ba201e5d9a767fd), [Stock](https://app.notion.com/p/80d90b8ff964820d8ad38171aeed722c), [Profile](https://app.notion.com/p/5e690b8ff96483c9ab05015e38d972c6). Tests and documents do not constitute another person's approval.

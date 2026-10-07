@@ -1,0 +1,59 @@
+diff --git a/doc/testing/requirement-test-traceability.md b/doc/testing/requirement-test-traceability.md
+index 2f60a74..47eb57e 100644
+--- a/doc/testing/requirement-test-traceability.md
++++ b/doc/testing/requirement-test-traceability.md
+@@ -1,6 +1,6 @@
+ # Final requirement to test traceability
+ 
+-Owner: ศิระพัทธ์. [Test plan](test-plan.md). Baseline: integrated develop 54e3538, 6 October 2026. Test names identify coverage, not proof of release execution. [Step 2](pavarit-step2-close-report.md) is historical; [Step 3 report](sirapat-step3-report.md) records current runs. Public acceptance is pending.
++Owner: ศิระพัทธ์. [Test plan](test-plan.md). Latest integrated baseline: develop cb612d9, 7 October 2026; fresh execution and unmerged PR #26 review are separated in the [API/State and regression report](sirapat-step3-api-state-regression-report.md). The initial baseline 54e3538 and [Step 2](pavarit-step2-close-report.md) are historical. Test names identify coverage, not proof of release execution. Public acceptance is pending.
+ 
+ | ID / requirement | Executable coverage / evidence | Final gate / owner |
+ |---|---|---|
+@@ -11,7 +11,7 @@ Owner: ศิระพัทธ์. [Test plan](test-plan.md). Baseline: integra
+ | QR-02 independent phones, invalid credential/session | DiningSessionIntegrationTest; Step2CompletionIntegrationTest; step3-core-flow.cjs | Public runtime/accounts; two customer contexts |
+ | QR-03 same-tab rescan/remount/latest-response | CustomerOrderingPage/CustomerOrderingConcurrency/OrderingConcurrency; step3-core-flow real same-document rescan; step3-concurrency current controlled-delay/remount fixtures | Public release rerun; controlled delay/503 fixtures stay separate from real Core Flow |
+ | ORDER-01 valid RECEIVED, invalid order unchanged | OrderingIntegrationTest; CustomerOrderingPage; step3-core-flow.cjs | Full real public flow; API review |
+-| ORDER-02 status/history/acknowledgement races | CustomerOrderingConcurrency; OrderFulfillmentIntegrationTest; SessionFulfillmentIntegrationTest | Public Kitchen/Staff transitions and denial |
++| ORDER-02 status/history/acknowledgement races | CustomerOrderingConcurrency; OrderFulfillmentIntegrationTest; SessionFulfillmentIntegrationTest; step3-core-flow.cjs: real HTTP401/403/400/404, skipped/reversed/terminal/unknown-enum transitions, ErrorResponse and unchanged persisted status | Public Kitchen/Staff transitions and denial; latest local evidence in API/State regression report |
+ | BILL-01 request stops every phone's orders | Step2CompletionIntegrationTest; PostgresOrderCloseConcurrencyTest; CustomerOrderingPage; step3-core-flow.cjs | Public two-phone polling/badge/409 |
+ | BILL-02 request before payment, total/due/paid | PaymentIntegrationTest; Step2CompletionIntegrationTest; BillingPreviewPage/PaymentPanel/CustomerOrderingPage | Public PAID/no duplicate; ธีรเมธ/ศรัณย์ |
+ | CLOSE-01 unpaid rejection/close/revocation/locks | DiningSessionIntegrationTest; PaymentIntegrationTest; PostgresOrderCloseConcurrencyTest; step3-core-flow.cjs | Actual PG concurrency + public close |
+@@ -28,4 +28,4 @@ Owner: ศิระพัทธ์. [Test plan](test-plan.md). Baseline: integra
+ | Menu SOLID/cascade/fetch contribution | [Module notes](../architecture/sirapat-menu-ordering-solid-jpa.md) | ปวริศช์ integrates; reviewers confirm |
+ | Test strategy/QR/frontend slides | Latest draft: doc/slide/sirapat-step3-quality-premerge.pptx/PDF and notes, CI303/303 +116/116, public pending; original draft retained as historical snapshot | Final numbers/URLs + merged deck/PDF + five-person rehearsal |
+ 
+-Requirements: [Step3](https://app.notion.com/p/37e90b8ff964834fad3701e2d8115de2), [Regression](https://app.notion.com/p/1cc90b8ff96482af882481112591accd), [Stock](https://app.notion.com/p/4cc90b8ff96483a8abec0159c87caf26), [Profile](https://app.notion.com/p/15c90b8ff96483d0b384813b365e4c09). Tests and documents do not constitute another person's approval.
++Requirements: [Step3](https://app.notion.com/p/a9e90b8ff9648363a6ab81b48fd70816), [Regression](https://app.notion.com/p/85290b8ff96482c59ba201e5d9a767fd), [Stock](https://app.notion.com/p/80d90b8ff964820d8ad38171aeed722c), [Profile](https://app.notion.com/p/5e690b8ff96483c9ab05015e38d972c6). Tests and documents do not constitute another person's approval.
+diff --git a/doc/testing/test-plan.md b/doc/testing/test-plan.md
+index 38cd3a8..2ca0413 100644
+--- a/doc/testing/test-plan.md
++++ b/doc/testing/test-plan.md
+@@ -1,10 +1,10 @@
+ # Final test plan — Buffet Restaurant Management System
+ 
+-Owner: ศิระพัทธ์. Updated 6 October 2026 from [Notion Step 3](https://app.notion.com/p/37e90b8ff964834fad3701e2d8115de2). Each feature owner tests their module; ปวริศช์ reviews E2E/traceability and ศรัณย์ reviews API/State. Final acceptance requires the reviewed release commit to be deployed and checked.
++Owner: ศิระพัทธ์. Updated 7 October 2026 from [Notion Step 3](https://app.notion.com/p/a9e90b8ff9648363a6ab81b48fd70816). Each feature owner tests their module; ปวริศช์ reviews E2E/traceability and ศรัณย์ reviews API/State. Final acceptance requires the reviewed release commit to be deployed and checked.
+ 
+ ## Scope and baseline
+ 
+-Start from integrated develop **54e3538** (PR #21). Table/Session, cookie authentication, Menu/Ordering, Kitchen/Serving, request bill, Payment, close and Manager master-data screens are implemented. [Step 2 closure](pavarit-step2-close-report.md) and [completion report](pavarit-step2-completion-report.md) are historical evidence. Their 303 backend / 109 frontend results do not certify a later release.
++Latest integrated regression baseline: develop **cb612d9** (PR #25). The [API/State and regression report](sirapat-step3-api-state-regression-report.md) records fresh local results and separately identifies the unmerged PR #26 review. The initial Step 3 baseline **54e3538** (PR #21), [Step 2 closure](pavarit-step2-close-report.md), and [completion report](pavarit-step2-completion-report.md) are historical evidence. Their 303 backend / 109 frontend results do not certify a later release. Table/Session, cookie authentication, Menu/Ordering, Kitchen/Serving, request bill, Payment, close and Manager master-data screens are implemented.
+ 
+ Final adds Stock opening target/active lifecycle and separate Profile names/phone (เมธัส), production deployment (ธีรเมธ), release integration (ปวริศช์) and API audit (ศรัณย์). ศิระพัทธ์ owns Customer/shared UI fixes, regression, responsive review and evidence. Feature UI defects go to that feature's owner with reproduction steps. No new gateway, WebSocket, analytics or automatic stock purchasing.
+ 
+@@ -39,7 +39,7 @@ Record source revision/tree or diff identity, commands, environment, start/end t
+ | QR-02 | Two independent phones redeem successive refreshed QR codes | Wrong session/forged credential rejected; old QR cannot be reused |
+ | QR-03 | Same-tab new QR clears old menu/cart/history; latest context wins | Late old menu/order/bill cannot overwrite new scan; retry consumed QR via cookie |
+ | ORDER-01 | Package menu, quantities/removal, confirmation, one order | Zero/negative/duplicate/unavailable/out-of-package rejected without saving; pending double clicks send one POST |
+-| ORDER-02 | RECEIVED → PREPARING → READY → SERVED through Kitchen/Staff | Wrong role/invalid transition denied; refresh before acknowledgement preserves one card/latest status |
++| ORDER-02 | RECEIVED → PREPARING → READY → SERVED through Kitchen/Staff | Real cookie HTTP401/403/400/404, skipped/reversed/terminal/unknown-enum transitions; ErrorResponse fields and persisted status unchanged; refresh before acknowledgement preserves one card/latest status |
+ | BILL-01 | Confirmation → REQUESTED; both phones stop orders; Staff badge | Cookie/Origin/session guards; idempotent request; Order after request=409 |
+ | BILL-02 | Payment → PAID, due=0, paid=recorded amount; still ACTIVE | Payment before request=409; duplicate does not add payment; closed session cannot pay/order |
+ | CLOSE-01 | Separate confirmed close → AVAILABLE and customer access revoked | Unpaid close denied; PostgreSQL Order/Request Bill/Payment/Close recheck after session lock |
+@@ -68,4 +68,4 @@ One ordering tab per browser profile is supported. Another tab exchanging a diff
+ 3. Public URL/deployed commit/schema/provider confirmation supplied; public regression rerun with separate role/device contexts and dynamic IDs.
+ 4. ปวริศช์ E2E/traceability and ศรัณย์ API review recorded; main/release/deployed revision matches evidence. ศิระพัทธ์ cannot self-approve team gates.
+ 
+-Current runs/dependencies: [Step 3 report](sirapat-step3-report.md). Module contribution: [Menu SOLID/JPA notes](../architecture/sirapat-menu-ordering-solid-jpa.md).
++Current runs/dependencies: [API/State and regression report](sirapat-step3-api-state-regression-report.md). Initial historical run: [Step 3 report](sirapat-step3-report.md). Module contribution: [Menu SOLID/JPA notes](../architecture/sirapat-menu-ordering-solid-jpa.md).
