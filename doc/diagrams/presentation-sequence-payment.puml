@@ -1,0 +1,29 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 24
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+skinparam componentBackgroundColor #F2E6D4
+skinparam componentBorderColor #173A45
+autonumber
+actor Customer
+actor "Service Staff" as Staff
+control "Session / Billing / Payment API" as API
+database "Session / payments" as DB
+Customer -> API : Request bill using customer cookie
+API -> DB : Lock session; set bill_requested_at
+note over API,DB : New orders are rejected; reads remain allowed.
+Staff -> API : Read bill and confirm payment method
+API -> DB : Read opening-price snapshot and counts
+API -> API : BillingEngine calculates trusted amount
+API -> DB : Save one PAID payment for this session
+Staff -> API : Close session in a separate action
+API -> DB : Lock; verify matching PAID\nCOMPLETED + table AVAILABLE + revoke grants
+note over API,DB : Payment never closes the session automatically.
+@enduml

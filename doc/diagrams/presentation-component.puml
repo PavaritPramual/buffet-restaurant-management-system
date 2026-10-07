@@ -1,0 +1,30 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 24
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+skinparam componentBackgroundColor #F2E6D4
+skinparam componentBorderColor #173A45
+top to bottom direction
+component "React View" as Web
+component "REST Controller\nHTTP / validation / DTO" as C
+component "Service Layer\nUse cases / transactions" as S
+component "Repository\nSpring Data JPA" as R
+database PostgreSQL as DB
+component "Shared interfaces\nSessionContextProvider\nDiningSessionBillingReader\nPaymentStatusLookup" as Contracts
+Web --> C : JSON + cookie
+C --> S
+S --> R
+R --> DB : JDBC
+S ..> Contracts : cross-module reads
+note right of S
+ State / Strategy / Template Method
+ encapsulate business rules.
+end note
+@enduml

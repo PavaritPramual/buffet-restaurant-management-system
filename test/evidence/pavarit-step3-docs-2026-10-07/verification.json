@@ -1,0 +1,464 @@
+{
+  "date": "2026-10-07",
+  "baseline_commit": "472fba4f25a27fa2e3cd1e1213151ce971646f3a",
+  "checks": {
+    "source_references": 63,
+    "local_markdown_path_links": 176,
+    "markdown_files": 13,
+    "plantuml_svg_count": 9,
+    "pptx_slides": 6,
+    "pptx_notes": 6,
+    "pdf_pages": 6,
+    "runtime_changes": 0,
+    "errors": []
+  },
+  "source_references": [
+    {
+      "path": "code/backend/pom.xml",
+      "line": 9,
+      "needle": "3.5.16"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/UserProfile.java",
+      "line": 19,
+      "needle": "@OneToOne"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/CustomerOrder.java",
+      "line": 39,
+      "needle": "@OneToMany"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/DiningSessionController.java",
+      "line": 23,
+      "needle": "private final"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java",
+      "line": 42,
+      "needle": "private final DiningSessionRepository"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/mapper/DiningSessionMapper.java",
+      "line": 10,
+      "needle": "class DiningSessionMapper"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/mapper/OrderingMapper.java",
+      "line": 13,
+      "needle": "class OrderingMapper"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/CustomerBillingService.java",
+      "line": 25,
+      "needle": "@PersistenceContext"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateFactory.java",
+      "line": 6,
+      "needle": "class OrderStateFactory"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingEngine.java",
+      "line": 9,
+      "needle": "class BillingEngine"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/StockTransactionTemplate.java",
+      "line": 15,
+      "needle": "abstract class"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/RestaurantTableController.java",
+      "line": 55,
+      "needle": "@PostMapping"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/BuffetPackageController.java",
+      "line": 46,
+      "needle": "@PostMapping"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/exception/GlobalExceptionHandler.java",
+      "line": 19,
+      "needle": "class GlobalExceptionHandler"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/DiningSessionController.java",
+      "line": 32,
+      "needle": "@Valid"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/dto/request/OpenDiningSessionRequest.java",
+      "line": 8,
+      "needle": "@NotNull"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/MenuItemController.java",
+      "line": 31,
+      "needle": "List menu items with pagination"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java",
+      "line": 89,
+      "needle": "public DiningSessionResponse openSession"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerSessionAccessService.java",
+      "line": 55,
+      "needle": "public ExchangeResult exchange"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerSessionAccessService.java",
+      "line": 81,
+      "needle": "if (forOrder)"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/CustomerBillingService.java",
+      "line": 41,
+      "needle": "public CustomerBillStatusResponse request"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/PaymentServiceImpl.java",
+      "line": 71,
+      "needle": "public PaymentResult pay"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java",
+      "line": 146,
+      "needle": "public DiningSessionResponse closeSession"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/DiningSession.java",
+      "line": 25,
+      "needle": "@ManyToOne"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/CustomerSessionGrant.java",
+      "line": 21,
+      "needle": "@ManyToOne"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerOrderingServiceImpl.java",
+      "line": 26,
+      "needle": "class CustomerOrderingServiceImpl"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingEngine.java",
+      "line": 21,
+      "needle": "public BillCalculation calculate"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingEngine.java",
+      "line": 10,
+      "needle": "private final BillCalculationStrategy"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/config/BillingConfig.java",
+      "line": 27,
+      "needle": "public BillingEngine billingEngine"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/billing/StandardBillCalculation.java",
+      "line": 12,
+      "needle": "public StandardBillCalculation(BillCalculationStrategy"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/StockTransactionTemplate.java",
+      "line": 43,
+      "needle": "protected abstract BigDecimal calculateDelta"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/SessionContextProvider.java",
+      "line": 5,
+      "needle": "interface SessionContextProvider"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateFactory.java",
+      "line": 12,
+      "needle": "return switch"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/state/OrderState.java",
+      "line": 22,
+      "needle": "@throws"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/state/ServedState.java",
+      "line": 4,
+      "needle": "BusinessRuleException"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingEngine.java",
+      "line": 26,
+      "needle": "if (subtotal == null"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/StockTransactionTemplate.java",
+      "line": 27,
+      "needle": "public final StockTransaction process"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DatabaseSessionContextProvider.java",
+      "line": 22,
+      "needle": "requireSessionForOrder"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/integration/billing/DiningSessionBillingReader.java",
+      "line": 7,
+      "needle": "interface DiningSessionBillingReader"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/integration/payment/PaymentStatusLookup.java",
+      "line": 6,
+      "needle": "interface PaymentStatusLookup"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/DiningSessionStaffAccessProvider.java",
+      "line": 4,
+      "needle": "interface DiningSessionStaffAccessProvider"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/OrderFulfillmentAccessProvider.java",
+      "line": 10,
+      "needle": "interface OrderFulfillmentAccessProvider"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/billing/BillCalculationStrategy.java",
+      "line": 7,
+      "needle": "interface BillCalculationStrategy"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/billing/DiscountCalculationStrategy.java",
+      "line": 6,
+      "needle": "interface DiscountCalculationStrategy"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java",
+      "line": 51,
+      "needle": "public DiningSessionServiceImpl("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerOrderingServiceImpl.java",
+      "line": 32,
+      "needle": "public CustomerOrderingServiceImpl("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingEngine.java",
+      "line": 16,
+      "needle": "public BillingEngine(BillCalculationStrategy pricing,"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DatabaseBillingContextProvider.java",
+      "line": 18,
+      "needle": "public DatabaseBillingContextProvider("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/StockService.java",
+      "line": 24,
+      "needle": "private final StockInProcessor"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/AuthController.java",
+      "line": 21,
+      "needle": "private final AuthService"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/SessionUserContextProvider.java",
+      "line": 3,
+      "needle": "import com.buffetrestaurant.controller.AuthController"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/SessionMenuAdminAccessProvider.java",
+      "line": 10,
+      "needle": "SessionUserContextProvider"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/DiningSessionController.java",
+      "line": 22,
+      "needle": "class DiningSessionController"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java",
+      "line": 36,
+      "needle": "class DiningSessionServiceImpl"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/repository/DiningSessionRepository.java",
+      "line": 12,
+      "needle": "interface DiningSessionRepository"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/repository/DiningSessionRepository.java",
+      "line": 13,
+      "needle": "@Lock"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java",
+      "line": 35,
+      "needle": "@Transactional"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/OrderFulfillmentServiceImpl.java",
+      "line": 52,
+      "needle": "advanceStatus("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateFactory.java",
+      "line": 11,
+      "needle": "forStatus("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/state/OrderState.java",
+      "line": 14,
+      "needle": "interface OrderState"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/config/BillingConfig.java",
+      "line": 18,
+      "needle": "new StandardBillCalculation"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/StockTransactionTemplate.java",
+      "line": 15,
+      "needle": "abstract class StockTransactionTemplate"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/StockService.java",
+      "line": 62,
+      "needle": "public StockTransactionResponse stockIn"
+    }
+  ],
+  "diagram_outputs": [
+    {
+      "file": "doc/diagrams/previews/class-billing-strategy.svg",
+      "sha256": "661adbfabb84030b322ba49ec4a5b88b80fad6566b1766c308b4c7a15852e134",
+      "width": "1226px",
+      "height": "601px",
+      "visual_review": "pass; inspected rendered diagram"
+    },
+    {
+      "file": "doc/diagrams/previews/class-order-state.svg",
+      "sha256": "87af3b0d5c3c462670e88859f78de3d2b198ed9a52b8a959a5153fc45c87ab78",
+      "width": "515px",
+      "height": "864px",
+      "visual_review": "pass; inspected rendered diagram"
+    },
+    {
+      "file": "doc/diagrams/previews/class-stock-template.svg",
+      "sha256": "5eea04998a286a73f029bfdd5866de027bff452632cdb7074a0c3e44313f1c9e",
+      "width": "1579px",
+      "height": "359px",
+      "visual_review": "pass; inspected rendered diagram"
+    },
+    {
+      "file": "doc/diagrams/previews/class-table-session.svg",
+      "sha256": "2fb0fa5fcd5a553030793af92ebc1d1c1c7b70dc3bc8c9d7294852bef87bf362",
+      "width": "1782px",
+      "height": "682px",
+      "visual_review": "pass; inspected rendered diagram"
+    },
+    {
+      "file": "doc/diagrams/previews/component.svg",
+      "sha256": "2449f29456330627cfa5d6fe83a35632578dca93acce8a5c1ac67432f2265cc7",
+      "width": "2126px",
+      "height": "731px",
+      "visual_review": "pass; inspected rendered diagram"
+    },
+    {
+      "file": "doc/diagrams/previews/domain-model.svg",
+      "sha256": "2d04d00dc7aa1875497f10523d8818ab2f2fd60634abf2826ab38152d253eb25",
+      "width": "999px",
+      "height": "801px",
+      "visual_review": "pass; inspected rendered diagram"
+    },
+    {
+      "file": "doc/diagrams/previews/sequence-billing-payment.svg",
+      "sha256": "eb5e85b758d7d6be42a9e9fd75f376457b2da7c70b1830bc3d8d588e3cd89bb9",
+      "width": "1813px",
+      "height": "1360px",
+      "visual_review": "pass; inspected rendered diagram"
+    },
+    {
+      "file": "doc/diagrams/previews/sequence-open-session.svg",
+      "sha256": "483d6f45def07e1f7633e9ddff30df1bb8407ee972e81bdc1a392bb0c2892775",
+      "width": "1351px",
+      "height": "807px",
+      "visual_review": "pass; inspected rendered diagram"
+    },
+    {
+      "file": "doc/diagrams/previews/sequence-qr-exchange.svg",
+      "sha256": "0976bed79dd3571fd2d9e7a4b5874822986c2f595940eebd06c8629304b8365f",
+      "width": "1354px",
+      "height": "940px",
+      "visual_review": "pass; inspected rendered diagram"
+    }
+  ],
+  "pptx": {
+    "sha256": "ac23058514c180719cac88ec33957e0efd243a4b0aec112345728a99d99fdecf",
+    "package_integrity": "pass",
+    "layout_findings": 0,
+    "layout_warnings": [],
+    "font_policy": {
+      "checked_text_script_count": 150,
+      "native_font_rendering_verified": false,
+      "observed_font_families": [
+        "Noto Sans Thai"
+      ],
+      "observed_font_use_counts": {
+        "Noto Sans Thai": 150
+      },
+      "passed": true,
+      "performed": true
+    },
+    "first_party_import_passed": true,
+    "visual_review": "all6 finalized slides inspected; corrected arrowheads and spacing",
+    "native_powerpoint_execution": "not tested",
+    "font_embedded": false
+  },
+  "pdf": {
+    "sha256": "e5940cd2b211647c3dad8ca249712edf89abd1705071ab4f932f675d51b88f23",
+    "format": "raster preview of editable PPTX",
+    "render_checks": [
+      {
+        "page": 1,
+        "pixel_mean_absolute_error_against_final_pptx_render": 1.819572884516461
+      },
+      {
+        "page": 2,
+        "pixel_mean_absolute_error_against_final_pptx_render": 1.804609375
+      },
+      {
+        "page": 3,
+        "pixel_mean_absolute_error_against_final_pptx_render": 1.953792277520576
+      },
+      {
+        "page": 4,
+        "pixel_mean_absolute_error_against_final_pptx_render": 1.8302639531893004
+      },
+      {
+        "page": 5,
+        "pixel_mean_absolute_error_against_final_pptx_render": 1.6835352366255145
+      },
+      {
+        "page": 6,
+        "pixel_mean_absolute_error_against_final_pptx_render": 1.8027131558641976
+      }
+    ]
+  },
+  "baseline_ci": {
+    "url": "https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37503690105",
+    "backend_postgres": 303,
+    "frontend": 116,
+    "url_guards": 6,
+    "new_tests_run_in_this_docs_task": false
+  },
+  "not_verified": [
+    "public deployment",
+    "central database current state",
+    "Final Stock/Profile",
+    "timed TTL",
+    "final release tests",
+    "native PowerPoint rendering"
+  ]
+}

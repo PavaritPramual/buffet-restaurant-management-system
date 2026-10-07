@@ -1,38 +1,52 @@
 @startuml
-title Class Diagram - User & Authentication
-
-skinparam classAttributeIconSize 0
+!pragma layout smetana
 skinparam shadowing false
-
-package "Domain" {
-    class User {
-        - id : Long
-        - username : String
-        - password : String
-        - role : UserRole
-        - active : Boolean
-    }
-
-    enum UserRole {
-        SERVICE_STAFF
-        KITCHEN_STAFF
-        SUPERVISOR
-        MANAGER
-    }
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title User and server-session authentication - actual classes
+class UserAccount {
+passwordHash : String
+role : UserRole
+active : boolean
 }
-
-package "Service" {
-    interface AuthenticationService {
-        + login(username : String, password : String) : String
-    }
+class UserProfile {
+userId : Long
+displayName : String
+email : String
 }
-
-package "Repository" {
-    interface UserRepository {
-        + findByUsername(username : String) : Optional<User>
-    }
+class AuthService {
++authenticate(username, password) : UserContext
++createUser(request) : UserResponse
 }
-
-AuthenticationService --> UserRepository
-
+interface UserAccountRepository <<Repository>>
+interface UserProfileRepository <<Repository>>
+class AuthController {
++login(request)
++logout()
+}
+class SessionUserContextProvider {
++requireCurrentRequestRole(role)
+}
+class HttpSession
+UserAccount "1" -- "0..1" UserProfile : shared PK / MapsId
+AuthController --> AuthService
+AuthService --> UserAccountRepository
+AuthService --> UserProfileRepository
+AuthController --> HttpSession : UserContext
+SessionUserContextProvider --> HttpSession
+note bottom of AuthService
+AuthService is currently concrete.
+Profile is optional in the database (0..1).
+createUser creates both; authenticate requires a profile.
+Only list/create user with basic displayName/email is implemented.
+Do not draw an AuthenticationService interface that does not exist.
+end note
 @enduml

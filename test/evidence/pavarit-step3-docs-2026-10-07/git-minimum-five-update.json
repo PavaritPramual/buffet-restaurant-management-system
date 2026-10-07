@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-07",
+  "snapshot_utc": "2026-10-07 03:45:54 UTC",
+  "before_review_fix_commit": true,
+  "base_head": "472fba4f25a27fa2e3cd1e1213151ce971646f3a",
+  "minimum_meaningful_commits": 5,
+  "criterion_source": "Pavarit reports instructor minimum 5",
+  "counts_are_candidates_not_meaningful_qualification": true,
+  "members": [
+    {
+      "login": "PavaritPramual",
+      "branch": "pavarit_673380278-9_01",
+      "remote_head": "bf32e112583827c2f1964446b8659600943bcb9c",
+      "candidate_commits": 53,
+      "minimum": 5,
+      "numeric_shortfall": 0
+    },
+    {
+      "login": "sirapatw-sys",
+      "branch": "sirapat_673380293-3_01",
+      "remote_head": "617d7423297f3881738d303eedbaada33ebfc4d6",
+      "candidate_commits": 22,
+      "minimum": 5,
+      "numeric_shortfall": 0
+    },
+    {
+      "login": "sarunph-ctrl",
+      "branch": "sarun_673380515-1_02",
+      "remote_head": "b3a2818beb39fdaa2d1a5295d484640461d14cff",
+      "candidate_commits": 3,
+      "minimum": 5,
+      "numeric_shortfall": 2
+    },
+    {
+      "login": "kojidesu01",
+      "branch": "teeramet_673380273-9_02",
+      "remote_head": "f387082e2292d1b115b626aab5ea76fcd6b55a8f",
+      "candidate_commits": 8,
+      "minimum": 5,
+      "numeric_shortfall": 0
+    },
+    {
+      "login": "methus-bit",
+      "branch": "methus_673380300-2_01",
+      "remote_head": "8ac7978ea205726e4f8deb07da537da18a46ea99",
+      "candidate_commits": 5,
+      "minimum": 5,
+      "numeric_shortfall": 0
+    }
+  ]
+}

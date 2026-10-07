@@ -1,67 +1,43 @@
 @startuml
-title Activity Diagram - Customer Dining & Ordering
-
-|Customer|
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title Customer ordering activity - cookie / package / bill rules
+|Service Staff|
 start
-:เข้าร้าน;
-:แจ้งจำนวนคน (ผู้ใหญ่ / เด็ก);
-
-|Service Staff|
-:ตรวจสอบโต๊ะว่าง;
-
-if (มีโต๊ะว่างหรือไม่?) then (มี)
-    :เปิด Dining Session;
-    :บันทึกจำนวนลูกค้า;
-    :เลือก Buffet Package;
-    :เลือกน้ำซุป;
-    :ออก QR Code ประจำโต๊ะให้ลูกค้า;
-else (ไม่มี)
-    :แจ้งว่าไม่มีโต๊ะว่าง;
-    stop
-endif
-
-|Customer|
-:สแกน QR Code;
-:ดูรายการอาหาร (ระบบกรองตาม Package);
-:เลือกอาหารและจำนวน;
-:ยืนยัน Order;
-
+:Login and select available table;
+:Select active package / soup and guest count;
 |System|
-:สร้าง Order (สถานะ = RECEIVED);
-
-|Kitchen Staff|
-:รับ Order;
-:เตรียมอาหาร (สถานะ = PREPARING);
-:อาหารเสร็จสิ้น (สถานะ = READY);
-
-|Service Staff|
-:ตรวจสอบ Order ที่ READY;
-:นำอาหารไปเสิร์ฟที่โต๊ะ;
-:อัปเดตสถานะเป็น SERVED;
-
+:Validate capacity and open session atomically;
 |Customer|
-:รับประทานอาหาร;
-
-while (ต้องการสั่งอาหารเพิ่มหรือไม่?) is (ใช่)
-    |Customer|
-    :เลือกอาหารเพิ่ม;
-    :ยืนยัน Order เพิ่ม;
-
-    |System|
-    :สร้าง Order เพิ่ม (สถานะ = RECEIVED);
-
-    |Kitchen Staff|
-    :รับ Order เพิ่ม;
-    :เตรียมอาหาร (สถานะ = PREPARING);
-    :อาหารเสร็จสิ้น (สถานะ = READY);
-
-    |Service Staff|
-    :นำอาหารไปเสิร์ฟที่โต๊ะ;
-    :อัปเดตสถานะเป็น SERVED;
-
-    |Customer|
-    :รับประทานอาหารต่อ;
-endwhile (ไม่ต้องการสั่งเพิ่ม)
-
+:Scan current QR;
+|System|
+:Exchange once and rotate QR;
+:Issue HttpOnly customer grant;
+repeat
+ |Customer|
+ :Choose menu and quantity;
+ |System|
+ if (Active grant / same session / no bill request?) then (yes)
+  :Validate package membership / availability;
+  :Create order RECEIVED with item snapshots;
+ else (no)
+  :Reject order using ErrorResponse;
+ endif
+ |Customer|
+repeat while (Order more?) is (yes) not (no)
+:Request bill;
+|System|
+:Record bill request and stop new orders for all grants;
+:Customer can still read orders and bill status;
 stop
 @enduml

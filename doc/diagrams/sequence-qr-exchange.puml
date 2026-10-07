@@ -1,0 +1,30 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName Tahoma
+title QR exchange and customer authorization - actual flow
+autonumber
+actor Customer
+boundary "Customer React page" as UI
+boundary CustomerSessionController as C
+control CustomerSessionAccessService as Access
+database "DiningSession / customer_session_grants" as DB
+Customer -> UI : /customer/qr#token=A
+UI -> UI : capture hash on each navigation; replace URL immediately
+note right of UI : Same-token in-flight Promise shared;\ndifferent tokens serialized; stale results ignored.
+UI -> C : POST /api/v1/dining-sessions/qr-exchange\nbody {token:A} + allowed Origin
+C -> C : CustomerOriginGuard
+C -> Access : exchange(A)
+group single transaction
+ Access -> DB : findBySessionTokenForUpdate(A); require ACTIVE
+ Access -> Access : random credential; SHA256 hash; expiry <=8h
+ Access -> DB : insert grant(hash, session, expiry)\nrotate QR token; flush
+end
+Access --> C : ExchangeResult(customer DTO, raw credential)
+C --> UI : HttpOnly customer_session cookie\nno-store + CustomerSessionResponse
+note over C,DB : Cookie path /api/v1/dining-sessions; SameSite/secure are configured.\nProduction must enforce HTTPS/Secure. Raw credential never stored in DB.
+UI -> C : GET /customer-context with cookie (refresh/no new QR)
+C -> Access : requireContext(cookie)
+Access -> DB : hash -> grant; expiry + ACTIVE
+Access --> UI : customer DTO; no QR token or price snapshot
+note over UI,DB : Reusing A ->404. Multiple devices scan successive rotated QR codes.\nMissing/invalid/expired grant ->401; wrong/inactive session ->404.\nClose deletes grants, so old cookie ->401.\nNew invalid QR must show error without falling back to old session.
+@enduml

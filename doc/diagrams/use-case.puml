@@ -1,67 +1,70 @@
 @startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title All actors and implemented use cases - develop 472fba4
 left to right direction
-
 actor Customer
-actor Staff
-actor "Head Staff / Supervisor" as HeadStaff
-actor "Kitchen Staff" as Kitchen
-actor "Manager / Admin" as Manager
-
-rectangle "Buffet Restaurant Management System" {
-
-  usecase "View Menu" as UC1
-  usecase "Place Order" as UC2
-  usecase "View Order Status" as UC3
-  usecase "Request Bill" as UC4
-
-  usecase "Login" as UC5
-  usecase "Open Dining Session" as UC6
-  usecase "Setup Dining Session" as UC7
-  usecase "Select Buffet Package" as UC20
-  usecase "Serve Order" as UC8
-  usecase "Process Payment" as UC9
-  usecase "Close Dining Session" as UC10
-  usecase "View Stock" as UC11
-  usecase "Record Stock In" as UC18
-  usecase "Adjust Stock" as UC19
-
-  usecase "View Incoming Orders" as UC12
-  usecase "Update Order Status" as UC13
-
-  usecase "Manage Menu" as UC14
-  usecase "Manage Buffet Package" as UC15
-  usecase "Manage Tables" as UC16
-  usecase "Manage Stock Items" as UC17
+actor "SERVICE_STAFF" as Staff
+actor "KITCHEN_STAFF" as Kitchen
+rectangle "Buffet restaurant" {
+ usecase "Exchange single-use QR" as QR
+ usecase "View package menu" as CustomerMenu
+ usecase "Place order / view status" as Order
+ usecase "Request bill / view bill status" as Bill
+ usecase "Open session\nSelect package and soup" as Open
+ usecase "Read READY / mark SERVED" as Serve
+ usecase "Receive payment" as Pay
+ usecase "Close after same-session PAID" as Close
+ usecase "Read incoming orders\nRECEIVED / PREPARING" as Incoming
+ usecase "PREPARING / READY transitions" as Prepare
 }
-
-Customer --> UC1
-Customer --> UC2
-Customer --> UC3
-Customer --> UC4
-
-Staff --> UC5
-Staff --> UC6
-Staff --> UC8
-Staff --> UC9
-Staff --> UC10
-
-HeadStaff --> UC5
-HeadStaff --> UC11
-HeadStaff --> UC18
-HeadStaff --> UC19
-
-Kitchen --> UC5
-Kitchen --> UC12
-Kitchen --> UC13
-
-Manager --> UC5
-Manager --> UC14
-Manager --> UC15
-Manager --> UC16
-Manager --> UC17
-
-' Required subflows
-UC6 ..> UC7 : <<include>>
-UC7 ..> UC20 : <<include>>
-
+Customer --> QR
+Customer --> CustomerMenu
+Customer --> Order
+Customer --> Bill
+Staff --> Open
+Staff --> Serve
+Staff --> Pay
+Staff --> Close
+Kitchen --> Incoming
+Kitchen --> Prepare
+actor "MANAGER" as Manager
+actor "SUPERVISOR" as Supervisor
+rectangle "Administration module" {
+ usecase "Login / logout" as Login
+ usecase "List / create users\nBasic profile at creation" as Users
+ usecase "Manage tables / packages / soups" as Catalog
+ usecase "Manage menu categories / items" as AdminMenu
+ usecase "Manage stock master data" as Master
+ usecase "View stock / transaction history" as Read
+ usecase "Record stock-in / signed adjustment" as Move
+}
+Manager --> Login
+Supervisor --> Login
+Manager --> Users
+Manager --> Catalog
+Manager --> AdminMenu
+Manager --> Master
+Manager --> Read
+Manager --> Move
+Supervisor --> Read
+Supervisor --> Move
+note bottom of Supervisor
+No Kitchen / Serving / Payment privilege.
+User edit/delete and detailed profile management are not implemented.
+end note
+note bottom
+Employees login before protected use cases.
+Customer access is QR exchange and HttpOnly grant.
+end note
 @enduml

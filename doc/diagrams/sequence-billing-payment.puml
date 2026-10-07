@@ -1,58 +1,51 @@
 @startuml
-title Session billing, payment recovery and separate close
-actor "SERVICE_STAFF" as Staff
+skinparam shadowing false
+skinparam defaultFontName Tahoma
+title Bill request -> Payment -> explicit close (actual locks)
+autonumber
 actor Customer
-participant "CustomerBillingService" as CustomerBilling
-participant "Billing UI" as UI
-participant "BillingPreviewService" as Billing
-participant "BillingContextProvider" as Context
-participant "BillingEngine" as Engine
-participant "PaymentService" as Payment
-participant "DiningSessionService" as Session
+actor SERVICE_STAFF as Staff
+control CustomerBillingService as CB
+control "BillingPreviewService / BillingEngine" as Bill
+participant "DatabaseBillingContextProvider\nDiningSessionBillingReader" as Read
+control PaymentServiceImpl as Pay
+control DiningSessionServiceImpl as Session
+participant DatabasePaymentStatusLookup as Lookup
 database DB
-Customer -> CustomerBilling : POST dining-sessions/{id}/bill-request\nHttpOnly customer cookie + allowed Origin
-CustomerBilling -> DB : lock ACTIVE session / set bill_requested_at once
-note over CustomerBilling,DB : Same row lock as Order/close.\nLater Orders return 409; existing orders continue.
-CustomerBilling -> Context : trusted opening snapshot / counts
-CustomerBilling -> Engine : calculate(context)
-CustomerBilling --> Customer : REQUESTED + BillSummary
-Customer -> CustomerBilling : GET bill-status (poll 5 seconds while visible)
-CustomerBilling --> Customer : REQUESTED / PAID + backend amount
-Staff -> UI : select session
-UI -> Billing : POST billing/preview {sessionId}
-Billing -> Billing : require SERVICE_STAFF
-Billing -> Context : findBySessionId(sessionId)
-Context -> DB : read opening price snapshot / counts / status
-Context --> Billing : internal BillingContext
-Billing -> Engine : calculate(context)
-Engine --> Billing : internal BillCalculation
-Billing --> UI : BillSummary display breakdown
-UI -> Payment : GET payments/sessions/{sessionId}
-Payment -> DB : find recorded payment
-Payment --> UI : PaymentResult including recorded amount / 404
-Staff -> UI : confirm payment method
-UI -> Payment : POST payments {sessionId, paymentMethod}
-Payment -> Payment : require SERVICE_STAFF
-Payment -> Context : trusted context
-Payment -> Engine : calculate(context)
-Engine --> Payment : payable total
-Payment -> DB : insert PAID / paidAt (unique session_id)
-Payment --> UI : 201 PaymentResult with recorded amount
-note over Payment,Session : Payment does not close the session
-alt response lost
- Staff -> UI : check status manually
- UI -> Payment : GET payments/sessions/{sessionId}
- Payment --> UI : recorded result / 404 / error
- note over UI
-  Only confirmed 404 unlocks manual retry.
-  No automatic POST retry; existing result blocks payment.
- end note
+Customer -> CB : POST /dining-sessions/{id}/bill-request\ncustomer cookie + Origin
+group transaction / session row lock
+ CB -> DB : findByIdForUpdate / refresh lock
+ CB -> CB : recheck credential and ACTIVE
+ CB -> DB : requestBill() sets bill_requested_at once
+ CB -> Read : trusted opening snapshot + counts
+ CB -> Bill : calculate(context)
 end
-Staff -> Session : POST dining-sessions/{id}/close
-Session -> Session : require SERVICE_STAFF / ACTIVE
-Session -> Payment : PaymentStatusLookup(sessionId)
-Payment -> DB : read status
-Payment --> Session : same sessionId + PAID
-Session -> DB : complete session / return table AVAILABLE atomically
-Session --> Staff : completed
+CB --> Customer : REQUESTED + BillSummary
+note over CB,DB : Same lock as Order/Payment/close. Later Orders ->409.\nRepeated bill request keeps original timestamp; session remains ACTIVE.
+Staff -> Bill : POST /billing/preview {sessionId}\nSERVICE_STAFF login cookie
+Bill -> Read : snapshot context (not browser-supplied amount)
+Bill --> Staff : rounded BillSummary
+Staff -> Pay : GET /payments/sessions/{sessionId}\ncheck existing payment before retry
+Staff -> Pay : POST /payments {sessionId,paymentMethod}
+group payment transaction / same session row lock
+ Pay -> DB : lock and refresh session
+ Pay -> Pay : require ACTIVE + billRequestedAt + no existing payment
+ Pay -> Read : findBySessionId; require matching id
+ Pay -> Bill : calculate total from snapshot
+ Pay -> DB : insert PAID amount + paidAt; unique session_id
+end
+Pay --> Staff : 201 PaymentResult with recorded amount
+note over Pay,Session : PAID does not close; duplicate Payment ->409.\nIf POST response lost, recover by GET; never auto-retry POST.
+Staff -> Session : POST /dining-sessions/{id}/close
+group close transaction
+ Session -> DB : lock ACTIVE session
+ Session -> Lookup : findPaymentForSession(id)
+ Lookup -> DB : read payment
+ Lookup --> Session : same sessionId + PAID
+ Session -> DB : lock table / delete all grants\ncomplete session + table AVAILABLE
+end
+Session --> Staff : DiningSessionResponse COMPLETED
+Customer -> CB : GET /bill-status with old cookie
+CB --> Customer : rejected after close
+note over CB,DB : Bill-status polling every5s while page visible.\nPAID response uses recorded amount; Final public regression still pending.
 @enduml

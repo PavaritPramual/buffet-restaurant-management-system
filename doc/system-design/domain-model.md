@@ -1,3 +1,5 @@
+> อัปเดตส่วน Table/Session, Domain, State/Strategy/Stock diagrams ณ 7 ต.ค.2026 จาก develop472fba4 ส่วน Menu/Auth/Ordering baseline ต้อง owner ตรวจ Finalอีกครั้ง QR flow ปัจจุบันดู [QR exchange](../diagrams/sequence-qr-exchange.puml)
+
 # Domain model
 
 ต้นทาง: [Domain model ใน Notion](https://app.notion.com/p/3d7cb2e9d47a807fbddfdc5810ac154a) · ย้ายเมื่อ 28 กันยายน 2026 · เป็น design baseline; ดู [สถานะเทียบกับโค้ด](README.md#สถานะเทียบกับโค้ด)
@@ -13,7 +15,7 @@ Domain Model คือแบบจำลองโครงสร้างขอ�
 
 | Entity | คำอธิบาย |
 | --- | --- |
-| **User** | เก็บข้อมูลบัญชีผู้ใช้งานระบบและบทบาท เช่น พนักงานบริการ (SERVICE_STAFF), พนักงานครัว (KITCHEN_STAFF), หัวหน้าพนักงาน (SUPERVISOR), และผู้จัดการ (MANAGER) |
+| **UserAccount** | เก็บข้อมูลบัญชีผู้ใช้งานระบบและบทบาท เช่น พนักงานบริการ (SERVICE_STAFF), พนักงานครัว (KITCHEN_STAFF), หัวหน้าพนักงาน (SUPERVISOR), และผู้จัดการ (MANAGER) |
 | **RestaurantTable** | แทนโต๊ะในร้าน ประกอบด้วยหมายเลขโต๊ะ ความจุ และสถานะของโต๊ะ (AVAILABLE / OCCUPIED) |
 | **DiningSession** | แทนรอบการเข้าใช้บริการของลูกค้าในโต๊ะนั้น ๆ บันทึกจำนวนลูกค้า, ราคาแพ็กเกจ ณ เวลาเปิด, เวลาเริ่ม-สิ้นสุด, สถานะ (ACTIVE / COMPLETED), และ QR token ที่หมุนหลังแลก |
 | **CustomerSessionGrant** | สิทธิ์ลูกค้าแต่ละเครื่อง เก็บเฉพาะ hash ของ credential ใน cookie, เวลาออกและหมดอายุ ผูกกับ DiningSession โดยไม่มีบัญชีลูกค้า |
@@ -24,5 +26,5 @@ Domain Model คือแบบจำลองโครงสร้างขอ�
 | **Order** | แทนคำสั่งอาหารในแต่ละรอบของโต๊ะ บันทึกเวลาที่สั่งและสถานะ (RECEIVED, PREPARING, READY, SERVED) |
 | **OrderItem** | เก็บรายละเอียดแต่ละรายการอาหารภายใน Order เช่น เมนู จำนวน และหมายเหตุเพิ่มเติม |
 | **Payment** | เก็บข้อมูลการชำระเงินของ Dining Session เช่น ยอดเงินสุทธิ วิธีชำระ (CASH / QR / CARD) และสถานะการชำระ |
-| **StockItem** | เก็บข้อมูลวัตถุดิบและสิ่งของคงคลัง เช่น ชื่อ หน่วยนับ ยอดคงเหลือปัจจุบัน (currentStock) ยอดขั้นต่ำ (minimumStock) และยอดเปิดร้านที่ควรมี (openingTargetStock) |
-| **StockTransaction** | บันทึกประวัติการเปลี่ยนแปลงสต็อก เช่น การรับเข้า (`STOCK_IN`) หรือการปรับยอดตรวจนับจริง (`ADJUSTMENT`) พร้อมเหตุผลและผู้บันทึก |
+| **StockItem** | ปัจจุบันมี sku/name/unit/quantity/lowStockThreshold ส่วน opening target และ active อยู่ Final ยังไม่ implement |
+| **StockTransaction** | บันทึกประวัติ stock-in (`IN`) และ adjustment (`ADJUSTMENT`) ด้วย signed delta พร้อม balanceAfter เหตุผลและผู้บันทึก ไม่ใช่การตั้งยอดตรวจนับโดยตรง |

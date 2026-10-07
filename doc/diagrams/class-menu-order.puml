@@ -1,54 +1,59 @@
 @startuml
-title Class Diagram - Menu & Order Domain
-
-skinparam classAttributeIconSize 0
+!pragma layout smetana
 skinparam shadowing false
-
-package "Domain" {
-    class BuffetPackage {
-        - id : Long
-        - name : String
-        - price : BigDecimal
-        - active : Boolean
-    }
-
-    class MenuCategory {
-        - id : Long
-        - name : String
-    }
-
-    class MenuItem {
-        - id : Long
-        - name : String
-        - description : String
-        - available : Boolean
-    }
-
-    class Order {
-        - id : Long
-        - status : OrderStatus
-        - createdAt : LocalDateTime
-        + addItem(item : OrderItem) : void
-        + calculateTotalItems() : Integer
-    }
-
-    class OrderItem {
-        - id : Long
-        - quantity : Integer
-        - note : String
-    }
-
-    enum OrderStatus {
-        RECEIVED
-        PREPARING
-        READY
-        SERVED
-    }
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title Menu and Ordering classes - actual implementation
+class BuffetPackage {
+price : BigDecimal
 }
-
-BuffetPackage "*" -- "*" MenuItem : includes
-MenuCategory "1" -- "0..*" MenuItem : categorizes
-Order "1" -- "1..*" OrderItem : contains
-MenuItem "1" -- "0..*" OrderItem : represents
-
+class MenuCategory {
+name : String
+}
+class MenuItem {
+category : MenuCategory
+ packageIds : Set<Long>
+ available : boolean
+ imageUrl : String
+}
+class CustomerOrder {
+sessionId : Long
+ tableNumber : String
+ status : OrderStatus
+ createdAt : OffsetDateTime
+ items : List<OrderItem>
+ +addItem(menuItemId, itemName, quantity)
+ +updateStatus(status)
+}
+class OrderItem {
+menuItemId : Long
+ itemName : String
+ quantity : Integer
+ order : CustomerOrder
+}
+interface CustomerOrderingService <<Service Layer>>
+class CustomerOrderingServiceImpl <<Service Layer>>
+interface SessionContextProvider <<Provider contract>>
+interface CustomerOrderRepository <<Repository>>
+class OrderingMapper <<DTO Mapper>>
+CustomerOrderingService <|.. CustomerOrderingServiceImpl
+CustomerOrderingServiceImpl --> SessionContextProvider
+CustomerOrderingServiceImpl --> CustomerOrderRepository
+CustomerOrderingServiceImpl --> OrderingMapper
+CustomerOrderRepository --> CustomerOrder
+MenuCategory "1" -- "0..*" MenuItem
+BuffetPackage "0..*" -- "0..*" MenuItem : package_menu_items
+CustomerOrder "1" *-- "1..*" OrderItem : ALL / LAZY
+note bottom of CustomerOrder
+sessionId and menuItemId are scalar IDs in these classes.
+FK constraints exist in DB; no invented ManyToOne fields.
+end note
 @enduml

@@ -1,93 +1,31 @@
 @startuml
-title Sequence Diagram 1: Open Dining Session & QR Generation
-
-skinparam sequenceMessageAlign center
-skinparam responseMessageBelowArrow true
-skinparam maxMessageSize 250
+skinparam shadowing false
+skinparam defaultFontName Tahoma
+title Open session and Staff QR - runtime 472fba4
 autonumber
-
-actor "Service Staff" as Staff
-boundary "TableController" as TC
-boundary "DiningSessionController" as DSC
-control "DiningSessionService" as DSS
-entity "RestaurantTableRepository" as TR
-entity "BuffetPackageRepository" as BPR
-entity "SoupRepository" as SR
-entity "DiningSessionRepository" as DSR
-entity "RestaurantTable" as Table
-entity "DiningSession" as Session
-
-== 1. Check Available Tables ==
-Staff -> TC: GET /api/v1/tables?status=AVAILABLE
-activate Staff
-activate TC
-TC -> DSS: getAvailableTables()
-activate DSS
-DSS -> TR: findByStatus(AVAILABLE)
-activate TR
-TR --> DSS: List<RestaurantTable>
-deactivate TR
-DSS --> TC: List<TableResponseDTO>
-deactivate DSS
-TC --> Staff: 200 OK (List of Available Tables)
-deactivate TC
-
-== 2. Open Dining Session & Setup ==
-Staff -> DSC: POST /api/v1/dining-sessions\n(OpenSessionRequestDTO: tableId, adultCount, childCount, packageId, soupId)
-activate DSC
-DSC -> DSS: openSession(requestDTO)
-activate DSS
-
-DSS -> TR: findById(requestDTO.tableId)
-activate TR
-TR --> DSS: Optional<RestaurantTable>
-deactivate TR
-
-alt Table Not Found or Not Available
-    DSS --> DSC: throw TableNotAvailableException("Table is occupied or invalid")
-    DSC --> Staff: 409 Conflict / 400 Bad Request (Error Response)
-else Table is Available
-    DSS -> BPR: findById(requestDTO.packageId)
-    activate BPR
-    BPR --> DSS: Optional<BuffetPackage>
-    deactivate BPR
-
-    DSS -> SR: findById(requestDTO.soupId)
-    activate SR
-    SR --> DSS: Optional<Soup>
-    deactivate SR
-
-    DSS -> Table: occupy()
-    activate Table
-    Table -> Table: status = OCCUPIED
-    Table --> DSS: void
-    deactivate Table
-
-    DSS -> TR: save(table)
-    activate TR
-    TR --> DSS: updatedTable
-    deactivate TR
-
-    DSS -> DSS: generateUniqueSessionToken()
-    note right: Generates secure UUID/Token\nlinked to this active session
-
-    create Session
-    DSS -> Session: new DiningSession(table, package, soup,\nadultCount, childCount, sessionToken, ACTIVE)
-
-    DSS -> DSR: save(session)
-    activate DSR
-    DSR --> DSS: savedSession (with generated id)
-    deactivate DSR
-
-    note right: Staff UI builds /customer/qr#token={sessionToken}\nFragment is removed by Customer UI before QR exchange
-
-    DSS --> DSC: DiningSessionResponseDTO\n(sessionId, tableNumber, packageName, soupName, sessionToken)
-    deactivate DSS
-    DSC --> Staff: 201 Created (DiningSessionResponseDTO)
-    deactivate DSC
-
-    Staff -> Staff: Provide table QR Code to Customer
-    deactivate Staff
+actor SERVICE_STAFF as Staff
+boundary DiningSessionController as C
+control DiningSessionServiceImpl as S
+participant SessionDiningSessionStaffAccessProvider as Access
+database "JPA repositories / DB" as DB
+Staff -> C : POST /api/v1/dining-sessions\nOpenDiningSessionRequest + login cookie
+C -> S : openSession(request)
+S -> Access : requireServiceStaffAccess()
+Access --> S : SERVICE_STAFF / reject
+group single transaction
+ S -> DB : RestaurantTableRepository.findByIdForUpdate(tableId)
+ DB --> S : table row locked
+ S -> S : require AVAILABLE / total people >=1 / <=capacity
+ S -> DB : read package and soup; require active
+ S -> S : generate SecureRandom QR token\nconstruct session with packagePriceAtOpen
+ S -> DB : table.occupy(); save(table)\nsaveAndFlush(session ACTIVE)
 end
-
+S --> C : DiningSessionResponse (Staff-only QR token + snapshot)
+C --> Staff : 201 + Location
+Staff -> Staff : QRCodeSVG points to /customer/qr#token=...\npoll/get Staff session to show rotated QR
+note over C,DB
+ Missing resource ->404; invalid DTO ->400;
+ occupied/capacity/inactive business rule ->409.
+ Row lock prevents two ACTIVE sessions for one table.
+end note
 @enduml
