@@ -22,8 +22,11 @@ public class BillingEngine implements BillCalculator {
         if (context == null || context.getSessionId() == null || context.getSessionId() <= 0)
             throw new IllegalArgumentException("A positive session ID is required");
         BigDecimal subtotal = pricing.calculate(context);
+        if (subtotal == null || subtotal.signum() < 0) {
+            throw new IllegalArgumentException("Invalid pricing strategy result");
+        }
         BigDecimal reduction = discount.calculateDiscount(context, subtotal);
-        if (subtotal == null || reduction == null || subtotal.signum() < 0 || reduction.signum() < 0
+        if (reduction == null || reduction.signum() < 0
                 || reduction.compareTo(subtotal) > 0) throw new IllegalArgumentException("Invalid strategy result");
         BigDecimal preciseTotal = subtotal.subtract(reduction);
         BigDecimal total = preciseTotal.setScale(2, RoundingMode.HALF_UP);

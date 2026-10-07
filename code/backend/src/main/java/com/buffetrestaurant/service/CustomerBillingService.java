@@ -54,7 +54,12 @@ public class CustomerBillingService {
         access.requireSession(id, credential);
         var session = sessions.findById(id).orElseThrow(() -> new ResourceNotFoundException("Active dining session not found"));
         var payment = payments.findBySessionId(id);
-        var calculation = engine.calculate(contextProvider.findBySessionId(id));
+        var context = contextProvider.findBySessionId(id);
+        if (context == null || !id.equals(context.getSessionId())
+                || context.getSessionStatus() != DiningSessionStatus.ACTIVE) {
+            throw new IllegalStateException("Billing context does not match the active session");
+        }
+        var calculation = engine.calculate(context);
         var subtotal = calculation.subtotalNoneDiscount().setScale(2, RoundingMode.HALF_UP);
         var paid = payment.filter(p -> p.getPaymentStatus() == PaymentStatus.PAID);
         // A recorded payment fixes the final net bill total. It is never an outstanding balance.
