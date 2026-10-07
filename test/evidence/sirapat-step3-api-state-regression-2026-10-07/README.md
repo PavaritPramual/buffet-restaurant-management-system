@@ -13,7 +13,7 @@ Owner: Sirapat. [Report](../../../doc/testing/sirapat-step3-api-state-regression
 | `runtime-summary.json`, `runtime-startup.txt` | In-memory H2, session/database providers, no env-file import or demo seed |
 | `runtime-harness.cjs` | Exact local invocation/setup snapshot; passwords generated in memory and not included |
 | `source-hashes.json` | SHA256 manifest for tested runtime/test sources |
-| `tested-docs-diff.patch` | Two documentation edits present while the browser ran; explains the dirty-tree marker |
+| `tested-docs-diff.json` | Two documentation edits present while the browser ran; explains the dirty-tree marker |
 | `visual-qa.json` | Inspection record for all 32 screenshots |
 
 The runtime harness snapshot uses the original machine's Java/Maven/Playwright paths and is evidence, not a portable launcher. For a new run follow [the testing guide](../../../test/README.md), build the backend, run Vite and the backend against a fresh isolated database with real session/database providers, privately create four role accounts, and provide the `FINAL_*` environment variables to the three scripts under `test/browser/`. The H2 runtime and its generated accounts were discarded after this run. Never use shared Supabase for these tests.

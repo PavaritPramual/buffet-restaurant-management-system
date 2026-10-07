@@ -4,7 +4,7 @@
   "automatedSourceCommit": "cb612d9bd396f7ec5b4ca6c70925acf087e305a6",
   "browserSourceCommit": "f97ef42872b5d0fd585d475815166b42b021bc62",
   "sourceTree": "dirty working tree; pair with source diff",
-  "dirtyChanges": "Only test-plan/traceability documentation; tested-docs-diff.patch and source-hashes.json attached; runtime/test sources unchanged",
+  "dirtyChanges": "Only test-plan/traceability documentation; tested-docs-diff.json and source-hashes.json attached; runtime/test sources unchanged",
   "java": "21.0.6",
   "maven": "3.9.16",
   "node": "24.13.1",

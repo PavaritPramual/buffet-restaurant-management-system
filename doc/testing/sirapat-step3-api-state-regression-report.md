@@ -13,7 +13,7 @@
 | Integrated develop | `cb612d9bd396f7ec5b4ca6c70925acf087e305a6` หลัง merge PR #25 |
 | Automated backend/frontend source | `cb612d9`; ไม่มีการแก้ production source ใน PR นี้ |
 | Browser/test source | `f97ef42872b5d0fd585d475815166b42b021bc62` เพิ่ม negative State assertions ใน `step3-core-flow.cjs` |
-| Working tree ระหว่าง browser | dirty เฉพาะ test-plan/traceability docs; แนบ [tested diff](../../test/evidence/sirapat-step3-api-state-regression-2026-10-07/tested-docs-diff.patch) และ [source hashes](../../test/evidence/sirapat-step3-api-state-regression-2026-10-07/source-hashes.json) |
+| Working tree ระหว่าง browser | dirty เฉพาะ test-plan/traceability docs; แนบ [tested diff](../../test/evidence/sirapat-step3-api-state-regression-2026-10-07/tested-docs-diff.json) และ [source hashes](../../test/evidence/sirapat-step3-api-state-regression-2026-10-07/source-hashes.json) |
 | Backend runtime | jar ที่ build รอบนี้, Java 21.0.6, Maven 3.9.16; profile `local-regression`; H2 `jdbc:h2:mem:sirapat_submit` |
 | Frontend/browser | Node 24.13.1; Chrome 145.0.7632.117; Vite local runtime |
 | Web / API | `http://127.0.0.1:5177` / `http://127.0.0.1:8087/api/v1` |
