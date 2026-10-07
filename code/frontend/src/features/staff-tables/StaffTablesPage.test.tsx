@@ -61,6 +61,21 @@ describe('Staff table flow', () => {
     expect(screen.getByText('กำลังใช้งาน')).toBeTruthy()
   })
 
+  it('shows the payment instruction in Thai when an unpaid close is rejected', async () => {
+    vi.mocked(api.getDiningSession).mockResolvedValue(context)
+    vi.mocked(api.closeDiningSession).mockRejectedValue(new Error('กรุณาบันทึกการชำระเงินก่อนปิดรอบกิน'))
+    render(<MemoryRouter initialEntries={['/staff/sessions/32']}><Routes>
+      <Route path="/staff/sessions/:sessionId" element={<DiningSessionPage />} />
+    </Routes></MemoryRouter>)
+
+    fireEvent.click(await screen.findByRole('button', { name: 'ปิดรอบกิน' }))
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))
+
+    expect((await screen.findByRole('alert')).textContent).toContain('กรุณาบันทึกการชำระเงินก่อนปิดรอบกิน')
+    expect(screen.getByText('กำลังใช้งาน')).toBeTruthy()
+    expect(api.closeDiningSession).toHaveBeenCalledWith(32)
+  })
+
   it('does not show a QR after the dining session has closed', async () => {
     vi.mocked(api.getDiningSession).mockResolvedValue({ ...context, sessionStatus: 'COMPLETED' })
     render(<MemoryRouter initialEntries={['/staff/sessions/32']}><Routes>
