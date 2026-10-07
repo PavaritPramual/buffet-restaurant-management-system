@@ -1,8 +1,10 @@
-# สไลด์ทีมปัจจุบัน — Canva v02
+# สไลด์ทีมปัจจุบัน — Canva v02b ฉบับล่วงหน้า
 
 > **ฉบับล่วงหน้า ยังไม่ได้รับการรับรองจากปวริศช์** เก็บเนื้อหาและลำดับเดิมไว้ก่อน รอให้โค้ดทุกส่วนเสร็จแล้วจึงทบทวนเนื้อหา ลำดับ และช่วงผู้พูดใหม่ เวลา 12 นาทีและ runbook ด้านล่างเป็นร่างที่ยังไม่รับรอง ดู [ข้อสังเกตและสถานะการเก็บ PPTX](team-final-v02-draft-status.md)
 
-[เปิด Canva v02](https://www.canva.com/d/wORhypcIcwvGuFK) · design `DAHXSWQA-Vs` · [เนื้อหาและ speaker notes](team-final-canva-v02-content.md)
+[เปิด Canva v02b](https://www.canva.com/d/yWw6P3disBOSfHS) · design `DAHXS8ESvRQ` · [เนื้อหาและ speaker notes](team-final-canva-v02-content.md)
+
+รอบแก้ PR #24 เปลี่ยนเฉพาะภาพ/notes หน้า 2, 24, 68, 70 ให้ตรงข้อเท็จจริง User/Profile และแยก Use Case menu ลำดับหน้า ผู้พูด และโค้ดตัวอย่างยังคงเดิม เก็บ [v02 เดิม](https://www.canva.com/d/wORhypcIcwvGuFK) เป็นประวัติ ดู [ผลแก้รีวิว](../testing/pr24-review-fixes-report.md)
 
 ## ช่วงนำเสนอ 12 นาที
 
@@ -26,12 +28,13 @@
 
 Canvaเป็นต้นฉบับและเครื่องมือพรีเซนต์ ตามคำยืนยันล่าสุดให้ **เก็บทั้ง PPTX และ PDF ที่ export จาก Canva** เป็นไฟล์สำรองแต่ละเวอร์ชันใน repo ร่าง PPTX รายคนเดิมยังเป็นประวัติ ไม่ใช่ไฟล์ export ของชุดทีมปัจจุบัน
 
-หลังเจ้าของตรวจเนื้อหา ให้ดาวน์โหลดจาก Canva ทุกหน้าเป็น Microsoft PowerPoint และ PDF มาตรฐาน แล้วบันทึกเป็น `doc/slide/team-final-v02.pptx` และ `doc/slide/team-final-v02.pdf` พร้อมวันที่ ลิงก์ Canva และ commit ที่อ้างอิงใน changelog ก่อนรับรองไฟล์ PPTX ให้เปิดตรวจฟอนต์ ภาพ diagram โค้ด และตำแหน่งข้อความหลัง export
+ดาวน์โหลดฉบับล่วงหน้าจาก Canva ทุกหน้าเป็น Microsoft PowerPoint เพื่อเก็บไว้ก่อนได้ ใช้ชื่อ `doc/slide/team-final-v02b-draft.pptx` และ PDF สำรอง `doc/slide/team-final-v02b-draft.pdf` พร้อมวันที่ ลิงก์ Canva และ commit ใน changelog การเก็บร่างไม่ใช่การรับรองเนื้อหา ก่อนรับรองไฟล์ให้ตรวจฟอนต์ ภาพ diagram โค้ด และตำแหน่งข้อความหลัง export
 
-เครื่องมือ Canva ที่เชื่อมอยู่ไม่มีคำสั่ง export จึงยังไม่ได้เก็บไฟล์ทั้งสองของ v02 และยังไม่ติ๊กว่า export สำเร็จ ไฟล์สำรองต้องดาวน์โหลดจาก Canva จริง
+เครื่องมือ Canva ที่เชื่อมอยู่ไม่มีคำสั่ง export จึงยังไม่ได้เก็บไฟล์ทั้งสองของ v02b และยังไม่ติ๊กว่า export สำเร็จ ไฟล์สำรองต้องดาวน์โหลดจาก Canva จริง ผลตรวจ v02 ข้างต้นเป็นผลประวัติของ design เดิม ดูรายงานรอบแก้สำหรับ v02b
 
 | รุ่น | วันที่ | ต้นฉบับ | สถานะ |
 |---|---|---|---|
+| v02b-draft | 2026-10-07 | [Canva](https://www.canva.com/d/yWw6P3disBOSfHS) / [content](team-final-canva-v02-content.md) | แก้ข้อเท็จจริง 4 หน้า คงลำดับ/ผู้พูดเดิม ยังไม่รับรอง รอโค้ดทีมเสร็จแล้วปรับชุดนำเสนอและ export |
 | v02 | 2026-10-07 | [Canva](https://www.canva.com/d/wORhypcIcwvGuFK) / [content](team-final-canva-v02-content.md) | 20หลัก+56ภาคผนวก; source/localQA/Canvareadbackผ่าน รอowner/CanvavisualQA/PDF/rehearsal/release |
 | v01 | 2026-10-07 | [Canva](https://www.canva.com/d/D0dhcGCjuTTS7pV) | 40หน้ารุ่นเก่า เก็บเป็นประวัติ ไม่ใช้เป็นรุ่นปัจจุบัน |
 

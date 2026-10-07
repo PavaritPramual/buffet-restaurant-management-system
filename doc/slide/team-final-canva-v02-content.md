@@ -1,4 +1,6 @@
-# สไลด์ Canva ทีม v02 — Software Design
+# สไลด์ Canva ทีม v02b — ฉบับล่วงหน้า แก้ข้อเท็จจริง PR #24
+
+**ยังไม่รับรอง** รอบนี้แก้เฉพาะข้อเท็จจริงหน้า2/24/68/70 คง76หน้า ลำดับและผู้พูดเดิม รอทบทวนหลังโค้ดทีมเสร็จ
 
 ชุดเต็ม 76 หน้า ประกอบด้วย 20 หน้าเนื้อหา/ภาพอธิบาย และ 56 ภาคผนวก มี diagram จริง 28 ชุดและโค้ดตัวอย่าง ทุกหน้ามีผู้บรรยายหนึ่ง branch ใช้โค้ดจริง baseline `472fba4f25a27fa2e3cd1e1213151ce971646f3a` ไม่ใช่การรับรอง public/release
 
@@ -38,9 +40,7 @@
 
 ### คำพูดประกอบ
 
-ช่วงนำเสนอ 12 นาที ใช้หน้านี้ประมาณ 35 วินาที
-
-ภาพย่อห้าactors หน้าที่หลักตามสิทธิ์จริง รายละเอียดแต่ละUseCaseและDescriptionอยู่ภาคผนวก ไม่ใช่การให้Managerมีทุกสิทธิ์
+Manager จัดการข้อมูลร้าน เมนูและสต็อก ส่วนผู้ใช้มีเฉพาะ list/create พร้อม basic profile displayName/email ยังไม่มีแก้/ลบผู้ใช้หรือ full profile management
 
 ## หน้า 03 — Use Case Description กำหนดเงื่อนไขเปิดรอบ
 
@@ -480,7 +480,7 @@ SERVICE_STAFF เปิดรอบ เสิร์ฟ รับชำระแ�
 
 ### คำพูดประกอบ
 
-ManagerจัดการUsersTablesPackagesSoupsMenuStockmaster Supervisorอ่านและทำstockmovement ไม่ inheritKitchenServingPaymentจากตำแหน่ง
+User API มี GET list และ POST create พร้อม basic profile displayName/email เท่านั้น ไม่มี update/delete user หรือ full profile management การจัดการข้อมูลร้านแต่ละส่วนต้องอ้าง API ที่มีจริง
 
 ## หน้า 25 — แบ่งชั้นเพื่อแยกเหตุผลที่โค้ดต้องเปลี่ยน
 
@@ -616,7 +616,7 @@ ALTER TABLE orders
 
 ### คำพูดประกอบ
 
-V7 เพิ่ม FK จาก orders.session_id ไป dining_sessions.id และใช้ ON DELETE RESTRICT ไม่แก้ migration ที่ apply ไปแล้ว V1–V14 เป็น baseline ตามรายงาน Step2 ของทีม งานสไลด์นี้ไม่ได้ต่อฐานกลางเพื่อตรวจสดหรือรัน migration
+V7 เพิ่ม FK จาก orders.session_id ไป dining_sessions.id และใช้ ON DELETE RESTRICT ไม่แก้ migration ที่ apply ไปแล้ว V1–V14 มี SELECT readback/checksum สดในรอบแก้ PR24 วันที่7ต.ค. ดูรายงาน pr24-review-fixes-report ไม่มีการ apply/repair migration หรือรัน JPA startup ใหม่
 
 ## หน้า 32 — ERD แสดงตารางและความสัมพันธ์ของฐานข้อมูล
 
@@ -1361,7 +1361,7 @@ Composeปัจจุบันมีfrontend/backendไม่ใช่databasec
 
 ### คำพูดประกอบ
 
-แหล่งหลักคือREADME docs/systemdesign diagrams SOLID patterns course matrix testplan traceabilityรายงานStep2/PR22 GitHubCI37503690105 รายงานนี้อ้างbaselineไม่ใช่deployedcommit ในPDFรุ่นส่งต้องเติมURLกับผลreleaseหลังตรวจจริง ใช้Canvaต้นฉบับและเก็บPDFexportเป็นเวอร์ชัน ไม่ใช้PPTXร่างเก่า
+แหล่งหลักคือREADME docs/systemdesign diagrams SOLID patterns course matrix testplan traceabilityรายงานStep2/PR22 GitHubCI37503690105 รายงานนี้อ้างbaselineไม่ใช่deployedcommit ในPDFรุ่นส่งต้องเติมURLกับผลreleaseหลังตรวจจริง ใช้Canvaต้นฉบับและเก็บPDFexportเป็นเวอร์ชัน เก็บPPTX/PDFที่exportจากCanvaตามเวอร์ชัน ร่างPPTXรายคนเก่าเป็นประวัติ
 
 ## หน้า 68 — Use Case ภาพรวมทุก actor ของระบบ
 
@@ -1377,7 +1377,7 @@ Composeปัจจุบันมีfrontend/backendไม่ใช่databasec
 
 ### คำพูดประกอบ
 
-ภาพรวมสมบูรณ์สำหรับตอบคำถามสิทธิ์ของแต่ละactor มีภาพfocusCustomerStaffKitchenและManagementในเนื้อหา
+CustomerMenu กับ AdminMenu เป็นคนละ use case และมี alias แยกกัน Customer ดูเมนูตามแพ็กเกจ ส่วน Manager จัดการ menu categories/items; ผู้ใช้มีเฉพาะ list/create และ basic profile
 
 ## หน้า 69 — Class ของ Menu และ Ordering ตรง source
 
@@ -1409,7 +1409,7 @@ CustomerOrderOrderItem snapshotid/name EnumOffsetDateTime DTOMapper ServiceLayer
 
 ### คำพูดประกอบ
 
-UserAccountpasswordHash BCryptUserProfileMapsIdsharedPK AuthServiceconcreteจริงและSessionUserContextProviderอ่านHttpSession ไม่แสดงtokenloginStringที่ไม่มี
+UserAccount มี UserProfile ได้ 0..1 จาก shared PK/FK ใน DB createUser สร้างทั้งคู่ ส่วน authenticate ต้องมี profile และ listUsers รองรับ user ไม่มี profile ด้วยค่าว่าง/null Basic profile มี displayName/email ยังไม่มี full profile management
 
 ## หน้า 71 — Sequence ของ Ordering ครัว และงานเสิร์ฟ
 

@@ -1,0 +1,288 @@
+{
+  "captured_utc": "2026-10-07 03:45:54 UTC",
+  "client_timezone": "Asia/Bangkok",
+  "project_id": "zbflfljthmzqhshahemv",
+  "access": "Supabase connector; SELECT-only metadata; not the app JDBC connection",
+  "no_migrations_applied": true,
+  "no_customer_or_account_data_read": true,
+  "history": [
+    {
+      "installed_rank": 1,
+      "version": "1",
+      "description": "baseline",
+      "type": "SQL",
+      "script": "V1__baseline.sql",
+      "checksum": -431459505,
+      "installed_on": "2026-09-18 08:32:08.721485",
+      "success": true
+    },
+    {
+      "installed_rank": 2,
+      "version": "2",
+      "description": "create restaurant tables",
+      "type": "SQL",
+      "script": "V2__create_restaurant_tables.sql",
+      "checksum": -376022096,
+      "installed_on": "2026-09-24 09:57:28.804814",
+      "success": true
+    },
+    {
+      "installed_rank": 3,
+      "version": "3",
+      "description": "create buffet packages and soups",
+      "type": "SQL",
+      "script": "V3__create_buffet_packages_and_soups.sql",
+      "checksum": 678764387,
+      "installed_on": "2026-09-28 09:55:03.299365",
+      "success": true
+    },
+    {
+      "installed_rank": 4,
+      "version": "4",
+      "description": "create menu and order tables",
+      "type": "SQL",
+      "script": "V4__create_menu_and_order_tables.sql",
+      "checksum": 1977155574,
+      "installed_on": "2026-09-28 09:55:04.609436",
+      "success": true
+    },
+    {
+      "installed_rank": 5,
+      "version": "5",
+      "description": "restrict menu and order access",
+      "type": "SQL",
+      "script": "V5__restrict_menu_and_order_access.sql",
+      "checksum": -21432884,
+      "installed_on": "2026-09-28 09:55:05.733228",
+      "success": true
+    },
+    {
+      "installed_rank": 6,
+      "version": "6",
+      "description": "create dining sessions",
+      "type": "SQL",
+      "script": "V6__create_dining_sessions.sql",
+      "checksum": 1714973593,
+      "installed_on": "2026-09-29 07:22:31.756789",
+      "success": true
+    },
+    {
+      "installed_rank": 7,
+      "version": "7",
+      "description": "link orders to dining sessions",
+      "type": "SQL",
+      "script": "V7__link_orders_to_dining_sessions.sql",
+      "checksum": 421808321,
+      "installed_on": "2026-09-29 07:22:33.066267",
+      "success": true
+    },
+    {
+      "installed_rank": 8,
+      "version": "8",
+      "description": "snapshot session package price",
+      "type": "SQL",
+      "script": "V8__snapshot_session_package_price.sql",
+      "checksum": 356417345,
+      "installed_on": "2026-09-29 07:22:33.726427",
+      "success": true
+    },
+    {
+      "installed_rank": 9,
+      "version": "10",
+      "description": "create user and stock tables",
+      "type": "SQL",
+      "script": "V10__create_user_and_stock_tables.sql",
+      "checksum": 693950150,
+      "installed_on": "2026-10-02 15:47:54.818152",
+      "success": true
+    },
+    {
+      "installed_rank": 10,
+      "version": "11",
+      "description": "restrict flyway and stock access",
+      "type": "SQL",
+      "script": "V11__restrict_flyway_and_stock_access.sql",
+      "checksum": 1583091535,
+      "installed_on": "2026-10-02 15:47:55.819644",
+      "success": true
+    },
+    {
+      "installed_rank": 11,
+      "version": "9",
+      "description": "create payments table",
+      "type": "SQL",
+      "script": "V9__create_payments_table.sql",
+      "checksum": 1126750035,
+      "installed_on": "2026-10-05 15:12:52.504549",
+      "success": true
+    },
+    {
+      "installed_rank": 12,
+      "version": "12",
+      "description": "align payment backend privileges",
+      "type": "SQL",
+      "script": "V12__align_payment_backend_privileges.sql",
+      "checksum": 1502075674,
+      "installed_on": "2026-10-05 15:12:53.525887",
+      "success": true
+    },
+    {
+      "installed_rank": 13,
+      "version": "13",
+      "description": "restrict remaining client database access",
+      "type": "SQL",
+      "script": "V13__restrict_remaining_client_database_access.sql",
+      "checksum": 419855576,
+      "installed_on": "2026-10-06 09:48:03.694447",
+      "success": true
+    },
+    {
+      "installed_rank": 14,
+      "version": "14",
+      "description": "add session bill request",
+      "type": "SQL",
+      "script": "V14__add_session_bill_request.sql",
+      "checksum": -1840534327,
+      "installed_on": "2026-10-06 09:48:04.664729",
+      "success": true
+    }
+  ],
+  "metadata": {
+    "bill_requested_at": [
+      {
+        "table_name": "dining_sessions",
+        "column_name": "bill_requested_at",
+        "data_type": "timestamp with time zone",
+        "is_nullable": "YES"
+      }
+    ],
+    "table_security": [
+      {
+        "relname": "restaurant_tables",
+        "relrowsecurity": true,
+        "relforcerowsecurity": false
+      }
+    ],
+    "client_table_grants": []
+  },
+  "client_privileges": [
+    {
+      "rolname": "authenticated",
+      "restaurant_tables_select": false,
+      "dining_sessions_select": false,
+      "flyway_history_select": false,
+      "table_sequence_usage": false
+    },
+    {
+      "rolname": "anon",
+      "restaurant_tables_select": false,
+      "dining_sessions_select": false,
+      "flyway_history_select": false,
+      "table_sequence_usage": false
+    }
+  ],
+  "file_checksum_comparison": {
+    "method": "Flyway SQL CRC32 over UTF-8 lines without separators/BOM; no migrate/repair run",
+    "checks": [
+      {
+        "version": "1",
+        "path": "code/backend/src/main/resources/db/migration/common/V1__baseline.sql",
+        "database_checksum": -431459505,
+        "file_checksum": -431459505,
+        "match": true
+      },
+      {
+        "version": "2",
+        "path": "code/backend/src/main/resources/db/migration/common/V2__create_restaurant_tables.sql",
+        "database_checksum": -376022096,
+        "file_checksum": -376022096,
+        "match": true
+      },
+      {
+        "version": "3",
+        "path": "code/backend/src/main/resources/db/migration/postgresql/V3__create_buffet_packages_and_soups.sql",
+        "database_checksum": 678764387,
+        "file_checksum": 678764387,
+        "match": true
+      },
+      {
+        "version": "4",
+        "path": "code/backend/src/main/resources/db/migration/common/V4__create_menu_and_order_tables.sql",
+        "database_checksum": 1977155574,
+        "file_checksum": 1977155574,
+        "match": true
+      },
+      {
+        "version": "5",
+        "path": "code/backend/src/main/resources/db/migration/postgresql/V5__restrict_menu_and_order_access.sql",
+        "database_checksum": -21432884,
+        "file_checksum": -21432884,
+        "match": true
+      },
+      {
+        "version": "6",
+        "path": "code/backend/src/main/resources/db/migration/postgresql/V6__create_dining_sessions.sql",
+        "database_checksum": 1714973593,
+        "file_checksum": 1714973593,
+        "match": true
+      },
+      {
+        "version": "7",
+        "path": "code/backend/src/main/resources/db/migration/common/V7__link_orders_to_dining_sessions.sql",
+        "database_checksum": 421808321,
+        "file_checksum": 421808321,
+        "match": true
+      },
+      {
+        "version": "8",
+        "path": "code/backend/src/main/resources/db/migration/common/V8__snapshot_session_package_price.sql",
+        "database_checksum": 356417345,
+        "file_checksum": 356417345,
+        "match": true
+      },
+      {
+        "version": "10",
+        "path": "code/backend/src/main/resources/db/migration/common/V10__create_user_and_stock_tables.sql",
+        "database_checksum": 693950150,
+        "file_checksum": 693950150,
+        "match": true
+      },
+      {
+        "version": "11",
+        "path": "code/backend/src/main/resources/db/migration/postgresql/V11__restrict_flyway_and_stock_access.sql",
+        "database_checksum": 1583091535,
+        "file_checksum": 1583091535,
+        "match": true
+      },
+      {
+        "version": "9",
+        "path": "code/backend/src/main/resources/db/migration/postgresql/V9__create_payments_table.sql",
+        "database_checksum": 1126750035,
+        "file_checksum": 1126750035,
+        "match": true
+      },
+      {
+        "version": "12",
+        "path": "code/backend/src/main/resources/db/migration/postgresql/V12__align_payment_backend_privileges.sql",
+        "database_checksum": 1502075674,
+        "file_checksum": 1502075674,
+        "match": true
+      },
+      {
+        "version": "13",
+        "path": "code/backend/src/main/resources/db/migration/postgresql/V13__restrict_remaining_client_database_access.sql",
+        "database_checksum": 419855576,
+        "file_checksum": 419855576,
+        "match": true
+      },
+      {
+        "version": "14",
+        "path": "code/backend/src/main/resources/db/migration/common/V14__add_session_bill_request.sql",
+        "database_checksum": -1840534327,
+        "file_checksum": -1840534327,
+        "match": true
+      }
+    ],
+    "all_match": true
+  }
+}

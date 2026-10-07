@@ -1,6 +1,10 @@
 # ปวริศช์ — Step3 documentation verification
 
-## อัปเดตv02 — diagram/code/12นาที/เกณฑ์commit5
+## รอบแก้รีวิว PR #24 — v02b ฉบับล่วงหน้า
+
+ดู [รายงานแก้รีวิวและหลักฐาน Supabase สด](pr24-review-fixes-report.md) และ [Canva v02b](https://www.canva.com/d/yWw6P3disBOSfHS) แก้ข้อเท็จจริง4หน้าโดยคงลำดับ/ผู้พูด ยังไม่รับรองร่าง รายงาน v02/v01 ด้านล่างเป็นประวัติ ไม่ใช่ผลรับรอง design ใหม่
+
+## ประวัติ v02 — diagram/code/12นาที/เกณฑ์commit5
 
 [Canva v02](https://www.canva.com/d/wORhypcIcwvGuFK) มี20หน้าหลักสำหรับ12นาทีและ56ภาคผนวก 35หน้าcodeจากdevelop472fba4 ภาพ28ชุดรวม23diagramsรายละเอียด+5ภาพย่อ ครบUseCase+Description Domain Class+Patterns Sequence4scenarios Activity ERD Component Deployment State ดู [coverage](../slide/course-diagram-coverage.md) และ [runbook](../slide/team-final-12-minute-runbook.md)
 

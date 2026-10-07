@@ -17,7 +17,7 @@ actor "MANAGER" as Manager
 actor "SUPERVISOR" as Supervisor
 rectangle "Restaurant administration" {
  usecase "Login / logout" as Login
- usecase "Manage users / profiles" as Users
+ usecase "List / create users\nBasic profile at creation" as Users
  usecase "Manage tables / packages / soups" as Catalog
  usecase "Manage menu categories / items" as Menu
  usecase "Manage stock master data" as Master
@@ -36,5 +36,6 @@ Supervisor --> Read
 Supervisor --> Move
 note bottom of Supervisor
 No Kitchen / Serving / Payment privilege.
+User edit/delete and detailed profile management are not implemented.
 end note
 @enduml

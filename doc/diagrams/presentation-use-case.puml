@@ -21,7 +21,7 @@ rectangle "Buffet restaurant" {
 usecase "Order from package menu\nRequest / view bill" as Order
 usecase "Open / serve / receive payment\nClose same-session PAID" as Staff
 usecase "Prepare received orders\nMark READY" as Prepare
-usecase "Manage store / menu / users\nManage stock" as Admin
+usecase "Manage store / menu / stock\nList / create users with basic profile" as Admin
 usecase "Stock-in / adjustment\nRead stock history" as Stock
 }
 Customer --> Order

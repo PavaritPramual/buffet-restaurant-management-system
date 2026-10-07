@@ -1,14 +1,17 @@
 {
   "date": "2026-10-07",
+  "snapshot_utc": "2026-10-07 03:45:54 UTC",
+  "before_review_fix_commit": true,
+  "base_head": "472fba4f25a27fa2e3cd1e1213151ce971646f3a",
   "minimum_meaningful_commits": 5,
-  "criterion_source": "Pavarit reports instructor changed minimum from 15 to 5 on 2026-10-07",
+  "criterion_source": "Pavarit reports instructor minimum 5",
   "counts_are_candidates_not_meaningful_qualification": true,
   "members": [
     {
       "login": "PavaritPramual",
       "branch": "pavarit_673380278-9_01",
-      "remote_head": "8d4ca99313ab17fa89644bc2fc7a421870b7f3ac",
-      "candidate_commits": 50,
+      "remote_head": "bf32e112583827c2f1964446b8659600943bcb9c",
+      "candidate_commits": 53,
       "minimum": 5,
       "numeric_shortfall": 0
     },

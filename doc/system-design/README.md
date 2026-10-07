@@ -10,7 +10,7 @@ Step 2 ปิดแล้ว PR#21 merge ที่54e3538 และ PR#22 merge 
 
 | Role | งานที่อนุญาต |
 |---|---|
-| MANAGER | ข้อมูลร้าน Users/Menu/โต๊ะ/แพ็กเกจ/น้ำซุป/รายการสต็อก และ stock movements |
+| MANAGER | ข้อมูลร้าน Menu/โต๊ะ/แพ็กเกจ/น้ำซุป/รายการสต็อก และ stock movements; Users เฉพาะ list/create พร้อม basic profile |
 | SUPERVISOR | อ่านสต็อก/ทำ stock-in และ adjustments ไม่รับชำระ/เปิดโต๊ะ/ครัว |
 | SERVICE_STAFF | เปิดรอบ แสดง QR เสิร์ฟ READY→SERVED รับชำระและ close |
 | KITCHEN_STAFF | incoming Orders RECEIVED→PREPARING→READY |
@@ -60,7 +60,7 @@ Frontend แชร์ Promiseเฉพาะ tokenที่กำลังแล
 
 ## สถานะเทียบกับโค้ด
 
-- Flyway common/H2/PostgreSQL มี V1–V14; centralV13/V14ได้รับอนุมัติและapplyหลังPR#21ตามรายงานStep2 นี่คือหลักฐานประวัติ ไม่ได้เชื่อมSupabaseตรวจสดในPRเอกสารนี้
+- Flyway common/H2/PostgreSQL มี V1–V14; central V13/V14 ตรวจ SELECT สดวันที่ 7 ตุลาคม พบ success=true/checksum ตรง repo พร้อม schema/grants [หลักฐาน](../testing/pr24-review-fixes-report.md#หลักฐาน-supabase-v13v14) ไม่ใช่ app JDBC/JPA validate ใหม่ และไม่ได้ apply/repair migration
 - State/Strategy/Template Methodมีimplementationและtestsแล้ว ไม่ใช่เพียงintent; ดูparticipantsจริงใน pattern report
 - Stockมี sku/name/unit/quantity/lowStockThreshold; openingTargetStock/active และ Profile first/last/phone ยังเป็นFinal ห้ามถือว่า ERD designเก่าคือcurrentJPA
 - enum DiningSessionStatusประกาศCANCELLEDแต่ไม่มีcancelAPI Order state4ค่า UserRoles4ค่า Stringenum

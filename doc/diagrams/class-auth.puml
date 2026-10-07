@@ -36,7 +36,7 @@ class SessionUserContextProvider {
 +requireCurrentRequestRole(role)
 }
 class HttpSession
-UserAccount "1" -- "1" UserProfile : shared PK / MapsId
+UserAccount "1" -- "0..1" UserProfile : shared PK / MapsId
 AuthController --> AuthService
 AuthService --> UserAccountRepository
 AuthService --> UserProfileRepository
@@ -44,6 +44,9 @@ AuthController --> HttpSession : UserContext
 SessionUserContextProvider --> HttpSession
 note bottom of AuthService
 AuthService is currently concrete.
+Profile is optional in the database (0..1).
+createUser creates both; authenticate requires a profile.
+Only list/create user with basic displayName/email is implemented.
 Do not draw an AuthenticationService interface that does not exist.
 end note
 @enduml

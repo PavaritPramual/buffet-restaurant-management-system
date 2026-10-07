@@ -4,17 +4,17 @@
 
 ปวริศช์แจ้งวันที่ 7 ตุลาคม 2026 ว่าอาจารย์ปรับขั้นต่ำจาก 15 เป็น 5 commits ต่อคน ใช้เกณฑ์ใหม่ในการตรวจรับ โดยเก็บใบงานต้นฉบับที่ยังเขียน 15 เป็นหลักฐาน ไม่แก้ไฟล์ต้นฉบับให้เหมือนอาจารย์เขียนใหม่ ดู [บันทึกเกณฑ์ที่เปลี่ยน](course-criteria-updates.md)
 
-ผลอ่าน remote หลัง fetch ล่าสุด ไม่นับ merge หรือ commit ที่ไม่มีไฟล์เปลี่ยน นับเฉพาะ author ที่จับคู่บัญชีจาก audit เดิม Counts ยังเป็น candidates ต้องสมาชิก/reviewer ยืนยันความหมายและการกระจายเวลาตามจริง
+ผลอ่าน remote หลัง fetch วันที่ 7 ตุลาคม 2026 **ก่อน commit แก้รีวิว PR #24** head ของปวริศช์ `bf32e11` และ develop `472fba4` ไม่รวม commit แก้รีวิวที่กำลังจัดทำ ไม่นับ merge/ไฟล์ไม่เปลี่ยน Counts ยังเป็น candidates ให้สมาชิกยืนยันความหมาย/บัญชี/การกระจายเวลา
 
-| บัญชี | branch | candidate commits | ขาดจากขั้นต่ำ 5 |
-|---|---|---:|---:|
-| PavaritPramual | `pavarit_673380278-9_01` | 50 | 0 |
-| sirapatw-sys | `sirapat_673380293-3_01` | 22 | 0 |
-| sarunph-ctrl | `sarun_673380515-1_02` | 3 | 2 |
-| kojidesu01 | `teeramet_673380273-9_02` | 8 | 0 |
-| methus-bit | `methus_673380300-2_01` | 5 | 0 |
+| บัญชี | branch | snapshot head | candidate commits | ขาดจากขั้นต่ำ 5 |
+|---|---|---|---:|---:|
+| PavaritPramual | `pavarit_673380278-9_01` | `bf32e11` | 53 | 0 |
+| sirapatw-sys | `sirapat_673380293-3_01` | `617d742` | 22 | 0 |
+| sarunph-ctrl | `sarun_673380515-1_02` | `b3a2818` | 3 | 2 |
+| kojidesu01 | `teeramet_673380273-9_02` | `f387082` | 8 | 0 |
+| methus-bit | `methus_673380300-2_01` | `8ac7978` | 5 | 0 |
 
-[หลักฐานการตรวจล่าสุด](../../test/evidence/pavarit-step3-docs-2026-10-07/git-minimum-five-update.json) ข้อความจำนวนและเกณฑ์ 15 ด้านล่างเป็นประวัติ audit ก่อนอาจารย์เปลี่ยนเกณฑ์ ไม่ใช่ข้อกำหนด Final ปัจจุบัน
+[หลักฐาน snapshot นี้](../../test/evidence/pavarit-step3-docs-2026-10-07/git-minimum-five-update.json) head `8d4ca99` และเกณฑ์ 15 ด้านล่างเป็นประวัติ ไม่ใช่ head ของ snapshot ปัจจุบัน ต้องตรวจซ้ำหลังทุกงานรวมก่อนรับรอง release
 
 ## ประวัติ audit เดิม
 

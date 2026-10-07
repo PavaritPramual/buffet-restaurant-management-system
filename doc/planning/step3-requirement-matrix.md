@@ -40,7 +40,7 @@
 | C22 Component/Deployment/State | [index](../diagrams/README.md) | ปวริศช์/ธีรเมธ/ศรัณย์ | ครบsource/SVG/Canva Localruntimeกับpublicdesignแยกกัน Publicdeploymentจริงยังรอ |
 | C23 READMEทุกหัวข้อ | [README](../../README.md) | ปวริศช์ / ศิระพัทธ์ | จัดทำ PRนี้ publicURLยังระบุ pending ตามจริง |
 | C24 Dockerfile/Compose/publicdeploy | [Compose](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/docker-compose.yml); backend/frontend Dockerfiles | ธีรเมธ / ปวริศช์ | local Composeมี ยังรอ production singleURL build+HTTPS+rollback |
-| C25 Slide/doc/slide/ | [Canva guide](../slide/README.md); [v02content](../slide/team-final-canva-v02-content.md); [12minutes](../slide/team-final-12-minute-runbook.md) | ทุกคนปวริศช์รวม / ศิระพัทธ์ | 20หลัก+56ภาคผนวก 35codepages/28diagramimages อ่านกลับครบ76notes/704editabletexts; รอowner/CanvavisualQA/PDF/release/ซ้อม ไม่ใช้PPTX |
+| C25 Slide/doc/slide/ | [Canva guide](../slide/README.md); [v02content](../slide/team-final-canva-v02-content.md); [12minutes](../slide/team-final-12-minute-runbook.md) | ทุกคนปวริศช์รวม / ศิระพัทธ์ | 20หลัก+56ภาคผนวก 35codepages/28diagramimages อ่านกลับครบ76notes/704editabletexts; รอowner/CanvavisualQA/PDF/release/ซ้อม ร่างยังไม่รับรอง; เก็บPPTX/PDFที่exportจากCanvaตามเวอร์ชัน |
 | C26 deployจริงทุกคนอธิบาย/release | [Final plan](step3-final-plan.md) | ทุกคน ปวริศช์ประสาน | รอ publicregression/release reviewed/main/deployedSHA/ซ้อม ส่งURLจริง |
 
 ## System scope ที่เลื่อนไป Final และ blocker

@@ -9,7 +9,7 @@
 | State | OrderFulfillmentServiceImplเป็นcontext resolvepersisted enumด้วยOrderStateFactory, OrderStateและReceived/Preparing/Ready/ServedState | [source](../diagrams/class-order-state.puml) / [SVG](../diagrams/previews/class-order-state.svg) |
 | Strategy | BillingEngineขึ้นกับBillCalculationStrategy/DiscountCalculationStrategy; StandardBillCalculationมีchildStrategyผ่านBillCalculationStrategy; publicBillSummaryแยกจากinternalBillCalculation | [source](../diagrams/class-billing-strategy.puml) / [SVG](../diagrams/previews/class-billing-strategy.svg) |
 | Template Method | StockTransactionTemplate.final process()และcalculateDelta()/transactionType() hooks; StockInProcessor/StockAdjustmentProcessor; transactionอยู่StockService | [source](../diagrams/class-stock-template.puml) / [SVG](../diagrams/previews/class-stock-template.svg) |
-| Auth | UserAccount/UserProfile AuthServiceและSpringHTTPsession | [source](../diagrams/class-auth.puml) / [SVG](../diagrams/previews/class-auth.svg) ไม่วาดProfilefieldsที่ยังไม่implement |
+| Auth | UserAccount/UserProfile AuthServiceและSpringHTTPsession | [source](../diagrams/class-auth.puml) / [SVG](../diagrams/previews/class-auth.svg) UserAccount มี UserProfile ได้ 0..1 แบบ shared PK; createUser สร้างทั้งคู่ แต่ DB ไม่บังคับทุก user ต้องมี profile ไม่วาด Profile fields ที่ยังไม่ implement |
 
 DiningSessionStatusมีCANCELLEDในenum แต่ยังไม่มีcancelendpoint Billrequestไม่เพิ่มstatusใหม่ QRgrantกับsnapshotไม่เปิดเผยในCustomerSessionResponse Stocktarget/activeและProfileละเอียดเป็นงานFinal ไม่ใช่fieldsปัจจุบัน
 

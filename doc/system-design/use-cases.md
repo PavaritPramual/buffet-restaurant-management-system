@@ -82,7 +82,7 @@
 
 - **ผู้ใช้หลัก** MANAGER
 - **ก่อนเริ่ม** login ตาม role
-- **งานหลัก** CRUD โต๊ะ เมนู/categories/package membership แพ็กเกจ น้ำซุป ผู้ใช้ และเพิ่ม/แก้ stock master ผ่าน UI/API ตาม contract
+- **งานหลัก** จัดการโต๊ะ เมนู/categories/package membership แพ็กเกจ น้ำซุปตาม API ของแต่ละส่วน เพิ่ม/แก้ stock master และดูรายการ/สร้างผู้ใช้พร้อม basic profile (`displayName`, `email`) ผ่าน UI/API ไม่มี API แก้/ลบผู้ใช้หรือจัดการ Profile แบบเต็มใน baseline นี้
 - **ทางเลือก** โต๊ะที่มี session history ลบไม่ได้ โต๊ะ active ไม่แก้ข้อมูลขัดรอบ package/soup ลบเป็น inactive เพื่อคงประวัติ Stock ใหม่เริ่มศูนย์และห้ามเปลี่ยน SKU/unit หลังมี transaction ราคาใหม่ไม่เปลี่ยน snapshot รอบเดิม
 - **หลังสำเร็จ** ข้อมูลร้านพร้อมใช้ โดย Supervisor ไม่ได้สิทธิ์ CRUD master data เหล่านี้
 

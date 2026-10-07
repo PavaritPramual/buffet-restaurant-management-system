@@ -2,12 +2,12 @@
 
 ระบบจัดการร้านบุฟเฟต์แบบ Walk-in ครอบคลุมเปิดโต๊ะ เลือกแพ็กเกจ/น้ำซุป และให้ลูกค้าสแกน QR เพื่อสั่งอาหาร
 ครัวรับและเตรียมออเดอร์ พนักงานเสิร์ฟ รับชำระ แล้วกดปิดรอบแยกเพื่อคืนโต๊ะ
-Manager จัดการข้อมูลร้าน ผู้ใช้ และสต็อก โดย backend ตรวจสิทธิ์และคำนวณยอดจากข้อมูลจริง
+Manager จัดการข้อมูลร้านและสต็อก พร้อมดูรายการ/สร้างผู้ใช้และ basic profile โดย backend ตรวจสิทธิ์และคำนวณยอดจากข้อมูลจริง
 พัฒนาด้วย Spring Boot, React และ PostgreSQL สำหรับวิชา CP353002 Principles of Software Design and Development
 
 ## สถานะปัจจุบัน
 
-**แนวทางสไลด์ล่าสุด:** [Canva ทีม v02](https://www.canva.com/d/wORhypcIcwvGuFK) ใช้20หน้าหลักสำหรับ12นาที พร้อมภาคผนวกdiagram/codeครบตามโจทย์ ดู [guide/version](doc/slide/README.md), [coverage](doc/slide/course-diagram-coverage.md) และ [notes](doc/slide/team-final-canva-v02-content.md) อ่านกลับ76หน้าผ่านแล้ว ยังรอowner/CanvavisualQA/ซ้อม/ผลrelease ใช้Canvaเป็นต้นฉบับและเก็บทั้งPPTXกับPDFที่exportจากCanvaตามเวอร์ชัน
+**สไลด์ฉบับล่วงหน้า ยังไม่รับรอง:** [Canva ทีม v02b](https://www.canva.com/d/yWw6P3disBOSfHS) แก้ข้อเท็จจริงตามรีวิว PR #24 เฉพาะ4หน้า คง76หน้า ลำดับและผู้พูดเดิมไว้ก่อน เป้าพรีเซนต์12นาทีและ runbook ยังเป็นร่าง รอให้โค้ดทุกส่วนเสร็จแล้วทบทวนเนื้อหา/การเรียง/ช่วงพูด ดู [guide/version](doc/slide/README.md), [coverage](doc/slide/course-diagram-coverage.md) และ [notes](doc/slide/team-final-canva-v02-content.md) ใช้Canvaเป็นต้นฉบับและเก็บทั้งPPTXกับPDFที่exportจากCanvaตามเวอร์ชัน ยังไม่มีไฟล์exportของร่างนี้
 
 Code baseline `develop 472fba4` ณ 7 ตุลาคม2026: Step2ปิดแล้วและPR#22รวมlocalregression/AdminShell/testpreparation
 เอกสารและสไลด์ปวริศช์ชุดนี้รอreview **ยังไม่ใช่ Final ที่พร้อมส่ง** Public deployment, Stock target/active, Profileละเอียด, SOLID gaps, Gitเกณฑ์รายคน และreleaseยังต้องปิด
@@ -80,8 +80,8 @@ Locations `db/migration/common` + `h2` หรือ `postgresql` ตามenviro
 V1baselineเปล่า V2tables V3packages/soups V4menu/order V5fulfillmentsnapshot V6sessions/grants V7ordersFK V8pricesnapshot V9payments V10auth V11stock V12paymentprivileges V13tableprivileges V14billrequest
 ตรวจคำอธิบายไฟล์จริงจาก [migrations](code/backend/src/main/resources/db/migration) ไม่เดาจากinstalled_rank
 
-SupabaseกลางV1–V14ได้รับรองและapplyตาม [Step2 completion report](doc/testing/pavarit-step2-completion-report.md) กับหน้าStep2 วันที่6ต.ค. V9เคยลงหลังV10/V11แต่validateปกติผ่านโดยไม่เปิดoutOfOrderค้างไว้
-นี่เป็นผลประวัติ ไม่ได้ตรวจฐานกลางสดจากPRdocsนี้ FinalStock/Profileต้องforwardmigrationเลขว่างจริง reviewและขออนุมัติฐานกลางใหม่
+ตรวจ Supabase กลางแบบอ่านอย่างเดียววันที่ 7 ตุลาคม 2026 พบ Flyway V1–V14 success=true รวม V13/V14 ที่ลงวันที่ 6 ตุลาคม และ checksum ตรงไฟล์ใน repo ดู [หลักฐาน SELECT/checksum/schema/grants](doc/testing/pr24-review-fixes-report.md#หลักฐาน-supabase-v13v14) V9 ลงหลัง V10/V11 ตาม installed_rank
+ผลนี้เป็น metadata readback ผ่าน connector ไม่ใช่การรันแอป/JPA validate ใหม่หรือการตรวจ public deployment และไม่มีการ apply/repair migration ใน PR นี้ Final Stock/Profile ต้อง forward migration เลขว่างจริง review และขออนุมัติฐานกลางใหม่
 Startup defaultFlywayenabledอาจapplypendingmigrations อย่าเริ่มimageใหม่ชี้ฐานกลางก่อนรับรอง pendingfiles ไม่repairhistoryให้ผ่านเฉยๆ
 
 ProvisionManagerแรกบนระบบจริงใช้ `BOOTSTRAP_ADMIN_ENABLED`, `BOOTSTRAP_ADMIN_USERNAME`, `BOOTSTRAP_ADMIN_PASSWORD` และoptionaldisplay/email ตามตัวอย่าง
@@ -98,7 +98,7 @@ docker compose up --build
 ```
 
 Composeมีbackend/frontendเท่านั้น **ไม่มีPostgreSQLcontainer** Databaseใช้ที่backend.envระบุ ซึ่งปกติคือSupabaseกลาง
-frontendยังเป็นVitedevserver ไม่ใช่productiondeployment เปิด frontend/loginที่ [localhost:5173/login](http://localhost:5173/login)
+frontendยังเป็นVitedevserver ไม่ใช่productiondeployment เปิด frontend/loginที่ [localhost:5173/admin](http://localhost:5173/admin)
 Health [localhost:8080/api/v1/system/health](http://localhost:8080/api/v1/system/health) และ [Swagger](http://localhost:8080/swagger-ui.html)
 Stop `docker compose down` ดูlogsด้วย `docker compose logs backend` / `frontend`
 
@@ -130,7 +130,7 @@ Demoใช้H2memory+common/H2migrations+seed; restartแล้วข้อม�
 
 ### Flowแต่ละrole
 
-- MANAGER: `/login` → Admin shell ข้อมูลร้าน/User/Stock เพิ่มmasterdataไม่ได้เพิ่มยอดStockทันที ใช้stock-in/adjustmentsเพื่อaudit
+- MANAGER: `/admin` → Admin shell ข้อมูลร้าน/User/Stock เพิ่มmasterdataไม่ได้เพิ่มยอดStockทันที ใช้stock-in/adjustmentsเพื่อaudit
 - SERVICE_STAFF: เปิดโต๊ะ →sessiondetails/QR →หน้าเสิร์ฟ →Billing/Payment→close
 - KITCHEN_STAFF: incomingOrders→PREPARING→READY ส่วนSERVEเป็นหน้าที่SERVICE_STAFF
 - SUPERVISOR: Stockoverview/history/stock-in/adjustment ไม่เปิดโต๊ะ/ชำระ/ครัว
@@ -204,6 +204,6 @@ docker-compose.yml
 ## Git workflow และชุดนำเสนอ
 
 Personalbranch →reviewedPR→develop →reviewedreleasePR→main ทุกคนใช้บัญชีตน Commitเป็นงานที่มีความหมาย ไม่เติมจำนวน
-[Git auditล่าสุด](doc/planning/step3-git-audit.md) แสดงทั้งห้าบัญชี branches/PRreviews/candidatecommitcounts และข้อขาดจริง
+[Git audit snapshot ก่อนแก้ PR #24](doc/planning/step3-git-audit.md) แสดงทั้งห้าบัญชี branches/PRreviews/candidatecommitcounts และข้อขาดจริง
 [สไลด์ทีมปัจจุบัน](doc/slide/README.md) / [Diagram coverage](doc/slide/course-diagram-coverage.md) / [runbook12นาที](doc/slide/team-final-12-minute-runbook.md)
 ร่างPPTX/PDFรายคนเดิมเป็นประวัติ รุ่นส่งใช้Canvaพร้อมไฟล์PPTX/PDFที่exportจากCanvaและownerรับรองตามreleaseจริง

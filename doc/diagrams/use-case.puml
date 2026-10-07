@@ -18,7 +18,7 @@ actor "SERVICE_STAFF" as Staff
 actor "KITCHEN_STAFF" as Kitchen
 rectangle "Buffet restaurant" {
  usecase "Exchange single-use QR" as QR
- usecase "View package menu" as Menu
+ usecase "View package menu" as CustomerMenu
  usecase "Place order / view status" as Order
  usecase "Request bill / view bill status" as Bill
  usecase "Open session\nSelect package and soup" as Open
@@ -29,7 +29,7 @@ rectangle "Buffet restaurant" {
  usecase "PREPARING / READY transitions" as Prepare
 }
 Customer --> QR
-Customer --> Menu
+Customer --> CustomerMenu
 Customer --> Order
 Customer --> Bill
 Staff --> Open
@@ -42,9 +42,9 @@ actor "MANAGER" as Manager
 actor "SUPERVISOR" as Supervisor
 rectangle "Administration module" {
  usecase "Login / logout" as Login
- usecase "Manage users / profiles" as Users
+ usecase "List / create users\nBasic profile at creation" as Users
  usecase "Manage tables / packages / soups" as Catalog
- usecase "Manage menu categories / items" as Menu
+ usecase "Manage menu categories / items" as AdminMenu
  usecase "Manage stock master data" as Master
  usecase "View stock / transaction history" as Read
  usecase "Record stock-in / signed adjustment" as Move
@@ -53,7 +53,7 @@ Manager --> Login
 Supervisor --> Login
 Manager --> Users
 Manager --> Catalog
-Manager --> Menu
+Manager --> AdminMenu
 Manager --> Master
 Manager --> Read
 Manager --> Move
@@ -61,6 +61,7 @@ Supervisor --> Read
 Supervisor --> Move
 note bottom of Supervisor
 No Kitchen / Serving / Payment privilege.
+User edit/delete and detailed profile management are not implemented.
 end note
 note bottom
 Employees login before protected use cases.

@@ -1,5 +1,12 @@
 # Slide version history
 
+## v02b-draft — แก้รีวิว PR #24 วันที่ 7 ตุลาคม 2026
+
+- แก้ User/Profile ให้เป็น list/create + basic displayName/email, แยก CustomerMenu/AdminMenu และ cardinality UserAccount–UserProfile เป็น 1 ต่อ 0..1
+- Regenerate SVG 4 ชุด และนำเข้าเป็น [Canva v02b](https://www.canva.com/d/yWw6P3disBOSfHS) หน้า 2, 24, 68, 70 เปลี่ยนเฉพาะภาพ/notes คงลำดับ ผู้พูด และโค้ดเดิมทั้ง76หน้า เก็บ v02 เดิมเป็นประวัติ
+- ยังเป็นฉบับล่วงหน้า ไม่รับรองเนื้อหา/เวลา/การส่งออก/Final รอให้โค้ดทุกส่วนเสร็จแล้วทบทวนตาม comment ของปวริศช์
+- เพิ่มหลักฐาน Supabase SELECT สด V1–V14/checksums/grants และ refresh Git audit snapshot ก่อน commit แก้รีวิว ดู [รายงาน](../testing/pr24-review-fixes-report.md)
+
 ## สถานะฉบับล่วงหน้า — 7 ตุลาคม 2026
 
 - ปวริศช์ยังไม่รับรองสไลด์ เก็บ comment ว่าเนื้อหาเยอะ สลับผู้พูดบ่อย และเนื้อหา/ลำดับต้องทบทวนหลังโค้ดทุกส่วนเสร็จ
