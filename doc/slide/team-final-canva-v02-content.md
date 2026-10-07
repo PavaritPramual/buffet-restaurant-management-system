@@ -1430,7 +1430,7 @@ UserAccount มี UserProfile ได้ 0..1 จาก shared PK/FK ใน DB c
 
 ### คำพูดประกอบ
 
-Scenarioสี่รวมCustomerOrderingServiceกับOrderFulfillmentService StateFactorycurrent.next thenEntityupdate ไม่ใช้APIprepare/ready/serveเก่าที่ไม่มี
+Scenarioสี่รวมCustomerOrderingServiceกับOrderFulfillmentService OrderStateResolver.resolve(currentStatus) → current.next() → update Entity ไม่ใช้APIprepare/ready/serveเก่าที่ไม่มี
 
 ## หน้า 72 — Activity ของครัวและการยืนยันเสิร์ฟ
 
