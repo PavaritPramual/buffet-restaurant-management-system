@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class SessionPaymentAccessProvider implements PaymentAccessProvider {
 
-    private final SessionUserContextProvider users;
+    private final UserContextProvider users;
 
-    public SessionPaymentAccessProvider(SessionUserContextProvider users) {
+    public SessionPaymentAccessProvider(UserContextProvider users) {
         this.users = users;
     }
 

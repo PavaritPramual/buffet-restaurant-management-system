@@ -1,6 +1,6 @@
 package com.buffetrestaurant.integration;
 
-import com.buffetrestaurant.controller.AuthController;
+import com.buffetrestaurant.common.UserSessionKeys;
 import com.buffetrestaurant.domain.enums.UserRole;
 import com.buffetrestaurant.dto.response.UserContext;
 import org.junit.jupiter.api.AfterEach;
@@ -79,7 +79,7 @@ class PostgresPaymentIntegrationTest extends PaymentIntegrationTest {
             Callable<Integer> request = () -> {
                 if (!start.await(10, TimeUnit.SECONDS)) throw new AssertionError("Start timed out");
                 MockHttpSession session = new MockHttpSession();
-                session.setAttribute(AuthController.USER_CONTEXT_SESSION_KEY,
+                session.setAttribute(UserSessionKeys.USER_CONTEXT_SESSION_KEY,
                         new UserContext(1L, "staff", "Staff", UserRole.SERVICE_STAFF));
                 return mvc.perform(post("/api/v1/payments").session(session)
                         .contentType("application/json")

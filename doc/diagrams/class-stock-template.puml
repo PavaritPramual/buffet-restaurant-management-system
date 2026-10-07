@@ -10,6 +10,9 @@ abstract class StockTransactionTemplate {
  #{abstract} calculateDelta(quantity) : BigDecimal
  #{abstract} transactionType() : StockTransactionType
 }
+interface StockTransactionProcessor {
+ +process(item, quantity, reason, actor) : StockTransaction
+}
 class StockInProcessor
 class StockAdjustmentProcessor
 class StockService {
@@ -34,8 +37,8 @@ interface StockTransactionRepository
 interface UserAccountRepository
 StockTransactionTemplate <|-- StockInProcessor
 StockTransactionTemplate <|-- StockAdjustmentProcessor
-StockService --> StockInProcessor
-StockService --> StockAdjustmentProcessor
+StockTransactionProcessor <|.. StockTransactionTemplate
+StockService --> StockTransactionProcessor : qualified IN / ADJUSTMENT policies
 StockService --> StockItemRepository : lock row before process
 StockTransactionTemplate --> StockItemRepository
 StockTransactionTemplate --> StockTransactionRepository

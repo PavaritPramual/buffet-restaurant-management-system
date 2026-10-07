@@ -3,9 +3,9 @@ package com.buffetrestaurant.service.state;
 import com.buffetrestaurant.domain.enums.OrderStatus;
 
 /** The kitchen has started preparing the order. */
-final class PreparingState implements OrderState {
+public final class PreparingState implements OrderState {
 
-    static final PreparingState INSTANCE = new PreparingState();
+    public static final PreparingState INSTANCE = new PreparingState();
 
     private PreparingState() {
     }

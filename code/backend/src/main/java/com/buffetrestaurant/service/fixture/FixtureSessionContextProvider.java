@@ -11,6 +11,11 @@ import org.springframework.stereotype.Component;
 @Profile({"local", "test", "demo"})
 @ConditionalOnProperty(name = "app.ordering.session-provider", havingValue = "fixture")
 public class FixtureSessionContextProvider implements SessionContextProvider {
+    /** Controlled local/test/demo data only; this fixture does not prove database locking. */
+    @Override
+    public SessionContextSnapshot requireSessionForOrder(Long sessionId, String customerCredential) {
+        return requireSession(sessionId, customerCredential);
+    }
     @Override
     public SessionContextSnapshot requireSession(Long sessionId, String sessionToken) {
         if (Long.valueOf(1L).equals(sessionId) && "fixture-active-token".equals(sessionToken)) {

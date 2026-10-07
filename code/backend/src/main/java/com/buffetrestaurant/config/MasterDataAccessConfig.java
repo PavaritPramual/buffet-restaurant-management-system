@@ -4,7 +4,7 @@ import com.buffetrestaurant.controller.BuffetPackageController;
 import com.buffetrestaurant.controller.RestaurantTableController;
 import com.buffetrestaurant.controller.SoupController;
 import com.buffetrestaurant.domain.enums.UserRole;
-import com.buffetrestaurant.service.SessionUserContextProvider;
+import com.buffetrestaurant.service.UserContextProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,9 +18,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @ConditionalOnProperty(name = "app.master-data.access-provider", havingValue = "session", matchIfMissing = true)
 public class MasterDataAccessConfig implements WebMvcConfigurer {
-    private final SessionUserContextProvider users;
+    private final UserContextProvider users;
 
-    public MasterDataAccessConfig(SessionUserContextProvider users) { this.users = users; }
+    public MasterDataAccessConfig(UserContextProvider users) { this.users = users; }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

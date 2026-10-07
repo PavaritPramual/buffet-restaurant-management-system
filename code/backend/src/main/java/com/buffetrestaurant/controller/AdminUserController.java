@@ -4,8 +4,8 @@ import com.buffetrestaurant.dto.request.CreateUserRequest;
 import com.buffetrestaurant.dto.response.ErrorResponse;
 import com.buffetrestaurant.dto.response.UserResponse;
 import com.buffetrestaurant.domain.enums.UserRole;
-import com.buffetrestaurant.service.AuthService;
-import com.buffetrestaurant.service.SessionUserContextProvider;
+import com.buffetrestaurant.service.UserAdministrationService;
+import com.buffetrestaurant.service.UserContextProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,10 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Staff Profiles")
 @SecurityRequirement(name = "staffSessionCookie")
 public class AdminUserController {
-    private final AuthService authService;
-    private final SessionUserContextProvider users;
+    private final UserAdministrationService authService;
+    private final UserContextProvider users;
 
-    public AdminUserController(AuthService authService, SessionUserContextProvider users) {
+    public AdminUserController(UserAdministrationService authService, UserContextProvider users) {
         this.authService = authService;
         this.users = users;
     }

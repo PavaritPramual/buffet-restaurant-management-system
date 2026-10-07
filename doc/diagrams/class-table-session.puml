@@ -54,6 +54,11 @@ class CustomerBillingService {
  +request(id, credential) : CustomerBillStatusResponse
  +status(id, credential) : CustomerBillStatusResponse
 }
+interface CustomerSessionVerifier
+interface BillCalculator
+CustomerSessionVerifier <|.. CustomerSessionAccessService
+CustomerBillingService --> CustomerSessionVerifier
+CustomerBillingService --> BillCalculator
 interface DiningSessionBillingReader
 interface PaymentStatusLookup
 interface DiningSessionRepository {

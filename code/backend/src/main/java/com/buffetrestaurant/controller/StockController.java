@@ -7,7 +7,7 @@ import com.buffetrestaurant.dto.response.StockTransactionResponse;
 import com.buffetrestaurant.dto.response.UserContext;
 import com.buffetrestaurant.dto.response.ErrorResponse;
 import com.buffetrestaurant.domain.enums.UserRole;
-import com.buffetrestaurant.service.SessionUserContextProvider;
+import com.buffetrestaurant.service.UserContextProvider;
 import com.buffetrestaurant.service.StockService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,9 +33,9 @@ import org.springframework.web.bind.annotation.RestController;
 @SecurityRequirement(name = "staffSessionCookie")
 public class StockController {
     private final StockService stockService;
-    private final SessionUserContextProvider users;
+    private final UserContextProvider users;
 
-    public StockController(StockService stockService, SessionUserContextProvider users) {
+    public StockController(StockService stockService, UserContextProvider users) {
         this.stockService = stockService;
         this.users = users;
     }

@@ -22,7 +22,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import com.buffetrestaurant.service.PaymentService;
 import com.buffetrestaurant.service.billing.BillingContextProvider;
-import com.buffetrestaurant.service.billing.BillingEngine;
+import com.buffetrestaurant.service.billing.BillCalculator;
 import com.buffetrestaurant.service.PaymentAccessProvider;
 
 @Service
@@ -48,13 +48,13 @@ public class PaymentServiceImpl implements PaymentService{
 
     private final PaymentRepository paymentRepository;
     private final BillingContextProvider contextProvider;
-    private final BillingEngine billingEngine;
+    private final BillCalculator billingEngine;
     private final PaymentAccessProvider accessProvider;
     
     public PaymentServiceImpl(
         PaymentRepository paymentRepository,
         BillingContextProvider billingContextProvider,
-        BillingEngine billingEngine,
+        BillCalculator billingEngine,
         PaymentAccessProvider accessProvider,
         DiningSessionRepository sessions,
         EntityManager entityManager

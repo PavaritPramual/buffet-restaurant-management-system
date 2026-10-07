@@ -27,16 +27,17 @@ public class CustomerSessionController {
     private final CustomerSessionAccessService accessService;
     private final CustomerOriginGuard originGuard;
 
-    @Value("${CUSTOMER_COOKIE_SECURE:false}")
-    private boolean cookieSecure;
-
-    @Value("${CUSTOMER_COOKIE_SAME_SITE:Lax}")
-    private String cookieSameSite;
+    private final boolean cookieSecure;
+    private final String cookieSameSite;
 
     public CustomerSessionController(CustomerSessionAccessService accessService,
-                                     CustomerOriginGuard originGuard) {
+                                     CustomerOriginGuard originGuard,
+                                     @Value("${CUSTOMER_COOKIE_SECURE:false}") boolean cookieSecure,
+                                     @Value("${CUSTOMER_COOKIE_SAME_SITE:Lax}") String cookieSameSite) {
         this.accessService = accessService;
         this.originGuard = originGuard;
+        this.cookieSecure = cookieSecure;
+        this.cookieSameSite = cookieSameSite;
     }
 
     @PostMapping("/qr-exchange")

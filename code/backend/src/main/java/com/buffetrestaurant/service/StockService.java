@@ -13,6 +13,7 @@ import com.buffetrestaurant.repository.StockItemRepository;
 import com.buffetrestaurant.repository.StockTransactionRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
@@ -21,11 +22,12 @@ import org.springframework.validation.annotation.Validated;
 public class StockService {
     private final StockItemRepository items;
     private final StockTransactionRepository transactions;
-    private final StockInProcessor stockInProcessor;
-    private final StockAdjustmentProcessor adjustmentProcessor;
+    private final StockTransactionProcessor stockInProcessor;
+    private final StockTransactionProcessor adjustmentProcessor;
 
     public StockService(StockItemRepository items, StockTransactionRepository transactions,
-            StockInProcessor stockInProcessor, StockAdjustmentProcessor adjustmentProcessor) {
+            @Qualifier("stockInProcessor") StockTransactionProcessor stockInProcessor,
+            @Qualifier("stockAdjustmentProcessor") StockTransactionProcessor adjustmentProcessor) {
         this.items = items;
         this.transactions = transactions;
         this.stockInProcessor = stockInProcessor;

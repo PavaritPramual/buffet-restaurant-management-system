@@ -4,9 +4,9 @@ import com.buffetrestaurant.domain.enums.OrderStatus;
 import com.buffetrestaurant.exception.BusinessRuleException;
 
 /** Terminal state: the order has been served and can never transition again. */
-final class ServedState implements OrderState {
+public final class ServedState implements OrderState {
 
-    static final ServedState INSTANCE = new ServedState();
+    public static final ServedState INSTANCE = new ServedState();
 
     private ServedState() {
     }

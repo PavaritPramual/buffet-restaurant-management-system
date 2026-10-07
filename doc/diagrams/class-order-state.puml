@@ -13,9 +13,13 @@ class ReceivedState
 class PreparingState
 class ReadyState
 class ServedState
-class OrderStateFactory {
- +{static} forStatus(status) : OrderState
+interface OrderStateResolver {
+ +resolve(status) : OrderState
 }
+class RegistryOrderStateResolver {
+ -states : Map<OrderStatus, OrderState>
+}
+class OrderStateConfig <<Configuration>>
 class OrderFulfillmentServiceImpl {
  +advanceStatus(id, request) : OrderResponse
 }
@@ -37,11 +41,18 @@ OrderState <|.. ServedState
 ReceivedState --> PreparingState : next()
 PreparingState --> ReadyState : next()
 ReadyState --> ServedState : next()
-OrderFulfillmentServiceImpl --> OrderStateFactory : resolve persisted enum
-OrderStateFactory --> OrderState
+OrderStateResolver <|.. RegistryOrderStateResolver
+OrderFulfillmentServiceImpl --> OrderStateResolver : resolve persisted enum
+RegistryOrderStateResolver o-- OrderState : validated registrations
+OrderStateConfig ..> OrderState : four singleton beans
 OrderFulfillmentServiceImpl --> CustomerOrder : validates next / writes status
 OrderFulfillmentServiceImpl --> OrderFulfillmentAccessProvider : authorize each request
 OrderFulfillmentAccessProvider <|.. SessionOrderFulfillmentAccessProvider
+note bottom of RegistryOrderStateResolver
+ Duplicate or missing statuses fail startup.
+ Null lookup is rejected. Resolution has no state-specific switch.
+ Adding workflow states still requires enum/transition/API/UI review.
+end note
 note bottom of ServedState
  Terminal next() rejects with BusinessRuleException.
  KITCHEN_STAFF: RECEIVED -> PREPARING -> READY.

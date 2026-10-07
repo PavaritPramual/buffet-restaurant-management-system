@@ -166,3 +166,17 @@ Compose เปิด Fulfillment/DiningSession/Menu authorization เป็น s
 | `UserRole` | `SERVICE_STAFF`, `KITCHEN_STAFF`, `SUPERVISOR`, `MANAGER` |
 
 Entity ต้องใช้ `@Enumerated(EnumType.STRING)` เท่านั้น ห้ามใช้ `EnumType.ORDINAL`
+
+## Internal interfaces หลัง Architecture refactor
+
+- UserSessionKeys.USER_CONTEXT_SESSION_KEY ยังคงค่า `userContext`; ไม่อ้าง constant จาก Controller
+- UserContextProvider สำเร็จเมื่อ userId เป็นบวก username ไม่ว่าง role มีค่า; displayName อาจไม่มีค่า. Missing/malformed identity → 401, complete identity กับ role ผิด → 403. Header role ไม่เพิ่มสิทธิ์
+- AuthenticationService แยกจาก UserAdministrationService (list/create เท่านั้น). ไม่เพิ่ม User/Profile fields หรือ endpoints
+- CustomerSessionVerifier แยก read/context จาก requireSessionForOrder; runtime order verification ต้องใช้ transaction/lock และปฏิเสธรอบขอคิดบิลหรือปิดแล้ว
+- SessionContextProvider ไม่มี fallback read สำหรับ order อีกต่อไป; implementations ต้องประกาศ order behavior เอง. Fixture เป็น synthetic และไม่พิสูจน์ DB lock
+- BillingContextProvider คืน snapshot/counts/status ของ ID เดียวกัน ไม่คืน null. discountContext เป็น nullได้หมายถึงไม่มี promotion
+- BillCalculator คืน BillCalculation ภายใน; JSON ของ BillSummary/PaymentResult เดิม ราคา snapshot/rounding/payment-recorded amount คงเดิม
+- StockTransactionProcessor ทำงานหลัง validation/row lock ภายใน StockService transaction. qualifiers แยก stockInProcessor กับ stockAdjustmentProcessor
+- OrderStateResolver รับ non-null enum และคืน State; registry ตรวจครบและไม่ซ้ำตอน startup. เปลี่ยน registration ได้โดยไม่แก้ resolver; enum/API/UI workflow ใหม่ยังต้อง review ร่วม
+
+HTTP routes, public DTOs/enums และ cookie settings ไม่เปลี่ยน. Fixture Fulfillment ปรับ role ให้ตรง runtime: Kitchen เท่านั้นทำครัว และ Service Staff เท่านั้นเสิร์ฟ; Manager/Supervisor ใช้ทั้งสอง flow ไม่ได้

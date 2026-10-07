@@ -1,6 +1,6 @@
 # Order Fulfillment State Diagram
 
-Reviewed against `origin/develop` baseline `0dbbe1b` on 7 October 2026. Owner: ศรัณย์. Matches `service/state/*State.java` (`OrderStateFactory`,
+Reviewed against `origin/develop` after architecture refactor PR #25 on 7 October 2026. Owner: ศรัณย์. Matches `service/state/*State.java` (`OrderStateResolver` / `RegistryOrderStateResolver`,
 `ReceivedState`, `PreparingState`, `ReadyState`, `ServedState`) and
 `OrderFulfillmentServiceImpl.advanceStatus`.
 
@@ -39,13 +39,13 @@ stateDiagram-v2
 All three reuse the `OrderResponse` shape (`OrderFulfillmentContext`): `orderId`,
 `sessionId`, `tableNumber`, `items`, `status`, `createdAt`.
 
-### Current authorization
+### Current authorization — architecture refactor
 
-`SessionOrderFulfillmentAccessProvider` uses `SessionUserContextProvider` and the authenticated staff HTTP session. A caller-supplied `X-User-Role` cannot grant access. The session-backed integration test exercises actual login and shows anonymous requests return 401; a logged-in wrong role returns 403 without changing the order. MANAGER and SUPERVISOR cannot use the Kitchen/Serving flows. This proves the session provider when configured, not the public deployment (there is no confirmed public URL).
+`SessionOrderFulfillmentAccessProvider` depends on `UserContextProvider`, implemented by `SessionUserContextProvider` and the staff HTTP login session. A caller-supplied `X-User-Role` cannot grant access. The session-backed integration test exercises actual login and shows anonymous requests return 401; a logged-in wrong role returns 403 without changing the order. MANAGER and SUPERVISOR cannot use the Kitchen/Serving flows. This proves the session provider when configured, not the public deployment (there is no confirmed public URL).
 
 ## State Pattern problem, context and tests
 
-The fulfillment service previously needed to guard arbitrary status changes with scattered conditionals. The State Pattern gives each status its own transition rule so `OrderFulfillmentServiceImpl` asks the current state for its only legal successor rather than duplicating a list of allowed pairs. The service is the context; `CustomerOrder` persists only the `OrderStatus` enum; `OrderStateFactory` resolves the corresponding state; and `ReceivedState`, `PreparingState`, `ReadyState`, and terminal `ServedState` define transition behavior.
+The fulfillment service previously needed to guard arbitrary status changes with scattered conditionals. The State Pattern gives each status its own transition rule so `OrderFulfillmentServiceImpl` asks the current state for its only legal successor rather than duplicating a list of allowed pairs. The service is the context; `CustomerOrder` persists only the `OrderStatus` enum; `OrderStateResolver` resolves the corresponding state through the validated `RegistryOrderStateResolver`; and `ReceivedState`, `PreparingState`, `ReadyState`, and terminal `ServedState` define transition behavior.
 
 | Attempt | Expected result | Evidence |
 |---|---|---|
@@ -57,3 +57,7 @@ The fulfillment service previously needed to guard arbitrary status changes with
 | Unknown order ID | `404 ErrorResponse` | `OrderFulfillmentIntegrationTest` |
 
 [PlantUML state source](state-order.puml) · [SVG preview](previews/state-order.svg) · [class participants](class-order-state.puml)
+
+## State registration
+
+`OrderStateConfig` registers the existing four singleton policies. The immutable registry rejects duplicate/missing statuses at startup and null lookup. Fulfillment injects OrderStateResolver; the static switch factory was removed. Changes to business statuses still require enum/transition/API/UI/permission review. Fixtures now use the same role matrix but do not prove runtime identity.

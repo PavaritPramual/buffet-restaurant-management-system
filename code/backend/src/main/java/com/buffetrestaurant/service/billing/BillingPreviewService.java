@@ -11,10 +11,10 @@ import com.buffetrestaurant.service.PaymentAccessProvider;
 @Service
 public class BillingPreviewService {
     private final BillingContextProvider contextProvider;
-    private final BillingEngine billingEngine;
+    private final BillCalculator billingEngine;
     private final PaymentAccessProvider accessProvider;
 
-    public BillingPreviewService(BillingContextProvider contextProvider, BillingEngine billingEngine, PaymentAccessProvider accessProvider) {
+    public BillingPreviewService(BillingContextProvider contextProvider, BillCalculator billingEngine, PaymentAccessProvider accessProvider) {
         this.contextProvider = contextProvider;
         this.billingEngine = billingEngine;
         this.accessProvider = accessProvider;

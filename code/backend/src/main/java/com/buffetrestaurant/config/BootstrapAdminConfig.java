@@ -3,7 +3,7 @@ package com.buffetrestaurant.config;
 import com.buffetrestaurant.domain.enums.UserRole;
 import com.buffetrestaurant.dto.request.CreateUserRequest;
 import com.buffetrestaurant.repository.UserAccountRepository;
-import com.buffetrestaurant.service.AuthService;
+import com.buffetrestaurant.service.UserAdministrationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,7 +19,7 @@ public class BootstrapAdminConfig {
     @Bean
     ApplicationRunner bootstrapInitialManager(
             UserAccountRepository users,
-            AuthService authService,
+            UserAdministrationService authService,
             @Value("${app.bootstrap-admin.username:}") String username,
             @Value("${app.bootstrap-admin.password:}") String password,
             @Value("${app.bootstrap-admin.display-name:Restaurant Manager}") String displayName,

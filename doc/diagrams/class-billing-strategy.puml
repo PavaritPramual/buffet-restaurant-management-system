@@ -17,6 +17,9 @@ class ChildRateCalculationStrategy {
  -rate : BigDecimal
 }
 class PromotionDiscountStrategy
+interface BillCalculator {
+ +calculate(context) : BillCalculation
+}
 class BillingEngine {
  +calculate(context) : BillCalculation
 }
@@ -41,12 +44,14 @@ StandardBillCalculation o-- BillCalculationStrategy : delegates child amount
 BillingEngine o-- BillCalculationStrategy : pricing
 BillingEngine o-- DiscountCalculationStrategy : discount
 BillingEngine --> BillCalculation
-BillingPreviewService --> BillingEngine
+BillCalculator <|.. BillingEngine
+BillingPreviewService --> BillCalculator
 BillingPreviewService --> BillSummary : maps display amounts
 note bottom of BillingEngine
  Strategies are immutable/stateless and injected.
  Calculate exactly, round payable total once HALF_UP.
  Composition replaces the obsolete addStrategy list design;
- Current baseline 472fba4; Final owners still review their evidence.
+ Invalid pricing is rejected before the discount policy.
+ Final owners still review release evidence.
 end note
 @enduml

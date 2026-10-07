@@ -1,5 +1,6 @@
 package com.buffetrestaurant.controller;
 
+import com.buffetrestaurant.common.UserSessionKeys;
 import com.buffetrestaurant.config.BillingConfig;
 import com.buffetrestaurant.domain.enums.UserRole;
 import com.buffetrestaurant.dto.response.UserContext;
@@ -77,7 +78,7 @@ class PaymentAuthorizationTest {
     void rejectsRolesWithoutPaymentAccess(UserRole role) throws Exception {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(
-                AuthController.USER_CONTEXT_SESSION_KEY,
+                UserSessionKeys.USER_CONTEXT_SESSION_KEY,
                 new UserContext(1L, "test-user", "Test User", role)
         );
 

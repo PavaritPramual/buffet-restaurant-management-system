@@ -240,18 +240,14 @@ class OrderFulfillmentIntegrationTest {
     }
 
     @Test
-    void manager_canActOnBothKitchenAndServiceStaffEndpoints() throws Exception {
+    void managerCannotActOnEitherBoardAndOrderDoesNotChange() throws Exception {
         CustomerOrder order = seedOrder(OrderStatus.RECEIVED);
-
-        mockMvc.perform(get("/api/v1/orders/incoming").header(ROLE_HEADER, MANAGER))
-                .andExpect(status().isOk());
-        mockMvc.perform(patchStatus(order.getId(), "PREPARING", MANAGER))
-                .andExpect(status().isOk());
-        mockMvc.perform(patchStatus(order.getId(), "READY", MANAGER))
-                .andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/orders/ready").header(ROLE_HEADER, MANAGER))
-                .andExpect(status().isOk());
-        mockMvc.perform(patchStatus(order.getId(), "SERVED", MANAGER))
-                .andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/orders/incoming").header(ROLE_HEADER, MANAGER)).andExpect(status().isForbidden());
+        mockMvc.perform(patchStatus(order.getId(), "PREPARING", MANAGER)).andExpect(status().isForbidden());
+        mockMvc.perform(patchStatus(order.getId(), "READY", MANAGER)).andExpect(status().isForbidden());
+        mockMvc.perform(get("/api/v1/orders/ready").header(ROLE_HEADER, MANAGER)).andExpect(status().isForbidden());
+        mockMvc.perform(patchStatus(order.getId(), "SERVED", MANAGER)).andExpect(status().isForbidden());
+        assertThat(orderRepository.findById(order.getId())).get()
+                .extracting(CustomerOrder::getStatus).isEqualTo(OrderStatus.RECEIVED);
     }
 }

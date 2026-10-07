@@ -28,6 +28,14 @@ public class DatabaseBillingContextProvider implements BillingContextProvider {
         }
 
         var snapshot = sessionReader.requireBySessionId(sessionId);
+        if (snapshot == null || !sessionId.equals(snapshot.sessionId())
+                || snapshot.packagePriceAtOpen() == null || snapshot.packagePriceAtOpen().signum() < 0
+                || snapshot.adultCount() == null || snapshot.childCount() == null
+                || snapshot.adultCount() < 0 || snapshot.childCount() < 0
+                || (long) snapshot.adultCount() + snapshot.childCount() < 1
+                || snapshot.sessionStatus() == null) {
+            throw new IllegalStateException("Billing snapshot does not match the requested session contract");
+        }
 
         BillingContext context = new BillingContext();
         context.setSessionId(snapshot.sessionId());

@@ -17,6 +17,24 @@ class BillingEngineTest {
         assertThat(replacement.calculate(context("100", 1, 1)).totalAmount()).isEqualByComparingTo("115.00");
         assertThatIllegalArgumentException().isThrownBy(() -> new ChildRateCalculationStrategy(new BigDecimal("1.1")));
     }
+    @Test
+    void invalidPricingNeverReachesDiscountPolicy() {
+        var discount = org.mockito.Mockito.mock(DiscountCalculationStrategy.class);
+        for (BigDecimal subtotal : new BigDecimal[]{null, new BigDecimal("-0.01")}) {
+            var calculator = new BillingEngine(context -> subtotal, discount);
+            assertThatIllegalArgumentException().isThrownBy(() -> calculator.calculate(context("399", 1, 0)));
+        }
+        org.mockito.Mockito.verifyNoInteractions(discount);
+    }
+
+    @Test
+    void rejectsNullNegativeAndExcessiveDiscountResults() {
+        for (BigDecimal discount : new BigDecimal[]{null, new BigDecimal("-0.01"), new BigDecimal("100.01")}) {
+            var calculator = new BillingEngine(context -> new BigDecimal("100"), (context, subtotal) -> discount);
+            assertThatIllegalArgumentException().isThrownBy(() -> calculator.calculate(context("399", 1, 0)));
+        }
+    }
+
     private final BillingEngine engine = new BillingEngine(new StandardBillCalculation());
 
     private BillingContext context(String price, int adults, int children) {
