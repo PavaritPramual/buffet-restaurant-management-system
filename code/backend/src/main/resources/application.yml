@@ -39,6 +39,8 @@ app:
     password: ${BOOTSTRAP_ADMIN_PASSWORD:}
     display-name: ${BOOTSTRAP_ADMIN_DISPLAY_NAME:Restaurant Manager}
     email: ${BOOTSTRAP_ADMIN_EMAIL:}
+    first-name: ${BOOTSTRAP_ADMIN_FIRST_NAME:Restaurant}
+    last-name: ${BOOTSTRAP_ADMIN_LAST_NAME:Manager}
   menu:
     admin-access-provider: ${MENU_ADMIN_ACCESS_PROVIDER:session}
   ordering:

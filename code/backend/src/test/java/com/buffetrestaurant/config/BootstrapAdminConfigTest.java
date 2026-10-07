@@ -23,23 +23,23 @@ class BootstrapAdminConfigTest {
         when(users.count()).thenReturn(0L);
 
         config.bootstrapInitialManager(users, authService, "first-manager", "initial-secret",
-                "Restaurant Manager", "manager@example.test").run(new DefaultApplicationArguments());
+                "Restaurant Manager", "manager@example.test", "Restaurant", "Manager").run(new DefaultApplicationArguments());
 
         verify(authService).createUser(new CreateUserRequest("first-manager", "initial-secret",
-                "Restaurant Manager", "manager@example.test", UserRole.MANAGER));
+                "Restaurant Manager", "manager@example.test", UserRole.MANAGER, "Restaurant", "Manager", null));
     }
 
     @Test
     void doesNothingAfterUsersExistAndDelegatesCredentialValidationToUserAdministrationService() throws Exception {
         when(users.count()).thenReturn(1L);
         config.bootstrapInitialManager(users, authService, "first-manager", "initial-secret",
-                "Restaurant Manager", "").run(new DefaultApplicationArguments());
+                "Restaurant Manager", "", "Restaurant", "Manager").run(new DefaultApplicationArguments());
         verify(authService, never()).createUser(any(CreateUserRequest.class));
 
         when(users.count()).thenReturn(0L);
         config.bootstrapInitialManager(users, authService, "first-manager", "short",
-                "Restaurant Manager", "").run(new DefaultApplicationArguments());
+                "Restaurant Manager", "", "Restaurant", "Manager").run(new DefaultApplicationArguments());
         verify(authService).createUser(new CreateUserRequest("first-manager", "short",
-                "Restaurant Manager", "", UserRole.MANAGER));
+                "Restaurant Manager", "", UserRole.MANAGER, "Restaurant", "Manager", null));
     }
 }

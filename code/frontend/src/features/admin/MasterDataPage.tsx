@@ -4,9 +4,9 @@ import { Button, Card, ConfirmDialog, EmptyState, ErrorAlert, LoadingState, Page
 import { getApiError } from '../../api/errors'
 
 type Kind = 'tables' | 'buffet-packages' | 'soups' | 'stock'
-type Row = { id: number; tableNumber?: string; capacity?: number; status?: string; name?: string; price?: number; description?: string; active?: boolean; sku?: string; unit?: string; quantity?: number; lowStockThreshold?: number }
+type Row = { id: number; tableNumber?: string; capacity?: number; status?: string; name?: string; price?: number; description?: string; active?: boolean; sku?: string; unit?: string; quantity?: number; lowStockThreshold?: number; openingTargetStock?: number; shortfall?: number }
 const titles: Record<Kind, string> = { tables: 'จัดการโต๊ะ', 'buffet-packages': 'จัดการแพ็กเกจ', soups: 'จัดการน้ำซุป', stock: 'จัดการรายการสต็อก' }
-const blanks = { tableNumber: '', capacity: '4', name: '', price: '', description: '', sku: '', unit: '', lowStockThreshold: '0' }
+const blanks = { tableNumber: '', capacity: '4', name: '', price: '', description: '', sku: '', unit: '', lowStockThreshold: '0', openingTargetStock: '0' }
 
 export default function MasterDataPage({ kind }: { kind: Kind }) {
   const [rows, setRows] = useState<Row[]>([])
@@ -38,7 +38,7 @@ export default function MasterDataPage({ kind }: { kind: Kind }) {
     const body = kind === 'tables' ? { tableNumber: form.tableNumber.trim(), capacity: Number(form.capacity) }
       : kind === 'buffet-packages' ? { name: form.name.trim(), price: form.price, description: form.description }
       : kind === 'soups' ? { name: form.name.trim() }
-      : { sku: form.sku.trim(), name: form.name.trim(), unit: form.unit.trim(), lowStockThreshold: form.lowStockThreshold }
+      : { sku: form.sku.trim(), name: form.name.trim(), unit: form.unit.trim(), lowStockThreshold: form.lowStockThreshold, openingTargetStock: form.openingTargetStock }
     try {
       if (editing === null) await apiClient.post(endpoint, body)
       else await apiClient.put(`${endpoint}/${editing}`, body)
@@ -51,6 +51,7 @@ export default function MasterDataPage({ kind }: { kind: Kind }) {
     inflight.current = true; setBusy(true); setError(''); setNotice('')
     try {
       if (kind === 'tables') await apiClient.delete(`${endpoint}/${pending.id}`)
+      else if (kind === 'stock') await apiClient.put(`${endpoint}/${pending.id}/active`, { active: !pending.active })
       else await apiClient.patch(`${endpoint}/${pending.id}/active`, { active: !pending.active })
       setPending(null); setNotice('อัปเดตข้อมูลแล้ว'); await load()
     } catch (cause) { setError(getApiError(cause)) }
@@ -58,7 +59,7 @@ export default function MasterDataPage({ kind }: { kind: Kind }) {
   }
   function edit(row: Row) {
     setEditing(row.id); setError(''); setNotice('')
-    setForm({ tableNumber: row.tableNumber ?? '', capacity: String(row.capacity ?? 4), name: row.name ?? '', price: String(row.price ?? ''), description: row.description ?? '', sku: row.sku ?? '', unit: row.unit ?? '', lowStockThreshold: String(row.lowStockThreshold ?? 0) })
+    setForm({ tableNumber: row.tableNumber ?? '', capacity: String(row.capacity ?? 4), name: row.name ?? '', price: String(row.price ?? ''), description: row.description ?? '', sku: row.sku ?? '', unit: row.unit ?? '', lowStockThreshold: String(row.lowStockThreshold ?? 0), openingTargetStock: String(row.openingTargetStock ?? 0) })
   }
   const field = (key: keyof typeof blanks, label: string, extra = {}) => <TextField label={label} value={form[key]} onChange={e => setForm({ ...form, [key]: e.target.value })} disabled={busy} required {...extra} />
   return <div className="ordering-page">
@@ -70,19 +71,19 @@ export default function MasterDataPage({ kind }: { kind: Kind }) {
           {kind === 'stock' && field('sku', 'รหัสสต็อก', { maxLength: 40 })}
           {field('name', 'ชื่อรายการ', { maxLength: kind === 'stock' ? 120 : 100 })}
           {kind === 'buffet-packages' && <>{field('price', 'ราคา', { type: 'number', min: '0.01', step: '0.01' })}{field('description', 'รายละเอียด', { required: false })}</>}
-          {kind === 'stock' && <>{field('unit', 'หน่วย', { maxLength: 24 })}{field('lowStockThreshold', 'ยอดแจ้งเตือนต่ำ', { type: 'number', min: 0, step: '0.001' })}<p>รายการใหม่เริ่มยอดศูนย์ เพิ่มยอดผ่านหน้าสต็อกเพื่อบันทึกประวัติ หลังมีประวัติแล้วจะเปลี่ยนรหัสและหน่วยไม่ได้</p></>}
+          {kind === 'stock' && <>{field('unit', 'หน่วย', { maxLength: 24 })}{field('lowStockThreshold', 'ยอดแจ้งเตือนต่ำ', { type: 'number', min: 0, step: '0.001' })}{field('openingTargetStock', 'ยอดเป้าหมายก่อนเปิดร้าน', { type: 'number', min: 0, step: '0.001' })}<p>รายการใหม่เริ่มยอดศูนย์ เพิ่มยอดผ่านหน้าสต็อกเพื่อบันทึกประวัติ หลังมีประวัติแล้วจะเปลี่ยนรหัสและหน่วยไม่ได้</p></>}
         </>}
         <div><Button type="submit" disabled={loading} loading={busy}>บันทึก</Button>{editing !== null && <Button type="button" variant="ghost" disabled={busy} onClick={() => { setEditing(null); setForm(blanks) }}>ยกเลิกแก้ไข</Button>}</div>
       </form>
     </Card>
     {loading ? <LoadingState /> : rows.length === 0 ? <EmptyState title="ยังไม่มีรายการ" /> : <section className="order-list" aria-label={titles[kind]}>
       {rows.map(row => <Card key={row.id}><h3>{row.tableNumber ?? row.name}</h3>
-        <p>{kind === 'tables' ? `รองรับ ${row.capacity} คน` : kind === 'stock' ? `${row.sku} · ${row.quantity} ${row.unit} · แจ้งเตือนต่ำ ${row.lowStockThreshold}` : kind === 'buffet-packages' ? `฿${row.price}` : ''}</p>
-        {kind !== 'stock' && <StatusBadge tone={kind === 'tables' ? row.status === 'AVAILABLE' ? 'success' : 'info' : row.active ? 'success' : 'neutral'}>{kind === 'tables' ? row.status === 'AVAILABLE' ? 'ว่าง' : 'กำลังใช้งาน' : row.active ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}</StatusBadge>}
+        <p>{kind === 'tables' ? `รองรับ ${row.capacity} คน` : kind === 'stock' ? `${row.sku} · ${row.quantity} ${row.unit} · แจ้งเตือนต่ำ ${row.lowStockThreshold} · เป้าหมาย ${row.openingTargetStock ?? 0} · ขาด ${row.shortfall ?? 0}` : kind === 'buffet-packages' ? `฿${row.price}` : ''}</p>
+        <StatusBadge tone={kind === 'tables' ? row.status === 'AVAILABLE' ? 'success' : 'info' : row.active ? 'success' : 'neutral'}>{kind === 'tables' ? row.status === 'AVAILABLE' ? 'ว่าง' : 'กำลังใช้งาน' : row.active ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}</StatusBadge>
         <Button variant="secondary" disabled={busy || (kind === 'tables' && row.status === 'OCCUPIED')} onClick={() => edit(row)}>แก้ไข</Button>
-        {kind !== 'stock' && <Button variant={kind === 'tables' || row.active ? 'danger' : 'secondary'} disabled={busy || (kind === 'tables' && row.status === 'OCCUPIED')} onClick={() => setPending(row)}>{kind === 'tables' ? 'ลบโต๊ะ' : row.active ? 'ปิดใช้งาน' : 'เปิดใช้งาน'}</Button>}
+        <Button variant={kind === 'tables' || row.active ? 'danger' : 'secondary'} disabled={busy || (kind === 'tables' && row.status === 'OCCUPIED')} onClick={() => setPending(row)}>{kind === 'tables' ? 'ลบโต๊ะ' : row.active ? 'ปิดใช้งาน' : 'เปิดใช้งาน'}</Button>
       </Card>)}
     </section>}
-    <ConfirmDialog open={!!pending} title={kind === 'tables' ? 'ยืนยันลบโต๊ะ' : pending?.active ? 'ยืนยันปิดใช้งาน' : 'ยืนยันเปิดใช้งาน'} description={kind === 'tables' ? 'ลบได้เฉพาะโต๊ะที่ไม่มีประวัติรอบกิน' : 'การเปลี่ยนนี้ไม่ลบประวัติรอบกินเดิม'} busy={busy} onCancel={() => setPending(null)} onConfirm={() => void confirmAction()} />
+    <ConfirmDialog open={!!pending} title={kind === 'tables' ? 'ยืนยันลบโต๊ะ' : pending?.active ? 'ยืนยันปิดใช้งาน' : 'ยืนยันเปิดใช้งาน'} description={kind === 'tables' ? 'ลบได้เฉพาะโต๊ะที่ไม่มีประวัติรอบกิน' : kind === 'stock' ? 'รายการที่ปิดใช้งานยังดูประวัติได้ แต่รับเข้าและปรับยอดไม่ได้จนกว่าจะเปิดใช้งานอีกครั้ง' : 'การเปลี่ยนนี้ไม่ลบประวัติรอบกินเดิม'} busy={busy} onCancel={() => setPending(null)} onConfirm={() => void confirmAction()} />
   </div>
 }

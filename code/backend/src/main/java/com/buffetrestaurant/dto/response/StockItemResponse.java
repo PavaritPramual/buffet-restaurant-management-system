@@ -5,9 +5,11 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 public record StockItemResponse(Long id, String sku, String name, String unit, BigDecimal quantity,
-        BigDecimal lowStockThreshold, Instant updatedAt) {
+        BigDecimal lowStockThreshold, BigDecimal openingTargetStock, BigDecimal shortfall, boolean active,
+        Instant updatedAt) {
     public static StockItemResponse from(StockItem item) {
         return new StockItemResponse(item.getId(), item.getSku(), item.getName(), item.getUnit(),
-                item.getQuantity(), item.getLowStockThreshold(), item.getUpdatedAt());
+                item.getQuantity(), item.getLowStockThreshold(), item.getOpeningTargetStock(),
+                item.getShortfall(), item.isActive(), item.getUpdatedAt());
     }
 }

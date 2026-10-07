@@ -23,6 +23,9 @@ export type StockItem = {
   unit: string
   quantity: number
   lowStockThreshold: number
+  openingTargetStock: number
+  shortfall: number
+  active: boolean
   updatedAt: string
 }
 
@@ -44,7 +47,12 @@ export type UserRecord = {
   displayName: string
   email: string | null
   role: UserRole
+  firstName: string | null
+  lastName: string | null
+  phoneNumber: string | null
 }
+
+export type UserProfileInput = { firstName: string; lastName: string; phoneNumber: string }
 
 export const authApi = {
   async current() {
@@ -79,8 +87,11 @@ export const usersApi = {
   async list() {
     return (await apiClient.get<UserRecord[]>('/admin/users')).data
   },
-  async create(user: { username: string; password: string; displayName: string; email: string; role: UserRole }) {
+  async create(user: { username: string; password: string; displayName: string; email: string; role: UserRole } & UserProfileInput) {
     return (await apiClient.post<UserRecord>('/admin/users', user)).data
+  },
+  async updateProfile(id: number, profile: UserProfileInput) {
+    return (await apiClient.put<UserRecord>(`/admin/users/${id}/profile`, profile)).data
   },
 }
 

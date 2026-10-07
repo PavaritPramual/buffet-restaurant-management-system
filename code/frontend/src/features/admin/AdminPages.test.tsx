@@ -12,20 +12,20 @@ vi.mock('./api', async () => {
   return {
     ...actual,
     stockApi: { overview: vi.fn(), history: vi.fn(), stockIn: vi.fn(), adjust: vi.fn() },
-    usersApi: { list: vi.fn(), create: vi.fn() },
+    usersApi: { list: vi.fn(), create: vi.fn(), updateProfile: vi.fn() },
   }
 })
 
 const item: StockItem = {
   id: 4, sku: 'RICE-01', name: 'ข้าวหอมมะลิ', unit: 'กก.', quantity: 12,
-  lowStockThreshold: 3, updatedAt: '2026-09-30T10:00:00Z',
+  lowStockThreshold: 3, openingTargetStock: 20, shortfall: 8, active: true, updatedAt: '2026-09-30T10:00:00Z',
 }
 const history: StockTransaction[] = [{
   id: 8, stockItemId: 4, itemName: 'ข้าวหอมมะลิ', transactionType: 'IN', quantityDelta: 2,
   balanceAfter: 12, reason: 'รับจากผู้ขาย', actorUsername: 'manager', createdAt: '2026-09-30T10:00:00Z',
 }]
 const manager: UserContext = { userId: 1, username: 'manager', displayName: 'ผู้จัดการ', role: 'MANAGER' }
-const account: UserRecord = { id: 2, username: 'staff', displayName: 'พนักงานบริการ', email: null, role: 'SERVICE_STAFF' }
+const account: UserRecord = { id: 2, username: 'staff', displayName: 'พนักงานบริการ', email: null, role: 'SERVICE_STAFF', firstName: null, lastName: null, phoneNumber: null }
 
 afterEach(() => { cleanup(); vi.clearAllMocks() })
 
@@ -75,6 +75,33 @@ describe('Admin stock and user pages', () => {
     fireEvent.click(screen.getByRole('button', { name: 'บันทึกรายการ' }))
 
     await waitFor(() => expect(stockApi.stockIn).toHaveBeenCalledWith(4, '2.5', 'รับจากผู้ขาย'))
+  })
+
+  it('shows target and shortfall and blocks stock-in/adjustment for inactive items', async () => {
+    vi.mocked(stockApi.overview).mockResolvedValue([item, { ...item, id: 5, sku: 'OFF-01', name: 'ปิดอยู่', active: false }])
+    vi.mocked(stockApi.history).mockResolvedValue(history)
+    renderInShell(<StockPage />, manager)
+    const activeRow = await screen.findByRole('row', { name: /RICE-01/ })
+    expect(activeRow.textContent).toContain('20')
+    expect(activeRow.textContent).toContain('8')
+    const inactiveRow = screen.getByRole('row', { name: /OFF-01/ })
+    const buttons = Array.from(inactiveRow.querySelectorAll('button'))
+    expect(buttons).toHaveLength(2)
+    expect(buttons.every((button) => (button as HTMLButtonElement).disabled)).toBe(true)
+    expect(screen.getByText('รับจากผู้ขาย')).toBeTruthy()
+  })
+
+  it('lets the manager fill names for a legacy profile and keeps the old display name', async () => {
+    vi.mocked(usersApi.list).mockResolvedValue([account])
+    vi.mocked(usersApi.updateProfile).mockResolvedValue({ ...account, firstName: 'สมชาย', lastName: 'ใจดี' })
+    renderInShell(<UsersPage />, manager)
+    const row = await screen.findByRole('row', { name: /พนักงานบริการ/ })
+    expect(row.textContent).toContain('ใช้ชื่อที่แสดงเดิม')
+    fireEvent.click(screen.getByRole('button', { name: 'เติมข้อมูล' }))
+    fireEvent.change(screen.getAllByLabelText('ชื่อ')[0], { target: { value: 'สมชาย' } })
+    fireEvent.change(screen.getAllByLabelText('นามสกุล')[0], { target: { value: 'ใจดี' } })
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกโปรไฟล์' }))
+    await waitFor(() => expect(usersApi.updateProfile).toHaveBeenCalledWith(2, { firstName: 'สมชาย', lastName: 'ใจดี', phoneNumber: '' }))
   })
 
   it('renders the user list and offers account creation to the manager page', async () => {

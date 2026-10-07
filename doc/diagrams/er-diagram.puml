@@ -110,6 +110,8 @@ entity "stock_items" as stock_items {
   * unit : CHARACTER VARYING(24)
   * quantity : NUMERIC(12,3)
   * low_stock_threshold : NUMERIC(12,3)
+  * opening_target_stock : NUMERIC(12,3) <<V15, default 0, >= 0>>
+  * active : BOOLEAN <<V15, default TRUE>>
   * updated_at : TIMESTAMP WITH TIME ZONE
 }
 
@@ -128,6 +130,9 @@ entity "user_profiles" as user_profiles {
   * user_id : BIGINT <<FK,PK>>
   * display_name : CHARACTER VARYING(120)
   email : CHARACTER VARYING(254)
+  first_name : CHARACTER VARYING(100) <<V15, nullable legacy>>
+  last_name : CHARACTER VARYING(100) <<V15, nullable legacy>>
+  phone_number : CHARACTER VARYING(20) <<V15, nullable>>
 }
 dining_sessions ||--o{ customer_session_grants : "session_id"
 buffet_packages ||--o{ dining_sessions : "package_id"

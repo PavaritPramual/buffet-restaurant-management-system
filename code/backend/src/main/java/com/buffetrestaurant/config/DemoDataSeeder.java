@@ -27,17 +27,18 @@ public class DemoDataSeeder {
             UserAdministrationService authService, StockService stockService) {
         return args -> {
             if (users.findByUsername("admin").isEmpty()) {
-                authService.createUser(new CreateUserRequest("admin", "admin123", "ผู้จัดการตัวอย่าง",
-                        "admin@example.test", UserRole.MANAGER));
+                authService.createUser(new CreateUserRequest("admin", "admin123", "[TEST DATA] ผู้จัดการตัวอย่าง",
+                        "admin@example.test", UserRole.MANAGER,
+                        "Demo", "Manager", null));
             }
             UserAccount user = users.findByUsername("admin").orElseThrow();
 
             List<StockItem> seededItems = List.of(
-                    new StockItem("ING-001", "ข้าวหอมมะลิ", "กก.", BigDecimal.ZERO, new BigDecimal("8.000")),
-                    new StockItem("ING-002", "นมสด", "ลิตร", BigDecimal.ZERO, new BigDecimal("5.000")),
-                    new StockItem("ING-003", "สันคอหมู", "กก.", BigDecimal.ZERO, new BigDecimal("4.000"))
+                    new StockItem("ING-001", "[TEST DATA] ข้าวหอมมะลิ", "กก.", BigDecimal.ZERO, new BigDecimal("8.000"), new BigDecimal("15.000")),
+                    new StockItem("ING-002", "[TEST DATA] นมสด", "ลิตร", BigDecimal.ZERO, new BigDecimal("5.000"), new BigDecimal("10.000")),
+                    new StockItem("ING-003", "[TEST DATA] สันคอหมู", "กก.", BigDecimal.ZERO, new BigDecimal("4.000"), new BigDecimal("12.000"))
             );
-            UserContext context = new UserContext(user.getId(), user.getUsername(), "ผู้จัดการตัวอย่าง", user.getRole());
+            UserContext context = new UserContext(user.getId(), user.getUsername(), "[TEST DATA] ผู้จัดการตัวอย่าง", user.getRole());
             for (StockItem seed : seededItems) {
                 if (stockItems.findBySku(seed.getSku()).isEmpty()) {
                     StockItem saved = stockItems.save(seed);

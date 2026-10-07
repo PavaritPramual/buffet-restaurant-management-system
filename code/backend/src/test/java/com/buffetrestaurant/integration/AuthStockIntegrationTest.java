@@ -99,7 +99,7 @@ class AuthStockIntegrationTest {
                 mockMvc.perform(get("/api/v1/stock/transactions").session(staff)).andExpect(status().isForbidden());
         mockMvc.perform(get("/api/v1/admin/users").session(staff)).andExpect(status().isForbidden());
         mockMvc.perform(post("/api/v1/admin/users").session(staff).contentType(MediaType.APPLICATION_JSON)
-                .content("{\"username\":\"blocked\",\"password\":\"password123\",\"displayName\":\"Blocked\",\"role\":\"MANAGER\"}"))
+                .content("{\"username\":\"blocked\",\"password\":\"password123\",\"displayName\":\"Blocked\",\"role\":\"MANAGER\",\"firstName\":\"B\",\"lastName\":\"L\"}"))
                 .andExpect(status().isForbidden());
         mockMvc.perform(post("/api/v1/stock/" + stockItem.getId() + "/in").session(staff)
                 .contentType(MediaType.APPLICATION_JSON).content("{\"quantity\":1,\"reason\":\"delivery\"}"))
@@ -134,7 +134,7 @@ class AuthStockIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"Manager category\"}"))
                 .andExpect(status().isCreated());
         mockMvc.perform(post("/api/v1/admin/users").session(manager).contentType(MediaType.APPLICATION_JSON)
-                .content("{\"username\":\"new-staff\",\"password\":\"password123\",\"displayName\":\"New Staff\",\"role\":\"SERVICE_STAFF\"}"))
+                .content("{\"username\":\"new-staff\",\"password\":\"password123\",\"displayName\":\"New Staff\",\"firstName\":\"New\",\"lastName\":\"Staff\",\"role\":\"SERVICE_STAFF\"}"))
                 .andExpect(status().isCreated());
     }
 
@@ -188,7 +188,8 @@ class AuthStockIntegrationTest {
     }
 
         private void createUser(String username, UserRole role) {
-                authService.createUser(new CreateUserRequest(username, "password123", username, null, role));
+                authService.createUser(new CreateUserRequest(username, "password123", username, null, role,
+                        "First", "Last", null));
         }
 
         private MockHttpSession login(String username) throws Exception {

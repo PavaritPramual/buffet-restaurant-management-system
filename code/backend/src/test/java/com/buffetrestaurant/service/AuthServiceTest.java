@@ -53,7 +53,7 @@ class AuthServiceTest {
 
     @Test
     void validatesCreateUserRequestBeforeSaving() {
-        CreateUserRequest invalid = new CreateUserRequest("", "short", "", null, UserRole.MANAGER);
+        CreateUserRequest invalid = new CreateUserRequest("", "short", "", null, UserRole.MANAGER, "", "", "abc");
 
         assertThrows(ConstraintViolationException.class, () -> service.createUser(invalid));
         verify(users, never()).save(any(UserAccount.class));

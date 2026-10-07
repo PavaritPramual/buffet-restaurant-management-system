@@ -23,11 +23,14 @@ public class BootstrapAdminConfig {
             @Value("${app.bootstrap-admin.username:}") String username,
             @Value("${app.bootstrap-admin.password:}") String password,
             @Value("${app.bootstrap-admin.display-name:Restaurant Manager}") String displayName,
-            @Value("${app.bootstrap-admin.email:}") String email
+            @Value("${app.bootstrap-admin.email:}") String email,
+            @Value("${app.bootstrap-admin.first-name:Restaurant}") String firstName,
+            @Value("${app.bootstrap-admin.last-name:Manager}") String lastName
     ) {
         return args -> {
             if (users.count() > 0) return;
-            authService.createUser(new CreateUserRequest(username, password, displayName, email, UserRole.MANAGER));
+            authService.createUser(new CreateUserRequest(username, password, displayName, email, UserRole.MANAGER,
+                    firstName, lastName, null));
         };
     }
 }

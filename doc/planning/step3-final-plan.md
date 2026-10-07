@@ -106,9 +106,9 @@ Snapshot Notion 7 ตุลาคม 2026 ก่อน PRเอกสารป�
 **หลักฐาน:** ยังไม่มีผล Final — แนบ PR / commit / tests / report / URL เมื่อทำจริง
 ## 5. เมธัส — Stock/Profile และ Database Tooling
 ### ก่อนเริ่ม
-- [ ] sync branch methus_673380300-2_01; อ่านสอง Tasks Final และ canonical schema/ERD/UI Guide
-- [ ] ตรวจ history ล่าสุดและจองเลข forward migrations สองชุดจากเลขว่างจริงใน Tasks; ยังไม่ประกาศเลข V15/V16 โดยไม่ได้ตรวจ
-- [ ] ใช้ DB แยกสำหรับ tests; V1–V14 ที่ apply กลางแล้วห้ามแก้ และการอนุมัติ V13/V14 ไม่ครอบคลุม Final migrations ใหม่
+- [x] sync branch methus_673380300-2_01; อ่านสอง Tasks Final และ canonical schema/ERD/UI Guide
+- [x] ตรวจ history ล่าสุดและจองเลข forward migrations สองชุดจากเลขว่างจริงใน Tasks; ยังไม่ประกาศเลข V15/V16 โดยไม่ได้ตรวจ
+- [x] ใช้ DB แยกสำหรับ tests; V1–V14 ที่ apply กลางแล้วห้ามแก้ และการอนุมัติ V13/V14 ไม่ครอบคลุม Final migrations ใหม่
 **อ้างอิง:** [Notion page](https://app.notion.com/p/3f1cb2e9d47a815c9098ffc0e5ededd2) · [Notion page](https://app.notion.com/p/3f1cb2e9d47a8103ac1ef67c72c7b02e) · [Notion page](https://app.notion.com/p/3d8cb2e9d47a80488aa4dacb4ef5a008) · [Notion page](https://app.notion.com/p/3d8cb2e9d47a81d9aa4cdcec37b26c9d) · [Schema ที่รับรอง](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/develop/doc/database/step2-schema-approved.md) · [Auth/Stock delta](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/develop/doc/database/auth-stock-schema-delta.md) · [Notion page](https://app.notion.com/p/3ddcb2e9d47a81d28d17f0a23ccdf288)
 ### งานที่ต้องทำ
 - [ ] เพิ่ม Stock opening_target_stock และ active ผ่าน Flyway/JPA/DTO/API/UI; ใช้ DECIMAL(12,3) ตาม quantity ปัจจุบัน target ≥0/default0 และ active/defaultTRUE ทั้งรายการใหม่/เดิม

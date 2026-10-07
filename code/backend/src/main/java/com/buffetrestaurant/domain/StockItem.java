@@ -32,6 +32,12 @@ public class StockItem {
     @Column(name = "low_stock_threshold", nullable = false, precision = 12, scale = 3)
     private BigDecimal lowStockThreshold;
 
+    @Column(name = "opening_target_stock", nullable = false, precision = 12, scale = 3)
+    private BigDecimal openingTargetStock = BigDecimal.ZERO;
+
+    @Column(nullable = false)
+    private boolean active = true;
+
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
@@ -47,8 +53,27 @@ public class StockItem {
         this.updatedAt = Instant.now();
     }
 
+    public StockItem(String sku, String name, String unit, BigDecimal quantity, BigDecimal lowStockThreshold,
+            BigDecimal openingTargetStock) {
+        this(sku, name, unit, quantity, lowStockThreshold);
+        this.openingTargetStock = openingTargetStock;
+    }
+
     public void updateDetails(String sku, String name, String unit, BigDecimal threshold) {
         this.sku = sku; this.name = name; this.unit = unit; this.lowStockThreshold = threshold;
+    }
+
+    public void updateOpeningTarget(BigDecimal openingTargetStock) {
+        this.openingTargetStock = openingTargetStock;
+    }
+
+    public void changeActive(boolean active) {
+        this.active = active;
+    }
+
+    /** Units missing against the opening target; never negative and never persisted. */
+    public BigDecimal getShortfall() {
+        return openingTargetStock.subtract(quantity).max(BigDecimal.ZERO);
     }
 
     public void applyDelta(BigDecimal delta) {
@@ -66,5 +91,7 @@ public class StockItem {
     public String getUnit() { return unit; }
     public BigDecimal getQuantity() { return quantity; }
     public BigDecimal getLowStockThreshold() { return lowStockThreshold; }
+    public BigDecimal getOpeningTargetStock() { return openingTargetStock; }
+    public boolean isActive() { return active; }
     public Instant getUpdatedAt() { return updatedAt; }
 }

@@ -26,6 +26,15 @@ public class UserProfile {
     @Column(length = 254)
     private String email;
 
+    @Column(name = "first_name", length = 100)
+    private String firstName;
+
+    @Column(name = "last_name", length = 100)
+    private String lastName;
+
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
+
     protected UserProfile() {
     }
 
@@ -35,7 +44,22 @@ public class UserProfile {
         this.email = email;
     }
 
+    public UserProfile(UserAccount user, String displayName, String email, String firstName, String lastName,
+            String phoneNumber) {
+        this(user, displayName, email);
+        updateContact(firstName, lastName, phoneNumber);
+    }
+
+    public void updateContact(String firstName, String lastName, String phoneNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+    }
+
     public Long getUserId() { return userId; }
     public String getDisplayName() { return displayName; }
     public String getEmail() { return email; }
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
+    public String getPhoneNumber() { return phoneNumber; }
 }

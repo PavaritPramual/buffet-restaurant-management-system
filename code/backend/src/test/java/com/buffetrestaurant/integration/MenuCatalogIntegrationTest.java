@@ -204,7 +204,8 @@ class MenuCatalogIntegrationTest {
 
     private MockHttpSession login(UserRole role) throws Exception {
         String username = "menu-" + UUID.randomUUID();
-        auth.createUser(new CreateUserRequest(username, "password123", "Catalog test", null, role));
+        auth.createUser(new CreateUserRequest(username, "password123", "Catalog test", null, role,
+                "Catalog", "Tester", null));
         return (MockHttpSession) mvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"username\":\"" + username + "\",\"password\":\"password123\"}"))
                 .andExpect(status().isOk()).andReturn().getRequest().getSession(false);

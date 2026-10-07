@@ -5,6 +5,7 @@ import com.buffetrestaurant.domain.StockTransaction;
 import com.buffetrestaurant.domain.UserAccount;
 import com.buffetrestaurant.domain.enums.StockTransactionType;
 import com.buffetrestaurant.exception.AuthenticationRequiredException;
+import com.buffetrestaurant.exception.InactiveStockItemException;
 import com.buffetrestaurant.exception.StockRuleViolationException;
 import com.buffetrestaurant.dto.response.UserContext;
 import com.buffetrestaurant.repository.StockItemRepository;
@@ -27,6 +28,7 @@ public abstract class StockTransactionTemplate implements StockTransactionProces
     public final StockTransaction process(StockItem item, BigDecimal requestedQuantity, String reason,
             UserContext actor) {
         if (actor == null || actor.userId() == null) throw new AuthenticationRequiredException();
+        if (!item.isActive()) throw new InactiveStockItemException();
         BigDecimal delta = calculateDelta(requestedQuantity);
         BigDecimal nextBalance = item.getQuantity().add(delta);
         if (nextBalance.signum() < 0) {
