@@ -7,7 +7,7 @@ Manager จัดการข้อมูลร้าน ผู้ใช้ แ�
 
 ## สถานะปัจจุบัน
 
-**แนวทางสไลด์ล่าสุด:** [Canva ทีม v02](https://www.canva.com/d/wORhypcIcwvGuFK) ใช้20หน้าหลักสำหรับ12นาที พร้อมภาคผนวกdiagram/codeครบตามโจทย์ ดู [guide/version](doc/slide/README.md), [coverage](doc/slide/course-diagram-coverage.md) และ [notes](doc/slide/team-final-canva-v02-content.md) อ่านกลับ76หน้าผ่านแล้ว ยังรอowner/CanvavisualQA/PDFexport/ซ้อม/ผลrelease ไม่ใช้PPTXเป็นชุดส่งหรือขอreview
+**แนวทางสไลด์ล่าสุด:** [Canva ทีม v02](https://www.canva.com/d/wORhypcIcwvGuFK) ใช้20หน้าหลักสำหรับ12นาที พร้อมภาคผนวกdiagram/codeครบตามโจทย์ ดู [guide/version](doc/slide/README.md), [coverage](doc/slide/course-diagram-coverage.md) และ [notes](doc/slide/team-final-canva-v02-content.md) อ่านกลับ76หน้าผ่านแล้ว ยังรอowner/CanvavisualQA/ซ้อม/ผลrelease ใช้Canvaเป็นต้นฉบับและเก็บทั้งPPTXกับPDFที่exportจากCanvaตามเวอร์ชัน
 
 Code baseline `develop 472fba4` ณ 7 ตุลาคม2026: Step2ปิดแล้วและPR#22รวมlocalregression/AdminShell/testpreparation
 เอกสารและสไลด์ปวริศช์ชุดนี้รอreview **ยังไม่ใช่ Final ที่พร้อมส่ง** Public deployment, Stock target/active, Profileละเอียด, SOLID gaps, Gitเกณฑ์รายคน และreleaseยังต้องปิด
@@ -195,7 +195,7 @@ doc/
   contracts/ database/ diagrams/ system-design/ testing/ planning/
   solid-analysis.md
   design-patterns.md
-  slide/       Canva content, presenter notes, version guides and approved PDF exports
+  slide/       Canva content, presenter notes, version guides and approved Canva PPTX/PDF exports
 img/           project media
 .github/       CI configuration
 docker-compose.yml
@@ -206,4 +206,4 @@ docker-compose.yml
 Personalbranch →reviewedPR→develop →reviewedreleasePR→main ทุกคนใช้บัญชีตน Commitเป็นงานที่มีความหมาย ไม่เติมจำนวน
 [Git auditล่าสุด](doc/planning/step3-git-audit.md) แสดงทั้งห้าบัญชี branches/PRreviews/candidatecommitcounts และข้อขาดจริง
 [สไลด์ทีมปัจจุบัน](doc/slide/README.md) / [Diagram coverage](doc/slide/course-diagram-coverage.md) / [runbook12นาที](doc/slide/team-final-12-minute-runbook.md)
-ร่างPPTX/PDFรายคนเดิมเป็นประวัติ รุ่นส่งใช้Canva/PDFที่ownerรับรองตามreleaseจริง
+ร่างPPTX/PDFรายคนเดิมเป็นประวัติ รุ่นส่งใช้Canvaพร้อมไฟล์PPTX/PDFที่exportจากCanvaและownerรับรองตามreleaseจริง
