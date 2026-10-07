@@ -2,6 +2,8 @@
 
 ตรวจ schema จาก Supabase และ Flyway V1–V12 เมื่อ 6 ตุลาคม 2026 ปวริศช์รับรอง extensions ตามแผนปิด Step 2; รายละเอียดนี้เป็น canonical implementation ของรอบนี้ เอกสาร design เดิมเก็บเป็นประวัติ การเปลี่ยน schema ที่ apply แล้วต้องใช้ forward migration
 
+**สถานะ V15 (7 ต.ค. 2026):** เอกสารนี้ยังไม่ครอบคลุม V15 (`stock_items.opening_target_stock/active`, `user_profiles.first_name/last_name/phone_number`) รายละเอียดและสถานะฐานกลางอยู่ใน [auth-stock-schema-delta.md](auth-stock-schema-delta.md) ซึ่งระบุว่ายังไม่ยืนยันครบ (ขาดหลักฐานอนุมัติ/checksum) จึงยังไม่รวม V15 เป็น canonical ที่นี่
+
 ## การตัดสินใจ
 
 **Customer Billing extension:** V14 เพิ่ม `bill_requested_at` ที่แถวรอบกิน nullable/default NULL แบบ TIMESTAMP WITH TIME ZONE ไม่เพิ่มสถานะรอบใหม่ เมื่อขอแล้ว Order ใหม่ถูกปฏิเสธด้วย 409 แต่ Payment/close ยังแยกกัน V13/V14 ยังไม่ apply Supabase และรอ review/deployment
@@ -12,7 +14,7 @@
 - ใช้ timestamp with time zone คู่กับ Java OffsetDateTime ตาม migration/API จริง; จำนวนอาหารต้องบวก และคง supporting indexes ตาม query paths
 - Billing ใช้ `package_price_at_open`; Payment คำนวณยอดฝั่ง backendและบันทึก paid_at เมื่อ PAID; การชำระแยกจากการปิดรอบ
 - Auth ใช้ `app_users`, BCrypt `password_hash` และ profile shared PK/display_name; Stock ใช้ DECIMAL(12,3), sku, quantity/low_stock_threshold และ required audit reason
-- เลื่อนชื่อ/นามสกุล/โทรศัพท์, opening_target_stock และ active/inactive ของ Stock ไป Final ตามข้อตกลง ไม่อ้างว่า fields เหล่านี้มีแล้ว
+- **ประวัติการตัดสินใจ Step 2 ณ 6 ต.ค. 2026:** เลื่อนชื่อ/นามสกุล/โทรศัพท์, opening_target_stock และ active/inactive ของ Stock ไป Final ตามข้อตกลง; ภายหลัง implement ด้วย V15 ตามเอกสาร delta โดยการตัดสินใจ Step 2 นี้ไม่ใช่การอนุมัติ V15
 - ข้อมูลเป้าหมายออกแบบเดิมที่เลื่อนต้องมี task แยก การรับรองนี้จำกัดที่ Step 2; ข้อเสนอใน PR นี้ยังต้องผ่าน reviewer ก่อนปิดขั้น
 
 ## app_users

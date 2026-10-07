@@ -111,12 +111,12 @@ Snapshot Notion 7 ตุลาคม 2026 ก่อน PRเอกสารป�
 - [x] ใช้ DB แยกสำหรับ tests; V1–V14 ที่ apply กลางแล้วห้ามแก้ และการอนุมัติ V13/V14 ไม่ครอบคลุม Final migrations ใหม่
 **อ้างอิง:** [Notion page](https://app.notion.com/p/3f1cb2e9d47a815c9098ffc0e5ededd2) · [Notion page](https://app.notion.com/p/3f1cb2e9d47a8103ac1ef67c72c7b02e) · [Notion page](https://app.notion.com/p/3d8cb2e9d47a80488aa4dacb4ef5a008) · [Notion page](https://app.notion.com/p/3d8cb2e9d47a81d9aa4cdcec37b26c9d) · [Schema ที่รับรอง](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/develop/doc/database/step2-schema-approved.md) · [Auth/Stock delta](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/develop/doc/database/auth-stock-schema-delta.md) · [Notion page](https://app.notion.com/p/3ddcb2e9d47a81d28d17f0a23ccdf288)
 ### งานที่ต้องทำ
-- [ ] เพิ่ม Stock opening_target_stock และ active ผ่าน Flyway/JPA/DTO/API/UI; ใช้ DECIMAL(12,3) ตาม quantity ปัจจุบัน target ≥0/default0 และ active/defaultTRUE ทั้งรายการใหม่/เดิม
-- [ ] แสดงยอดเป้าหมายก่อนเปิดร้านและจำนวนขาด max(target − quantity,0); ไม่เปลี่ยน quantity/lowStockThreshold หรือสร้าง stock-in อัตโนมัติ
-- [ ] Manager ปิด/เปิดรายการได้; inactive ยังอ่านประวัติได้ แต่ stock-in/adjustment ต้องถูกปฏิเสธจน activate กลับ ทั้ง backend และ UI
-- [ ] เพิ่ม Profile firstName/lastName/phoneNumber ผ่าน User API/UI; first/last length100 phone20 และ validation ตาม Data Dictionary
-- [ ] เก็บ display_name/email/sharedPK เดิม; first/last/phone ของข้อมูลเก่า nullable ไม่เดาแยกชื่อ; UI ใช้ชื่อเดิมพร้อมให้ Manager เติม ส่วนบัญชีใหม่ต้องมีชื่อ/นามสกุล
-- [ ] ทดสอบสิทธิ์ duplicate/validation inactive lifecycle ประวัติ Stock และข้อมูล Profile เก่า รวม Flyway/JPA บน H2/PostgreSQL แยก
+- [x] เพิ่ม Stock opening_target_stock และ active ผ่าน Flyway/JPA/DTO/API/UI; ใช้ DECIMAL(12,3) ตาม quantity ปัจจุบัน target ≥0/default0 และ active/defaultTRUE ทั้งรายการใหม่/เดิม
+- [x] แสดงยอดเป้าหมายก่อนเปิดร้านและจำนวนขาด max(target − quantity,0); ไม่เปลี่ยน quantity/lowStockThreshold หรือสร้าง stock-in อัตโนมัติ
+- [x] Manager ปิด/เปิดรายการได้; inactive ยังอ่านประวัติได้ แต่ stock-in/adjustment ต้องถูกปฏิเสธจน activate กลับ ทั้ง backend และ UI
+- [x] เพิ่ม Profile firstName/lastName/phoneNumber ผ่าน User API/UI; first/last length100 phone20; phone จำกัดความยาวเท่านั้นเพราะยังไม่มีรูปแบบที่ยืนยัน
+- [x] เก็บ display_name/email/sharedPK เดิม; first/last/phone ของข้อมูลเก่า nullable ไม่เดาแยกชื่อ; UI ใช้ชื่อเดิมพร้อมให้ Manager เติม ส่วนบัญชีใหม่ต้องมีชื่อ/นามสกุล
+- [x] ทดสอบสิทธิ์ duplicate/validation inactive lifecycle ประวัติ Stock และข้อมูล Profile เก่า รวม Flyway/JPA บน H2/PostgreSQL แยก
 - [ ] รวม JPA rationale ทุก Entity จากเจ้าของ: cardinality, FK/index, owner side, cascade/fetch และผลกับ query/ประวัติ; ไม่เปลี่ยน mapping เพียงเพื่อให้เอกสารดูดี
 - [ ] ทำ setup/demo-data instructions ที่รันซ้ำได้ มีป้ายข้อมูลทดสอบ และไม่ลบข้อมูลทีม/เปิด bootstrap admin ค้าง
 - [ ] เขียน Template Method: algorithm ขั้นร่วม/steps ที่ override และการรักษา transaction/audit พร้อม Auth/Stock SOLID/slides

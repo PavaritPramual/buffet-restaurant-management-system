@@ -2,12 +2,12 @@
 
 สถานะ: เอกสารอธิบาย mapping ที่ **implemented อยู่แล้ว** (ตรวจกับ `code/backend/.../domain/*.java` และ migration V1–V15) ไม่มีการเปลี่ยน mapping เพื่อให้เอกสารดูดีขึ้น
 การยืนยันเหตุผลเชิงออกแบบจากเจ้าของแต่ละ Entity: Auth/Stock/Profile = เมธัส/ปวริศช์ (ในเอกสารนี้); Menu/Ordering = [sirapat-menu-ordering-solid-jpa.md](sirapat-menu-ordering-solid-jpa.md); Table/Session/Payment ยังรอเจ้าของลงชื่อยืนยัน (ระบุ "รอเจ้าของยืนยัน")
-ทุก association ใช้ `LAZY` (ไม่มี EAGER); ทุก FK มี index ที่ใช้ใน query หลัก
+association ส่วนใหญ่ใช้ `LAZY` ยกเว้น `UserProfile.user` ที่ประกาศ `@OneToOne` โดยไม่กำหนด fetch จึงเป็น **EAGER (ค่าเริ่มต้นของ JPA สำหรับ `@OneToOne`)**; ทุก FK มี index ที่ใช้ใน query หลัก
 
 | Entity → table | ความสัมพันธ์/cardinality | Owner side, FK, ON DELETE | Cascade / fetch | ผลต่อ query และประวัติ |
 | --- | --- | --- | --- | --- |
 | `UserAccount` → `app_users` | 1 : 0..1 กับ `UserProfile`; 1 : 0..* กับ `StockTransaction` (actor) | ไม่ถือ FK; username UNIQUE, role CHECK, `idx_app_users_role` | ไม่ cascade | login ค้นด้วย username (unique index); ลบ user ไม่ทำให้ประวัติสต็อกหาย (actor → NULL) |
-| `UserProfile` → `user_profiles` | 1 : 1 กับ user (`@OneToOne @MapsId`, shared PK `user_id`) | Owner = profile; FK `user_id` → `app_users` ON DELETE CASCADE | ไม่ cascade จาก user; LAZY | join ด้วย PK ไม่ต้องมี index เพิ่ม; V15 เพิ่ม `first_name/last_name/phone_number` nullable เพื่อไม่เดาชื่อของข้อมูลเก่า |
+| `UserProfile` → `user_profiles` | 1 : 1 กับ user (`@OneToOne @MapsId`, shared PK `user_id`) | Owner = profile; FK `user_id` → `app_users` ON DELETE CASCADE | ไม่ cascade จาก user; `@OneToOne` ไม่กำหนด fetch จึงเป็น EAGER (default) — ต้อง fetch `UserAccount` เมื่อโหลด `UserProfile`; provider อาจใช้ join หรือ secondary select ไม่ได้เปลี่ยนเป็น LAZY | shared PK ใช้ lookup/index เดิมได้; V15 เพิ่ม `first_name/last_name/phone_number` nullable เพื่อไม่เดาชื่อของข้อมูลเก่า |
 | `StockItem` → `stock_items` | 1 : 0..* กับ `StockTransaction` | ไม่ถือ FK; sku UNIQUE; CHECK quantity/threshold/`opening_target_stock` ≥ 0 | ไม่ cascade | `active` เป็น flag แทนการลบ จึงรักษา FK/ประวัติ; shortfall คำนวณ (`max(target−quantity,0)`) ไม่เก็บใน DB |
 | `StockTransaction` → `stock_transactions` | N : 1 กับ `StockItem` (optional=false), N : 0..1 กับ `UserAccount` | Owner = transaction; `stock_item_id` ON DELETE RESTRICT; `actor_user_id` ON DELETE SET NULL | ไม่ cascade; LAZY ทั้งคู่ | `idx_stock_transactions_item_created` รองรับ history รายสินค้าเรียงเวลา; RESTRICT บังคับให้ใช้ inactive แทนลบ; CHECK delta ≠ 0, balance ≥ 0 |
 | `RestaurantTable` → `restaurant_tables` | 1 : 0..* กับ `DiningSession` | ไม่ถือ FK; table_number UNIQUE, `idx_tables_status` | ไม่ cascade | รอเจ้าของยืนยัน |

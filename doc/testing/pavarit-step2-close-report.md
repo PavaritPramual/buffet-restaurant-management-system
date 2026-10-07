@@ -86,7 +86,7 @@ node test/browser/step2-ui-states.cjs
 
 ## ขอบเขต Final และเงื่อนไขปิด Step 2
 
-- Stock opening_target_stock/active lifecycle และ Profile first_name/last_name/phone ยังไม่ implement แยก Tasks Final ตามข้อตกลงเดิม
+- **ประวัติ ณ รอบ Step 2 (ก่อน V15):** Stock opening_target_stock/active lifecycle และ Profile first_name/last_name/phone ยังไม่ implement ในรอบนั้น; ภายหลังเพิ่มด้วย V15 (ดู [Auth/Stock schema delta](../database/auth-stock-schema-delta.md))
 - Manager CRUD screens ของ Table/Package/Soup/stock items และ Customer Request Bill/Bill Status ยังไม่ครบตาม UI Guide เดิม เป็นงานหน้าจอเพิ่มที่ไม่บล็อก Staff Core Flow รอบนี้ แยก Tasks Final และเว้น checklist ทุก-action ของ Role Flow ไม่ใช้ API seed/demo แทน UI ที่ยังไม่มี
 - ไม่รวม public deployment/slides/SOLID-pattern report/Git audit Final
 - PR รวมต้องผ่าน review จากศรัณย์ (API/transition), ศิระพัทธ์ (UI/tests), เมธัส (DB/Auth/V13), ธีรเมธ (Payment/runtime)

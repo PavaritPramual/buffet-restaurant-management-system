@@ -82,10 +82,10 @@
 
 - **ผู้ใช้หลัก** MANAGER
 - **ก่อนเริ่ม** login ตาม role
-- **งานหลัก** จัดการโต๊ะ เมนู/categories/package membership แพ็กเกจ น้ำซุปตาม API ของแต่ละส่วน เพิ่ม/แก้ stock master และดูรายการ/สร้างผู้ใช้พร้อม basic profile (`displayName`, `email`) ผ่าน UI/API ไม่มี API แก้/ลบผู้ใช้หรือจัดการ Profile แบบเต็มใน baseline นี้
+- **งานหลัก** จัดการโต๊ะ เมนู/categories/package membership แพ็กเกจ น้ำซุปตาม API ของแต่ละส่วน เพิ่ม/แก้ stock master และดูรายการ/สร้างผู้ใช้พร้อม basic profile (`displayName`, `email`) ผ่าน UI/API; Manager แก้ `firstName`/`lastName`/`phoneNumber` ผ่าน profile endpoint ได้ (V15) แต่ยังไม่มี API แก้/ลบข้อมูลบัญชีผู้ใช้
 - **ทางเลือก** โต๊ะที่มี session history ลบไม่ได้ โต๊ะ active ไม่แก้ข้อมูลขัดรอบ package/soup ลบเป็น inactive เพื่อคงประวัติ Stock ใหม่เริ่มศูนย์และห้ามเปลี่ยน SKU/unit หลังมี transaction ราคาใหม่ไม่เปลี่ยน snapshot รอบเดิม
 - **หลังสำเร็จ** ข้อมูลร้านพร้อมใช้ โดย Supervisor ไม่ได้สิทธิ์ CRUD master data เหล่านี้
 
-## ขอบเขต Final ที่ยังไม่อยู่ baseline นี้
+## ขอบเขตที่เพิ่มจาก baseline เดิม
 
-Stock opening target/lifecycle และ Profile firstName/lastName/phoneNumber ยังต้องเพิ่มตาม Final plan แผน public Deployment เป็นแบบออกแบบ ไม่ใช่ผลตรวจ runtime
+Stock opening target/lifecycle และ Profile firstName/lastName/phoneNumber implement ด้วย V15 แล้ว; public Deployment ยังเป็นแบบออกแบบ ไม่ใช่ผลตรวจ runtime

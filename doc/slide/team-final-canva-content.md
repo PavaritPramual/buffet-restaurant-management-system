@@ -235,7 +235,7 @@ stock_items 1 → N stock_transactions
 
 ### คำพูดและรายละเอียดประกอบ
 
-ความสัมพันธ์ One-to-One และ One-to-Many ตรงเกณฑ์วิชา และมี Many-to-Many สำหรับเมนูในแพ็กเกจ orders และ payments เก็บ sessionId เป็น scalar ใน JPA แต่ฐานข้อมูลมี FK จริง จึงต้องแยกสิ่งที่เป็น database relationship ออกจาก object association Profile ใช้ชื่อจริงตาราง app_users และ fields display_name/email ใน baseline ชื่อและโทรศัพท์ละเอียดเป็นงาน Final ที่ยังไม่รวม
+ความสัมพันธ์ One-to-One และ One-to-Many ตรงเกณฑ์วิชา และมี Many-to-Many สำหรับเมนูในแพ็กเกจ orders และ payments เก็บ sessionId เป็น scalar ใน JPA แต่ฐานข้อมูลมี FK จริง จึงต้องแยกสิ่งที่เป็น database relationship ออกจาก object association ใน baseline รอบ Step 2 Profile ใช้ชื่อตาราง `user_profiles` และ fields `display_name`/`email`; ต่อมา V15 เพิ่ม firstName/lastName/phoneNumber (nullable สำหรับข้อมูลเดิม) ตาม [Auth/Stock schema delta](../database/auth-stock-schema-delta.md)
 
 ### แหล่งอ้างอิง
 
@@ -1026,4 +1026,3 @@ Checklistทั้งหมดนี้ยังไม่ติ๊กจาก�
 - [doc/planning/step3-requirement-matrix.md](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/0f1a05c38bc6baa5436369d45a6545ea030a64d1/doc/planning/step3-requirement-matrix.md)
 - [doc/testing/pavarit-step3-docs-report.md](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/0f1a05c38bc6baa5436369d45a6545ea030a64d1/doc/testing/pavarit-step3-docs-report.md)
 - [README.md](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/0f1a05c38bc6baa5436369d45a6545ea030a64d1/README.md)
-

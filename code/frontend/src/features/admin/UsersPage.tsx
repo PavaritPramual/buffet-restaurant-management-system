@@ -108,7 +108,7 @@ export default function UsersPage() {
         <label>ชื่อที่แสดง<input required maxLength={120} value={displayName} onChange={(event) => setDisplayName(event.target.value)} /></label>
         <label>ชื่อ<input required maxLength={100} value={firstName} onChange={(event) => setFirstName(event.target.value)} /></label>
         <label>นามสกุล<input required maxLength={100} value={lastName} onChange={(event) => setLastName(event.target.value)} /></label>
-        <label>โทรศัพท์<input maxLength={20} pattern="\s*(\+?[0-9][0-9 ()\-]*)?\s*" value={phoneNumber} onChange={(event) => setPhoneNumber(event.target.value)} /></label>
+        <label>โทรศัพท์<input maxLength={20} value={phoneNumber} onChange={(event) => setPhoneNumber(event.target.value)} /></label>
         <label>ชื่อผู้ใช้<input required maxLength={80} autoComplete="off" value={username} onChange={(event) => setUsername(event.target.value)} /></label>
         <label>รหัสผ่านเริ่มต้น<input required type="password" minLength={8} maxLength={72} autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>
         <label>อีเมล<input type="email" maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} /></label>

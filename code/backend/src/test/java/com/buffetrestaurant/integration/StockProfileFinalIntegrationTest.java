@@ -150,7 +150,7 @@ class StockProfileFinalIntegrationTest {
     }
 
     @Test
-    void newAccountsRequireNamesAndValidPhone() throws Exception {
+    void newAccountsRequireNamesAndLimitPhoneLength() throws Exception {
         String base = "{\"username\":\"%s\",\"password\":\"password123\",\"displayName\":\"Disp\",\"role\":\"SERVICE_STAFF\"%s}";
         json(post("/api/v1/admin/users").session(manager), base.formatted("u1", "")).andExpect(status().isBadRequest());
         json(post("/api/v1/admin/users").session(manager), base.formatted("u1", ",\"firstName\":\"A\"")).andExpect(status().isBadRequest());
@@ -159,14 +159,16 @@ class StockProfileFinalIntegrationTest {
         json(post("/api/v1/admin/users").session(manager),
                 base.formatted("u1", ",\"firstName\":\"A\",\"lastName\":\"B\",\"phoneNumber\":\"" + "1".repeat(21) + "\"")).andExpect(status().isBadRequest());
         json(post("/api/v1/admin/users").session(manager),
-                base.formatted("u1", ",\"firstName\":\"A\",\"lastName\":\"B\",\"phoneNumber\":\"abc\"")).andExpect(status().isBadRequest());
-        json(post("/api/v1/admin/users").session(manager),
                 base.formatted("u1", ",\"firstName\":\"  Ann \",\"lastName\":\"Lee\",\"phoneNumber\":\"+66 81-234-5678\""))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.firstName").value("Ann"))
                 .andExpect(jsonPath("$.lastName").value("Lee"))
                 .andExpect(jsonPath("$.phoneNumber").value("+66 81-234-5678"))
                 .andExpect(jsonPath("$.displayName").value("Disp"));
+        json(post("/api/v1/admin/users").session(manager),
+                base.formatted("u2", ",\"firstName\":\"A\",\"lastName\":\"B\",\"phoneNumber\":\"abc\""))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.phoneNumber").value("abc"));
         json(post("/api/v1/admin/users").session(manager),
                 base.formatted("u1", ",\"firstName\":\"A\",\"lastName\":\"B\"")).andExpect(status().isConflict());
     }
@@ -186,7 +188,7 @@ class StockProfileFinalIntegrationTest {
         String path = "/api/v1/admin/users/" + legacy.getId() + "/profile";
         json(put(path).session(supervisor), "{\"firstName\":\"A\",\"lastName\":\"B\"}").andExpect(status().isForbidden());
         json(put(path).session(manager), "{\"firstName\":\"\",\"lastName\":\"B\"}").andExpect(status().isBadRequest());
-        json(put(path).session(manager), "{\"firstName\":\"A\",\"lastName\":\"B\",\"phoneNumber\":\"x1\"}").andExpect(status().isBadRequest());
+        json(put(path).session(manager), "{\"firstName\":\"A\",\"lastName\":\"B\",\"phoneNumber\":\"" + "1".repeat(21) + "\"}").andExpect(status().isBadRequest());
         json(put("/api/v1/admin/users/999999/profile").session(manager), "{\"firstName\":\"A\",\"lastName\":\"B\"}")
                 .andExpect(status().isNotFound());
         json(put(path).session(manager), "{\"firstName\":\"Somchai\",\"lastName\":\"Jaidee\",\"phoneNumber\":\"0812345678\"}")
@@ -194,6 +196,9 @@ class StockProfileFinalIntegrationTest {
                 .andExpect(jsonPath("$.firstName").value("Somchai"))
                 .andExpect(jsonPath("$.displayName").value("Old Display"))
                 .andExpect(jsonPath("$.email").value("old@example.test"));
+        json(put(path).session(manager), "{\"firstName\":\"Somchai\",\"lastName\":\"Jaidee\",\"phoneNumber\":\"x1\"}")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.phoneNumber").value("x1"));
         UserProfile reloaded = profiles.findByUserId(legacy.getId()).orElseThrow();
         assertThat(reloaded.getLastName()).isEqualTo("Jaidee");
         assertThat(reloaded.getDisplayName()).isEqualTo("Old Display");
