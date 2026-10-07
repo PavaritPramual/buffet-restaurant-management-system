@@ -1,0 +1,714 @@
+{
+  "date": "2026-10-07",
+  "canva_design_id": "DAHXSWQA-Vs",
+  "canva_url": "https://www.canva.com/d/wORhypcIcwvGuFK",
+  "code_baseline": "472fba4f25a27fa2e3cd1e1213151ce971646f3a",
+  "pages": 76,
+  "main_pages": 20,
+  "appendix_pages": 56,
+  "spoken_seconds": 650,
+  "buffer_seconds": 70,
+  "editable_text_elements": 704,
+  "diagram_image_elements": 28,
+  "code_pages": 35,
+  "page_checks": [
+    {
+      "page": 1,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 2,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 3,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 4,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 5,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 6,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 7,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 8,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 9,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 10,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 11,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 12,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 13,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 14,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 15,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 16,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 17,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 18,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 19,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 20,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 21,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 22,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 23,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 24,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 25,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 26,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 27,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 28,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 29,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 30,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 31,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 32,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 33,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 34,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 35,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 36,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 37,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 38,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 39,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 40,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 41,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 42,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 43,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 44,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 45,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 46,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 47,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 48,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 49,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 50,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 51,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 52,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 53,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 54,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 55,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 56,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 57,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 58,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 59,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 60,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 61,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 62,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 63,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 64,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 65,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 66,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 67,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 68,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 69,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 70,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 71,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 72,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 73,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 74,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 75,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    },
+    {
+      "page": 76,
+      "title": true,
+      "single_owner": true,
+      "points": true,
+      "code": true,
+      "notes": true,
+      "image": true
+    }
+  ],
+  "failures": [],
+  "out_of_canvas": [],
+  "all_source_diagrams_rendered": 28,
+  "local_fonts": {
+    "body": "Sarabun",
+    "code": "JetBrains Mono"
+  },
+  "minimum_meaningful_commits_per_member": 5,
+  "local_visual_qa": true,
+  "canva_all_page_visual_qa": false,
+  "owner_confirmed": false,
+  "exported_pdf_from_canva": false,
+  "backend_frontend_retested": false,
+  "runtime_changes": 0
+}

@@ -4,6 +4,8 @@
 
 ## Sources และกติกาสถานะ
 
+เกณฑ์ปัจจุบันขั้นต่ำ **5 meaningful commits ต่อคน** ตาม [การปรับที่ปวริศช์แจ้ง](course-criteria-updates.md) ส่วนใบงานต้นฉบับ15และauditเก่าเก็บเป็นประวัติ
+
 - ใบงานรายวิชาที่ปวริศช์ให้ใน workspace `ใบงานโปรเจค_ CP353002 Principles of Software Design and Development (Spring Boot).md` (SHA-256 `30ef76f8fbda34deca6f9349af34849eb6c1874b14bae2d826611a35d8e3ebb0`) ข้อ 3–11 เป็นแหล่งเกณฑ์หลัก ต้นฉบับไม่ได้อยู่ใน tracked repo จึงไม่สร้างลิงก์ที่เปิดไม่ได้
 - [Requirements](https://app.notion.com/p/3cfcb2e9d47a81ed9ad9d2abb8a174fd) และ [Course Audit](https://app.notion.com/p/3ddcb2e9d47a816bae8ccc995ca92d6a) ตรวจ 7 ต.ค. หน้าหลังเป็น audit design เดือนกันยายน ต้องอ่าน matrix นี้เพื่อดู code ล่าสุด
 - [Step 3](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6), [Tasks](https://app.notion.com/p/822603f5de7247e68cfe7f50b378fe4f), [System Design](../system-design/README.md), [Contracts](../contracts/shared-contracts.md), [Step 2 report](../testing/pavarit-step2-completion-report.md)
@@ -29,16 +31,16 @@
 | C13 Pagination/sorting≥1 | [MenuItemController.java:31](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/controller/MenuItemController.java#L31); PageResponse/MenuCatalogIntegrationTest | ศิระพัทธ์ / ศรัณย์ | มี implementation/CI |
 | C14 Swagger/REST resource URLs | [contracts](../contracts/api-conventions.md); OpenApiConfig; /swagger-ui.html | ศรัณย์ / ปวริศช์ | local Swagger มี; public URL ยังรอ |
 | C15 tests+report | [CI](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37503690105); [PR22 report](../testing/sirapat-step3-premerge-report.md) | ศิระพัทธ์+ทุก owner / ปวริศช์ | baseline backend303 frontend116 guards6; Final release/public/TTL ยังรอ |
-| C16 personalbranch/account/≥15meaningful commits | [Git audit](step3-git-audit.md) | ทุกคน ปวริศช์ audit / ศิระพัทธ์ | branches/account history พบจริง; ยังมีสมาชิกต่ำกว่า15และต้องประเมินความหมาย |
+| C16 personalbranch/account/≥5meaningful commits | [Git audit](step3-git-audit.md) | ทุกคน ปวริศช์ audit / ศิระพัทธ์ | branches/account history พบจริง; ยังมีสมาชิกยังต้องประเมินความหมายตามขั้นต่ำ5 และดูจำนวนล่าสุดในGit audit |
 | C17 PR/reviewer/code contribution | [PR inventory](step3-git-audit.md#pr-และ-reviewer-history) | ทุกคน / เพื่อน reviewer | มี code/PR history ไม่แทนการยืนยันทุกคนอธิบายงานได้ |
 | C18 code/test/doc/img | [root tree](https://github.com/PavaritPramual/buffet-restaurant-management-system/tree/472fba4f25a27fa2e3cd1e1213151ce971646f3a) | ปวริศช์ / ศิระพัทธ์ | โครงสร้างมีครบ img เป็นที่เก็บสื่อไม่ใช่หลักฐาน diagram ครบ |
-| C19 UseCase+Description | [diagram](../diagrams/use-case.puml); [descriptions](../system-design/use-cases.md) | ปวริศช์ / ศรัณย์ | baseline มี ต้อง owners ตรวจ final consistency พร้อม preview ก่อน release |
-| C20 Domain/Class | [Domain](../diagrams/domain-model.puml); [Table/Session](../diagrams/class-table-session.puml); [Patterns](../design-patterns.md) | ปวริศช์+owners / ศรัณย์ | ปรับส่วน Session/Domain/patterns PR นี้ ที่เหลือต้อง Finalตรวจ |
-| C21 Sequence≥3 Activity ER+Dictionary | [diagram index](../diagrams/README.md); [dictionary](../database/step2-schema-approved.md) | ทุก owner / ปวริศช์ | open/QR/billปรับ PRนี้ Ordering/Activities baselineมี ต้อง final consistency |
-| C22 Component/Deployment/State | [Component](../diagrams/component.puml); [State](../diagrams/order-fulfillment-state-diagram.md) | ปวริศช์/ธีรเมธ/ศรัณย์ | Component PRนี้ Stateมี Deployment diagram/runtimeยังรอ |
+| C19 UseCase+Description | [diagrams](../diagrams/use-case.puml); [descriptions](../system-design/use-cases.md); [slide coverage](../slide/course-diagram-coverage.md) | ปวริศช์ / ศรัณย์ | ปรับ5actors/UC10งานตรงcode มีsource/SVG/Canva รอowner/releaseconfirmation |
+| C20 Domain/Class | [index](../diagrams/README.md); [Patterns](../design-patterns.md) | ปวริศช์+owners / ศรัณย์ | Domain/Classทุกโมดูลพร้อมpatternpositions source/SVG/Canva รอpeer review |
+| C21 Sequence≥3 Activity ER+Dictionary | [index](../diagrams/README.md); [dictionary](../database/step2-schema-approved.md) | ทุกowner / ปวริศช์ | 4scenarios/4Activities/ERDตรงbaseline มีsource/SVG/Canva รอreleaseconsistency |
+| C22 Component/Deployment/State | [index](../diagrams/README.md) | ปวริศช์/ธีรเมธ/ศรัณย์ | ครบsource/SVG/Canva Localruntimeกับpublicdesignแยกกัน Publicdeploymentจริงยังรอ |
 | C23 READMEทุกหัวข้อ | [README](../../README.md) | ปวริศช์ / ศิระพัทธ์ | จัดทำ PRนี้ publicURLยังระบุ pending ตามจริง |
 | C24 Dockerfile/Compose/publicdeploy | [Compose](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/docker-compose.yml); backend/frontend Dockerfiles | ธีรเมธ / ปวริศช์ | local Composeมี ยังรอ production singleURL build+HTTPS+rollback |
-| C25 Slide/doc/slide/ | [Canva/version guide](../slide/README.md); [เนื้อหาชุดทีม40หน้า](../slide/team-final-canva-content.md) | ทุกคน ปวริศช์รวม / ศิระพัทธ์ | Canvaต้นฉบับ32หลัก+8ภาคผนวกนำเข้าสำเร็จ ข้อความ/notesอ่านกลับครบ ใช้PDFexportเป็นเวอร์ชัน ไม่ใช้PPTX; รอowner review/ตรวจภาพทุกหน้า/PDF/ผลrelease/ซ้อม ยังไม่ผ่านFinal |
+| C25 Slide/doc/slide/ | [Canva guide](../slide/README.md); [v02content](../slide/team-final-canva-v02-content.md); [12minutes](../slide/team-final-12-minute-runbook.md) | ทุกคนปวริศช์รวม / ศิระพัทธ์ | 20หลัก+56ภาคผนวก 35codepages/28diagramimages อ่านกลับครบ76notes/704editabletexts; รอowner/CanvavisualQA/PDF/release/ซ้อม ไม่ใช้PPTX |
 | C26 deployจริงทุกคนอธิบาย/release | [Final plan](step3-final-plan.md) | ทุกคน ปวริศช์ประสาน | รอ publicregression/release reviewed/main/deployedSHA/ซ้อม ส่งURLจริง |
 
 ## System scope ที่เลื่อนไป Final และ blocker

@@ -11,36 +11,11 @@ skinparam classBorderColor #173A45
 skinparam actorBorderColor #173A45
 skinparam usecaseBackgroundColor #F2E6D4
 skinparam usecaseBorderColor #A54A2E
-title All actors and implemented use cases - develop 472fba4
+title Manager and Supervisor use cases
 left to right direction
-actor Customer
-actor "SERVICE_STAFF" as Staff
-actor "KITCHEN_STAFF" as Kitchen
-rectangle "Buffet restaurant" {
- usecase "Exchange single-use QR" as QR
- usecase "View package menu" as Menu
- usecase "Place order / view status" as Order
- usecase "Request bill / view bill status" as Bill
- usecase "Open session\nSelect package and soup" as Open
- usecase "Read READY / mark SERVED" as Serve
- usecase "Receive payment" as Pay
- usecase "Close after same-session PAID" as Close
- usecase "Read incoming orders\nRECEIVED / PREPARING" as Incoming
- usecase "PREPARING / READY transitions" as Prepare
-}
-Customer --> QR
-Customer --> Menu
-Customer --> Order
-Customer --> Bill
-Staff --> Open
-Staff --> Serve
-Staff --> Pay
-Staff --> Close
-Kitchen --> Incoming
-Kitchen --> Prepare
 actor "MANAGER" as Manager
 actor "SUPERVISOR" as Supervisor
-rectangle "Administration module" {
+rectangle "Restaurant administration" {
  usecase "Login / logout" as Login
  usecase "Manage users / profiles" as Users
  usecase "Manage tables / packages / soups" as Catalog
@@ -61,9 +36,5 @@ Supervisor --> Read
 Supervisor --> Move
 note bottom of Supervisor
 No Kitchen / Serving / Payment privilege.
-end note
-note bottom
-Employees login before protected use cases.
-Customer access is QR exchange and HttpOnly grant.
 end note
 @enduml

@@ -7,11 +7,13 @@ Manager จัดการข้อมูลร้าน ผู้ใช้ แ�
 
 ## สถานะปัจจุบัน
 
-**แนวทางสไลด์ล่าสุด:** ใช้ [Canva ทีม 40 หน้า](https://www.canva.com/d/D0dhcGCjuTTS7pV) เป็นต้นฉบับและเครื่องมือพรีเซนต์รวมทั้งทีม แล้วเก็บ PDF export เป็นเวอร์ชันใน `doc/slide/` ดู [สถานะ/เวอร์ชันสไลด์](doc/slide/README.md) และ [เนื้อหาและคำพูดประกอบ](doc/slide/team-final-canva-content.md) นำเข้าและอ่านกลับครบแล้ว ยังรอตรวจภาพ/เจ้าของยืนยัน/PDF/ผล release ไม่ใช้ PPTX ร่างรายคนเป็นชุดส่งหรือขอรีวิว
+**แนวทางสไลด์ล่าสุด:** [Canva ทีม v02](https://www.canva.com/d/wORhypcIcwvGuFK) ใช้20หน้าหลักสำหรับ12นาที พร้อมภาคผนวกdiagram/codeครบตามโจทย์ ดู [guide/version](doc/slide/README.md), [coverage](doc/slide/course-diagram-coverage.md) และ [notes](doc/slide/team-final-canva-v02-content.md) อ่านกลับ76หน้าผ่านแล้ว ยังรอowner/CanvavisualQA/PDFexport/ซ้อม/ผลrelease ไม่ใช้PPTXเป็นชุดส่งหรือขอreview
 
 Code baseline `develop 472fba4` ณ 7 ตุลาคม2026: Step2ปิดแล้วและPR#22รวมlocalregression/AdminShell/testpreparation
 เอกสารและสไลด์ปวริศช์ชุดนี้รอreview **ยังไม่ใช่ Final ที่พร้อมส่ง** Public deployment, Stock target/active, Profileละเอียด, SOLID gaps, Gitเกณฑ์รายคน และreleaseยังต้องปิด
 ดู [Requirement Matrix](doc/planning/step3-requirement-matrix.md), [Step3 plan](doc/planning/step3-final-plan.md) และ [Notionสด](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6)
+
+**เกณฑ์Gitที่อาจารย์ปรับ:** ขั้นต่ำ5meaningfulcommitsต่อคนตามการแจ้งวันที่7ตุลาคม2026 ดู [criteria update](doc/planning/course-criteria-updates.md) และ [Git audit](doc/planning/step3-git-audit.md)
 
 ## สมาชิกและหน้าที่
 
@@ -193,7 +195,7 @@ doc/
   contracts/ database/ diagrams/ system-design/ testing/ planning/
   solid-analysis.md
   design-patterns.md
-  slide/       editable PPTX, PDF previews and notes
+  slide/       Canva content, presenter notes, version guides and approved PDF exports
 img/           project media
 .github/       CI configuration
 docker-compose.yml
@@ -203,5 +205,5 @@ docker-compose.yml
 
 Personalbranch →reviewedPR→develop →reviewedreleasePR→main ทุกคนใช้บัญชีตน Commitเป็นงานที่มีความหมาย ไม่เติมจำนวน
 [Git auditล่าสุด](doc/planning/step3-git-audit.md) แสดงทั้งห้าบัญชี branches/PRreviews/candidatecommitcounts และข้อขาดจริง
-[สไลด์ปวริศช์ PPTX](doc/slide/pavarit-step3-architecture.pptx) / [PDF](doc/slide/pavarit-step3-architecture.pdf) / [Notes](doc/slide/pavarit-step3-architecture-notes.md)
-[สไลด์ศิระพัทธ์](doc/slide/sirapat-step3-quality-premerge.pptx) อีกสามคนและสไลด์ทีม/release/ซ้อมยังต้องส่งครบก่อนFinal
+[สไลด์ทีมปัจจุบัน](doc/slide/README.md) / [Diagram coverage](doc/slide/course-diagram-coverage.md) / [runbook12นาที](doc/slide/team-final-12-minute-runbook.md)
+ร่างPPTX/PDFรายคนเดิมเป็นประวัติ รุ่นส่งใช้Canva/PDFที่ownerรับรองตามreleaseจริง

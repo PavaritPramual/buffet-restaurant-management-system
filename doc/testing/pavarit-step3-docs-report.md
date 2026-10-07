@@ -1,5 +1,20 @@
 # ปวริศช์ — Step3 documentation verification
 
+## อัปเดตv02 — diagram/code/12นาที/เกณฑ์commit5
+
+[Canva v02](https://www.canva.com/d/wORhypcIcwvGuFK) มี20หน้าหลักสำหรับ12นาทีและ56ภาคผนวก 35หน้าcodeจากdevelop472fba4 ภาพ28ชุดรวม23diagramsรายละเอียด+5ภาพย่อ ครบUseCase+Description Domain Class+Patterns Sequence4scenarios Activity ERD Component Deployment State ดู [coverage](../slide/course-diagram-coverage.md) และ [runbook](../slide/team-final-12-minute-runbook.md)
+
+PlantUMLrenderทั้งหมดไม่มีsyntaxerrors ตรวจภาพlocalทุก76หน้าและgeometryผ่าน ฟอนต์Sarabun/JetBrainsMonoโหลดครบ นำเข้าCanvaแล้วอ่านกลับtitle/points/code/branch/notesและdiagramครบ76หน้า พบ704editabletextsและ28imageelements ไม่มีelementออกนอกcanvas [ผลตรวจ](../../test/evidence/pavarit-step3-docs-2026-10-07/canva-v02-verification.json) ภาพdiagramเป็นSVGimage ไม่อ้างว่าnodesเป็นCanvashapesแก้แยกได้
+
+ใช้ขั้นต่ำ5meaningfulcommitsตามผู้ใช้แจ้งอาจารย์ปรับ รักษาworksheet15และauditเก่าเป็นประวัติ [currentGit audit](../planning/step3-git-audit.md) candidatesก่อนcommitv02คือ50/22/3/8/5 ศรัณย์ขาดขั้นต่ำจำนวน2 ทุกคนยังต้องยืนยันความหมาย/บัญชี/เวลา
+
+ยังไม่รับรองCanvaallpagevisualQA owner/PDFexport/rehearsal/public/release ไม่มีruntimechangeหรือbackend/frontendtestsใหม่ ไม่มีSupabasemigration ไม่merge PR24 ส่วนDeploymentpublicเป็นdesign ไม่ใช่deployedcertificate
+
+[Source/link check v02](../../test/evidence/pavarit-step3-docs-2026-10-07/canva-v02-source-check.json) ตรวจcode35snippetsกับGit SHAจริง SVG/source28ชุด และlocalMarkdown285ลิงก์ผ่าน ไม่พบruntime/secret pathsในdiff
+
+## ประวัติการตรวจv01และร่างPPTXก่อนเปลี่ยนแนวทาง
+
+
 ## เปลี่ยนแนวทางสไลด์ — อัปเดต7ตุลาคม2026
 
 ใช้Canvaเป็นต้นฉบับและเครื่องมือพรีเซนต์ของทั้งทีม PDFต้องexportจากCanvaและเก็บแต่ละเวอร์ชัน Reviewerไม่ต้องตรวจPPTX/PDF/notesร่างเดิม ดู [สถานะสไลด์ปัจจุบัน](../slide/README.md) และ [ร่างชุดทีม40หน้า](../slide/team-final-canva-content.md)
@@ -44,7 +59,7 @@ Browser14PASS/0FAILและ17ภาพใน [รายงานศิระพ
 ## ข้อที่ยังไม่ผ่านก่อนFinal
 
 - `CustomerBillingService` field-injectedEntityManager, `SessionUserContextProvider`อ้างAuthControllerconstant และconcreteService dependencies ดูSOLIDG01–G04 ต้องแก้code/reviewแยก เจ้าของปวริศช์ร่วมเมธัสและmoduleowners ศรัณย์review
-- Gitcandidatecountsก่อนชุดdocs: ปวริศช์44 ศิระพัทธ์22 ศรัณย์3 ธีรเมธ8 เมธัส5 นับrootที่มีfilesด้วย ไม่ใช่meaningfulqualification ทุกคนต้องยืนยันบัญชี/ความหมาย/การกระจายเวลา สมาชิก3คนยังต่ำกว่า15 ไม่เพิ่มcommitsเพื่อเติมยอด
+- Gitcandidatecountsก่อนชุดdocs: ปวริศช์44 ศิระพัทธ์22 ศรัณย์3 ธีรเมธ8 เมธัส5 นับrootที่มีfilesด้วย ไม่ใช่meaningfulqualification ทุกคนต้องยืนยันบัญชี/ความหมาย/การกระจายเวลา จำนวนนี้เป็นประวัติก่อนอาจารย์ปรับเกณฑ์ขั้นต่ำเป็น5 ดู [ผลตรวจใหม่](../planning/step3-git-audit.md) ไม่เพิ่มcommitsเพื่อเติมยอด
 - Stocktarget/active/Profileละเอียด, ownerJPA/patternconfirmation, DeploymentDiagram/RenderHTTPS/Securecookies/SPA404/restart/coldstart/runbook
 - Public/timedTTL/regressionของreleaseล่าสุด สมาชิกอีก3คนส่งslides รวมทีม/ซ้อม/releasePRเข้าmain/deployedSHA
 

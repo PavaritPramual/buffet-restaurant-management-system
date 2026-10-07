@@ -1,236 +1,49 @@
 @startuml
-title Sequence Diagram 2: Customer Ordering & Kitchen Flow (GoF State Pattern)
-
-skinparam sequenceMessageAlign center
-skinparam responseMessageBelowArrow true
-skinparam maxMessageSize 250
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title Ordering and fulfillment - actual services / State Pattern
 autonumber
-
-actor "Customer" as Cust
-actor "Kitchen Staff" as Kitchen
+actor Customer
+actor Kitchen
 actor "Service Staff" as Staff
-boundary "DiningSessionController" as DSC
-boundary "MenuController" as MC
-boundary "OrderController" as OC
-control "DiningSessionService" as DSS
-boundary "KitchenOrderController" as KOC
-boundary "StaffOrderController" as SOC
-control "OrderService" as OS
-control "MenuService" as MS
-entity "DiningSessionRepository" as DSR
-entity "MenuItemRepository" as MIR
-entity "OrderRepository" as OR
-entity "Order" as Order <<Context>>
-participant "ReceivedState" as RecState <<State>>
-participant "PreparingState" as PrepState <<State>>
-participant "ReadyState" as ReadyState <<State>>
-participant "ServedState" as ServedState <<State>>
-
-== 1. Customer Redeems Single-Use QR & Views Filtered Menu ==
-Cust -> DSC: POST /api/v1/dining-sessions/qr-exchange\nBody: {token}; allowed Origin
-activate Cust
-activate DSC
-DSC -> DSS: lock active session by QR token
-activate DSS
-DSS -> DSR: findBySessionTokenForUpdate(token)
-activate DSR
-DSR --> DSS: Optional<DiningSession>
-deactivate DSR
-DSS -> DSR: rotate QR token; save hashed customer credential
-DSS --> DSC: CustomerSessionResponse(sessionId, packageId, tableNumber)
-deactivate DSS
-DSC --> Cust: 200 OK + HttpOnly customer_session cookie
-deactivate DSC
-
-Cust -> MC: GET /api/v1/dining-sessions/{sessionId}/menu\nCookie: customer_session
-activate MC
-MC -> MS: getAvailableMenuForSession(sessionId)
-activate MS
-MS -> DSR: findById(sessionId)
-activate DSR
-DSR --> MS: Optional<DiningSession>
-deactivate DSR
-MS -> MIR: findByBuffetPackageId(session.buffetPackage.id)
-activate MIR
-MIR --> MS: List<MenuItem>
-deactivate MIR
-MS --> MC: List<MenuItemResponseDTO>
-deactivate MS
-MC --> Cust: 200 OK (Allowed Menu Items for Package)
-deactivate MC
-
-== 2. Customer Places Order (Round-by-Round) ==
-Cust -> OC: POST /api/v1/dining-sessions/{sessionId}/orders\nCookie: customer_session; allowed Origin\nBody: items [{menuItemId, quantity}]
-activate OC
-OC -> OS: placeOrder(requestDTO)
-activate OS
-
-OS -> DSR: findByIdForUpdate(sessionId)\n(same row lock as closeSession)
-activate DSR
-DSR --> OS: Optional<DiningSession>
-deactivate DSR
-
-create Order
-OS -> Order: new Order(session)
-loop For each item in requestDTO.items
-    OS -> MIR: findById(item.menuItemId)
-    activate MIR
-    MIR --> OS: MenuItem
-    deactivate MIR
-    OS -> Order: addItem(menuItem, quantity, note)
-end
-
-create RecState
-OS -> RecState: new ReceivedState()
-OS -> Order: setState(ReceivedState)
-activate Order
-Order -> Order: status = RECEIVED
-Order --> OS: void
-deactivate Order
-
-OS -> OR: save(order)
-activate OR
-OR --> OS: savedOrder
-deactivate OR
-
-OS --> OC: OrderResponseDTO (orderId, status=RECEIVED, items)
-deactivate OS
-OC --> Cust: 201 Created (Order Received Confirmation)
-deactivate OC
-deactivate Cust
-
-== 3. Kitchen Staff Starts Preparing Order ==
-Kitchen -> KOC: GET /api/v1/kitchen/orders?status=RECEIVED
-activate Kitchen
-activate KOC
-KOC -> OS: getOrdersByStatus(RECEIVED)
-activate OS
-OS -> OR: findByStatus(RECEIVED)
-activate OR
-OR --> OS: List<Order>
-deactivate OR
-OS --> KOC: List<OrderResponseDTO>
-deactivate OS
-KOC --> Kitchen: 200 OK (List of incoming orders)
-deactivate KOC
-
-Kitchen -> KOC: PATCH /api/v1/kitchen/orders/{orderId}/prepare
-activate KOC
-KOC -> OS: startPreparing(orderId)
-activate OS
-OS -> OR: findById(orderId)
-activate OR
-OR --> OS: Order
-deactivate OR
-
-OS -> Order: nextState()
-activate Order
-Order -> RecState: next(order)
-activate RecState
-create PrepState
-RecState -> PrepState: new PreparingState()
-RecState -> Order: setState(PreparingState)
-RecState -> Order: status = PREPARING
-RecState --> Order: void
-deactivate RecState
-Order --> OS: void
-deactivate Order
-
-OS -> OR: save(order)
-activate OR
-OR --> OS: savedOrder
-deactivate OR
-
-OS --> KOC: OrderResponseDTO (status=PREPARING)
-deactivate OS
-KOC --> Kitchen: 200 OK (Cooking in progress)
-deactivate KOC
-deactivate Kitchen
-
-== 4. Kitchen Staff Finishes Cooking (Sets to READY) ==
-Kitchen -> KOC: PATCH /api/v1/kitchen/orders/{orderId}/ready
-activate Kitchen
-activate KOC
-KOC -> OS: markReady(orderId)
-activate OS
-OS -> OR: findById(orderId)
-activate OR
-OR --> OS: Order
-deactivate OR
-
-OS -> Order: nextState()
-activate Order
-Order -> PrepState: next(order)
-activate PrepState
-create ReadyState
-PrepState -> ReadyState: new ReadyState()
-PrepState -> Order: setState(ReadyState)
-PrepState -> Order: status = READY
-PrepState --> Order: void
-deactivate PrepState
-Order --> OS: void
-deactivate Order
-
-OS -> OR: save(order)
-activate OR
-OR --> OS: savedOrder
-deactivate OR
-
-OS --> KOC: OrderResponseDTO (status=READY)
-deactivate OS
-KOC --> Kitchen: 200 OK (Food ready for serving)
-deactivate KOC
-note over Kitchen: Kitchen staff is strictly FORBIDDEN\nfrom marking order as SERVED
-deactivate Kitchen
-
-== 5. Service Staff Delivers & Marks SERVED ==
-Staff -> SOC: GET /api/v1/staff/orders?status=READY
-activate Staff
-activate SOC
-SOC -> OS: getOrdersByStatus(READY)
-activate OS
-OS -> OR: findByStatus(READY)
-activate OR
-OR --> OS: List<Order>
-deactivate OR
-OS --> SOC: List<OrderResponseDTO>
-deactivate OS
-SOC --> Staff: 200 OK (Orders ready to be delivered)
-deactivate SOC
-
-Staff -> Staff: Delivers food to customer table
-
-Staff -> SOC: PATCH /api/v1/staff/orders/{orderId}/serve
-activate SOC
-SOC -> OS: markServed(orderId)
-activate OS
-OS -> OR: findById(orderId)
-activate OR
-OR --> OS: Order
-deactivate OR
-
-OS -> Order: nextState()
-activate Order
-Order -> ReadyState: next(order)
-activate ReadyState
-create ServedState
-ReadyState -> ServedState: new ServedState()
-ReadyState -> Order: setState(ServedState)
-ReadyState -> Order: status = SERVED
-ReadyState --> Order: void
-deactivate ReadyState
-Order --> OS: void
-deactivate Order
-
-OS -> OR: save(order)
-activate OR
-OR --> OS: savedOrder
-deactivate OR
-
-OS --> SOC: OrderResponseDTO (status=SERVED)
-deactivate OS
-SOC --> Staff: 200 OK (Order marked as served)
-deactivate SOC
-deactivate Staff
-
+boundary "CustomerOrderingController" as C
+control "CustomerOrderingServiceImpl" as S
+participant "SessionContextProvider" as P
+database "CustomerOrderRepository" as R
+control "OrderFulfillmentServiceImpl" as F
+participant "OrderStateFactory / OrderState" as State
+Customer -> C : POST session orders / customer cookie
+C -> S : placeOrder(sessionId, credential, request)
+S -> P : requireSessionForOrder(sessionId, credential)
+P -> P : check grant / ACTIVE / bill request / lock session
+S -> S : package membership / availability / item snapshot
+S -> R : save CustomerOrder / status RECEIVED
+R --> C : OrderResponse
+Kitchen -> F : incoming / login session
+F -> R : RECEIVED and PREPARING orders
+Kitchen -> F : advanceStatus(orderId, PREPARING)
+F -> State : forStatus(current).next()
+State --> F : expected PREPARING
+F -> R : updateStatus / save
+Kitchen -> F : advanceStatus(orderId, READY)
+F -> State : forStatus(PREPARING).next()
+F -> R : updateStatus READY / save
+Staff -> F : ready orders / login session
+Staff -> F : advanceStatus(orderId, SERVED)
+F -> State : forStatus(READY).next()
+F -> R : updateStatus SERVED / save
+note over F,State
+State singleton objects stay in service logic.
+Entity stores enum; no Order.setState / Order.nextState.
+end note
 @enduml

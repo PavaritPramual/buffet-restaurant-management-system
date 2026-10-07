@@ -1,12 +1,45 @@
-# สไลด์นำเสนอของทีม — Canva
+# สไลด์ทีมปัจจุบัน — Canva v02
 
-## แนวทางปัจจุบัน
+[เปิด Canva v02](https://www.canva.com/d/wORhypcIcwvGuFK) · design `DAHXSWQA-Vs` · [เนื้อหาและ speaker notes](team-final-canva-v02-content.md)
+
+## ช่วงนำเสนอ 12 นาที
+
+ใช้ **หน้า1–20** พูดเนื้อหา10นาที50วินาที เผื่อส่งต่อคนและเวลาคลาดเคลื่อน1นาที10วินาที ส่วน **หน้า21–76 เป็นภาคผนวก** สำหรับตอบคำถาม ไม่อ่าน76หน้าบนเวที ดู [runbookพร้อมผู้พูด/เวลารายหน้า](team-final-12-minute-runbook.md)
+
+เรียงตามโจทย์ UseCase/Architecture/Data, SOLIDทั้ง5, State/Strategy/TemplateMethod, QR/Billing integration, Tests และDemo ทุกหน้ามีผู้บรรยายหนึ่งคนระบุชื่อbranchจริง ส่วนสถานะที่ยังไม่เสร็จแยกไปภาคผนวก66
+
+## ภาพและโค้ด
+
+- มี23diagramรายละเอียดตามใบงานข้อ9.1ครบ พร้อม5ภาพย่อสำหรับอ่านบนจอ ภาพเต็มเก็บท้ายชุดและมีsource/SVG
+- UseCaseรวมทั้ง5actorsพร้อมDescription Domain/Classพร้อมตำแหน่งPatterns Sequence4scenarios Activity ERD Component Deployment และState ดู [coverageพร้อมเลขหน้า](course-diagram-coverage.md)
+- มี35หน้าที่แสดงcodeจากdevelop `472fba4` พร้อมไฟล์/บรรทัดในnotes ครอบคลุมSOLID Enterprise/BehavioralPatterns API/transaction/DTO/security และtestcases
+- ใช้SarabunมีหัวกับJetBrainsMonoสำหรับcode พื้นครีม/navy/terracotta/gold มีsyntaxhighlightและภาพแทนข้อความยาว ลดcolon/ลูกศรในproseโดยคงsyntaxของcode/UML
+- Gitขั้นต่ำปัจจุบันคือ5meaningfulcommitsต่อคนตามที่ปวริศช์แจ้งว่าอาจารย์ปรับ ดู [บันทึกเกณฑ์](../planning/course-criteria-updates.md) ไม่แก้ใบงานต้นฉบับที่ยังเขียน15
+
+## ผลตรวจและข้อที่ยังรอ
+
+[หลักฐานv02](../../test/evidence/pavarit-step3-docs-2026-10-07/canva-v02-verification.json) นำเข้า76หน้า อ่านกลับtitle/points/branch/code/notesตรงร่างทุกหน้า พบข้อความแก้ได้704องค์ประกอบและภาพdiagram28องค์ประกอบ ไม่มีองค์ประกอบออกนอกcanvas1920×1080 ภาพdiagramเป็นSVGที่นำเข้า ไม่อ้างว่าnodeภายในแต่ละdiagramเป็นnativeCanvashapeที่แก้แยกกันได้ ให้แก้จากPlantUMLsourceแล้วเปลี่ยนภาพเมื่อdesignเปลี่ยน
+
+ตรวจภาพlocalทั้ง76หน้าและgeometryแล้ว ฟอนต์localโหลดครบ ยังต้องownerตรวจภาพในCanvaและซ้อมทั้ง5คน ไม่อ้างว่าCanvavisualQAทุกหน้าหรือpublic/releaseผ่าน งานนี้ไม่แก้runtimeและไม่รันmigration/testsบนSupabase
+
+Canvaเป็นต้นฉบับและเครื่องมือพรีเซนต์ **ไม่ใช้PPTXเป็นชุดส่งหรือขอreview** เครื่องมือที่เชื่อมไม่มีexportPDF จึงยังไม่มีPDFv02จากCanva เมื่อownerตรวจแล้วให้แชร์/ดาวน์โหลด/PDFมาตรฐาน/ทุกหน้า บันทึก `doc/slide/team-final-v02.pdf` พร้อมวันที่/commit/changelog ไม่เรียกPDFที่สร้างจากlocalHTMLว่าCanvaexport
+
+| รุ่น | วันที่ | ต้นฉบับ | สถานะ |
+|---|---|---|---|
+| v02 | 2026-10-07 | [Canva](https://www.canva.com/d/wORhypcIcwvGuFK) / [content](team-final-canva-v02-content.md) | 20หลัก+56ภาคผนวก; source/localQA/Canvareadbackผ่าน รอowner/CanvavisualQA/PDF/rehearsal/release |
+| v01 | 2026-10-07 | [Canva](https://www.canva.com/d/D0dhcGCjuTTS7pV) | 40หน้ารุ่นเก่า เก็บเป็นประวัติ ไม่ใช้เป็นรุ่นปัจจุบัน |
+
+---
+
+# ประวัติรุ่น v01 — Canva
+
+## แนวทางก่อนปรับ v02 (ประวัติ)
 
 ผู้ใช้ยืนยันวันที่ 7 ตุลาคม 2026 ให้ทำสไลด์ **ทั้งทีม** ใน **Canva** เป็นต้นฉบับและเครื่องมือพรีเซนต์ เมื่อรุ่นหนึ่งตรวจแล้วให้ export PDF **จาก Canva** เก็บในโฟลเดอร์นี้พร้อมเลขเวอร์ชัน วันที่ และ changelog
 
 **ไม่ใช้ PPTX เป็นชุดนำเสนอหรือชุดส่ง Reviewer ไม่ต้องตรวจ PPTX รวมถึง PDF/notes ที่สร้างจาก PPTX ร่างเดิม** ไฟล์รายคนเดิมคงไว้เป็นประวัติ ไม่ใช่หลักฐานว่าสไลด์ทีม Final ผ่านแล้ว
 
-**ต้นฉบับทีมปัจจุบัน:** [เปิด Canva — Team Final v01](https://www.canva.com/d/D0dhcGCjuTTS7pV) · Design ID `DAHXQy_ZUvQ` · 40 หน้า ขนาด 1920×1080
+**ต้นฉบับรุ่นก่อน v01:** [เปิด Canva — Team Final v01](https://www.canva.com/d/D0dhcGCjuTTS7pV) · Design ID `DAHXQy_ZUvQ` · 40 หน้า ขนาด 1920×1080
 
 พื้นที่ Canva ที่ปวริศช์ให้เดิม: [Posd](https://canva.link/hwrws57kjwgvafx) — ตรวจพบหนึ่งหน้าว่างก่อนเริ่มงาน จึงสร้างชุดทีมเป็น design ใหม่ ไม่แก้หน้าว่างเดิม
 

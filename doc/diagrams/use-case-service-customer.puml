@@ -11,7 +11,7 @@ skinparam classBorderColor #173A45
 skinparam actorBorderColor #173A45
 skinparam usecaseBackgroundColor #F2E6D4
 skinparam usecaseBorderColor #A54A2E
-title All actors and implemented use cases - develop 472fba4
+title Customer, Service and Kitchen use cases
 left to right direction
 actor Customer
 actor "SERVICE_STAFF" as Staff
@@ -38,32 +38,4 @@ Staff --> Pay
 Staff --> Close
 Kitchen --> Incoming
 Kitchen --> Prepare
-actor "MANAGER" as Manager
-actor "SUPERVISOR" as Supervisor
-rectangle "Administration module" {
- usecase "Login / logout" as Login
- usecase "Manage users / profiles" as Users
- usecase "Manage tables / packages / soups" as Catalog
- usecase "Manage menu categories / items" as Menu
- usecase "Manage stock master data" as Master
- usecase "View stock / transaction history" as Read
- usecase "Record stock-in / signed adjustment" as Move
-}
-Manager --> Login
-Supervisor --> Login
-Manager --> Users
-Manager --> Catalog
-Manager --> Menu
-Manager --> Master
-Manager --> Read
-Manager --> Move
-Supervisor --> Read
-Supervisor --> Move
-note bottom of Supervisor
-No Kitchen / Serving / Payment privilege.
-end note
-note bottom
-Employees login before protected use cases.
-Customer access is QR exchange and HttpOnly grant.
-end note
 @enduml

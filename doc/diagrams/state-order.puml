@@ -1,0 +1,23 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title Order state diagram - role-limited transitions
+[*] --> RECEIVED : Customer places valid order
+RECEIVED --> PREPARING : Kitchen staff starts preparing
+PREPARING --> READY : Kitchen staff finishes preparing
+READY --> SERVED : Service staff confirms serving
+SERVED --> [*]
+note bottom of SERVED
+Terminal state. Skips and reverse transitions are rejected.
+end note
+@enduml

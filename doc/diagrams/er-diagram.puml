@@ -1,5 +1,6 @@
-@startuml er_diagram
-title Step 2 implementation - V1-V12 baseline + V14 bill request proposed
+@startuml
+!pragma layout smetana
+title Implemented schema - V1-V14 baseline
 hide circle
 skinparam linetype ortho
 skinparam shadowing false
@@ -139,7 +140,7 @@ dining_sessions ||--o{ orders : "session_id"
 menu_items ||--o{ package_menu_items : "menu_item_id"
 buffet_packages ||--o{ package_menu_items : "package_id"
 dining_sessions ||--o| payments : "session_id"
-app_users o|--o{ stock_transactions : "actor_user_id"
+app_users |o--o{ stock_transactions : "actor_user_id"
 stock_items ||--o{ stock_transactions : "stock_item_id"
 app_users ||--o| user_profiles : "user_id"
 

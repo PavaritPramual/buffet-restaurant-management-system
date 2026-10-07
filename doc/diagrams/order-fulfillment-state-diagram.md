@@ -32,22 +32,15 @@ stateDiagram-v2
 
 | Endpoint | Purpose | Requires |
 |---|---|---|
-| `GET /api/v1/orders/incoming` | Kitchen board — orders in `RECEIVED` or `PREPARING`, oldest first | `KITCHEN_STAFF`, `SUPERVISOR`, or `MANAGER` |
-| `GET /api/v1/orders/ready` | Staff serving board — orders in `READY`, oldest first | `SERVICE_STAFF`, `SUPERVISOR`, or `MANAGER` |
-| `PATCH /api/v1/orders/{id}/status` | Advance an order to the single next legal status | `KITCHEN_STAFF`/`SUPERVISOR`/`MANAGER` for `PREPARING`/`READY`; `SERVICE_STAFF`/`SUPERVISOR`/`MANAGER` for `SERVED` |
+| `GET /api/v1/orders/incoming` | Kitchen board — orders in `RECEIVED` or `PREPARING`, oldest first | `KITCHEN_STAFF` only |
+| `GET /api/v1/orders/ready` | Staff serving board — orders in `READY`, oldest first | `SERVICE_STAFF` only |
+| `PATCH /api/v1/orders/{id}/status` | Advance an order to the single next legal status | `KITCHEN_STAFF` for `PREPARING`/`READY`; `SERVICE_STAFF` for `SERVED` |
 
 All three reuse the `OrderResponse` shape (`OrderFulfillmentContext`): `orderId`,
 `sessionId`, `tableNumber`, `items`, `status`, `createdAt`.
 
-### Authorization (interim, until Authentication ships)
+### Current authorization — develop 472fba4
 
-`OrderFulfillmentAccessProvider` is the authorization seam (mirrors `MenuAdminAccessProvider`
-and `SessionContextProvider`). In production (`disabled`, the default) every call fails with
-`503 Service Unavailable` until เมธัส's Authentication module provides the real implementation.
-In `local`/`test` profiles (`fixture`), the caller's role is read from an `X-User-Role` header:
+`SessionOrderFulfillmentAccessProvider` uses `SessionUserContextProvider` and the staff HTTP login session. Production frontend does not send `X-User-Role`; spoofing it cannot grant access. No login returns 401; a logged-in wrong role returns 403. Fixtures apply only to explicitly configured tests/demo, not production authority. MANAGER and SUPERVISOR cannot use the Kitchen/Serving flows.
 
-- Missing or unrecognized header → `401 Unauthorized`
-- Recognized role without the required permission → `403 Forbidden`
-
-This header is a temporary stand-in for real login and must be replaced once Authentication
-ships a real session/JWT-backed identity.
+[PlantUML state source](state-order.puml) · [SVG preview](previews/state-order.svg) · [class participants](class-order-state.puml)

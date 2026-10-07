@@ -16,11 +16,11 @@ Fragmentไม่เป็นHTTPrequest path หน้าCustomerล้างfr
 
 ## 3. Ordering / Kitchen / Serving
 
-[Baseline source](../diagrams/sequence-ordering-kitchen.puml) · [State implementation](../design-patterns.md#state--order-fulfillment)
+[Source](../diagrams/sequence-ordering-kitchen.puml) · [SVG](../diagrams/previews/sequence-ordering-kitchen.svg) · [State implementation](../design-patterns.md#state--order-fulfillment)
 
 CustomerOrderingServiceImpl ใช้ SessionContextProviderตรวจรอบACTIVE เมนูตามpackageและquantity ก่อนwriteผ่านrequireSessionForOrderล็อกsessionเดียวกับclose/billrequest
 
-OrderFulfillmentServiceImpl resolve OrderStatusผ่านOrderStateFactoryและตรวจcurrent.next()ก่อนเปลี่ยน persisted enum ไม่ใช่ให้CustomerOrderมีnextState() ครัว RECEIVED→PREPARING→READY และServiceStaff READY→SERVED baselineภาพOrderingยังต้องศรัณย์/ศิระพัทธ์ตรวจFinalว่าตรงcookie/lockนี้
+OrderFulfillmentServiceImpl resolve OrderStatusผ่านOrderStateFactoryและตรวจcurrent.next()ก่อนเปลี่ยน persisted enum ไม่ใช่ให้CustomerOrderมีnextState() ครัว RECEIVED→PREPARING→READY และServiceStaff READY→SERVED ภาพปรับตามcookie/lock/stateจริงแล้ว ยังต้องownerยืนยันและตรวจreleaseFinalอีกครั้ง
 
 ## 4. ขอคิดบิล ชำระ และ close
 

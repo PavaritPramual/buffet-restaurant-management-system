@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-07",
+  "minimum_meaningful_commits": 5,
+  "criterion_source": "Pavarit reports instructor changed minimum from 15 to 5 on 2026-10-07",
+  "counts_are_candidates_not_meaningful_qualification": true,
+  "members": [
+    {
+      "login": "PavaritPramual",
+      "branch": "pavarit_673380278-9_01",
+      "remote_head": "8d4ca99313ab17fa89644bc2fc7a421870b7f3ac",
+      "candidate_commits": 50,
+      "minimum": 5,
+      "numeric_shortfall": 0
+    },
+    {
+      "login": "sirapatw-sys",
+      "branch": "sirapat_673380293-3_01",
+      "remote_head": "617d7423297f3881738d303eedbaada33ebfc4d6",
+      "candidate_commits": 22,
+      "minimum": 5,
+      "numeric_shortfall": 0
+    },
+    {
+      "login": "sarunph-ctrl",
+      "branch": "sarun_673380515-1_02",
+      "remote_head": "b3a2818beb39fdaa2d1a5295d484640461d14cff",
+      "candidate_commits": 3,
+      "minimum": 5,
+      "numeric_shortfall": 2
+    },
+    {
+      "login": "kojidesu01",
+      "branch": "teeramet_673380273-9_02",
+      "remote_head": "f387082e2292d1b115b626aab5ea76fcd6b55a8f",
+      "candidate_commits": 8,
+      "minimum": 5,
+      "numeric_shortfall": 0
+    },
+    {
+      "login": "methus-bit",
+      "branch": "methus_673380300-2_01",
+      "remote_head": "8ac7978ea205726e4f8deb07da537da18a46ea99",
+      "candidate_commits": 5,
+      "minimum": 5,
+      "numeric_shortfall": 0
+    }
+  ]
+}

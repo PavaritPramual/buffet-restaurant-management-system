@@ -2,7 +2,8 @@
 title Staff payment and separate close
 start
 :Require SERVICE_STAFF;
-:Read ACTIVE session and opening price snapshot;
+:Require customer bill request and ACTIVE session;
+:Read opening price snapshot;
 :Calculate adult/child pricing and backend percentage discount;
 :Round payable total once HALF_UP;
 :Show public display breakdown;

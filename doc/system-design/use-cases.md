@@ -1,102 +1,91 @@
-# Use cases
+# Use cases และ Use Case Descriptions
 
-ต้นทาง: [Use cases ใน Notion](https://app.notion.com/p/3d3cb2e9d47a80819cf9e6b549adba17) · ย้ายเมื่อ 28 กันยายน 2026 · เป็น design baseline; ดู [สถานะเทียบกับโค้ด](README.md#สถานะเทียบกับโค้ด)
+อัปเดตจากโค้ด develop `472fba4` วันที่ 7 ตุลาคม 2026 โดยรักษาต้นทาง [Notion Use cases](https://app.notion.com/p/3d3cb2e9d47a80819cf9e6b549adba17) ไว้เป็นประวัติ ภาพและคำอธิบายนี้อ้าง implementation ปัจจุบัน รอ peer review และไม่รับรอง public deployment
 
-[PlantUML: use-case](../diagrams/use-case.puml)
+[ภาพรวม](../diagrams/previews/use-case.svg) · [Customer/Service/Kitchen](../diagrams/previews/use-case-service-customer.svg) · [Manager/Supervisor](../diagrams/previews/use-case-management.svg) · [source](../diagrams/use-case.puml)
 
-## Use Case Descriptions (ตัวหลัก)
-### UC-01 Open Dining Session
-- **Primary Actor:** Staff
-- **Preconditions:** Staff เข้าสู่ระบบแล้ว และมีโต๊ะสถานะ Available
-- **Main Flow:**
-	1. Staff เปิดหน้าจัดการโต๊ะ
-	2. ระบบแสดงสถานะโต๊ะทั้งหมด
-	3. Staff เลือกโต๊ะที่ว่าง
-	4. Staff ระบุจำนวนลูกค้า
-	5. Staff เปิด Dining Session
-	6. ระบบสร้าง Dining Session และผูกกับโต๊ะ
-- **Alternative / Exception:** หากไม่มีโต๊ะว่าง ระบบแจ้งว่าไม่มีโต๊ะ Available และไม่สร้าง Dining Session
-- **Postconditions:** มี Dining Session ที่ Active และผูกกับโต๊ะหนึ่งโต๊ะ
-### UC-02 Setup Dining Session
-- **Primary Actor:** Staff
-- **Preconditions:** มี Dining Session ที่ Active
-- **Main Flow:**
-	1. ระบบเปลี่ยนสถานะโต๊ะเป็น Occupied
-	2. Staff เลือก Buffet Package ที่ลูกค้าต้องการ โดยแต่ละ Package มีราคาและชุดเมนูที่แตกต่างกัน
-	3. Staff เลือกน้ำซุป
-	4. ระบบบันทึก Package และข้อมูลการรับประทานใน Dining Session
-	5. ระบบเปิดใช้งาน QR ของโต๊ะสำหรับ Dining Session ปัจจุบัน
-- **Alternative / Exception:** หาก Package ที่เลือกไม่ Available ระบบไม่ให้ยืนยันและให้เลือกใหม่
-- **Postconditions:** Dining Session มี Buffet Package ที่กำหนดชัดเจน และ Customer จะเห็นเฉพาะเมนูที่อนุญาตสำหรับ Package นั้นผ่าน QR
-### UC-03 Place Order
-- **Primary Actor:** Customer
-- **Preconditions:** โต๊ะมี Dining Session ที่ Active และ QR สามารถเข้าถึง Session ได้
-- **Main Flow:**
-	1. Customer สแกน QR ของโต๊ะ
-	2. ระบบอ่าน Buffet Package ของ Dining Session และแสดงเฉพาะเมนูที่ Package นั้นสั่งได้
-	3. Customer เลือกรายการอาหารและจำนวน
-	4. Customer ยืนยันการสั่ง
-	5. ระบบสร้าง Order สำหรับรอบการสั่งนั้น
-	6. ระบบสร้าง Order Items จากรายการที่เลือก
-	7. ระบบตั้งสถานะ Order เป็น RECEIVED
-	8. Order ปรากฏในหน้าของ Kitchen Staff
-- **Alternative / Exception:** หากรายการอาหารไม่ Available หรือไม่อยู่ใน Buffet Package ของ Session ระบบแจ้งและไม่เพิ่มรายการนั้นใน Order
-- **Postconditions:** มี Order ใหม่ที่ผูกกับ Dining Session และพร้อมให้ครัวดำเนินการ
-### UC-04 Update Order Status
-- **Primary Actor:** Kitchen Staff
-- **Preconditions:** มี Order ที่อยู่ในสถานะ RECEIVED หรือ PREPARING
-- **Main Flow:**
-	1. Kitchen Staff เปิดรายการ Incoming Orders
-	2. Kitchen Staff เลือก Order
-	3. เปลี่ยนสถานะจาก RECEIVED เป็น PREPARING เมื่อเริ่มเตรียม
-	4. เมื่อเตรียมเสร็จ เปลี่ยนสถานะเป็น READY
-	5. ระบบบันทึกสถานะล่าสุดของ Order
-- **Alternative / Exception:** ระบบไม่อนุญาตการเปลี่ยนสถานะที่ข้ามลำดับหรือไม่ถูกต้อง
-- **Postconditions:** Order มีสถานะล่าสุดที่สะท้อนขั้นตอนการทำอาหาร
-### UC-05 Serve Order
-- **Primary Actor:** Staff
-- **Preconditions:** Order อยู่ในสถานะ READY
-- **Main Flow:**
-	1. Staff ดูรายการ Order ที่ READY
-	2. Staff นำอาหารไปเสิร์ฟยังโต๊ะที่เกี่ยวข้อง
-	3. Staff ยืนยันว่าเสิร์ฟแล้ว
-	4. ระบบเปลี่ยนสถานะ Order เป็น SERVED
-- **Alternative / Exception:** หาก Order ไม่ได้อยู่สถานะ READY ระบบไม่ให้ยืนยันการเสิร์ฟ
-- **Postconditions:** Order อยู่ในสถานะ SERVED
-### UC-06 Process Payment
-- **Primary Actor:** Staff
-- **Secondary Actor:** Customer
-- **Preconditions:** Customer ขอเช็กบิล และ Dining Session ยัง Active
-- **Main Flow:**
-	1. Staff เปิดรายละเอียด Dining Session
-	2. ระบบคำนวณยอดจาก Buffet Package ค่าเพิ่ม และส่วนลดถ้ามี
-	3. Staff ตรวจสอบยอด
-	4. Customer เลือกวิธีชำระ CASH / QR / CARD
-	5. Staff ยืนยันการชำระเงิน
-	6. ระบบบันทึก Payment
-	7. ระบบแสดงหรือออกใบเสร็จ
-- **Alternative / Exception:** หากการชำระยังไม่สำเร็จ ระบบไม่บันทึก Payment เป็น Completed และยังไม่อนุญาตให้ปิด Session
-- **Postconditions:** มี Payment ที่ผูกกับ Dining Session และระบุวิธี/สถานะการชำระ
-### UC-07 Close Dining Session
-- **Primary Actor:** Staff
-- **Preconditions:** Dining Session มีการชำระเงินสำเร็จแล้ว
-- **Main Flow:**
-	1. Staff เลือกปิด Dining Session
-	2. ระบบตรวจสอบสถานะ Payment
-	3. ระบบเปลี่ยน Dining Session เป็น Closed
-	4. ระบบเปลี่ยนสถานะโต๊ะเป็น Available
-	5. QR ของโต๊ะไม่สามารถใช้สั่งอาหารใน Session เดิมได้อีก
-- **Alternative / Exception:** หากยังไม่มี Payment ที่สำเร็จ ระบบไม่อนุญาตให้ปิด Dining Session
-- **Postconditions:** Dining Session ปิดสมบูรณ์และโต๊ะพร้อมรับลูกค้ารอบถัดไป
-### UC-08 Record Stock Movement
-- **Primary Actor:** Head Staff / Supervisor
-- **Preconditions:** Head Staff เข้าสู่ระบบแล้ว
-- **Main Flow:**
-	1. Head Staff เปิดหน้าจัดการ Stock
-	2. ระบบแสดง Stock Item ปริมาณคงเหลือ ปริมาณขั้นต่ำ และสถานะ Stock
-	3. Head Staff บันทึก Stock In เมื่อรับวัตถุดิบเข้า
-	4. ระบบสร้าง Stock Transaction และเพิ่มจำนวนคงเหลือ
-	5. Head Staff บันทึก Stock Adjustment จากการตรวจนับจริง พร้อมเหตุผล
-	6. ระบบสร้าง Stock Transaction และอัปเดตจำนวนคงเหลือ
-- **Alternative / Exception:** หากจำนวนที่กรอกไม่ถูกต้อง ระบบไม่บันทึก Transaction
-- **Postconditions:** ปริมาณ Stock ปัจจุบันและประวัติ Stock Transaction ถูกอัปเดต
+## UC-01 เปิดรอบและเลือกแพ็กเกจ/น้ำซุป
+
+- **ผู้ใช้หลัก** SERVICE_STAFF
+- **ก่อนเริ่ม** login แล้ว โต๊ะ AVAILABLE มี package/soup ที่ active
+- **งานหลัก** เลือกโต๊ะ ระบุผู้ใหญ่/เด็ก แพ็กเกจและน้ำซุป ยืนยันคำขอเดียว ระบบล็อกโต๊ะ ตรวจ capacity และจำนวนคนอย่างน้อยหนึ่ง เก็บราคา snapshot สร้าง ACTIVE session พร้อมตั้งโต๊ะ OCCUPIED ใน transaction เดียว
+- **ทางเลือก** โต๊ะไม่ว่าง/คำขอเปิดซ้ำ คนผิดหรือเกิน capacity หรือ master inactive ถูกปฏิเสธโดยไม่สร้าง session ครึ่งทาง
+- **หลังสำเร็จ** ได้รอบจริง พร้อม QR รุ่นปัจจุบัน และราคาเดิมที่ใช้คิดบิล
+
+การ setup ที่เคยแยกเป็น UC-02 ในแบบเดิมรวมอยู่ใน UC-01 นี้แล้ว ไม่อ้างว่าระบบเปิดรอบเปล่าก่อนเลือกแพ็กเกจ
+
+## UC-02 แลก QR และอ่านเมนู
+
+- **ผู้ใช้หลัก** Customer ไม่ต้องมีบัญชีพนักงาน
+- **ก่อนเริ่ม** มีรอบ ACTIVE และ QR token รุ่นที่ยังไม่ถูกแลก
+- **งานหลัก** สแกน fragment link หน้าเว็บอ่านแล้วล้าง fragment ส่ง POST body Backend ล็อก session หมุน QR และสร้าง grant ต่อเครื่อง เก็บเฉพาะ credential hash และ expiry ออก HttpOnly cookie จากนั้นอ่านเมนูที่ available และอยู่ในแพ็กเกจของรอบ
+- **ทางเลือก** QR ผิด/ใช้ซ้ำ/รอบไม่ active ค้นไม่พบ cookie หายหรือหมดอายุไม่ได้สิทธิ์ ทุกเครื่องใช้ QR รุ่นถัดไป ไม่แลก token เดิมซ้ำ
+- **หลังสำเร็จ** อ่านข้อมูลรอบเดียวกันได้ ไม่มี QR token/ราคา snapshot ใน Customer DTO
+
+## UC-03 สั่งอาหารและดูออเดอร์
+
+- **ผู้ใช้หลัก** Customer
+- **ก่อนเริ่ม** cookie grant ถูกต้องตรงรอบ ACTIVE และยังไม่ขอคิดบิล
+- **งานหลัก** เลือกเมนูและจำนวน ยืนยัน Backend ล็อก session/recheck สิทธิ์ ตรวจ package/available/quantity แล้วสร้าง Order RECEIVED กับ items และ item-name/table snapshots
+- **ทางเลือก** menu ไม่อยู่ใน package หรือไม่ available ถูกปฏิเสธ Order ที่เข้า lock หลัง bill request/close ไม่ถูกบันทึก
+- **หลังสำเร็จ** ออเดอร์ปรากฏฝั่ง Customer และ incoming ของครัว
+
+## UC-04 เตรียมอาหาร
+
+- **ผู้ใช้หลัก** KITCHEN_STAFF
+- **ก่อนเริ่ม** login ตาม role และมี RECEIVED/PREPARING order
+- **งานหลัก** อ่าน incoming เริ่ม PREPARING แล้ว READY เมื่อเตรียมเสร็จ State Pattern ตรวจ single next transition ก่อน persist enum
+- **ทางเลือก** ข้ามขั้น ย้อนกลับ role ผิด หรือไปต่อหลัง SERVED ถูกปฏิเสธ
+- **หลังสำเร็จ** READY order ปรากฏในหน้าพนักงานเสิร์ฟ
+
+## UC-05 เสิร์ฟอาหาร
+
+- **ผู้ใช้หลัก** SERVICE_STAFF
+- **ก่อนเริ่ม** login และ Order READY
+- **งานหลัก** อ่าน ready board เสิร์ฟแล้วกดยืนยัน ระบบตรวจ State และ role แล้วบันทึก SERVED
+- **ทางเลือก** ครัว/Manager/Supervisor ไม่ได้รับสิทธิ์เสิร์ฟ ไม่มีการข้ามจาก RECEIVED มา SERVED
+- **หลังสำเร็จ** order terminal ไม่เปลี่ยนต่อได้
+
+## UC-06 ขอคิดบิลและดูสถานะ
+
+- **ผู้ใช้หลัก** Customer
+- **ก่อนเริ่ม** cookie ตรงรอบ ACTIVE
+- **งานหลัก** ยืนยันขอคิดบิล ระบบล็อก session ตั้ง billRequestedAt ครั้งแรก คำนวณยอดจาก BillingEngine หน้าเว็บอ่านสถานะ NOT_REQUESTED/REQUESTED/PAID พร้อม backend BillSummary
+- **ทางเลือก** กดซ้ำคืนผลเดิม ทุกมือถือหยุดสั่งเพิ่ม แต่ยังอ่านเมนู/ออเดอร์/บิลได้
+- **หลังสำเร็จ** Staff เห็น badge ขอคิดบิล Session ยัง ACTIVE
+
+## UC-07 รับชำระ
+
+- **ผู้ใช้หลัก** SERVICE_STAFF
+- **ก่อนเริ่ม** login รอบ ACTIVE ขอคิดบิลแล้ว และยังไม่มี Payment
+- **งานหลัก** Staff อ่าน bill เลือกวิธี CASH/QR/CARD แล้วรับรองชำระ Backend อ่าน opening-price snapshot/counts คำนวณยอดเอง ล็อก session และบันทึก PAID/paidAt พร้อม unique session_id
+- **ทางเลือก** ไม่ขอคิดบิล จ่ายซ้ำ หรือ role ผิดถูกปฏิเสธ คำตอบ POST สูญหายให้ GET ตรวจ Payment เดิมก่อน retry
+- **หลังสำเร็จ** มี Payment เดียวของรอบ ไม่ปิด session อัตโนมัติ ไม่มี Payment Gateway หรือระบบพิมพ์ใบเสร็จในขอบเขตนี้
+
+## UC-08 ปิดรอบ
+
+- **ผู้ใช้หลัก** SERVICE_STAFF
+- **ก่อนเริ่ม** login รอบ ACTIVE และ PaymentStatusLookup ยืนยัน PAID ของ session เดียวกัน
+- **งานหลัก** กดยืนยัน close ระบบล็อก session/โต๊ะ ตรวจ PAID อีกครั้ง ลบ grants ตั้ง session COMPLETED/endTime และโต๊ะ AVAILABLE ใน transaction เดียว
+- **ทางเลือก** ยังไม่จ่าย ผลเป็นของอีกรอบ หรือ provider ไม่มี ใช้ปิดสำเร็จไม่ได้
+- **หลังสำเร็จ** โต๊ะพร้อมรอบใหม่ customer credentials เดิมใช้งานไม่ได้
+
+## UC-09 รับเข้าและปรับยอดสต็อก
+
+- **ผู้ใช้หลัก** MANAGER หรือ SUPERVISOR
+- **ก่อนเริ่ม** login และมี stock item
+- **งานหลัก** อ่านยอด/ประวัติ รับเข้าด้วยจำนวนบวก หรือ adjustment ด้วย signed delta และเหตุผล StockService ใช้ Template Method ล็อกแถว ตรวจยอดใหม่ไม่ติดลบ บันทึกยอดและ IN/ADJUSTMENT history พร้อม actor/reason/balance_after
+- **ทางเลือก** จำนวนไม่ถูกต้อง ขาดเหตุผล หรือทำให้ยอดติดลบไม่บันทึกทั้งยอดและ history
+- **หลังสำเร็จ** มีประวัติตรวจย้อนหลัง ไม่ใช้จำนวนตรวจนับเป็นยอดใหม่โดยตรง และไม่ตัด stock จากสูตรอาหารอัตโนมัติ
+
+## UC-10 จัดการข้อมูลร้าน เมนู ผู้ใช้ และรายการสต็อก
+
+- **ผู้ใช้หลัก** MANAGER
+- **ก่อนเริ่ม** login ตาม role
+- **งานหลัก** CRUD โต๊ะ เมนู/categories/package membership แพ็กเกจ น้ำซุป ผู้ใช้ และเพิ่ม/แก้ stock master ผ่าน UI/API ตาม contract
+- **ทางเลือก** โต๊ะที่มี session history ลบไม่ได้ โต๊ะ active ไม่แก้ข้อมูลขัดรอบ package/soup ลบเป็น inactive เพื่อคงประวัติ Stock ใหม่เริ่มศูนย์และห้ามเปลี่ยน SKU/unit หลังมี transaction ราคาใหม่ไม่เปลี่ยน snapshot รอบเดิม
+- **หลังสำเร็จ** ข้อมูลร้านพร้อมใช้ โดย Supervisor ไม่ได้สิทธิ์ CRUD master data เหล่านี้
+
+## ขอบเขต Final ที่ยังไม่อยู่ baseline นี้
+
+Stock opening target/lifecycle และ Profile firstName/lastName/phoneNumber ยังต้องเพิ่มตาม Final plan แผน public Deployment เป็นแบบออกแบบ ไม่ใช่ผลตรวจ runtime
