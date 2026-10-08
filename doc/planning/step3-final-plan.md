@@ -28,7 +28,7 @@ Snapshot Notion 7 ตุลาคม 2026 ก่อน PRเอกสารป�
 - [ ] รวม [solid-analysis.md](../solid-analysis.md) ครบ S/O/L/I/D พร้อมไฟล์ บรรทัด และเหตุผล อ้าง commit รุ่นส่ง
 - [ ] รวม [design-patterns.md](../design-patterns.md) ให้มี Pattern \| ปัญหาที่แก้ \| ไฟล์/คลาส \| Class Diagram ครบ Enterprise Patterns และ State/Strategy/Template Method
 - [ ] ปรับ README ครบชื่อ/คำอธิบาย สมาชิกและหน้าที่ Stack Architecture ERD Setup/Run API Tests Deployment URL และ Project Structure
-- [ ] ตรวจ Git ทั้ง 5 คน: branch ถูกชื่อ บัญชีผู้เขียน meaningful commits ≥5 ต่อคน การกระจายเวลา PR/reviewer และสิทธิ์ให้อาจารย์เข้าถึง; บันทึกข้อขาดจริง ไม่สร้าง commits เติมยอดหรือ push แทนกัน
+- [ ] ตรวจ Git ทั้ง 5 คน: branch ถูกชื่อ บัญชีผู้เขียน meaningful commits ≥15 ต่อคน การกระจายเวลา PR/reviewer และสิทธิ์ให้อาจารย์เข้าถึง; บันทึกข้อขาดจริง ไม่สร้าง commits เติมยอดหรือ push แทนกัน
 - [ ] รวม slides ต้นฉบับและ PDF ใน doc/slide/ พร้อมลิงก์ภาพ/diagram ที่ใช้
 - [ ] ประสาน release PR develop → main หลัง Final gates ผ่าน review แล้ว บันทึก merge commit/tag และ deployed commit ให้ตรงรุ่นส่ง
 ### เกณฑ์ผ่าน
@@ -173,7 +173,7 @@ Snapshot Notion 7 ตุลาคม 2026 ก่อน PRเอกสารป�
 - [ ] Diagramครบ UseCase+Description,Domain,Class+patterns,Sequenceอย่างน้อย3,Activity,ERD+Dictionary,Component,Deployment,State มีsourceและpreviewอ่านได้
 - [ ] SOLIDทั้ง5, EnterprisePatternsและ Behavioral State/Strategy/TemplateMethodมีcode/file/line/เหตุผล/classdiagram
 - [ ] READMEครบหัวข้อวิชา TestReportและcode/test/doc/img/doc-slideพร้อม ทุกลิงก์สำคัญเปิดได้
-- [ ] Git5คน branch/account/meaningfulcommits≥5/เวลา/PR/reviewerตรวจจริง ไม่ยืนยันcountล่วงหน้า
+- [ ] Git5คน branch/account/meaningfulcommits≥15/เวลา/PR/reviewerตรวจจริง ไม่ยืนยันcountล่วงหน้า
 - [ ] ทั้ง5คนซ้อมอธิบายโค้ดส่วนตนและdemoด้วยบัญชีจริง ไม่แก้DBด้วยมือระหว่างflow
 - [ ] Release PRผ่านreviewและmerge main deployedcommitตรงรุ่นส่ง มีrelease record/tag
 - [ ] PublicURL/Swaggerตรวจอีกครั้งก่อนส่ง พร้อมdemoscript/coldstartinstructions/คลิปหรือComposeสำรอง

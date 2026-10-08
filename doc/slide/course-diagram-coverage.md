@@ -16,4 +16,4 @@
 
 Use Case Description เต็มพร้อมactor/preconditions/main flow/alternative/postconditions อยู่ [use-cases.md](../system-design/use-cases.md) Public deployment diagramต้องเทียบรุ่นที่deployจริงอีกครั้ง ภาพlocalแสดงconfigurationที่มีอยู่ ไม่อ้างว่าฐานกลางถูกตรวจสดในงานสไลด์
 
-[เนื้อหา/notes](team-final-canva-v02-content.md) · [คู่มือ12นาที](team-final-12-minute-runbook.md) · [เกณฑ์commitใหม่5ต่อคน](../planning/course-criteria-updates.md)
+[เนื้อหา/notes](team-final-canva-v02-content.md) · [คู่มือ12นาที](team-final-12-minute-runbook.md) · [เกณฑ์ Git ปัจจุบัน 15 meaningful commits ต่อคน](../planning/course-criteria-updates.md)

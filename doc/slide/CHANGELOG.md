@@ -32,7 +32,7 @@
 - ระบุช่วงพูด12นาทีเป็น20หน้าหลัก อีก56หน้าเป็นภาคผนวกอ้างอิง ไม่เพิ่มเวลาพูดเป็น76หน้า
 - 23ภาพรายละเอียดและ5ภาพย่อพร้อมPlantUML/SVG 35หน้าcode 76notes SARABUN/JetBrainsMono navy/cream/terracotta/gold
 - อัปเดตUseCaseDescriptions Auth/MenuOrderClasses Orderingsequence Stock/CustomerActivities StatepermissionsและDeploymentdesignที่เคยขาด/ล้าสมัย
-- ปรับเกณฑ์Gitเป็น5meaningfulcommitsต่อคนตามการแจ้งของปวริศช์ เก็บworksheet15ไว้เป็นต้นฉบับ
+- บันทึกในเวลานั้นว่าปรับเกณฑ์ Git เป็น 5 meaningful commits ต่อคนตามการแจ้งของปวริศช์; การแจ้งนี้ถูกยกเลิกวันที่ 8 ต.ค. และเกณฑ์ปัจจุบันกลับเป็น 15 ตาม [บันทึกเกณฑ์](../planning/course-criteria-updates.md)
 - [Canva v02](https://www.canva.com/d/wORhypcIcwvGuFK) `DAHXSWQA-Vs` นำเข้า76หน้า อ่านกลับครบ 704ข้อความแก้ได้/28diagramimages ไม่มีelementออกนอกcanvas ตรวจภาพlocalครบ ไม่อ้างCanvaallpagevisualQA/PDF/owner/releaseว่าผ่านแล้ว
 - v01คงไว้เป็นประวัติ ไม่แก้/ลบdesignเดิม ไม่สร้างPPTX ไม่แก้runtime ไม่mergePR24
 

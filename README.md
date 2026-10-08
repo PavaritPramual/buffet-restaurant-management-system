@@ -11,9 +11,9 @@ Manager จัดการข้อมูลร้านและสต็อก
 
 Code baseline: merged [`develop adc5798`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/adc5798b05279840dc6178f4291278467c929791) ณ 8 ตุลาคม 2026. CI [run 37738400052](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37738400052) ผ่าน Backend/PostgreSQL 348/348, Frontend 121/121, URL guards 6/6, lint 0 errors/4 existing warnings และ build ผ่าน. Stock target/active และ Profile fields อยู่ใน V15 ที่ merge ผ่าน [PR #28](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/28) พร้อม tests และ reviewer approvals; หลักฐาน Stock/Profile candidate browser ระบุแยกใน [follow-up report](doc/testing/sirapat-step3-followup-2026-10-08.md)
 
-เอกสาร/สไลด์และ CI **ยังไม่ใช่การรับรอง Final**. PR #33 (integrated JPA/evidence) ยัง open แม้มี approvals จากศิระพัทธ์/ศรัณย์; PR #34 (Final Matrix/Git audit/README) ยัง open, CI ผ่าน และรอ review จากปวริศช์/ศิระพัทธ์. Public deployment/URL, V15 central-schema approval/validate, integrated public regression, reviewed release บน main/deployed SHA และสไลด์ export/ซ้อมทีมยังต้องปิดตามหลักฐานจริง ดู [Requirement Matrix](doc/planning/step3-requirement-matrix.md), [Git audit](doc/planning/step3-git-audit.md), [dated Git evidence](test/evidence/sarun-git-audit-2026-10-08/README.md), [Step3 plan](doc/planning/step3-final-plan.md) และ [Notion](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6)
+เอกสาร/สไลด์และ CI **ยังไม่ใช่การรับรอง Final**. PR #33 (integrated JPA/evidence) ยัง open แม้มี approvals จากศิระพัทธ์/ศรัณย์; PR #34 (Final Matrix/Git audit/README) ยัง open และ CI ผ่านบน `a823ddb` แต่ปวริศช์/ศิระพัทธ์ขอแก้ก่อน approve. Public deployment/URL, V15 central-schema approval/validate, integrated public regression, reviewed release บน main/deployed SHA และสไลด์ export/ซ้อมทีมยังต้องปิดตามหลักฐานจริง ดู [Requirement Matrix](doc/planning/step3-requirement-matrix.md), [Git audit](doc/planning/step3-git-audit.md), [dated Git evidence](test/evidence/sarun-git-audit-2026-10-08/README.md), [Step3 plan](doc/planning/step3-final-plan.md) และ [Notion](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6)
 
-**เกณฑ์Gitที่อาจารย์ปรับ:** ขั้นต่ำ5meaningfulcommitsต่อคนตามการแจ้งวันที่7ตุลาคม2026 ดู [criteria update](doc/planning/course-criteria-updates.md) และ [Git audit](doc/planning/step3-git-audit.md)
+**เกณฑ์ Git ปัจจุบัน:** ขั้นต่ำ 15 meaningful commits ต่อคน; การแจ้ง 5 commits วันที่ 7 ต.ค. ถูกยกเลิกวันที่ 8 ต.ค. ดู [criteria update](doc/planning/course-criteria-updates.md) และ [Git audit](doc/planning/step3-git-audit.md)
 
 ## สมาชิกและหน้าที่
 
@@ -45,7 +45,7 @@ Orderingอ่านสิทธิ์ผ่านSessionContextProvider Billing
 
 ## ERD และ Data Dictionary
 
-[ERD source](doc/diagrams/er-diagram.puml) · [canonical Data Dictionary V1–V14](doc/database/step2-schema-approved.md) · [Diagram index](doc/diagrams/README.md)
+[ERD source](doc/diagrams/er-diagram.puml) · [Data Dictionary V1–V14 (Step 2 baseline)](doc/database/step2-schema-approved.md) · [V15 delta](doc/database/auth-stock-schema-delta.md) · [Diagram index](doc/diagrams/README.md)
 มีTables/Packages/Soups/Sessions/Grants/Menu/Orders/Payments/Users/Profile/Stockและtransactions
 Session snapshotราคาเมื่อเปิด billrequestหยุดOrderใหม่ PAIDยังต้องStaffcloseแยก ดู [Bill/Payment sequence](doc/diagrams/sequence-billing-payment.puml)
 

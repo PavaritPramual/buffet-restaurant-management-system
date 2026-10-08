@@ -10,7 +10,7 @@
 
 PlantUMLrenderทั้งหมดไม่มีsyntaxerrors ตรวจภาพlocalทุก76หน้าและgeometryผ่าน ฟอนต์Sarabun/JetBrainsMonoโหลดครบ นำเข้าCanvaแล้วอ่านกลับtitle/points/code/branch/notesและdiagramครบ76หน้า พบ704editabletextsและ28imageelements ไม่มีelementออกนอกcanvas [ผลตรวจ](../../test/evidence/pavarit-step3-docs-2026-10-07/canva-v02-verification.json) ภาพdiagramเป็นSVGimage ไม่อ้างว่าnodesเป็นCanvashapesแก้แยกได้
 
-ใช้ขั้นต่ำ5meaningfulcommitsตามผู้ใช้แจ้งอาจารย์ปรับ รักษาworksheet15และauditเก่าเป็นประวัติ [currentGit audit](../planning/step3-git-audit.md) candidatesก่อนcommitv02คือ50/22/3/8/5 ศรัณย์ขาดขั้นต่ำจำนวน2 ทุกคนยังต้องยืนยันความหมาย/บัญชี/เวลา
+รายงานฉบับนี้บันทึกการใช้ขั้นต่ำ 5 meaningful commits ตามการแจ้งวันที่ 7 ต.ค. ซึ่งถูกยกเลิกวันที่ 8 ต.ค.; เกณฑ์ปัจจุบันคือ 15 ตาม [บันทึกเกณฑ์](../planning/course-criteria-updates.md). เก็บ candidates ก่อน commit v02 (50/22/3/8/5) เป็น historical snapshot ไม่ใช้แทน audit ล่าสุด; ทุกคนยังต้องยืนยันความหมาย/บัญชี/เวลา
 
 ยังไม่รับรองCanvaallpagevisualQA owner/PDFexport/rehearsal/public/release ไม่มีruntimechangeหรือbackend/frontendtestsใหม่ ไม่มีSupabasemigration ไม่merge PR24 ส่วนDeploymentpublicเป็นdesign ไม่ใช่deployedcertificate
 
