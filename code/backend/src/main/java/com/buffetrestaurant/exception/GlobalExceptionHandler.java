@@ -4,6 +4,7 @@ import com.buffetrestaurant.dto.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.stream.Collectors;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -166,7 +167,7 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String message, String path) {
         ErrorResponse response = new ErrorResponse(
-                OffsetDateTime.now(),
+                OffsetDateTime.now(ZoneOffset.UTC),
                 status.value(),
                 status.getReasonPhrase(),
                 message,

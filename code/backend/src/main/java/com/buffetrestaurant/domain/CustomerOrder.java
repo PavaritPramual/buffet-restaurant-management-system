@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class CustomerOrder {
         this.sessionId = sessionId;
         this.tableNumber = tableNumber;
         this.status = OrderStatus.RECEIVED;
-        this.createdAt = OffsetDateTime.now();
+        this.createdAt = OffsetDateTime.now(ZoneOffset.UTC);
     }
 
     public void addItem(Long menuItemId, String itemName, int quantity) {

@@ -3,6 +3,7 @@ package com.buffetrestaurant.service.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,7 +123,7 @@ public class PaymentServiceImpl implements PaymentService{
             request.paymentMethod()
         );
 
-        payment.markPaid(OffsetDateTime.now());
+        payment.markPaid(OffsetDateTime.now(ZoneOffset.UTC));
 
         Payment saved = paymentRepository.saveAndFlush(payment);
 

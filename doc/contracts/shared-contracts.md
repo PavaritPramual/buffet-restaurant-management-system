@@ -7,7 +7,7 @@
 - Base API: `/api/v1`
 - ID ใช้ JSON number และ Java `Long`
 - จำนวนเงินใช้ JSON number และ Java `BigDecimal`
-- วันเวลาใช้ ISO-8601 พร้อม timezone เช่น `2026-09-18T10:00:00+07:00`
+- วันเวลาที่ API ส่งออกใช้ ISO-8601 UTC พร้อม timezone เช่น `2026-10-07T08:09:10Z`
 - Enum ส่งผ่าน JSON เป็น uppercase string และไม่รับ lowercase
 - Field ที่ไม่ระบุว่า nullable ต้องมีค่า
 
@@ -104,7 +104,7 @@ Owner: ธีรเมธ — Billing & Payment
 | `amount` | number | No | Recorded amount from Payment, not a recalculated preview |
 | `paymentMethod` | string | No | `PaymentMethod` |
 | `paymentStatus` | string | No | `PaymentStatus` |
-| `paidAt` | string | Yes | ISO-8601 with timezone; required when PAID, null otherwise |
+| `paidAt` | string | Yes | ISO-8601 UTC (`Z`); required when PAID, null otherwise |
 
 ## UserContext
 
@@ -114,8 +114,31 @@ Owner: เมธัส — Authentication
 |---|---|---|---|
 | `userId` | number | No | User identifier |
 | `username` | string | No | ชื่อบัญชีพนักงาน |
+| `displayName` | string | No | ชื่อที่แสดงในหน้า staff |
 | `role` | string | No | `UserRole` |
-| `active` | boolean | No | สถานะบัญชี |
+
+`POST /api/v1/auth/login` and authenticated `GET /api/v1/auth/me` return these four fields. An unauthenticated `/auth/me` intentionally returns an empty `401`; login failures use the standard `ErrorResponse`. Staff authentication is carried in the `JSESSIONID` cookie, not a JSON credential field.
+
+## Staff Profile API (`UserResponse`)
+
+`GET /api/v1/admin/users` returns `200` and `UserResponse[]`; `POST /api/v1/admin/users` returns `201` and the created `UserResponse`. Both require MANAGER. The response fields are `id` (number), `username`, `displayName`, nullable `email`, and `role`. Passwords and account-internal fields are never returned.
+
+Create request fields: `username` (required, max 80), `password` (required, 8–72), `displayName` (required, max 120), `email` (optional/null, valid email, max 254), and `role` (required `UserRole`). Invalid values return `400 ErrorResponse`; a duplicate username returns `409 ErrorResponse`.
+
+## Stock API
+
+Stock quantity and threshold fields are JSON numbers backed by Java `BigDecimal`; maximum precision is 9 integer and 3 fractional digits. `StockItemResponse` is `{id, sku, name, unit, quantity, lowStockThreshold, updatedAt}` with `updatedAt` as an ISO-8601 UTC string. `StockTransactionResponse` is `{id, stockItemId, itemName, transactionType, quantityDelta, balanceAfter, reason, actorUsername, createdAt}`; quantity values are JSON numbers and `createdAt` is ISO-8601 UTC.
+
+| Method / path | Request | Success | Access |
+|---|---|---|---|
+| `POST /api/v1/stock/items` | `{sku, name, unit, lowStockThreshold}`; metadata only, starts at zero | `201` + `Location` | MANAGER |
+| `PUT /api/v1/stock/items/{id}` | Same metadata; does not set quantity | `200` | MANAGER |
+| `GET /api/v1/stock` | — | `200 StockItemResponse[]` | MANAGER, SUPERVISOR |
+| `POST /api/v1/stock/{itemId}/in` | Positive numeric `quantity`, non-blank `reason` | `200 StockTransactionResponse` | MANAGER, SUPERVISOR |
+| `POST /api/v1/stock/{itemId}/adjustments` | Non-zero signed numeric `quantityDelta`, non-blank `reason` | `200 StockTransactionResponse` | MANAGER, SUPERVISOR |
+| `GET /api/v1/stock/transactions?itemId={id}` | Optional numeric filter | `200 StockTransactionResponse[]` | MANAGER, SUPERVISOR |
+
+Invalid input/balance returns `400 ErrorResponse`, missing resource `404 ErrorResponse`, duplicate or conflicting metadata `409 ErrorResponse`, unauthenticated `401 ErrorResponse`, and wrong role `403 ErrorResponse`.
 
 ## Fulfillment authorization (Step 2 integration)
 

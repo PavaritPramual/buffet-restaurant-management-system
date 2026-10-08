@@ -58,8 +58,13 @@ export default function StockPage() {
     setSaving(true)
     setError('')
     try {
-      if (mode === 'IN') await stockApi.stockIn(selected.id, amount, reason)
-      else await stockApi.adjust(selected.id, amount, reason)
+      const quantity = Number(amount)
+      if (!Number.isFinite(quantity)) {
+        setError('กรุณาระบุจำนวนที่ถูกต้อง')
+        return
+      }
+      if (mode === 'IN') await stockApi.stockIn(selected.id, quantity, reason)
+      else await stockApi.adjust(selected.id, quantity, reason)
       setSelected(null)
       setAmount('')
       setReason('')

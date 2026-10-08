@@ -377,7 +377,7 @@ Backend อ่านสิทธิ์จาก login cookie จริง
 | Context | OrderFulfillmentServiceImpl |
 | State contract | OrderState: status() / next() |
 | Concrete states | Received / Preparing / Ready / Served |
-| Resolve state | OrderStateFactory.forStatus(enum) |
+| Resolve state | Injected OrderStateResolver.resolve(enum); runtime implementation: RegistryOrderStateResolver |
 | Persistence | CustomerOrder.status เป็น enum string |
 
 ### คำพูดและรายละเอียดประกอบ
@@ -388,7 +388,8 @@ Service resolve current state จาก enum แล้วเทียบ request
 
 - [doc/diagrams/class-order-state.puml](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/0f1a05c38bc6baa5436369d45a6545ea030a64d1/doc/diagrams/class-order-state.puml)
 - [code/backend/src/main/java/com/buffetrestaurant/service/state/OrderState.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/state/OrderState.java)
-- [code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateFactory.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateFactory.java)
+- [code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateResolver.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/cb612d9bd396f7ec5b4ca6c70925acf087e305a6/code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateResolver.java)
+- [code/backend/src/main/java/com/buffetrestaurant/service/state/RegistryOrderStateResolver.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/cb612d9bd396f7ec5b4ca6c70925acf087e305a6/code/backend/src/main/java/com/buffetrestaurant/service/state/RegistryOrderStateResolver.java)
 
 ## หน้า 15 — DTO, Validation และ ErrorResponse
 
@@ -635,7 +636,8 @@ Single Responsibility ดูเหตุผลที่จะทำให้ค�
 
 - [doc/solid-analysis.md](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/0f1a05c38bc6baa5436369d45a6545ea030a64d1/doc/solid-analysis.md)
 - [code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingEngine.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingEngine.java)
-- [code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateFactory.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateFactory.java)
+- [code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateResolver.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/cb612d9bd396f7ec5b4ca6c70925acf087e305a6/code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateResolver.java)
+- [code/backend/src/main/java/com/buffetrestaurant/service/state/RegistryOrderStateResolver.java](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/cb612d9bd396f7ec5b4ca6c70925acf087e305a6/code/backend/src/main/java/com/buffetrestaurant/service/state/RegistryOrderStateResolver.java)
 
 ## หน้า 25 — SOLID: Liskov และ Interface Segregation
 
@@ -1026,4 +1028,3 @@ Checklistทั้งหมดนี้ยังไม่ติ๊กจาก�
 - [doc/planning/step3-requirement-matrix.md](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/0f1a05c38bc6baa5436369d45a6545ea030a64d1/doc/planning/step3-requirement-matrix.md)
 - [doc/testing/pavarit-step3-docs-report.md](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/0f1a05c38bc6baa5436369d45a6545ea030a64d1/doc/testing/pavarit-step3-docs-report.md)
 - [README.md](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/0f1a05c38bc6baa5436369d45a6545ea030a64d1/README.md)
-
