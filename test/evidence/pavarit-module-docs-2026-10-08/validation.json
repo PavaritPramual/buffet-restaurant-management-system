@@ -1,0 +1,326 @@
+{
+  "codeBaseline": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+  "anchors": [
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/DiningSessionController.java",
+      "line": 28,
+      "needle": "public class DiningSessionController"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java",
+      "line": 89,
+      "needle": "public DiningSessionResponse openSession("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java",
+      "line": 146,
+      "needle": "public DiningSessionResponse closeSession("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/mapper/DiningSessionMapper.java",
+      "line": 11,
+      "needle": "public DiningSessionResponse toResponse("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/RestaurantTableServiceImpl.java",
+      "line": 34,
+      "needle": "private RestaurantTable lockForMaintenance("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/CatalogService.java",
+      "line": 19,
+      "needle": "public class CatalogService"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/RestaurantTable.java",
+      "line": 15,
+      "needle": "public class RestaurantTable"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/BuffetPackage.java",
+      "line": 13,
+      "needle": "public class BuffetPackage"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/Soup.java",
+      "line": 12,
+      "needle": "public class Soup"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/DiningSession.java",
+      "line": 20,
+      "needle": "public class DiningSession"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/CustomerSessionGrant.java",
+      "line": 16,
+      "needle": "public class CustomerSessionGrant"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/repository/DiningSessionRepository.java",
+      "line": 12,
+      "needle": "public interface DiningSessionRepository"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerSessionAccessService.java",
+      "line": 56,
+      "needle": "public ExchangeResult exchange("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerSessionAccessService.java",
+      "line": 76,
+      "needle": "public SessionContextSnapshot requireSession(Long sessionId, String credential, boolean forOrder)"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerSessionAccessService.java",
+      "line": 107,
+      "needle": "private CustomerSessionGrant requireActiveGrant("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/CustomerSessionController.java",
+      "line": 61,
+      "needle": "ResponseCookie cookie = ResponseCookie.from"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/CustomerSessionVerifier.java",
+      "line": 7,
+      "needle": "public interface CustomerSessionVerifier"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DatabaseSessionContextProvider.java",
+      "line": 10,
+      "needle": "public class DatabaseSessionContextProvider"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DatabaseDiningSessionBillingReader.java",
+      "line": 20,
+      "needle": "public BillingSnapshot requireBySessionId("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/integration/payment/PaymentStatusLookup.java",
+      "line": 6,
+      "needle": "public interface PaymentStatusLookup"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/CustomerBillingService.java",
+      "line": 30,
+      "needle": "public CustomerBillingService("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/CustomerBillingService.java",
+      "line": 41,
+      "needle": "public CustomerBillStatusResponse request("
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/SessionDiningSessionStaffAccessProvider.java",
+      "line": 9,
+      "needle": "public class SessionDiningSessionStaffAccessProvider"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/config/MasterDataAccessConfig.java",
+      "line": 20,
+      "needle": "public class MasterDataAccessConfig"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionIntegrationTest.java",
+      "line": 53,
+      "needle": "class DiningSessionIntegrationTest"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/service/SessionContextProviderContractTest.java",
+      "line": 13,
+      "needle": "class SessionContextProviderContractTest"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/service/CustomerBillingContractTest.java",
+      "line": 18,
+      "needle": "class CustomerBillingContractTest"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/Step2CompletionIntegrationTest.java",
+      "line": 22,
+      "needle": "class Step2CompletionIntegrationTest"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/PostgresOrderCloseConcurrencyTest.java",
+      "line": 40,
+      "needle": "class PostgresOrderCloseConcurrencyTest"
+    },
+    {
+      "path": "code/backend/src/main/resources/db/migration/common/V2__create_restaurant_tables.sql",
+      "line": 1,
+      "needle": "CREATE TABLE IF NOT EXISTS restaurant_tables"
+    },
+    {
+      "path": "code/backend/src/main/resources/db/migration/postgresql/V3__create_buffet_packages_and_soups.sql",
+      "line": 1,
+      "needle": "CREATE TABLE buffet_packages"
+    },
+    {
+      "path": "code/backend/src/main/resources/db/migration/postgresql/V6__create_dining_sessions.sql",
+      "line": 1,
+      "needle": "CREATE TABLE public.dining_sessions"
+    },
+    {
+      "path": "code/backend/src/main/resources/db/migration/common/V7__link_orders_to_dining_sessions.sql",
+      "line": 2,
+      "needle": "ADD CONSTRAINT fk_orders_dining_session"
+    },
+    {
+      "path": "code/backend/src/main/resources/db/migration/common/V8__snapshot_session_package_price.sql",
+      "line": 2,
+      "needle": "ADD COLUMN package_price_at_open"
+    },
+    {
+      "path": "code/backend/src/main/resources/db/migration/common/V14__add_session_bill_request.sql",
+      "line": 2,
+      "needle": "ALTER TABLE dining_sessions ADD COLUMN bill_requested_at"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/dto/response/DiningSessionResponse.java",
+      "line": 7,
+      "needle": "public record DiningSessionResponse"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/dto/response/CustomerSessionResponse.java",
+      "line": 5,
+      "needle": "public record CustomerSessionResponse"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerOrderingServiceImpl.java",
+      "line": 46,
+      "needle": "public OrderResponse placeOrder("
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionMigrationTest.java",
+      "line": 14,
+      "needle": "class DiningSessionMigrationTest"
+    }
+  ],
+  "checkedAt": "2026-10-08",
+  "timezone": "Asia/Bangkok",
+  "documentCommits": [
+    "d1ff4afdfa2fb160c8aefa1efdc43992b1c7e6de",
+    "52d17fd409ed483e7c859840a05afc783aabb9be"
+  ],
+  "environment": {
+    "os": "Windows",
+    "localJava": "26.0.1",
+    "diagramJava": "21.0.11",
+    "plantUml": "1.2025.0",
+    "testDatabase": "H2 in-memory; test profile; spring.config.import empty"
+  },
+  "localTests": [
+    {
+      "suite": "DiningSessionIntegrationTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "SessionContextProviderContractTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "CustomerBillingContractTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "Step2CompletionIntegrationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "baselineCi": {
+    "runId": 37719753927,
+    "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+    "backendTests": 339,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "concurrencySuite": "PostgresOrderCloseConcurrencyTest",
+    "concurrencyTests": 8,
+    "paymentSuite": "PostgresPaymentIntegrationTest",
+    "paymentTests": 15,
+    "executedLocallyThisRound": false
+  },
+  "diagrams": [
+    {
+      "name": "component",
+      "sourceCommit": "52d17fd409ed483e7c859840a05afc783aabb9be",
+      "gitBlobSha256": {
+        "doc/diagrams/component.puml": "b8fb3f46368d845001638b1849baadedcab49f26087d5d38d1ad32ad985e9ae3",
+        "doc/diagrams/previews/component.svg": "25fd37eec1d40a585b91fa7869b7bca193aa2d47adb42b776fa3051613d7d235"
+      },
+      "pngDimensions": [
+        2339,
+        746
+      ],
+      "visualInspection": "passed; complete frame, readable labels, no clipping"
+    },
+    {
+      "name": "class-table-session",
+      "sourceCommit": "52d17fd409ed483e7c859840a05afc783aabb9be",
+      "gitBlobSha256": {
+        "doc/diagrams/class-table-session.puml": "671ccd1c6c0ee2c1fff7d40b593dd8228bbccaa9abe9fee3702607cc996a7e92",
+        "doc/diagrams/previews/class-table-session.svg": "68ab3bb50a97f3a0b7c557a609878f8607a0739d562197b2cebdff3ee7bee0ae"
+      },
+      "pngDimensions": [
+        1606,
+        1007
+      ],
+      "visualInspection": "passed; complete frame, readable labels, no clipping"
+    },
+    {
+      "name": "sequence-open-session",
+      "sourceCommit": "52d17fd409ed483e7c859840a05afc783aabb9be",
+      "gitBlobSha256": {
+        "doc/diagrams/sequence-open-session.puml": "29ac5b38233a12b029f5350a1a359b4aae23e6998f2c978ed7862d0f176846fd",
+        "doc/diagrams/previews/sequence-open-session.svg": "d17ea0526d532f9f8d03953a60fa4cf98dcfabf6a4d8ed77ae39d54014b4f4bc"
+      },
+      "pngDimensions": [
+        1391,
+        838
+      ],
+      "visualInspection": "passed; complete frame, readable labels, no clipping"
+    },
+    {
+      "name": "sequence-qr-exchange",
+      "sourceCommit": "52d17fd409ed483e7c859840a05afc783aabb9be",
+      "gitBlobSha256": {
+        "doc/diagrams/sequence-qr-exchange.puml": "9de8b84356aec89a045d8a79c70b5d9a978e92328d27b9c01d8dbf8b08a48c1c",
+        "doc/diagrams/previews/sequence-qr-exchange.svg": "403158d4511b7891c7218e7063fb997c0c413cf2b37a86a5833e3034b86d6941"
+      },
+      "pngDimensions": [
+        1394,
+        968
+      ],
+      "visualInspection": "passed; complete frame, readable labels, no clipping"
+    },
+    {
+      "name": "domain-model",
+      "sourceCommit": "52d17fd409ed483e7c859840a05afc783aabb9be",
+      "gitBlobSha256": {
+        "doc/diagrams/domain-model.puml": "f492473c681be470b74ee9d495208abd1d547321d844a04c6e7ed35ed051b96b",
+        "doc/diagrams/previews/domain-model.svg": "00aa76e721ba58858eadc6d2abb7d2d645023c9f48be4f16247360492423b2ca"
+      },
+      "pngDimensions": [
+        1381,
+        800
+      ],
+      "visualInspection": "passed; complete frame, readable labels, no clipping"
+    }
+  ],
+  "learningFileCount": 21,
+  "runtimeDiff": "empty",
+  "scope": "documentation and diagram review only; no shared database access; no public runtime acceptance"
+}
