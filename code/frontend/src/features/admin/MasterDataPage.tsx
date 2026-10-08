@@ -38,7 +38,7 @@ export default function MasterDataPage({ kind }: { kind: Kind }) {
     const body = kind === 'tables' ? { tableNumber: form.tableNumber.trim(), capacity: Number(form.capacity) }
       : kind === 'buffet-packages' ? { name: form.name.trim(), price: Number(form.price), description: form.description }
       : kind === 'soups' ? { name: form.name.trim() }
-      : { sku: form.sku.trim(), name: form.name.trim(), unit: form.unit.trim(), lowStockThreshold: Number(form.lowStockThreshold), openingTargetStock: form.openingTargetStock }
+      : { sku: form.sku.trim(), name: form.name.trim(), unit: form.unit.trim(), lowStockThreshold: Number(form.lowStockThreshold), openingTargetStock: Number(form.openingTargetStock) }
     try {
       if (editing === null) await apiClient.post(endpoint, body)
       else await apiClient.put(`${endpoint}/${editing}`, body)

@@ -152,13 +152,24 @@ class AuthStockIntegrationTest {
                 .andExpect(jsonPath("$.path").value("/api/v1/admin/users"));
 
         mockMvc.perform(post("/api/v1/admin/users").session(manager).contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"no-email\",\"password\":\"password123\","
-                                + "\"displayName\":\"No Email\",\"email\":null,\"role\":\"SERVICE_STAFF\"}"))
+                .content("""
+                        {
+                        "username": "no-email",
+                        "password": "password123",
+                        "displayName": "No Email",
+                        "email": null,
+                        "firstName": "No",
+                        "lastName": "Email",
+                        "role": "SERVICE_STAFF"
+                        }
+                """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.username").value("no-email"))
                 .andExpect(jsonPath("$.displayName").value("No Email"))
-                .andExpect(jsonPath("$.role").value("SERVICE_STAFF"));
+                .andExpect(jsonPath("$.role").value("SERVICE_STAFF"))
+                .andExpect(jsonPath("$.firstName").value("No"))
+                .andExpect(jsonPath("$.lastName").value("Email"));
     }
 
     @Test
