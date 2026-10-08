@@ -62,7 +62,8 @@ async function main() {
     await m.getByRole('button',{name:'ยกเลิกแก้ไข',exact:true}).click();pass({httpStatus:400,unchanged:true,browserMin:0})
     scenario='Supervisor stock-in and confirmed adjustment through UI'
     await s.reload()
-    const row=()=>s.getByRole('row').filter({has:s.getByText(item.name,{exact:true})})
+    const row=()=>s.getByRole('table').filter({has:s.getByRole('columnheader',{name:'เป้าหมายก่อนเปิดร้าน',exact:true})})
+      .getByRole('row').filter({has:s.getByText(item.name,{exact:true})})
     await row().getByRole('button',{name:'รับเข้า',exact:true}).click()
     await s.getByLabel('จำนวนที่รับเข้า',{exact:true}).fill('2.125');await s.getByLabel('เหตุผล',{exact:true}).fill(run+' in')
     await save(s,'POST',`/stock/${item.id}/in`,s.getByRole('button',{name:'บันทึกรายการ',exact:true}))
