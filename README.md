@@ -9,9 +9,9 @@ Manager จัดการข้อมูลร้านและสต็อก
 
 **สไลด์ฉบับล่วงหน้า ยังไม่รับรอง:** [Canva ทีม v02b](https://www.canva.com/d/yWw6P3disBOSfHS) แก้ข้อเท็จจริงตามรีวิว PR #24 เฉพาะ4หน้า คง76หน้า ลำดับและผู้พูดเดิมไว้ก่อน เป้าพรีเซนต์12นาทีและ runbook ยังเป็นร่าง รอให้โค้ดทุกส่วนเสร็จแล้วทบทวนเนื้อหา/การเรียง/ช่วงพูด ดู [guide/version](doc/slide/README.md), [coverage](doc/slide/course-diagram-coverage.md) และ [notes](doc/slide/team-final-canva-v02-content.md) ใช้Canvaเป็นต้นฉบับและเก็บทั้งPPTXกับPDFที่exportจากCanvaตามเวอร์ชัน ยังไม่มีไฟล์exportของร่างนี้
 
-Code baseline: merged [`develop adc5798`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/adc5798b05279840dc6178f4291278467c929791) ณ 8 ตุลาคม 2026. CI [run 37738400052](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37738400052) ผ่าน Backend/PostgreSQL 348/348, Frontend 121/121, URL guards 6/6, lint 0 errors/4 existing warnings และ build ผ่าน. Stock target/active และ Profile fields อยู่ใน V15 ที่ merge ผ่าน [PR #28](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/28) พร้อม tests และ reviewer approvals; หลักฐาน Stock/Profile candidate browser ระบุแยกใน [follow-up report](doc/testing/sirapat-step3-followup-2026-10-08.md)
+**Code baseline ล่าสุด:** merged [`develop e6172b2`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/e6172b20096f7fb5487418ce278928a82b3f59ee) ณ 8 ตุลาคม 2026 หลัง PR #33. CI ของ PR #33 [run 37777850248](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37777850248) ผ่าน Backend/PostgreSQL 348/348, Frontend 121/121, URL guards 6/6, lint 0 errors/4 existing warnings และ build ผ่านก่อน merge. [`adc5798`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/adc5798b05279840dc6178f4291278467c929791) และ CI [run 37738400052](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37738400052) เป็นหลักฐาน baseline ก่อน PR #33 ที่เก็บไว้เป็นประวัติ. Stock target/active และ Profile fields อยู่ใน V15 ที่ merge ผ่าน [PR #28](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/28) พร้อม tests และ reviewer approvals; หลักฐาน Stock/Profile candidate browser แยกไว้ใน [follow-up report](doc/testing/sirapat-step3-followup-2026-10-08.md)
 
-เอกสาร/สไลด์และ CI **ยังไม่ใช่การรับรอง Final**. PR #33 (integrated JPA/evidence) merge แล้วเข้า `develop e6172b2`; PR #34 (Final Matrix/Git audit/README) ยัง open, CI ผ่านบน `345cf44` แต่ formal re-review/approval ยังรอ. Git audit ล่าสุดนับ 123 non-merge commits ใน `develop`; meaningfulness/account/ownership/การกระจายเวลายังต้องให้สมาชิกยืนยันเอง และแบบฟอร์มยืนยันนับเฉพาะ commits ที่ merge เข้า `develop`. Public deployment/URL, V15 central-schema approval/validate, integrated public regression, reviewed release บน main/deployed SHA และสไลด์ export/ซ้อมทีมยังต้องปิดตามหลักฐานจริง ดู [Requirement Matrix](doc/planning/step3-requirement-matrix.md), [Git audit](doc/planning/step3-git-audit.md), [dated Git evidence](test/evidence/sarun-git-audit-2026-10-08/README.md), [Step3 plan](doc/planning/step3-final-plan.md) และ [Notion](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6)
+เอกสาร/สไลด์และ CI **ยังไม่ใช่การรับรอง Final**. PR #33 (integrated JPA/evidence) merge แล้วเข้า `develop e6172b2`. PR #34 (Final Matrix/Git audit/README) ยัง open; CI [run 37804095499](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37804095499) ผ่านทั้ง Backend/PostgreSQL และ Frontend บน head `f1d99a0` ก่อน README ฉบับนี้; การแก้ครั้งนี้จะทำให้ CI ทำงานซ้ำ และ formal re-review/approval จากปวริศช์/ศิระพัทธ์ยังรอ. Git audit snapshot ล่าสุดนับ 123 non-merge commits ใน `develop`; meaningfulness/account/ownership/การกระจายเวลายังต้องให้สมาชิกยืนยันเอง และแบบฟอร์มยืนยันนับเฉพาะ commits ที่ merge เข้า `develop`. Public deployment/URL, V15 central-schema approval/validate, integrated public regression, reviewed release บน main/deployed SHA และสไลด์ export/ซ้อมทีมยังต้องปิดตามหลักฐานจริง ดู [Requirement Matrix](doc/planning/step3-requirement-matrix.md), [Git audit](doc/planning/step3-git-audit.md), [dated Git evidence](test/evidence/sarun-git-audit-2026-10-08/README.md), [Step3 plan](doc/planning/step3-final-plan.md) และ [Notion](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6)
 
 **เกณฑ์ Git ปัจจุบัน:** ขั้นต่ำ 15 meaningful commits ต่อคน; การแจ้ง 5 commits วันที่ 7 ต.ค. ถูกยกเลิกวันที่ 8 ต.ค. ดู [criteria update](doc/planning/course-criteria-updates.md) และ [Git audit](doc/planning/step3-git-audit.md)
 
@@ -109,7 +109,7 @@ cd code/backend
 ./mvnw spring-boot:run
 ```
 
-Windowsใช้ `mvnw.cmd` จากcode/backend และenv/providersข้างต้น Frontendอีกterminal:
+บน Windows PowerShell ใช้ `.\mvnw.cmd spring-boot:run` จาก `code/backend` พร้อม env/providers ข้างต้น. Frontend อีก terminal:
 
 ```bash
 cd code/frontend
@@ -154,6 +154,8 @@ cd code/backend
 ./mvnw test
 ```
 
+บน Windows PowerShell ใช้ `.\mvnw.cmd test` จาก `code/backend`.
+
 PostgreSQLmigration/security/concurrencyมีguardและต้องใช้ **DBทิ้งได้เท่านั้น** รันH2เฉยๆอาจskipPostgreSQL suites จึงห้ามอ้างว่า303ผ่านจากคำสั่งนี้เพียงอย่างเดียว
 ดู [CI workflow](.github/workflows/ci.yml) ที่เตรียมmarked databases/user/roleด้วย `disposable-postgres-ci.sql` และ [PostgreSQL verification](doc/billing/pr19-review-verification.md)
 กำหนดMENU_TEST_PG_URL/DINING_TEST_PG_URL/PAYMENT_TEST_PG_URLและALLOW_DESTRUCTIVE_DB_TESTSเฉพาะenvironmentทิ้งได้ที่มีmarker ไม่ชี้Supabaseกลาง
@@ -169,7 +171,7 @@ npm run lint
 npm run build
 ```
 
-[CI ล่าสุดของ `develop adc5798`](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37738400052): Backend/PostgreSQL348/348, frontend121/121, URLguards6/6, lint0errors/4warningsเดิม, buildผ่าน จาก job logs
+[CI ของ PR #33 ซึ่งถูกรวมเป็น `develop e6172b2`](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37777850248): Backend/PostgreSQL 348/348, Frontend 121/121, URL guards 6/6, lint 0 errors/4 existing warnings และ build ผ่าน. CI เก่าของ `adc5798` [run 37738400052](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37738400052) คงไว้เป็น baseline ประวัติ.
 [PR#32 report](doc/testing/sirapat-step3-followup-2026-10-08.md) แยก develop regression, Stock/Profile candidate 8/8, controlled fixtures และ public gates ตาม revision; candidate/browser evidence ไม่ใช่ public acceptance
 การแก้เอกสารครั้งนี้ใช้ CI ดังกล่าวเป็นหลักฐาน baseline ไม่อ้างว่ารัน backend/frontend ใหม่ รายละเอียดของ PR ที่เกี่ยวข้องอยู่ใน [PR #32 report](doc/testing/sirapat-step3-followup-2026-10-08.md) และ [Pavarit module docs report](doc/testing/pavarit-module-docs-report-2026-10-08.md)
 
