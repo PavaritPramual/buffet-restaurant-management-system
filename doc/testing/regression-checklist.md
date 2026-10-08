@@ -1,5 +1,18 @@
 # Regression checklist
 
+## Current independent verification — 8 October 2026
+
+See [current report](sirapat-step3-followup-2026-10-08.md). These checks record local/candidate evidence, not team release approval.
+
+- [x] Integrated develop6d83eac Core Flow16/16; real State denials12 and Thai unpaid-close message/ACTIVE/OCCUPIED verified after #26/#27/#29 merge.
+- [x] PR #28 candidatecc72fa0 Core Flow16/16, real Stock/Profile8/8 and responsive360/768/1280 checked before merge.
+- [x] Candidate Stock/Profile controlled loading/empty/error9 + legacy fallback1 separately labelled; all70 screenshots inspected.
+- [x] Canonical Git blob hashes and updated test-plan/traceability/report/slide-content draft ready for review.
+- [ ] Stock/Profile reviewer/migration gates and regression on final integrated revision.
+- [ ] Public same-origin HTTPS, Secure-cookie/timed TTL and final release/main/deployed SHA; team reviewed slides/export/rehearsal.
+
+The following feature-owner lists retain historical verification and owner review status.
+
 Run this list for changes to Menu, Ordering, Session contracts, API conventions, or frontend shared components. Record failures and the tested commit in the PR.
 
 - [x] Backend tests pass; frontend tests, lint and build pass.

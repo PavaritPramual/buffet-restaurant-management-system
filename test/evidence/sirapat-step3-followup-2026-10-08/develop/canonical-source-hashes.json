@@ -1,0 +1,1707 @@
+{
+  "sourceCommit": "4f8bc5a6fe072476772ef8c3ffcd610c9b35dc5c",
+  "byteFormat": "unmodified Git blob bytes; no LF/CRLF/BOM conversion",
+  "algorithm": "SHA256",
+  "files": {
+    "code/backend/pom.xml": {
+      "gitBlob": "f73311ee4a92bb1471800fb3de587972485d72fc",
+      "mode": "100644",
+      "sha256": "5912972ed3207a3567261061bfb98fa6e2abdc40a6f5bcb22cac9d8c13b0fc5b"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/BuffetRestaurantApplication.java": {
+      "gitBlob": "27111904a78df5891974bdf45aae43d223b9bfad",
+      "mode": "100644",
+      "sha256": "bb3b9ab13fb04fb92c60bf4dec8353cde9ad3a2344cc19206630b2bf8133669e"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/common/ApiPaths.java": {
+      "gitBlob": "596a7c0d788d5d9afc727a07f359e17684b05536",
+      "mode": "100644",
+      "sha256": "aeb80d56f7233fb8caa5b3377658729aa9c41bfd5c47795cbda02fdc3762c88b"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/common/UserSessionKeys.java": {
+      "gitBlob": "86acc16c13ab158100476a35f843b034c5214f7f",
+      "mode": "100644",
+      "sha256": "495a0983563650d6a33ed6107229025c9363b4052c1337247ccd0a966f7dd9ee"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/config/BillingConfig.java": {
+      "gitBlob": "7c5844949fc647682e1fec233b6ef59deb0b9cd8",
+      "mode": "100644",
+      "sha256": "1ec70e065219df2615b64d1787c66155154e933aad18f89f0c2d662cb03fee8c"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/config/BootstrapAdminConfig.java": {
+      "gitBlob": "b216424d4adf1607fc37ebcede34dad36d440136",
+      "mode": "100644",
+      "sha256": "658c4d7eb062b5cc6507abdf26f2ad4c7a0c78d4e809ccffa1c0710b69884d51"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/config/CorsConfig.java": {
+      "gitBlob": "d7eab3a84de099c154ea93a50a5439e458f47f59",
+      "mode": "100644",
+      "sha256": "620f59b84db28dda1a61de04441d918cfe630e785a4d192dbee31534ef63ada1"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/config/CustomerOriginGuard.java": {
+      "gitBlob": "8f5133e478d2a81d5d412f28fea386e1418286e2",
+      "mode": "100644",
+      "sha256": "c8ecc452b39c963a442043cab7ab0eac01f2267cb783e5a260e8e00b966404fb"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/config/DemoDataSeeder.java": {
+      "gitBlob": "bb690756f844feec2e33ed6f0f89dc50d77a9733",
+      "mode": "100644",
+      "sha256": "d47964416faac805c08f7cba85fa282d84035e9e4237377b1d5e6b50d0ad8114"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/config/MasterDataAccessConfig.java": {
+      "gitBlob": "e20cb8081bb5c7d7609410bc6efceaf70ee37ed9",
+      "mode": "100644",
+      "sha256": "d34aa183a234ad43f39dd3a0839e562e7e80243b3e20ae3bad1e7c423d4f79d8"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/config/OpenApiConfig.java": {
+      "gitBlob": "985b9d2da18195135ba6e42e6710357cbe1c7814",
+      "mode": "100644",
+      "sha256": "aaae73632508bc005495d79ec633cd56d30dfba9d04e599caa607b93e2264527"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/config/OrderStateConfig.java": {
+      "gitBlob": "6a64429dded74b93503a783ef919fc4ad4bba238",
+      "mode": "100644",
+      "sha256": "90137f3c5c990b50585561f81da7f5b10b5c878003010ed46fe67b7dfc5b6847"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/config/PasswordConfig.java": {
+      "gitBlob": "db70c8aebe2237202d34857a8d98de5e6f2872b3",
+      "mode": "100644",
+      "sha256": "ec22d60bf2f0d7ae6bc85bb53e7e5b40c296086911c3bdbadb502bba6e6bbe8f"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/AdminUserController.java": {
+      "gitBlob": "186ba54757723227f5603ca5802471338845cb71",
+      "mode": "100644",
+      "sha256": "fdc14d1b611e8ed93720068475d3e5c28698d5c9750df79a92d0daef65413083"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/AuthController.java": {
+      "gitBlob": "a641af12673cea9ef02416dd70a265687afde3f8",
+      "mode": "100644",
+      "sha256": "b3df96d78c4207d4579c66d8c8586790a9588b3a8777f7edea0cb4beedbe5b2c"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/BillingController.java": {
+      "gitBlob": "e4f1a74fef54cb88b64ea7eff060fa1aa12ab7ca",
+      "mode": "100644",
+      "sha256": "936918d20b1f94761139efaf2c3ce1aefc96e77da392041338b34cb21ae56275"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/BuffetPackageController.java": {
+      "gitBlob": "eeb19d28f57a467cb381b4f0ef66531ec3d0b05e",
+      "mode": "100644",
+      "sha256": "dacd4342dc8c9cf6c6dc781094070e8b17bd115e6408f7ae979034371e8f3cb1"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/CustomerBillingController.java": {
+      "gitBlob": "fcc2597673b4f66a05173a493ece7b851edf118e",
+      "mode": "100644",
+      "sha256": "0e3bad862d14ac8d3deae8f9d2da32728f67fa0e54810296ca98dc6082f769c5"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/CustomerOrderingController.java": {
+      "gitBlob": "696ea1275980ab1f5d343a30f06b3850b496b067",
+      "mode": "100644",
+      "sha256": "c2885d26b18c926ae583259c8bedb548df358b4fc371f637d4493633aff07007"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/CustomerSessionController.java": {
+      "gitBlob": "2de69ecd3be349df999e5d22564cb62cdba2473e",
+      "mode": "100644",
+      "sha256": "14a6794bd84bb838924371b1562783e2ac5e36bf0f39ead212db82a88904d020"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/CustomerSessionPackageController.java": {
+      "gitBlob": "a03df1f22616f0158da8312ce667daed86e53c41",
+      "mode": "100644",
+      "sha256": "209881f76f9722cadf21fd3a87ebbbf0ae341bdbf22e9aaf748584e633cdff08"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/DiningSessionController.java": {
+      "gitBlob": "238996ffc5f4a5304c39c63639577bede81463e9",
+      "mode": "100644",
+      "sha256": "b523ef982c50bef257980bcd1430c3dfba2692c63889bcd13c966525bbabdb08"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/MenuCategoryController.java": {
+      "gitBlob": "59a143e514acd151828d545c313b62388f3f7671",
+      "mode": "100644",
+      "sha256": "a05388944df535fb12c3abcce4e473775dd6beee28b6a8e5d14fc7c4baaf54be"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/MenuItemController.java": {
+      "gitBlob": "9f928a29b03c878b89a1b60c87ceef32d08f658e",
+      "mode": "100644",
+      "sha256": "3ae49afe09ddff07b75226a476f33ea33096f347d2e3af3a46cd0e16b203ce10"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/OrderFulfillmentController.java": {
+      "gitBlob": "fde35e0ab7bf5d48b79d25ec117a97c996de93f8",
+      "mode": "100644",
+      "sha256": "ccd6dbda02be9e7343dbfbb9eea5ca007ca37975b18abfcde38584566c493473"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/PaymentController.java": {
+      "gitBlob": "7dce169aace0c6ed145c2d45e9fb5dbb89ebdf48",
+      "mode": "100644",
+      "sha256": "27347134841b9c5a0e85afd299da63b97642a679865d42dc73cb02c046209677"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/RestaurantTableController.java": {
+      "gitBlob": "1d87fd8cd75a4061ce9016ef68aa1a2d94556cd8",
+      "mode": "100644",
+      "sha256": "53e8a3b9e68ac120b4d69b5091bcd93ad36a2f74b9bbc4778d31f5767b73ccf8"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/SoupController.java": {
+      "gitBlob": "2ddc3b5fd23691066d5b02002123735a5beeee0d",
+      "mode": "100644",
+      "sha256": "09d094430820ecdc813079dd69a377656e43adcb2c33b796645b191da51a818f"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/StockController.java": {
+      "gitBlob": "543db6d406384a97a1dcd5fb9adae8de7a6f146d",
+      "mode": "100644",
+      "sha256": "b5610f95136c951859510bffd13e56b9e75ca37518e7fa3778ec6a7d4c014070"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/controller/SystemController.java": {
+      "gitBlob": "057b85ff9037e5f1ca0ac23d0d4cccedf95ba1f6",
+      "mode": "100644",
+      "sha256": "5a6c60fed9f7a2d97667405f17bb2bf426cacdb3332ad54e34c1b2ff9f07697f"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/BuffetPackage.java": {
+      "gitBlob": "dc005c487ba2470ba49c6ded5dda4e565194d773",
+      "mode": "100644",
+      "sha256": "3ce93de2bf7dbb3310cc30dde83ffc53ae6c7b2309c98d200333a5d28032ae01"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/CustomerOrder.java": {
+      "gitBlob": "8f9f9c2c8ad35e89b570ba02e9bb76cd951b37d9",
+      "mode": "100644",
+      "sha256": "93510f9beec0bea3407e44b7eb670790a292c0fa8b977b9e8bcd56a646d3fc62"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/CustomerSessionGrant.java": {
+      "gitBlob": "feab93142669c4bf4b5175305eff423303d878cc",
+      "mode": "100644",
+      "sha256": "679e0872c61a404c2ebc75dc2ef7749cc20e84f0078222b45d085017fe087c2b"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/DiningSession.java": {
+      "gitBlob": "b7a6da533f9412f1e10f72469839f3fabfd81cca",
+      "mode": "100644",
+      "sha256": "51fecc5c520ca6de10982077e0f584646494047df34978f74dc8f603428f09f5"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/MenuCategory.java": {
+      "gitBlob": "f1441b7f81ff228ae3b3d0616c5ddca5c41e723f",
+      "mode": "100644",
+      "sha256": "19aaf99bc6337b015cd2551fde327b30911f845143fae2290d8e85e0ea30c9be"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/MenuItem.java": {
+      "gitBlob": "522b6ba2d3b7dfa0457576a9fe7c829e6bc2dfd5",
+      "mode": "100644",
+      "sha256": "3f1d4cfdd35d568aacf7f43bb4495b30581556487bdb06fef15c53a076355a6b"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/OrderItem.java": {
+      "gitBlob": "afb35f5a40f7b70ace63b42f4cba52a6402e1887",
+      "mode": "100644",
+      "sha256": "cc66f8133050ef50de89b4aa7b53385b7821b86e7d5d80e249ad486ab96d10cd"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/Payment.java": {
+      "gitBlob": "07fd13ab5e5ee6d6adf50fa28e84829c1fde3b9d",
+      "mode": "100644",
+      "sha256": "49871e22090989f38da14a7944ea317d0afad8bb0d45f02e5cb56c872b4e0932"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/RestaurantTable.java": {
+      "gitBlob": "fc75f18f53c342e9d0f69f44795ac2a2463dfc83",
+      "mode": "100644",
+      "sha256": "457b6aa2bb3cfc0f3963111a02b2b45f05d7055a198f297b16e397889da9eae4"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/Soup.java": {
+      "gitBlob": "fccb44fc2e30d005516190dd8cc6d63bc417ec5e",
+      "mode": "100644",
+      "sha256": "b6531b17e216d6f9f8f41f4da7335680c92b7e2ff825055d5596ce17493753c3"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/StockItem.java": {
+      "gitBlob": "3576c51bcf29bc3fc5670376df2c7144f9e1c20b",
+      "mode": "100644",
+      "sha256": "b9635033c5089719ae2e35e8299228b723db0bf2599f34f7ced8d7d0ebf25c51"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/StockTransaction.java": {
+      "gitBlob": "6a5db71bd6cfb3332491ab9c89e21aa41da039c7",
+      "mode": "100644",
+      "sha256": "ef37d84f9e8404502b52c75be899fa1a6ad7fda1d931647946cac5470cc70554"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/UserAccount.java": {
+      "gitBlob": "50fd89e914bb79ce6d6c3bf1a6564faa58ca22ae",
+      "mode": "100644",
+      "sha256": "286006cdd6c9f3cb8b0205a24077ce5fcc9952b3137bfbd951bdf282b8843d24"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/UserProfile.java": {
+      "gitBlob": "f1a616646e7f2953a56e868f36da7d3ab8822e36",
+      "mode": "100644",
+      "sha256": "4e72b9763ac8a2f123c17fa0c5ebdb4a62d96f7b5fb6c0aef7518e5dc8f1e37c"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/enums/CustomerBillStatus.java": {
+      "gitBlob": "19755c7d29ffedb7171ce8c3f7efbe90532b4730",
+      "mode": "100644",
+      "sha256": "e927909c5dc2f8cbc69598990a256b32ddde7e75428243434e690f74f7274881"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/enums/DiningSessionStatus.java": {
+      "gitBlob": "9445eb27541fb50293c8e055a32ec89dce65da2b",
+      "mode": "100644",
+      "sha256": "080d5d2b2c926e0380332baa73aabeb66ba61b572318fa9754ef8d90488594c7"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/enums/OrderStatus.java": {
+      "gitBlob": "608eff33f50871d0a6ca606b482e2b431047a316",
+      "mode": "100644",
+      "sha256": "1b08a5f86494b35b69234cdf06c91b70f9e9dff1045df3c45966574dd89d6681"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/enums/PaymentMethod.java": {
+      "gitBlob": "ae0382e97669224ffed544913b80eb164867b186",
+      "mode": "100644",
+      "sha256": "56829b7ba1ef9893742bdce14e1bf4f1e4f76f66f7fa4ffc3023c0176e236b56"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/enums/PaymentStatus.java": {
+      "gitBlob": "80bfbf4cf4b4703605d2d1e54390d2ee7fe974de",
+      "mode": "100644",
+      "sha256": "b6d5e86c1d861f220d245d597656f78a2b35481aef55a9d39ac8be9e01a051a8"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/enums/StockTransactionType.java": {
+      "gitBlob": "02b85a863f17416fc51cec365b73aef53225d563",
+      "mode": "100644",
+      "sha256": "12ca77f517076ae74cf4e17edd4533a0124f911f4d08b42c06056800513e3866"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/enums/TableStatus.java": {
+      "gitBlob": "3e01c9060d0baaee62946fce8243b569b2f32ec6",
+      "mode": "100644",
+      "sha256": "70272ca3d6aecb49b672a38ebfe6a456380e9516e330d496c1e7c67dec12953c"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/enums/UserRole.java": {
+      "gitBlob": "224ea0b6cecf7456136cb927745232a8453e6cb9",
+      "mode": "100644",
+      "sha256": "319d313a6eea1dde7c7a1a63d914112f47cc5722c7ee1920bfa4b66b3c49db44"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/domain/package-info.java": {
+      "gitBlob": "a408e8d1cf2914cc2db6d387861282afa7a92b81",
+      "mode": "100644",
+      "sha256": "93d8f7007d23e2d76ac565ce54db6f2536f191e9185f850d0ffe083e907bf2e4"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/billing/BillingContext.java": {
+      "gitBlob": "199dc74060bd285c2f8b129dfc56944cb28388f8",
+      "mode": "100644",
+      "sha256": "6bd6d429d2cd4ef53169e7adbf15a9f535dabcbe075d15c11aaf54a76debefd5"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/ActiveStatusRequest.java": {
+      "gitBlob": "30d99403654cd07d7609564ca1baa8bc60ca01c9",
+      "mode": "100644",
+      "sha256": "86533469f3a17deb4f254df0bc833fccb28ae0d888455a9470a128e32f2f7590"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/BillingPreviewRequest.java": {
+      "gitBlob": "ac83bca57d12c9841626197d25668dcbb34d908b",
+      "mode": "100644",
+      "sha256": "456f2e377b7b34b0fca97c730e0c235513012f7c6e66b71ded6550881406e213"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/BuffetPackageRequest.java": {
+      "gitBlob": "229046b44bd1ca8bca3929e5dd58eb0561933e59",
+      "mode": "100644",
+      "sha256": "5914b96b81d1aa60a9fe5e71806b977973390fc08ab5c068a33d90bc14630707"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/CreatePaymentRequest.java": {
+      "gitBlob": "3d0af64426f4c54cd609a1e8abc516b6ac29af23",
+      "mode": "100644",
+      "sha256": "1c2d8535054a8921eb36ed18a5f85f89c483177bcff330665d030b650ecc36f9"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/CreateTableRequest.java": {
+      "gitBlob": "4ddfdad01ac00430e659c780eba4d91b94fe398a",
+      "mode": "100644",
+      "sha256": "1eadddce94fa0cf385322fd8d63751b402401f8ea975e0f70dac10cec4db2269"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/CreateUserRequest.java": {
+      "gitBlob": "67f664e24b46dc8f4a2ed1e767594e20c0a0a09a",
+      "mode": "100644",
+      "sha256": "8e1f7efa35e85c0f233695abdf582420d5956122d4ec7ef232a950cfa7912088"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/ExchangeQrRequest.java": {
+      "gitBlob": "9384f412167f33eae8157740fe3385bb5bf99d4f",
+      "mode": "100644",
+      "sha256": "f11e08a4e797787bf1e404d4f4b2aab894be56bb75d61fb1b5ef11a7b4a24e63"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/LoginRequest.java": {
+      "gitBlob": "7e9aaba05006d1ac34e17301c361275c845ce412",
+      "mode": "100644",
+      "sha256": "8e8d29f653b319c80373ae735f4f97fbb3f2927fd259925040a66ec478f514e5"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/MenuCategoryRequest.java": {
+      "gitBlob": "29d423ac7e84e682c8da0dd794f5e6b2009aeb9e",
+      "mode": "100644",
+      "sha256": "9424ee15e74ee6c40a2dbf8c2c190bb38142f843488f0f86b8e756a025f80c87"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/MenuItemRequest.java": {
+      "gitBlob": "d5c12557ee82eaa44cbbdc4a46a2a0ee64c6a22f",
+      "mode": "100644",
+      "sha256": "2f93e62f902618e9d85159fa0802feb78f0c0faa8ef1c8fc224d60d15bbc6d9d"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/OpenDiningSessionRequest.java": {
+      "gitBlob": "b9f73ae64effd09f691e835427d43e6afe80551a",
+      "mode": "100644",
+      "sha256": "bd69c76680472fa60a891f9247fc09a55f1c819a0c86cc10162d661c6be416a6"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/OrderItemRequest.java": {
+      "gitBlob": "082971c1fb231766f65475612e1ff98b39291a43",
+      "mode": "100644",
+      "sha256": "0f2d9d6d9b23deb2013a806b07e1468b1758f34c0191f9d2ca2c142755b39bcf"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/PlaceOrderRequest.java": {
+      "gitBlob": "7dc279214e76da760e7a4b1e0700b9abe88d80af",
+      "mode": "100644",
+      "sha256": "bcbf0418875c81359fa36a2bf4b08292249206eb8e03c8d1d5dc179862c42607"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/SoupRequest.java": {
+      "gitBlob": "52f7224ec60b4801ed52955171f4683f67b952d5",
+      "mode": "100644",
+      "sha256": "ff8fc8d8ac2bb1e3b1158a48f0c078f663f1c72875c61e6818648a8578e98cdf"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/StockAdjustmentRequest.java": {
+      "gitBlob": "f13797791586b4e5bcc92459cc24dba6ad1be890",
+      "mode": "100644",
+      "sha256": "e11661c9621a4f77e0479316aac109748a260b241cc2a65cf455d5c812419240"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/StockInRequest.java": {
+      "gitBlob": "1097dd1511a503551469a79bcf4ce9fa87dfc9e8",
+      "mode": "100644",
+      "sha256": "9c98d8cff9627513525939e2803372aa8d76b88585bbff26e6a8ab4ede68e6d3"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/StockItemRequest.java": {
+      "gitBlob": "b6d92f1d9e6d3837bbf654845a2707f2a1a4332e",
+      "mode": "100644",
+      "sha256": "34694d633448c0641e6b9f12d639941d54cd75b92ef7bb9b467addf28ca8923d"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/UpdateOrderStatusRequest.java": {
+      "gitBlob": "2d6e789bfc0b40ecde4b336c6b28240fb410199d",
+      "mode": "100644",
+      "sha256": "ef26fa77a6dbd5b9b1034bbd2b980122a5dbf990ca36d6893d9efe3b1178b426"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/UpdateTableRequest.java": {
+      "gitBlob": "5913e5f7fe0d1c7dc1da8f40b231b40a200b3ab1",
+      "mode": "100644",
+      "sha256": "d744e771d4a65a6ee71b4ce021f9edcb02a2e97ee274adf38be265de1ee358dd"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/UpdateTableStatusRequest.java": {
+      "gitBlob": "3ac4c67f034fee0476cde3516c794737670b1291",
+      "mode": "100644",
+      "sha256": "0772150eec7996e51eee79c62b25c52de93671f5633e85019e75000a3b1ef65f"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/request/package-info.java": {
+      "gitBlob": "6930a36bdd3bacf82268329bea8e00ca1bab1867",
+      "mode": "100644",
+      "sha256": "e075a85512c3d86b752f7ed5fc5889d6a5a5dadcbef0b6a02fbcb93a7fec5e4b"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/BillSummary.java": {
+      "gitBlob": "72f9615367179b1af29c89d1f0c3809e13b764f2",
+      "mode": "100644",
+      "sha256": "eaf6d5e5053ebf0e09d3390828f3fbf043e15d5cd67f1548107e0d104849c5bf"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/BuffetPackageResponse.java": {
+      "gitBlob": "1d95ef8c2d50a464beb28dca65ecbcc481416dbb",
+      "mode": "100644",
+      "sha256": "5964463ab0145acae34474a44ad946aadf56224d0b69481e52c6ee7453134aef"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/CustomerBillStatusResponse.java": {
+      "gitBlob": "6d47a840ccb3f35e21c65ec49573ace2d05bb6b6",
+      "mode": "100644",
+      "sha256": "aa016e8dfda17f412c8d5ccf38b8d7ed237e7235d6be139167d6ed566e870369"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/CustomerSessionResponse.java": {
+      "gitBlob": "f65462964bdeb8402f0f05a24b9607b30fa34d45",
+      "mode": "100644",
+      "sha256": "acda099bb0563a08922cf84ad4306f0b0fc7dad1a9e5e32190d5c7d071c6e92c"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/DiningSessionResponse.java": {
+      "gitBlob": "1bed3212f30636f5a598fc37533d3054bca60ad2",
+      "mode": "100644",
+      "sha256": "d6e92aadea6fb42fee90d36374d546f162bd23c8a4a1f4aba2fb80c8b01b2547"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/ErrorResponse.java": {
+      "gitBlob": "23d6935779a242d1c9131f6e23ea9a6948d5a14a",
+      "mode": "100644",
+      "sha256": "d495755b2c0c551ceffbee2e4346b501b0fc1c80dbbd3d12c5f19bce194106a0"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/MenuCategoryResponse.java": {
+      "gitBlob": "8ad126d4fed9d344a93d23a888919dd85bf71c8f",
+      "mode": "100644",
+      "sha256": "9afdc56d1bda1fbb3094ca526ce897c1258348c674883be3efadc16e19e6d7b6"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/MenuItemResponse.java": {
+      "gitBlob": "4ea369f3a670a0e90ad1443685124ecb88bf24d8",
+      "mode": "100644",
+      "sha256": "91f7e131d4a78372dc28532ac922061dd468ff63684e6f009630f0b2f965bb13"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/OrderResponse.java": {
+      "gitBlob": "80d7eea84b8eb95ab88fb44bc11ea4c176ab598b",
+      "mode": "100644",
+      "sha256": "df9e963834c42b5d8e1b3e18dcff26e613c130a7e8be19f8051efc33282788fe"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/PageResponse.java": {
+      "gitBlob": "5b9de13c4c9240339dd9ba3fabcb9f7d0e6857a1",
+      "mode": "100644",
+      "sha256": "09410974cc48a3b43945cc39c0330c1070434eaac67d4f8c139c1984a7982b2f"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/PaymentResult.java": {
+      "gitBlob": "588d28ab88bb3cef76eebbaf552ef62a684ef5cd",
+      "mode": "100644",
+      "sha256": "ab220eace427ee274fb7055f254605320a57853ef765755e29ef4d335c5a70b3"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/SoupResponse.java": {
+      "gitBlob": "1d59c89d1ca3ab72cf3ce69988727e31a29ec80c",
+      "mode": "100644",
+      "sha256": "369f1ec7bbe88917a89b6f1e547d199304b48968a60581c8e23784d68313a627"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/StockItemResponse.java": {
+      "gitBlob": "e0d8222fb47c3af5b36ec7216ee6a2acdf81aff9",
+      "mode": "100644",
+      "sha256": "fec2690382db985c854e6dc6897b4a1e974481967ff3c9bcb042fb9a11090c7b"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/StockTransactionResponse.java": {
+      "gitBlob": "6360e94b009c88fba8dc0d33ff3b5d2da27255e8",
+      "mode": "100644",
+      "sha256": "0e62eb87a0feffdad2732fe337f00f5f1f3e6eb3e5ea5f88eaaab82dc9c6397b"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/SystemStatusResponse.java": {
+      "gitBlob": "30de7f67c77f8aa4b2a49480a194b10f64d4c434",
+      "mode": "100644",
+      "sha256": "a5288392995cda7ac39e9bad7419735fd59b0321df474adcffa653bbba32baec"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/TableResponse.java": {
+      "gitBlob": "725b3fe8570584f6846005855661dd08b1ea67d3",
+      "mode": "100644",
+      "sha256": "db97887145bc2fce1b5d99f483e2b03c38a321a39b9a82647bcd0233fee18211"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/UserContext.java": {
+      "gitBlob": "be83237814066cde55a21ea4dcbfd4fbe8557b80",
+      "mode": "100644",
+      "sha256": "cd3f5a6c4bb29f1cb01189362593e0b53470b5b2f4b899057e31d284d6a85591"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/dto/response/UserResponse.java": {
+      "gitBlob": "fea1c26fe38db7f265acde441b2553ad5e467606",
+      "mode": "100644",
+      "sha256": "ff555f1d31ed27d16aa18fa4f30b370ffaa3fd678ddacf023398693d1877c75f"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/exception/AuthenticationRequiredException.java": {
+      "gitBlob": "64cf6d1a1f9318c27c9ea1b20d54d70a9bfe6669",
+      "mode": "100644",
+      "sha256": "50a3b4930946de0232a8872fa53a45d6620403c7aa849d1fe2ca2503c2d82a37"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/exception/BusinessRuleException.java": {
+      "gitBlob": "0e545e60e924d96e9e299b8cd339ef0d7a8f844a",
+      "mode": "100644",
+      "sha256": "0a8c4fcca99a8e77cc0e772200d80d9ffc3e18dede974a7c63b1937a90fccb82"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/exception/DuplicateResourceException.java": {
+      "gitBlob": "ff3797a6c686f402a96e7b59f28fcd0bc768fd4d",
+      "mode": "100644",
+      "sha256": "b42957baa0224bc6c78c400fb34aae35d4355982b13cfe853f7f4e21afd2e9e0"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/exception/ForbiddenException.java": {
+      "gitBlob": "3e0f54ba389da31a6059cf85201b6fba2f552c4c",
+      "mode": "100644",
+      "sha256": "35c2ac7ac861aea96c3a581ce172298281938f368de8eabcfa84c60d520b6544"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/exception/GlobalExceptionHandler.java": {
+      "gitBlob": "1ab17a946766fe3727bcc6e950a09f981ab97a43",
+      "mode": "100644",
+      "sha256": "de9f6719ed27a7e3d77062d8b1f99181427bd9841e36bf0278cc6301ddcc0800"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/exception/InvalidCredentialsException.java": {
+      "gitBlob": "2f8b0bec46630420c0c6d92138fd3d509f75da0d",
+      "mode": "100644",
+      "sha256": "7ca01b37ed1273576ee719b6412c214dd4ac49541dfcba1af0f462b32cf81608"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/exception/ResourceNotFoundException.java": {
+      "gitBlob": "5326899d98f4330b6bdf0b3e80f7b586ecd5d846",
+      "mode": "100644",
+      "sha256": "6e5e60d89194c12419ba398b41e699800cf390d9cae30a3c8282ecfba638eade"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/exception/RoleAccessDeniedException.java": {
+      "gitBlob": "860ca794184cf37fd13d6caabb72a69141527cfb",
+      "mode": "100644",
+      "sha256": "d53f83cf7486a02002cd3d15da6a1d9bbf3d02698dd064b6d5e5c6714bde02b9"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/exception/ServiceUnavailableException.java": {
+      "gitBlob": "9c0e3b00dde3cca63bd42a0321b06233eaa30fe1",
+      "mode": "100644",
+      "sha256": "9165409af6024b2cb0f3c59ab59f79ec373ab4b3a3d793d584d3e833f74c0417"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/exception/StockRuleViolationException.java": {
+      "gitBlob": "1c711ad7534ca3bd86cecb3939cac10cd558c68a",
+      "mode": "100644",
+      "sha256": "f614eb00fe635c8e3f72a1b10855836effdbdca36d0dc96e94e9f0110e6e88b7"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/exception/UnauthorizedException.java": {
+      "gitBlob": "0cb1973c5d70f93d5f3db73d35a4e322f9b5431a",
+      "mode": "100644",
+      "sha256": "254aa3eb23a491e7ef1cef9dcaa85b81834390f6f9b168a602c522537b608892"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/integration/billing/DiningSessionBillingReader.java": {
+      "gitBlob": "b9569e568966130bec15b8ee083f8622f51c1e1a",
+      "mode": "100644",
+      "sha256": "0f1986c5128aa098a2e20ab01aceacfec433ae1b94c3224ce5e4898a88403fd4"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/integration/payment/PaymentStatusLookup.java": {
+      "gitBlob": "3318f2845ce2257588640e0e5fe3ce27e70e59ba",
+      "mode": "100644",
+      "sha256": "ab84178675b36b5dcd3defa3db8b7092f21076fc44be4c000ef4edba987e03af"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/mapper/CatalogMapper.java": {
+      "gitBlob": "042c800e64a88dfd613d2f664bfcff66657ce998",
+      "mode": "100644",
+      "sha256": "3f066b2a6a0dfcc24ee52600b94fede86aef31a18d3c566b04f25d3bc961a2b3"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/mapper/DiningSessionMapper.java": {
+      "gitBlob": "b6555aeb4ae9e94e4b0e716d7cf3403787196044",
+      "mode": "100644",
+      "sha256": "90a22b6f465bf56b48f0d2abeb630cbcaabc563299fdcb297bf0c58e47d56bfc"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/mapper/OrderingMapper.java": {
+      "gitBlob": "0fed3f2d1ea86ab16ff9cc0143758caa7ffe04d0",
+      "mode": "100644",
+      "sha256": "2d47f99006d3f5900602d85d48b4c99141996333d8e389844e502b9c066b2d88"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/mapper/TableMapper.java": {
+      "gitBlob": "918422b2eabb2dcd5f0b54a21f5e14784ec5136c",
+      "mode": "100644",
+      "sha256": "501e11c7885420f28eb3c83a52ce7a77522fc3ca149490a3c7df4d36f81c0c55"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/mapper/package-info.java": {
+      "gitBlob": "92d52996688c2e0c8f69f4148d9a64592676bba2",
+      "mode": "100644",
+      "sha256": "29b366d3d9785bfe90587c9f5c1848f8597b2748edbf45de2b005197cc31c29a"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/BuffetPackageRepository.java": {
+      "gitBlob": "a8225a5a9e88fd239376cfe58f73aa436d940b7a",
+      "mode": "100644",
+      "sha256": "30951a55d270f47997ff12a86a06d191624fad163b0ce3540c3586d74ebf07ab"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/CustomerOrderRepository.java": {
+      "gitBlob": "a6144edcbae4c48624e34e5a7e37ceb62d109b93",
+      "mode": "100644",
+      "sha256": "ed823068590ff140f1a4ae2f918a05df95698e529013d993da099e9f11a0624b"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/CustomerSessionGrantRepository.java": {
+      "gitBlob": "dfb6da593fe2f39820d9b8e85d2454bf5a5885a9",
+      "mode": "100644",
+      "sha256": "309dbad5cd9a6b42faa803ac0efda457b64a522e88c06115bbc49dea1d9a31cd"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/DiningSessionRepository.java": {
+      "gitBlob": "8344e1e4472d127e2ed0e7f91af2bc29a55b4438",
+      "mode": "100644",
+      "sha256": "e4466b5b8fc02155bf7a2c0f5ad0e168e097a49c3437226b46d1ce0d1ab980c5"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/MenuCategoryRepository.java": {
+      "gitBlob": "e22d604f0eb076c5f990db8e81f6c23df61f357c",
+      "mode": "100644",
+      "sha256": "e02b0a396e0ee0808369ea73a66523100e2bb2870f5340db5996d1c52863cb2d"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/MenuItemRepository.java": {
+      "gitBlob": "3e7f1ba47d413616cea95e4b0032bca2a3f6946c",
+      "mode": "100644",
+      "sha256": "493020d8051978898e4927eec04bd797f7e5d16945025ce513b941b7eb7e8943"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/OrderItemRepository.java": {
+      "gitBlob": "eb588a5d6ef1cabec34d93cdba8cd81602d46345",
+      "mode": "100644",
+      "sha256": "585255cb9fbc0a93abc869248387754ae1162dc72d31007ae76cb4a25b38b2f5"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/PaymentRepository.java": {
+      "gitBlob": "6badd16efbe8285b65580e69cc9604a5fbc76560",
+      "mode": "100644",
+      "sha256": "a3523ff1a2caa4cee106bc5c60bd6351736ab34dbef441add595e1290824fe53"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/RestaurantTableRepository.java": {
+      "gitBlob": "5f45027332602e31b27a00473374ec5554c22bbd",
+      "mode": "100644",
+      "sha256": "6015e765e7f47db4f092d81c779414eb383d3b95dedb48ef840433c3532948b4"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/SoupRepository.java": {
+      "gitBlob": "24a2007a4960ba3eb6fcee137b82a05f2a5cf6f3",
+      "mode": "100644",
+      "sha256": "fb83fd868bccaf6b38119ce6081c4e8931716150ed048b0efae5782b42c770c8"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/StockItemRepository.java": {
+      "gitBlob": "1644ab523d63042c37ebd854b90b467d3b89d0cd",
+      "mode": "100644",
+      "sha256": "50e49f99b906a8d1d1bccd91c55bc840d422edd7a4273040db65653be59ae13c"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/StockTransactionRepository.java": {
+      "gitBlob": "a498976db21203e1c51de842e164bdedf1d1f1c5",
+      "mode": "100644",
+      "sha256": "f27825cdd03841e426f3edcd6cf43b459b00343d98bf8a5c7d376cac9d3d48d6"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/UserAccountRepository.java": {
+      "gitBlob": "13d0981dc6f8c4fc92142e0b210976a6c1acf3d7",
+      "mode": "100644",
+      "sha256": "15c1873c711bbb73bf3048562f06671084ddec62e90bd07a5f9730ed096ba00a"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/UserProfileRepository.java": {
+      "gitBlob": "b155d9a40279fe4fce0af32cfca1540291027119",
+      "mode": "100644",
+      "sha256": "ad6bce9ac28722130ef0a87319652ad750bebaacfa7de50458701bb7831afeaf"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/repository/package-info.java": {
+      "gitBlob": "289c100554baadb46c7eafe04cd15290b0492578",
+      "mode": "100644",
+      "sha256": "b528ad1c37d4531147f9fa492d644d0b867421bbea3c5b96f449e4d064d9fde4"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/AuthService.java": {
+      "gitBlob": "45f72efc4cac72647fe17c646147c0e233df56e6",
+      "mode": "100644",
+      "sha256": "8533b27728420cd241b678b4701e531f6b76c6e3bcafe0d4239d17a039681bcc"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/AuthenticationService.java": {
+      "gitBlob": "dea4a7c2f51a1ab962303d752094f4a75681231d",
+      "mode": "100644",
+      "sha256": "d357a1c53f7c8ba7ac2064ec3a92634ce3c7a3a715f459338f8f830ba24df27c"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/CatalogService.java": {
+      "gitBlob": "29935d7f2683835f01c79dac839e2200ce54ce4b",
+      "mode": "100644",
+      "sha256": "0d46647e14c25cd2aed32863345234f5d1791d3965dd8f2158da6a500cb1dbf1"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/CustomerBillingService.java": {
+      "gitBlob": "2511c4a13dea66d8d3689fa542010b3f80923ff7",
+      "mode": "100644",
+      "sha256": "192537fc81d4edaa0f90d317416060ab361212688b458631d08f32c20c373e71"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/CustomerOrderingService.java": {
+      "gitBlob": "3fe43c157de6158b8f92de148f834ed353d5174b",
+      "mode": "100644",
+      "sha256": "005d41897d5448bc3eb4044ca53477f47e4821bbefbf50a6125e2d4e798c7979"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/CustomerSessionVerifier.java": {
+      "gitBlob": "117bf90cdf937f532f25d824ea3ab0f848bc729f",
+      "mode": "100644",
+      "sha256": "e35bf80a822ad82da7c50deaa88a55934440db0f141ae86526a9deee17cb7798"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/DiningSessionService.java": {
+      "gitBlob": "26f58dbb4e9d925fe24b5b8eb8c38339aebeede8",
+      "mode": "100644",
+      "sha256": "96e757e51a6212f44e257a865df2a3b0f4574b50484b09c8448bf94132062e2e"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/DiningSessionStaffAccessProvider.java": {
+      "gitBlob": "3fb583199bf66f1f2a2884659527b3522d49e7b0",
+      "mode": "100644",
+      "sha256": "1ed68e1c772c7122474b27881fccd2cc65e637d9ab96feef7d6702c6f0ac4304"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/MenuAdminAccessProvider.java": {
+      "gitBlob": "6b8110e68dd48e32a46520ad7add13a3efc73a58",
+      "mode": "100644",
+      "sha256": "73244a2e665e47092056e9e19880a3ccb5aaf98f7ef675eb728ccdefb82f470a"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/MenuCatalogService.java": {
+      "gitBlob": "da12f81adcbc5cc34fe63726024f68f014eb3b25",
+      "mode": "100644",
+      "sha256": "90efd00f5b3b75984e3d3f1f95a2788654f7fb313e71d8605c004ee64e0365b5"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/OrderFulfillmentAccessProvider.java": {
+      "gitBlob": "778099b3a13059591e2a1a9282a88aca3b0d5efe",
+      "mode": "100644",
+      "sha256": "8fea93751e4e987c8694d2a72cb2cfb605bf8b0f741697031cb3c85a0143092f"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/OrderFulfillmentService.java": {
+      "gitBlob": "5cbbf59a1278787874031927309378f2dabf1a82",
+      "mode": "100644",
+      "sha256": "3c3e2d985d46e2352757012f04380afd66da947e0a15f8a8ae5d5b2fb05e4939"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/PaymentAccessProvider.java": {
+      "gitBlob": "ac7b3353e340aa60a51d879f49868ad6a4048de9",
+      "mode": "100644",
+      "sha256": "ecbc4f8d74b1cec16a05a3922c382feb0f8d7a3c587a15b5356f3c1cc0f9be48"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/PaymentService.java": {
+      "gitBlob": "cfc34af3f9690b2c51ea43ac20a02ddd4b5deaed",
+      "mode": "100644",
+      "sha256": "dbf5ac5a267fb631ef0f264363b223aa1443a742c8043acb71bf4a598835e710"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/RestaurantTableService.java": {
+      "gitBlob": "7b8b772118e430ec83edfc433a30a20503b7dcdd",
+      "mode": "100644",
+      "sha256": "c5df8f58ecfaec8372cd085a6333047850b477da96161e8fc1eb1aa420ec8ea8"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/SessionContextProvider.java": {
+      "gitBlob": "8a8785cf8b9abca128aa4175423abc2766732841",
+      "mode": "100644",
+      "sha256": "47338eee8c5f8dd69ff670003d58e8366a0cab12948b0aa3549063287f1533ed"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/SessionDiningSessionStaffAccessProvider.java": {
+      "gitBlob": "72eb58e61adc1235529e2498a2bb69ca324a6b35",
+      "mode": "100644",
+      "sha256": "e12a1f8f6150dbe6e01cbe5073e369d9e1544894212fb7b17a7f1ef8d1de046f"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/SessionMenuAdminAccessProvider.java": {
+      "gitBlob": "8935d92e788d402d207986240db38c3a8def60ac",
+      "mode": "100644",
+      "sha256": "360af5434ef89b5fd3415818a6c21129439186833b20a88c1aec037ee1c25079"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/SessionOrderFulfillmentAccessProvider.java": {
+      "gitBlob": "b70d5e9d0080bdb233ede84b98878b4d450e120f",
+      "mode": "100644",
+      "sha256": "4664eac6c5d1bf4900b541c682e03cd221c31fafa5f116d91ceb557efbc5aa33"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/SessionPaymentAccessProvider.java": {
+      "gitBlob": "4d43f70002cae05df62ddc67e43afe3a94e3654b",
+      "mode": "100644",
+      "sha256": "2adf383beb9440cefddb8b2ee2116d072f970dae8cba6579876f8fd97634fbeb"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/SessionUserContextProvider.java": {
+      "gitBlob": "def22b5a100e9ded317ff79e5ef01603f54e9e70",
+      "mode": "100644",
+      "sha256": "c6e50ac776336e558a58fe8124606d7be2b8798edcda1dc09d045fcc067b3e18"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/StockAdjustmentProcessor.java": {
+      "gitBlob": "457d82d3320333c318148b3f9ab0b9f44c8cda19",
+      "mode": "100644",
+      "sha256": "6cbb22a1297b0e5210e53883f00b606c76df155acd19a670b77dd3aec0d92041"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/StockInProcessor.java": {
+      "gitBlob": "eedcc90ae59e7318a47629317697cd04d00d9784",
+      "mode": "100644",
+      "sha256": "61532d79c7c17ad48189322162e33827c29080b5ac386edde6c4a9f8333324b8"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/StockService.java": {
+      "gitBlob": "cfde0897df60d488b38ad90ceb8071a67eb2d3b7",
+      "mode": "100644",
+      "sha256": "564fdc5a219dc320fb001bb7be9bd1d6a7b70798ead4e624958b2300aa563ee6"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/StockTransactionProcessor.java": {
+      "gitBlob": "7ef162b02db5687307100b288ca95146930f3521",
+      "mode": "100644",
+      "sha256": "29af680c30fe33d070957fc91d4f9229357b46626f54067c0213de050765e0dd"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/StockTransactionTemplate.java": {
+      "gitBlob": "507cc9e68df2a58803eb99032a5143243e1874b5",
+      "mode": "100644",
+      "sha256": "6790694f715799271e0f369992d6ac44cfc9ca4a9dadfca3bcdcc32ca653bfbe"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/UserAdministrationService.java": {
+      "gitBlob": "a132f700d113aef2811a563c6f1731f581acc297",
+      "mode": "100644",
+      "sha256": "fedc7b8135eb0443cc28a17e3a0f51f7f652bbcf5961b95aa85b1fbb930da4b5"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/UserContextProvider.java": {
+      "gitBlob": "25ccf76afb1765f39a82bfcce3590c8b93c6806b",
+      "mode": "100644",
+      "sha256": "6a0ca12734754949ad2a014cba4916a27d9eb6342f7564faf568088cb4816cdc"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/billing/BillCalculation.java": {
+      "gitBlob": "ec7d820f99b36eb5147e6389005070f88f97052e",
+      "mode": "100644",
+      "sha256": "983962d535d94124ff1de26bdd0d85354d2228c37ffe4c7b76c6bfcf28998842"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/billing/BillCalculationStrategy.java": {
+      "gitBlob": "36e1c1a5f0c0fe5e0bbbf248a3afd74e346e06f3",
+      "mode": "100644",
+      "sha256": "96cb8f5b914d93595bf719eb9c6635ab2dbfb2614ad9dacbeb6099ad58f081ef"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/billing/BillCalculator.java": {
+      "gitBlob": "073ea35b409bb3cb12a6fd7491c7c4b74d7094d3",
+      "mode": "100644",
+      "sha256": "8d9c5722ac1b038c33330d8867d83c90ad2ab9e890167adf6d96a2790ac85700"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingContextProvider.java": {
+      "gitBlob": "9217a5fca91667d699b9fb5406223d03f2bb720c",
+      "mode": "100644",
+      "sha256": "518db043bba1c651e02a62daadf462cd5d2dbdf391bb6c07665fe4809e259b16"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingEngine.java": {
+      "gitBlob": "6b611457bdb0cb017f0a3d335037437abc5b0ca3",
+      "mode": "100644",
+      "sha256": "752df738e48ce344bbb9de9362c4458baf4c09bb8bf1cedb938c763326561d97"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingPreviewService.java": {
+      "gitBlob": "d8272aecb0c10813126d8f675598ae127516ad67",
+      "mode": "100644",
+      "sha256": "0771908b9aa62b7ba4e2380b1dc14a21e893071cc2ca455eb7c53dec1f0e79a5"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/billing/ChildRateCalculationStrategy.java": {
+      "gitBlob": "5365170d121d107b5a3acd49ee5fad1068fa5edf",
+      "mode": "100644",
+      "sha256": "77576babccbb55f423d26f7b5714bc5e0b0e23c29a5f17f2db826213ede78788"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/billing/DiscountCalculationStrategy.java": {
+      "gitBlob": "820b69c13ee8e18f621233dc37b5b6b034944e19",
+      "mode": "100644",
+      "sha256": "1e5c408fb821d3ceeff0ccea217060028673adcc027876e0694c02e9b7047a0f"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/billing/PromotionDiscountStrategy.java": {
+      "gitBlob": "9529dbe7ffc402f90ff23df1fea84cfec384fe20",
+      "mode": "100644",
+      "sha256": "3a6cd08e120c46345967d71077f25b6cc2b3334b6d814adeffee751512a63c2c"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/billing/StandardBillCalculation.java": {
+      "gitBlob": "2e4d36e7ec0e13d6f6d3bd4d4309506f544f474b",
+      "mode": "100644",
+      "sha256": "ec5095ea08f22f659380c4b198a97ac713f32d3a3f93228b3185955714d9c8dd"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/fixture/DisabledBillingContextProvider.java": {
+      "gitBlob": "821b11d36128d975617ea14fb535121fdbe46275",
+      "mode": "100644",
+      "sha256": "0414a01c2f99921ee4683e1604f9ed3f02f4b645a86a64b298dd4c3383fe93d0"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/fixture/DisabledDiningSessionStaffAccessProvider.java": {
+      "gitBlob": "7a5d2fae45460ef2430ca9fef76ae4de93efc4b3",
+      "mode": "100644",
+      "sha256": "b327b2d3c2c9c7516641c38b7165596d4067a1f9fd86ce39714e6477894c3014"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/fixture/DisabledMenuAdminAccessProvider.java": {
+      "gitBlob": "2293b9f924e05d4cb607345e255be53d5b27fb94",
+      "mode": "100644",
+      "sha256": "d5714d69c07d4941b4f7e1599b1cb07fd46d3484b71eb23b612225c086f7ee23"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/fixture/DisabledOrderFulfillmentAccessProvider.java": {
+      "gitBlob": "ab1efb2528b56df75200266b626d7b1439a603ec",
+      "mode": "100644",
+      "sha256": "bfae0166220654f014b1bdbe5a97ce05332a2ab177dac734fbbf01d95c141800"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/fixture/DisabledSessionContextProvider.java": {
+      "gitBlob": "2a969b3dc7bc10e276947990e5b687db73ac5859",
+      "mode": "100644",
+      "sha256": "6e36787d3adf348563b6d4762cd3c4d3fbf8a91eaa165956ff2d36226e1e2c77"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/fixture/FixtureDiningSessionStaffAccessProvider.java": {
+      "gitBlob": "483a12656de6bff4a8886bae8020ac1e74766ab6",
+      "mode": "100644",
+      "sha256": "bc6e99e870b4a61fd2e7cadc9bcd76b044ad6a12d441125c54eaa9f4f2651fab"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/fixture/FixtureMenuAdminAccessProvider.java": {
+      "gitBlob": "f9094841ddacd03d23daf71f8be5bd1ba40fff02",
+      "mode": "100644",
+      "sha256": "39bc9e2372b265914dad8c1c7a3f0670571d14b0c82e5ada4c185bd39c077d76"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/fixture/FixtureOrderFulfillmentAccessProvider.java": {
+      "gitBlob": "1e0b5649ba151c6c88869bc0f02270f5890b6d98",
+      "mode": "100644",
+      "sha256": "b254a28b11c8c8860a7431d295a7d43c4b22ce7913488d1fbcbf21a509b5b72f"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/fixture/FixtureSessionContextProvider.java": {
+      "gitBlob": "41bd5de67d22ab18c7b3198b7ac4a517f97dc62a",
+      "mode": "100644",
+      "sha256": "920f43aa7c2eb7eb257d3eed8dfefc1b187c96fe0df1f5dbcad9a6f530378ea5"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerOrderingServiceImpl.java": {
+      "gitBlob": "3548f9f2b8a6cd3bc471d9be8d9dafa4d589ae2f",
+      "mode": "100644",
+      "sha256": "338af1943c609ec23e6ab3a2d640f193172a455a2c41bf1be4310240c191bee9"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerSessionAccessService.java": {
+      "gitBlob": "93831013874ef9ef2dee1feadf210e564f679888",
+      "mode": "100644",
+      "sha256": "bdbda2cbe3e56d8d0bc3a6cb26f0ff9e04c62d59f7fc817a701e57dbe371dab4"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/impl/DatabaseBillingContextProvider.java": {
+      "gitBlob": "f4197abe0640848b6998f08886dea4acd3c6a5cc",
+      "mode": "100644",
+      "sha256": "3dedfa15f6696f6e63ac1a57ddde6f3ae6937b0621390f8c0e019419ce74539f"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/impl/DatabaseDiningSessionBillingReader.java": {
+      "gitBlob": "ec7321d922374e14d72cd58f59648583ca443d04",
+      "mode": "100644",
+      "sha256": "e96f80218aa24027aef92f0a561a019790130c4ae35f1cba8508e55aec9179e1"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/impl/DatabasePaymentStatusLookup.java": {
+      "gitBlob": "2cf01506c8adc4b8bb7bae30450dd3776becc9d7",
+      "mode": "100644",
+      "sha256": "4d709fedda615e4ef4015a3600ec3144ac51d4d1be43969c15d8adc70c1fe8bd"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/impl/DatabaseSessionContextProvider.java": {
+      "gitBlob": "3e9af4cce47b05d22772ebc6e68843aefccae5f1",
+      "mode": "100644",
+      "sha256": "8f2ceb90f7828d6a4d0323505f814c7963eb0891b1585addbb94f9920acfacf5"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java": {
+      "gitBlob": "e3fbf697b0bccaf4d82fdcc68db2b9af2e66de5e",
+      "mode": "100644",
+      "sha256": "c973db328dcadc31a893eb2720750a2f6ad284ce37cdb3e47b75c6742820758a"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/impl/MenuCatalogServiceImpl.java": {
+      "gitBlob": "297f77d836137211280cc8752a9f72adab91dfac",
+      "mode": "100644",
+      "sha256": "773e59b96cdb970bc414b8304c0d57658321e83aca41e0166a58988a1bab9c4d"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/impl/OrderFulfillmentServiceImpl.java": {
+      "gitBlob": "1d015fbf210614121f765c91a48fabf13cee2176",
+      "mode": "100644",
+      "sha256": "0e556426814b8e3e5d9f8172e8f664c6773cb38b339688635790a2134f66a3f3"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/impl/PaymentServiceImpl.java": {
+      "gitBlob": "92572a879f5b498a12f60591ca5241bbe1f0d789",
+      "mode": "100644",
+      "sha256": "12fe24c35d9caf8b5db1fe37bb2bcf68720254c02a56511c7f789d438181d749"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/impl/RestaurantTableServiceImpl.java": {
+      "gitBlob": "28c8cfe3d6445183adfebf3296e594ae9cba411c",
+      "mode": "100644",
+      "sha256": "ef0275889318e52ded404a1e84419c132f7b0a3632987b9d097110ce3b271dc4"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/impl/package-info.java": {
+      "gitBlob": "d6d6a9b46a7a43c4d37e4127f203c1bfc259fa36",
+      "mode": "100644",
+      "sha256": "94b5d19bd6b74def7b0410ab774ae8f15131358c3bdb23a5873b3ff313cd0f64"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/package-info.java": {
+      "gitBlob": "efcce9f9b937747cdf10d22205fa15629e92ed15",
+      "mode": "100644",
+      "sha256": "fe7245826ed8292bf0fe7759a776882090cbec77f5af9361f22452b8f371f028"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/state/OrderState.java": {
+      "gitBlob": "3e166b9faec73eccb9ede962e8abf4d2346481f7",
+      "mode": "100644",
+      "sha256": "bb65f2c7a9c009ebbebbb14254a35d3dd79a9abbc56d9c370a431e2cf988f18a"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateResolver.java": {
+      "gitBlob": "a6a0a1f3e7ee16dffbce8c519474cd10b0ba89da",
+      "mode": "100644",
+      "sha256": "553cac165e8c65a85ac96bfb1cfdc8bb4a413ff91760590f354437d4bbdd2b66"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/state/PreparingState.java": {
+      "gitBlob": "3da3f3013517ee9dac6dcd20fe631ef3ffc12716",
+      "mode": "100644",
+      "sha256": "23e679f460ea1e4e0e81bc7110e975cbd852ca7ef7916f425dfc13adc6373e6a"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/state/ReadyState.java": {
+      "gitBlob": "e600d6f19f675e00829cd715e5fb5f7d17471bbb",
+      "mode": "100644",
+      "sha256": "4ccbca89690033542474cc6cebc8cbd8931c62efa9b997da371c9bb5af7f7f27"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/state/ReceivedState.java": {
+      "gitBlob": "4b6cad9635af7cdb94f94b7fce8f962429324ec8",
+      "mode": "100644",
+      "sha256": "c6803b3f77a9d8934efc30f7ee6fffb5e97f12c5d07ac028c3d200f1805f2a20"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/state/RegistryOrderStateResolver.java": {
+      "gitBlob": "fe5ce52aafca4bba7c1082a427b643595dc617c9",
+      "mode": "100644",
+      "sha256": "da33fabb06d9857ec985bc3181e5ee076a16a2900ef125f4d65507d2376d9ddd"
+    },
+    "code/backend/src/main/java/com/buffetrestaurant/service/state/ServedState.java": {
+      "gitBlob": "d4ad745e7ef126804cee56b98f62f32a8fa9b278",
+      "mode": "100644",
+      "sha256": "7a82f89ff0bcb5ecb0a4566825adfffb3c1ef207a020388de0a7f621282f5d68"
+    },
+    "code/backend/src/main/resources/application-demo.yml": {
+      "gitBlob": "8db5fcd8cb6a611e774e77cae506e8c2eb182f5a",
+      "mode": "100644",
+      "sha256": "45b5f9922a0ebc9eea5e702fcdf0391decdea86d73246d34db6432543cae14e0"
+    },
+    "code/backend/src/main/resources/application-local.yml": {
+      "gitBlob": "a5f206afd2e4d95537682606407e9a424e5356c3",
+      "mode": "100644",
+      "sha256": "c2956867a548eb62c135c13dca26f71fe56c7fd278b1032ec58ef2fb290b5e49"
+    },
+    "code/backend/src/main/resources/application.yml": {
+      "gitBlob": "592ff1f761b38e8c0107f10ba97d3d749abb5086",
+      "mode": "100644",
+      "sha256": "53ab4b0031b8a8e1a6d98f5e5fb663e01cb86fd08fd84469df7dd07598491f59"
+    },
+    "code/backend/src/main/resources/db/migration/common/V10__create_user_and_stock_tables.sql": {
+      "gitBlob": "7f685935121c7d1f6a25cedf03fe6b10372e909f",
+      "mode": "100644",
+      "sha256": "e2ed95636eae60159528e4186dfcd7843f726eea21f1b1622c30ee2f02050e5f"
+    },
+    "code/backend/src/main/resources/db/migration/common/V14__add_session_bill_request.sql": {
+      "gitBlob": "4e602128e14849a4a09c6ddc450d98078ebea407",
+      "mode": "100644",
+      "sha256": "23024cc072d0f4a887ad130ff612ab24bb2f756bbd2d21f8a4871d6ba21cf356"
+    },
+    "code/backend/src/main/resources/db/migration/common/V1__baseline.sql": {
+      "gitBlob": "65509134fc393a1041cde742b6f325b8b91f55ff",
+      "mode": "100644",
+      "sha256": "a63464f4982601c68f02170f189480f0949c0de73f4d09d6185137e27db2d9db"
+    },
+    "code/backend/src/main/resources/db/migration/common/V2__create_restaurant_tables.sql": {
+      "gitBlob": "e083203750c910dce25504febecade690913595c",
+      "mode": "100644",
+      "sha256": "0713bbd59b8e68990c4bfb7d72fac64354aabdacf91dc6430edbb8438b31a667"
+    },
+    "code/backend/src/main/resources/db/migration/common/V4__create_menu_and_order_tables.sql": {
+      "gitBlob": "55cbf1033f3a19fb188fd95d6c67b83faa57cbb6",
+      "mode": "100644",
+      "sha256": "6899d7b42134505a6818811daac311d0b46083c1ca9dd5572e7ce47bdae72038"
+    },
+    "code/backend/src/main/resources/db/migration/common/V7__link_orders_to_dining_sessions.sql": {
+      "gitBlob": "d147e2d1927d20081ab3eccf0aae0b7fc340c2f0",
+      "mode": "100644",
+      "sha256": "61780882c77afbb04774624696861c43aae6f05b8fc38d6fc82081bc32da8b9c"
+    },
+    "code/backend/src/main/resources/db/migration/common/V8__snapshot_session_package_price.sql": {
+      "gitBlob": "734be68867fa1d16dca31987132ae068f9715f53",
+      "mode": "100644",
+      "sha256": "e74dab635f1ba81fca2f2e0c7ac07c713725e96d0e73caa9b031d9b23b99e8b4"
+    },
+    "code/backend/src/main/resources/db/migration/h2/V3__create_buffet_packages_and_soups.sql": {
+      "gitBlob": "45dd30cbab7cdc0430476d3a44346d2d9184758d",
+      "mode": "100644",
+      "sha256": "0d5e14b57e1b5ef126782476737dba3798a14eae4f29dd59ee8d790e1e288ad8"
+    },
+    "code/backend/src/main/resources/db/migration/h2/V6__create_dining_sessions.sql": {
+      "gitBlob": "5dd35a5494833ac29110636694ba04fc7a5812e0",
+      "mode": "100644",
+      "sha256": "b63f583e8aee32368a6e3c7d10c693561a52619d720dae25e8319be34c59bd98"
+    },
+    "code/backend/src/main/resources/db/migration/h2/V9__create_payments_table.sql": {
+      "gitBlob": "85104e4b8c6e8a79535ded1d6088c950a35134c9",
+      "mode": "100644",
+      "sha256": "317c3fa6da3acacce76c4fd9fda7e47ee7f8e2b2f00fbc0c5f2525c8134306b2"
+    },
+    "code/backend/src/main/resources/db/migration/postgresql/V11__restrict_flyway_and_stock_access.sql": {
+      "gitBlob": "b5ef0f46ab1b8b7a2b7ceb4a0eadcdbf617c0222",
+      "mode": "100644",
+      "sha256": "ef4640e5f070dfa6b9e08af439a90e6fc21724a98147d84c7e6fc0eb3fba9598"
+    },
+    "code/backend/src/main/resources/db/migration/postgresql/V12__align_payment_backend_privileges.sql": {
+      "gitBlob": "b6e967e0845fc3e8d7b05dac8647f88881990599",
+      "mode": "100644",
+      "sha256": "575002e2faf476c5e6b1a88689ee9b1a19bd23c755139c31f4710224f4c1857e"
+    },
+    "code/backend/src/main/resources/db/migration/postgresql/V13__restrict_remaining_client_database_access.sql": {
+      "gitBlob": "371579a62cf7188195ce3021e18c8406103ab7e1",
+      "mode": "100644",
+      "sha256": "b9c68c6f1cdcb1e763f68ca8fa1d23cdf70eb1131bb79c5101b3f07cb650cb3e"
+    },
+    "code/backend/src/main/resources/db/migration/postgresql/V3__create_buffet_packages_and_soups.sql": {
+      "gitBlob": "6058195dc458cca9af4c0b8884d971be48d040b3",
+      "mode": "100644",
+      "sha256": "bab4328426775b04bef519df834794eac7a4812aeb2afd02c6b17266849fcb41"
+    },
+    "code/backend/src/main/resources/db/migration/postgresql/V5__restrict_menu_and_order_access.sql": {
+      "gitBlob": "3592b2b164589c718145f9e185b0e3c45f909272",
+      "mode": "100644",
+      "sha256": "54495060e1d7ece85daa7c9b40cb35c6408e2dfefc00e657d944954d11097d54"
+    },
+    "code/backend/src/main/resources/db/migration/postgresql/V6__create_dining_sessions.sql": {
+      "gitBlob": "2710beacdb1068997438eb6270c3a627f7d20251",
+      "mode": "100644",
+      "sha256": "841b22037a8576ce9c3e6ad9736df3004a759813f285165fbb7614b63aa501bd"
+    },
+    "code/backend/src/main/resources/db/migration/postgresql/V9__create_payments_table.sql": {
+      "gitBlob": "e94fe49c9d2922e4a0ba1bcaaf88e0d6d50fd771",
+      "mode": "100644",
+      "sha256": "3ac00fb4bfe89c4d9a751d9fe74e9d7a2f232d4c914a4a75d3d75d0566d1beed"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/config/BootstrapAdminConfigTest.java": {
+      "gitBlob": "4d113502c473221db7b07e7384a725be9826e1e2",
+      "mode": "100644",
+      "sha256": "5d01a0b1469cf60731dfd265c3c28e6d3e0e3679f0ddbb6c92c69e58122e528e"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/controller/BillingControllerTest.java": {
+      "gitBlob": "60a4b94294da707b768634af1ecb652d849a00d4",
+      "mode": "100644",
+      "sha256": "5bfce5461ab860423dac82c155d32272bb343333e77c8ed70ab59535e93c0960"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/controller/OpenApiContractIntegrationTest.java": {
+      "gitBlob": "3be8328424076c4931e57290ace03c7c8d924e21",
+      "mode": "100644",
+      "sha256": "a8f9137c03fccde796ca025101584ca92f7b00cf68d3f9c8632abecfef735680"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/controller/OrderFulfillmentControllerTest.java": {
+      "gitBlob": "80191daf2753cab68326c46dbba9e7894154b587",
+      "mode": "100644",
+      "sha256": "0d24413fc39489e90d5db66d018a813cd8817939a312b90c0b10d8c9670ea3e8"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/controller/PaymentAuthorizationTest.java": {
+      "gitBlob": "b77a455c0e4e22b3aef32ac9b45799e9238dd2cb",
+      "mode": "100644",
+      "sha256": "32ab2c0b8f3b155ed48f8b0146946c56dba19516c7b24390bfd890915dea5575"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/controller/RestaurantTableControllerTest.java": {
+      "gitBlob": "e2c9f903a6f29a752f908bb2cd93c57405f21a1e",
+      "mode": "100644",
+      "sha256": "1a56e9ceb603a7b02c36bdc557cdc6776307cbe9f01d7a2de4c54eb4c45e720c"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/controller/SystemControllerTest.java": {
+      "gitBlob": "4c6c55e40851042999f679618f41a12648e64fb6",
+      "mode": "100644",
+      "sha256": "236097d636da40f4f7ef1ccb181e432c88ec14631f1db05a5ff3f2871c7c92a3"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/domain/enums/SharedEnumSerializationTest.java": {
+      "gitBlob": "485f8d28c0f2aa9f376b7e45dc4dde8dabebd2a4",
+      "mode": "100644",
+      "sha256": "e447f8508ba7d079a1f4cbaabfc8b87553ba6aa08120af15c59ea6e12ff751a7"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/exception/EnumErrorResponseTest.java": {
+      "gitBlob": "7bf7c837c5c04f365733c93a6621829faee4b77d",
+      "mode": "100644",
+      "sha256": "a3c0044c54a819989c3d50cd07af20ad22f6c548f19f935606f0fcac3d538839"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/AuthStockIntegrationTest.java": {
+      "gitBlob": "1a049f26e740fd56fbe64487d5b3d0620b8a8edf",
+      "mode": "100644",
+      "sha256": "2c33908200b761d95da05487e146865e9062d3c53ce10dcb366a79bb4179070a"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/CatalogIntegrationTest.java": {
+      "gitBlob": "1a15fe37c1d35811fc5719a31521925f751de022",
+      "mode": "100644",
+      "sha256": "431f02d4bfc8cf10c44ff9bce7eaf691f4aa8bcd57786bafc1678f15f1a8e837"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/CatalogMigrationTest.java": {
+      "gitBlob": "c45d0f97e693697c6aaf9bb2bd1cbd705d25e3d3",
+      "mode": "100644",
+      "sha256": "9a4667136daa40e8a02992a44e647bcba7db42fe32036fac59da10cb5532caab"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/DemoDataSeederTest.java": {
+      "gitBlob": "0b06685c05083d7c457fabac187307e51dab01bc",
+      "mode": "100644",
+      "sha256": "1ccaa1b608c1bb3bbdd220b38912727402b8b03fa97b1f528b8c48f0cdb7f286"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionIntegrationTest.java": {
+      "gitBlob": "99915c8854f2c0aab603d1404e7810b4462f6b62",
+      "mode": "100644",
+      "sha256": "db7fa3cac1ddff2072d70ce775eb49a649993c9e537b8a6f5f19bffd34269d4e"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionMigrationTest.java": {
+      "gitBlob": "fd8ecf80e6f8c6981e55be5d84c68f1747a181d7",
+      "mode": "100644",
+      "sha256": "be4fa5755d8e86d048620a7e3f2081620894d28a597a051206d329147c077c20"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionPaymentUnavailableIntegrationTest.java": {
+      "gitBlob": "ee714295a748d17283e6f79ae56f46339623d44f",
+      "mode": "100644",
+      "sha256": "1010e14064f1ee7a11121af9dd21b877395df1def3c8ace8b598c90c186c12e3"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionStaffAccessDisabledIntegrationTest.java": {
+      "gitBlob": "56916fdc942c47b3de4d5e0f71eebbaf9ba795c9",
+      "mode": "100644",
+      "sha256": "b50cf52c5ea0268cd7aef290c03db5c4918ae212f14911f81081d08a96825111"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/DisposablePostgresDatabase.java": {
+      "gitBlob": "15953defcac26b5b738061b4322f28c02cb8caea",
+      "mode": "100644",
+      "sha256": "45fc9c21bed2e336cf5334b54f3b8afa3dfadd1fdc280adb8691439d3fb871fb"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/DisposablePostgresDatabaseTest.java": {
+      "gitBlob": "a5b58ccafd06ab318e4ae56b17af2b91b14984d5",
+      "mode": "100644",
+      "sha256": "e1f7067c23755da0b675fbf9ac2ad83c9869d2ce57fad019aa8bf09fb91b0ee6"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/MenuAdminDisabledIntegrationTest.java": {
+      "gitBlob": "377ba1cf32921f28d3ab0bebde914c7114cc1481",
+      "mode": "100644",
+      "sha256": "7ffd25f1570bb4af2081fa98b968f02a53d78f0fa9868a512c4d3c26748eecf0"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/MenuCatalogIntegrationTest.java": {
+      "gitBlob": "7a399f94997a769f716e96e84b1c9f5af616ff31",
+      "mode": "100644",
+      "sha256": "93d12d31d60861d695a38ace91f8f67bb17ea7177e40592c97a5bde65c997f8e"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/MenuOrderingMigrationTest.java": {
+      "gitBlob": "3636c61453b9c6d92063fde3e1e4d8a8dd24167a",
+      "mode": "100644",
+      "sha256": "973bbe67b87355f90395e1eb6ee76c06f1ab80161ffd2b492cdb7266ad6eb181"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/OrderFulfillmentIntegrationTest.java": {
+      "gitBlob": "a240ce920f0b0b60b20a24be7b68f33fdbe977d0",
+      "mode": "100644",
+      "sha256": "10a3f4a43c5aa58d063834fa3cf7d324401a3ccd47378f4f90080395ae317ed3"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/OrderingDisabledIntegrationTest.java": {
+      "gitBlob": "da58dbef2662222202972280231c59eb39229cda",
+      "mode": "100644",
+      "sha256": "912bb1763a869166103612845439061f0b600e7c866799c634f92f522adcb27e"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/OrderingIntegrationTest.java": {
+      "gitBlob": "2df36de2ed145318ec8875940e4b33078f12a9fe",
+      "mode": "100644",
+      "sha256": "3e9cb0c01cb8c9dc331cb3a52b5b9ee3ba7d80903edfd4a3840e32471d2b6180"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/PaymentIntegrationTest.java": {
+      "gitBlob": "3a3ce583c6aee21965ae8e1c87fb856567eac737",
+      "mode": "100644",
+      "sha256": "344db6c480ca4f75345c6f74ba2ebf7bc9d4508ed43fbb3df0193ac961cb9f0b"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/PostgresApplicationClientAccessTest.java": {
+      "gitBlob": "80b5329492f13bf5f2198818ed1b192b967d290e",
+      "mode": "100644",
+      "sha256": "07690902a3e8350d85c5ab4260821bef32b723fa0d492cd0ed15e1778432f12f"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/PostgresDiningSessionMigrationTest.java": {
+      "gitBlob": "ea3da0c4aeaa194ad12605b1e5a752579f3bc895",
+      "mode": "100644",
+      "sha256": "c37bd4b3d6b915d526c624f462d1062f7b12336a18d91f0291201ae0b40475d2"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/PostgresMenuOrderingMigrationTest.java": {
+      "gitBlob": "20bf9db71052e21f540d9ddb557b10cfa7dec786",
+      "mode": "100644",
+      "sha256": "5533df430d023207651c59a545c5bf19207639e8f2a22126678b077a4ac27008"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/PostgresOrderCloseConcurrencyTest.java": {
+      "gitBlob": "6591a099e7b4514a12c5e6a2286d5ff2b028ef6f",
+      "mode": "100644",
+      "sha256": "0e7a2909f6fd9df90f77345da60cb624fffa4b8a5580886502e4c64a649721d5"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/PostgresPaymentIntegrationTest.java": {
+      "gitBlob": "4068dbfc12ba2f540fbae7428919f3df32df7c41",
+      "mode": "100644",
+      "sha256": "cc534f48e7df4d102c20da6e0a59931de26cfea3625292c5fb536bee9fd47f35"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/PostgresStockSecurityIntegrationTest.java": {
+      "gitBlob": "cbf4aa1449882b995af99509b2e07376878a342b",
+      "mode": "100644",
+      "sha256": "711b03acab80e57ceaf53ee36395b3c02dbc147e39b7704b880c9efd4d1fd6a4"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/RestaurantTableIntegrationTest.java": {
+      "gitBlob": "9f7580c1c2e899e16f3cffd4b19bfd22517f92fe",
+      "mode": "100644",
+      "sha256": "5e4e150ba15938ffe04b99eaba2ba4161d43c5a5a918f5cb40658c6af5f4e9d1"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/SessionFulfillmentIntegrationTest.java": {
+      "gitBlob": "8f11ee7460d09683d3956df29945dc4bbd6585e5",
+      "mode": "100644",
+      "sha256": "45bdcb52d2c864d5da96b7ed63d77357a9a834d61bce9e26fd30dab156e2e59e"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/integration/Step2CompletionIntegrationTest.java": {
+      "gitBlob": "0a3524a93952d7adfb0b1a59bb65d98f5ae2e470",
+      "mode": "100644",
+      "sha256": "72f6179bb4ab09d464f008b1419eb45479180ebe176e7bdb354908dc6a128683"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/AuthServiceTest.java": {
+      "gitBlob": "9764e4031caafdc4de6ee3079bcb931f26c41058",
+      "mode": "100644",
+      "sha256": "f78e3fefe91f0de76b2a9761f236d118b9e836e8e1ea0e549f5d565bf87a48cb"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/CustomerBillingContractTest.java": {
+      "gitBlob": "eecb712b8b850324eb537b125ffc253b6ae1d2cb",
+      "mode": "100644",
+      "sha256": "1f68b7c7f3c53ec1f0494d64da56a5e9e205d5527a48d54f88e1da85f0db1e88"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/DatabaseBillingContextContractTest.java": {
+      "gitBlob": "aeda5173e0a8bc1e35a1a0afc24e061eeab954db",
+      "mode": "100644",
+      "sha256": "62f91ad0eb51733f88bc71dc0eef7912687eae666232fc35535ca4ff07b21eff"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/OrderFulfillmentServiceTest.java": {
+      "gitBlob": "fd97047c3f0216a161338b61063a065cfad5cc99",
+      "mode": "100644",
+      "sha256": "9bef9a4ec3d6656de75fabf3567c6cebaf9a84bc7ee0cbac4db6c3ae2ef60e21"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/RestaurantTableServiceTest.java": {
+      "gitBlob": "a5e45d340c01bac99b01ee7bd80c7e7af522cfc3",
+      "mode": "100644",
+      "sha256": "30c7cb4ca306ed4466cd64f64d74f2625319f46326f8b5d943ad1e954af24025"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/SessionContextProviderContractTest.java": {
+      "gitBlob": "6e12c038f55edd34680a5d9018ae2509cf063473",
+      "mode": "100644",
+      "sha256": "95fb0b664a3386d35463f23b8d2e9aa66c18db7f3829e718fca6a63e7a24a14b"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/SessionUserContextProviderTest.java": {
+      "gitBlob": "e9b115c57bc9ff7f9fe2e730bc1adc8b4e970b60",
+      "mode": "100644",
+      "sha256": "e8d26871d087f3f7ff23920d5da880b64730eff335e168717c425ee95fd3f2ac"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/StockTransactionTemplateTest.java": {
+      "gitBlob": "f5f2f241c0df13f95495752bd728b1533d23e7d7",
+      "mode": "100644",
+      "sha256": "b0327e199a743ee1a2ea81f52273291a4bc29a81fedb8e647858981037288aec"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/billing/BillingEngineTest.java": {
+      "gitBlob": "7195898462e3cdc94cacb6fe5ae75541f3399ae6",
+      "mode": "100644",
+      "sha256": "e55c9e9092ce683f38dd6ec9fe0fb3ffb341b98163d92f3e653150a39c9c45e3"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/billing/StandardBillCalculationTest.java": {
+      "gitBlob": "da69683e201c5d51a3090d4e98b5777f2ef2db3a",
+      "mode": "100644",
+      "sha256": "a01af30697bbb6d8d158e83100dfcad9609dca0b7823f09ea82f736ec7ca3315"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/fixture/FixtureOrderFulfillmentAccessProviderTest.java": {
+      "gitBlob": "a506c0f141403a9407bc97be007cdc0dfdd315e8",
+      "mode": "100644",
+      "sha256": "98ae867e67eb73dc5c98cd50a745a9b3381226ebc05b0e2753930c4c9d06ce4b"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/state/OrderStateResolverTest.java": {
+      "gitBlob": "3289b6f1a0e56eba81f72038d4e86ebf264d3a53",
+      "mode": "100644",
+      "sha256": "195fd53155efae1122b5cb19f916511511a7bfee87912a9f9fbc9f9b5957f586"
+    },
+    "code/backend/src/test/java/com/buffetrestaurant/service/state/OrderStateTest.java": {
+      "gitBlob": "86e22466139df7e60a8aa19892eda784eec3c5d8",
+      "mode": "100644",
+      "sha256": "5130ae8c6e7a860fdd86a751ca1f865022c6288d53f449997daffca28bf12f6e"
+    },
+    "code/backend/src/test/resources/application-postgres-it.yml": {
+      "gitBlob": "31f4c001d5ac0a57e32de5a6feefed83e15148e2",
+      "mode": "100644",
+      "sha256": "531963c38ac2c8a99ef1ee430cb29c54020c66c0bfd6f51b31213f738006faf8"
+    },
+    "code/backend/src/test/resources/application.yml": {
+      "gitBlob": "47282bd26790c07f2879c581bdfd573cd506a819",
+      "mode": "100644",
+      "sha256": "f05412f4dba37d300f50097524169e89bf2b8c8f8c987545da77fe573adc63d9"
+    },
+    "code/backend/src/test/resources/disposable-postgres-ci.sql": {
+      "gitBlob": "3fded9f578e481489e9d69c3166fd9f7b5a588b1",
+      "mode": "100644",
+      "sha256": "3650bc57f595d89a9ffe2b18a5a89a7414864c65ac091a9069ac5c9930f80f4c"
+    },
+    "code/backend/src/test/resources/postgres-test-roles.sql": {
+      "gitBlob": "bf75591e23ae0b29167dd8533ca320068b8780d4",
+      "mode": "100644",
+      "sha256": "dc5bc0ead54bbc370009fc53b1f9519887f84d6df9a29a8b963773cccaacc765"
+    },
+    "code/frontend/package-lock.json": {
+      "gitBlob": "73ccd67064a54ec7a701b1df8a8068d5fff0cf91",
+      "mode": "100644",
+      "sha256": "3696f31aad6b97dfa2d59069a3f0a282bb12172182a002b5f3fc289e1f110561"
+    },
+    "code/frontend/package.json": {
+      "gitBlob": "00df8315f0e657a6eb0ccc41c0c1262d65e3c15c",
+      "mode": "100644",
+      "sha256": "f7da813b2891eecce00354dbb22b82a523112baaf9fdc50b7801b4b17c83c4f9"
+    },
+    "code/frontend/src/App.css": {
+      "gitBlob": "f90339d8f765fa2c69d9a341959a8ddb9fff5720",
+      "mode": "100644",
+      "sha256": "6e25a776d3e8102da5bacb3cb99f4a5fc662a2e01e6143140671a556d28c3d5c"
+    },
+    "code/frontend/src/App.tsx": {
+      "gitBlob": "dd2c226dfcb7aab1de12dc1559c65b4025e3df6a",
+      "mode": "100644",
+      "sha256": "0620953c6f6c8a7e98d9e2d86755d63ee7c7c2cd580b3cc126d6db13fcc4a871"
+    },
+    "code/frontend/src/BillingPreviewPage.test.tsx": {
+      "gitBlob": "daa0a7937c772d25bad47fc0e5180484c46fa1de",
+      "mode": "100644",
+      "sha256": "a7a6f56f8a5bc720412328150c7beaffcc85a1f754f04c6be29778994962acce"
+    },
+    "code/frontend/src/BillingPreviewPage.tsx": {
+      "gitBlob": "e5ccf445fbe0566e6daa13360aed37c83a64ce13",
+      "mode": "100644",
+      "sha256": "ce26198f19e7eb6c6ec8b76353986d798a660ee1acbcc32195ad8d3e249d3263"
+    },
+    "code/frontend/src/DesignSystemPage.tsx": {
+      "gitBlob": "10b6345c9f6902a94aa6b57017a76cf09e7903af",
+      "mode": "100644",
+      "sha256": "ceaa9c0701e7cc3afa6d8223054402cd280ddb04b4f4e61a5e6807ac7a325c46"
+    },
+    "code/frontend/src/FoundationApp.tsx": {
+      "gitBlob": "dc6cfed4169ce0eae53def91f901a4b363136345",
+      "mode": "100644",
+      "sha256": "de817d70f78b2f185b40204062cc28ee325532a920af68a861eca417bb67b5ab"
+    },
+    "code/frontend/src/api/billing.ts": {
+      "gitBlob": "718b50f02181a4cfccb1d72dbda010df0a3ba9c1",
+      "mode": "100644",
+      "sha256": "01fdaf465832afc6ffaf0986f0f949776e19ce08bc4630f3278cac9a0d60f543"
+    },
+    "code/frontend/src/api/client.ts": {
+      "gitBlob": "e5d97a2f9eb9b31048e5c1a483a9f9d429306e9f",
+      "mode": "100644",
+      "sha256": "db6f665fc9ec9c057c482fbbb833505c12e3aac16686136ecf1f1917b16b81c9"
+    },
+    "code/frontend/src/api/errors.ts": {
+      "gitBlob": "2b64444c10a0d1161fbcd3a6ef6a70f48ce60b03",
+      "mode": "100644",
+      "sha256": "80518e724aa5048db7a8a28f94ca425722b7150357f42a3144a2dce97fd21e0e"
+    },
+    "code/frontend/src/api/payments.ts": {
+      "gitBlob": "cad7bc5d29dc05c4ccd29a7fa255b83b7fa14ab8",
+      "mode": "100644",
+      "sha256": "c71444cc3aa60a0d7e77640605ee29edc8924dfd2859056ed514c50a4c22e394"
+    },
+    "code/frontend/src/assets/hero.png": {
+      "gitBlob": "02251f4b956c55af2d76fd0788124d7eee2b45eb",
+      "mode": "100644",
+      "sha256": "881ffbcaafc212e49addad08846a5b82761355fa20624253af3477ba33262c5c"
+    },
+    "code/frontend/src/assets/react.svg": {
+      "gitBlob": "6c87de9bb3358469122cc991d5cf578927246184",
+      "mode": "100644",
+      "sha256": "35ef61ed53b323ae94a16a8ec659b3d0af3880698791133f23b084085ab1c2e5"
+    },
+    "code/frontend/src/assets/vite.svg": {
+      "gitBlob": "5101b674df391399da71c767aa5c976426c9dc7a",
+      "mode": "100644",
+      "sha256": "5be21acd42eb7b896e517f4e0f0f11eb5c5d9e54fbbcebe9453f033008fcca6f"
+    },
+    "code/frontend/src/components/common/StatusBadge.test.tsx": {
+      "gitBlob": "d68797e9a3beba8bc617a266146f69113e367ecb",
+      "mode": "100644",
+      "sha256": "70d32c62fca52b5e0797ebd38961c947ff0effc9444d9cc7553bda0ecbb71c9d"
+    },
+    "code/frontend/src/components/common/common.css": {
+      "gitBlob": "5750d28e3c40e5229f8a3769c9d901f3d082f5ea",
+      "mode": "100644",
+      "sha256": "c263e7629f5203829831b0a5e4998634536df6e49b04b7fad44ae738bced206b"
+    },
+    "code/frontend/src/components/common/index.tsx": {
+      "gitBlob": "d7fd6ae5ab0e786e53d6e1d36b4bc8baeb65cef6",
+      "mode": "100644",
+      "sha256": "0d19a29e1ac79ffe3c281301ae50ab60194e21d03d01a2e192884ea6cb5bbc7f"
+    },
+    "code/frontend/src/contracts/shared.ts": {
+      "gitBlob": "db9ba3a2c4407ad18d6ea2245e1fa63bc7380563",
+      "mode": "100644",
+      "sha256": "cddca330eec447df7803f8fd981fd09a528932aab1fe09eed82201e7fc40f6b8"
+    },
+    "code/frontend/src/design-system.css": {
+      "gitBlob": "3b6898dd496ff10d4867de926c55481eecd0641a",
+      "mode": "100644",
+      "sha256": "554ac70ee8e2278dfd466f29beae9ab19548a37858cdd22e3b5485c6127a7773"
+    },
+    "code/frontend/src/features/admin/AdminPages.test.tsx": {
+      "gitBlob": "f277986cc24919df5894686f2fa05ec800d715a7",
+      "mode": "100644",
+      "sha256": "60e0bf80d683e889b1564fc0d0f85f5a82b3647f9b5cc92c606d6296094c0965"
+    },
+    "code/frontend/src/features/admin/AdminShell.test.tsx": {
+      "gitBlob": "f408250c516130171b746a892ba0b4ade8a3ba65",
+      "mode": "100644",
+      "sha256": "5d238a5b0bf6f06918d02ed9c40b95d97b71835786c3bf4b35728271eed0a504"
+    },
+    "code/frontend/src/features/admin/AdminShell.tsx": {
+      "gitBlob": "b32df4d48f184686427be0c756c7bb66ed07dda9",
+      "mode": "100644",
+      "sha256": "5ae2b387c8fe70c81b81aabf637820b1db21961c9afde3c2e4a00d7023432bc6"
+    },
+    "code/frontend/src/features/admin/MasterDataPage.test.tsx": {
+      "gitBlob": "ce4dd568900e5f36c146c69e130a85ea6e57752c",
+      "mode": "100644",
+      "sha256": "1909de9713dcf45cd52d2a25214fb9d5f905ce439de9f9ea4ac0ba32f0294de6"
+    },
+    "code/frontend/src/features/admin/MasterDataPage.tsx": {
+      "gitBlob": "b442adab8b1eba7b7dff54fd73660c160111f0f1",
+      "mode": "100644",
+      "sha256": "7ce4a20eef4662011d7bc8ace72eedfdb1671e2c745154840958805e58a57f2b"
+    },
+    "code/frontend/src/features/admin/StockPage.tsx": {
+      "gitBlob": "91c28e54b2ba36d764e51821320201f517701c60",
+      "mode": "100644",
+      "sha256": "92c1f4121458943eaa035878b0483f596a9d93ba7f4455de7896a1b223ff4de1"
+    },
+    "code/frontend/src/features/admin/UsersPage.tsx": {
+      "gitBlob": "818bad2c6ea66356e2231bc2524fc845fc65a307",
+      "mode": "100644",
+      "sha256": "a0192f5d97329b70cd2a2629d10c0dcf6db98982290c53a4e545d33be0e50317"
+    },
+    "code/frontend/src/features/admin/admin.css": {
+      "gitBlob": "af466c97107791b8d4e6edcd0daa06d74663336c",
+      "mode": "100644",
+      "sha256": "fcdb561148174f642a7a1f754fad424116a9af70ee1700b1900e741013d79a4d"
+    },
+    "code/frontend/src/features/admin/api.ts": {
+      "gitBlob": "73a24ff61d9a4c90ffe5368ed19b1aa351c0469a",
+      "mode": "100644",
+      "sha256": "545531917acdb987966b94a64935602709b453d21216f6ad02970d44410ae379"
+    },
+    "code/frontend/src/features/auth/StaffShell.tsx": {
+      "gitBlob": "5bf0ba1969069b08b282d266416e10c2d2f96f7b",
+      "mode": "100644",
+      "sha256": "99f6753051a20d9fecffc8de6a55f96800e672478b4de465cf015570d5d77ae2"
+    },
+    "code/frontend/src/features/auth/staff-shell.css": {
+      "gitBlob": "d63e7164df3e278519ef37804e1710318024054e",
+      "mode": "100644",
+      "sha256": "02e9bce2fd612c68573eaa6ffc3e137bbaf1846be64db3567b55a65365f2cd70"
+    },
+    "code/frontend/src/features/billing/PaymentConfirmation.tsx": {
+      "gitBlob": "ce549889d632b5b6f2503fd0693a19d3a65b0f4f",
+      "mode": "100644",
+      "sha256": "d13480e4215bdbf1ef5e555ebcad993c48f230abc5d8d658e7d8f95955cba022"
+    },
+    "code/frontend/src/features/billing/PaymentForm.tsx": {
+      "gitBlob": "b16b798b6c812e950a600bd6de811c813e6b7714",
+      "mode": "100644",
+      "sha256": "3a54ecce84e0f080ad1258ac844b3535bdef8bd2584d0d5396d3c3abd7f989cc"
+    },
+    "code/frontend/src/features/billing/PaymentPanel.test.tsx": {
+      "gitBlob": "0c5062f53a5db8b72392b55165bb40f87e2e6e97",
+      "mode": "100644",
+      "sha256": "6d7c91df48458040f31fa09c3bba74f3dd0e1b72d189cda00d64a85075e95797"
+    },
+    "code/frontend/src/features/billing/PaymentPanel.tsx": {
+      "gitBlob": "db4d107ff983e030fc43d0619c1ea1c5d3255bf6",
+      "mode": "100644",
+      "sha256": "151a05a2b38252b7d2f06062ca84563570a1649f7bff2bf86aa0f8a51462adbb"
+    },
+    "code/frontend/src/features/billing/billing-preview.css": {
+      "gitBlob": "aa5c016957319458d90a5b75b23c59fb7844d506",
+      "mode": "100644",
+      "sha256": "3ed322a0ed7158172a2c9f26d8e70b5166ae289feed912ca301305e88c84c3ea"
+    },
+    "code/frontend/src/features/billing/paymentLabels.ts": {
+      "gitBlob": "ee83b3647621cdf6ae75192ffe12a80336981fff",
+      "mode": "100644",
+      "sha256": "d96d6f2752717b462faeaefa4c2f7d4f21c0c03459775a69941ec0d1bcfa5c71"
+    },
+    "code/frontend/src/features/fulfillment/KitchenBoardPage.test.tsx": {
+      "gitBlob": "ae95e90b6715b5cfeb8fea9dbde79aaf78a838e2",
+      "mode": "100644",
+      "sha256": "d503bce5189138d480197763cea31587a796ab9e4663612cfa7af4d5c914bc91"
+    },
+    "code/frontend/src/features/fulfillment/KitchenBoardPage.tsx": {
+      "gitBlob": "6e30f13eff3f3cfabf35219ac564e47673af3511",
+      "mode": "100644",
+      "sha256": "4224d468bf5f36ced944a64cc82082b4564a17d0564065eeabfb39a437e8b8da"
+    },
+    "code/frontend/src/features/fulfillment/StaffServingPage.test.tsx": {
+      "gitBlob": "b567db947ca582d0cd91b850e52be1a6a70b1432",
+      "mode": "100644",
+      "sha256": "191e3cac3c90b404f8f26d0cc9d838b4de4d81348ee1d4715099150f98dadc2e"
+    },
+    "code/frontend/src/features/fulfillment/StaffServingPage.tsx": {
+      "gitBlob": "756ec32e51288b046f8e73d557b5d3e5b27107ca",
+      "mode": "100644",
+      "sha256": "de15d09364ae1beeed0928f378c4151cf0a3dc7c51fdeee2a0d3f32e51842c7b"
+    },
+    "code/frontend/src/features/fulfillment/api.ts": {
+      "gitBlob": "c9199e81369194b1259538c16a80128c58178bbb",
+      "mode": "100644",
+      "sha256": "731523df42ed528b14e6537f9be32b6932ea93c217f54e1a9992bdc18da0068e"
+    },
+    "code/frontend/src/features/fulfillment/fulfillment.css": {
+      "gitBlob": "b6b7679978516664556a4df3d34aeb9502d16fce",
+      "mode": "100644",
+      "sha256": "2131a2058c86856e34afd818aef62f05cc9804b3e7475343c203123a73240c4a"
+    },
+    "code/frontend/src/features/ordering/CustomerOrderingConcurrency.test.tsx": {
+      "gitBlob": "5df7c53761af41016d59f29505e39395cd848cc6",
+      "mode": "100644",
+      "sha256": "bf9632975d788d1b4cff61a4ba0bd601b54b8edb7bca98ea9f6c76210525fc7d"
+    },
+    "code/frontend/src/features/ordering/CustomerOrderingPage.test.tsx": {
+      "gitBlob": "d831adc8eb9c7f1e627356b3aca1f714ba70e18e",
+      "mode": "100644",
+      "sha256": "d8367ada4fc53545fb1867a2250d7cb7fbce5c061f017c4d6d3648d05fce6687"
+    },
+    "code/frontend/src/features/ordering/CustomerOrderingPage.tsx": {
+      "gitBlob": "9894a89d5a2b0c93994d55acacd45870e66e71ec",
+      "mode": "100644",
+      "sha256": "810341bb27a58586e70b8dfb451740522a21dd7f5073b3bd4d0066897d6019b8"
+    },
+    "code/frontend/src/features/ordering/MenuAdminPage.test.tsx": {
+      "gitBlob": "6ad75d0b62d094146562c2e9984b7fffe35858eb",
+      "mode": "100644",
+      "sha256": "6244be3d241614d949818652717b2c1b76339c6106c1117e6b3cc00ca69344e9"
+    },
+    "code/frontend/src/features/ordering/MenuAdminPage.tsx": {
+      "gitBlob": "c7e26d913a0cbc56c9490afdee9d6b3f91c27bfd",
+      "mode": "100644",
+      "sha256": "fafb0f0e88b6cbcb678c108ad1457933be053a1a875212a69fc9e82cb40d500c"
+    },
+    "code/frontend/src/features/ordering/OrderingConcurrency.test.tsx": {
+      "gitBlob": "7a478b6ef97d0249f0dd173efbcdd4e2ce357fb5",
+      "mode": "100644",
+      "sha256": "70b31132e93229cccc48c4001727d77811b8cf449791cf15da56595cd76bcaa7"
+    },
+    "code/frontend/src/features/ordering/api.test.ts": {
+      "gitBlob": "ce90dc2aaec2315a283d58b2d02e5d85ddf11c4e",
+      "mode": "100644",
+      "sha256": "1018f8a20694c312fdccd071cb29dc322f1c9ef8dd07dc526f7a3f58451f4fd0"
+    },
+    "code/frontend/src/features/ordering/api.ts": {
+      "gitBlob": "21e10051da1d0f548facc7d7b03f706626d14ec6",
+      "mode": "100644",
+      "sha256": "946d6e0258e18f1a65e6b4eedad64c14f482ec042bcc409bbd6ea5ad4eeb9da3"
+    },
+    "code/frontend/src/features/ordering/ordering.css": {
+      "gitBlob": "d1b4ebb8f2aebdf4d6e35fed30c93e0f9b175238",
+      "mode": "100644",
+      "sha256": "41c6e63634dc46e79868b016fa127c49c53ffa2a678ccfa0bde642e78ac4c2ff"
+    },
+    "code/frontend/src/features/staff-tables/DiningSessionPage.tsx": {
+      "gitBlob": "1ea580ad4dcdad860d91906bab0d4d51711fc41f",
+      "mode": "100644",
+      "sha256": "da3b406252a1566d0de8573f85dea31f73ef224c8a5b880f474b3d341ee28b5b"
+    },
+    "code/frontend/src/features/staff-tables/StaffTablesPage.test.tsx": {
+      "gitBlob": "20fe8bf84736ebee9c3306cfdccdf457676534a4",
+      "mode": "100644",
+      "sha256": "2d2a606f991904c9e2ed88851ee6c5f00f2faebb7a810f6558cfdde764bafe67"
+    },
+    "code/frontend/src/features/staff-tables/StaffTablesPage.tsx": {
+      "gitBlob": "14052eafcc1989c98ad638331b76514beeb1edb3",
+      "mode": "100644",
+      "sha256": "8af4ad88483384cd9b58acb5cc590a0b1c3bcd19f5963fb7cf0df6e9c0b3edb7"
+    },
+    "code/frontend/src/features/staff-tables/api.ts": {
+      "gitBlob": "5fcaa516d7d97ba5c23c12d38d051e383a46b30e",
+      "mode": "100644",
+      "sha256": "683385e3ccee03da9cc4143e00bf6f320e74fd9bdf1d718be5ee2dcb88d03631"
+    },
+    "code/frontend/src/features/staff-tables/staff-tables.css": {
+      "gitBlob": "c103675bb98f3054877dcbc2b98794f14ec0111f",
+      "mode": "100644",
+      "sha256": "113747330b0f4788731ca541b43e9334926ec72ebf2e27c784a5b91a199ed881"
+    },
+    "code/frontend/src/foundation.css": {
+      "gitBlob": "d9386d1424d2a70d5a1d2f8309ffda8dfc989d87",
+      "mode": "100644",
+      "sha256": "d12cdc916c17fe704335d44069da284768437f51ebac4196a4606fe494e71de3"
+    },
+    "code/frontend/src/index.css": {
+      "gitBlob": "5fb33130220482ba51683f2f43660cca10f174d9",
+      "mode": "100644",
+      "sha256": "535c25dd1f338486ab3678832fc698011c8b8d1fe4ffd3d0ef5e33181457cc9f"
+    },
+    "code/frontend/src/main.tsx": {
+      "gitBlob": "c9d99c200678a28cd440824bd2d5a36e29dec258",
+      "mode": "100644",
+      "sha256": "e91cd8679692fb360cbcc007c4015e8b2c7c252fd5a855c26103e2a11ba6f47f"
+    },
+    "code/frontend/src/styles/tokens.css": {
+      "gitBlob": "22fc2e68c29afde857446dc5ead8eafe9da4af1c",
+      "mode": "100644",
+      "sha256": "17b85e3d3a8f5fe3d05b88d94a0ceb5921444505997701529cb4ff25ff61ee91"
+    },
+    "code/frontend/vite.config.ts": {
+      "gitBlob": "a3a662852b6ec9e74a9a5c93df06c7826765aa04",
+      "mode": "100644",
+      "sha256": "e24c077ae2cd77df9e6a26a0eab040a4435c59ab3958e65e48a032056a535ba8"
+    },
+    "test/browser/evidence-source-hashes.cjs": {
+      "gitBlob": "5bd0845a1ba98fd07f99270de7bdccbd55acfa68",
+      "mode": "100644",
+      "sha256": "de622733898752173a9f928ceb947110aef476854a752893e4a94b19be0c32a6"
+    },
+    "test/browser/sirapat-step2-concurrency.cjs": {
+      "gitBlob": "5537d0ca26e1e714abe0ac54bb4f4a9ea0c95940",
+      "mode": "100644",
+      "sha256": "c496380663bce64636e9af39d1700be3086a55a39f7c1d54055ce2157fe740a7"
+    },
+    "test/browser/sirapat-step2-smoke.cjs": {
+      "gitBlob": "4272f1a50ef24f59a18f4a57d525c5cbc6968437",
+      "mode": "100644",
+      "sha256": "90e26f79eb503ee3956eeff6ab0d346df09cfde0cb6a258ef531eed13c056b8f"
+    },
+    "test/browser/step2-core-flow.cjs": {
+      "gitBlob": "291fd5889af95b18f32112abff898d89fd3d7264",
+      "mode": "100644",
+      "sha256": "f398c81e84cd6d165ab7d9386233908ca75cef6c5370c28786854409dcd12147"
+    },
+    "test/browser/step2-ui-states.cjs": {
+      "gitBlob": "6a8e620b972fa75e45a036c4fe96a5e1d6f6077d",
+      "mode": "100644",
+      "sha256": "e9721ac23d143d826071c4f6109b8955b754b2efc79d4b6a082028c40b5ca56d"
+    },
+    "test/browser/step3-concurrency.cjs": {
+      "gitBlob": "27ad82f251a1aa2873f198ebac1c0ef3099fdc40",
+      "mode": "100644",
+      "sha256": "2e72f8c207a91dabaddf107e0fced851f638cc1ca1a4affd8c37cb6fd64d4770"
+    },
+    "test/browser/step3-core-flow.cjs": {
+      "gitBlob": "5278d5f931f1bd52b604c9362078a0d976499cf7",
+      "mode": "100644",
+      "sha256": "057d193c1f8b255055819ff89492a062a5cae9069147ad8d8b6047cbc9bd498d"
+    },
+    "test/browser/step3-local-runtime.cjs": {
+      "gitBlob": "60c01f28582af0ae5abb403916caf8e397c6da3f",
+      "mode": "100644",
+      "sha256": "8290d6128c5b9132b618c84492c0a1b4f315abf6c531fccbbe991ceb674f3367"
+    },
+    "test/browser/step3-runtime-config.cjs": {
+      "gitBlob": "d9999ec45ad919dc6912f2ef40f13553f2f1a78b",
+      "mode": "100644",
+      "sha256": "5124f7a7a6238104db691206f1a7bc99dcdf03c03242e1d7f040c12eff178373"
+    },
+    "test/browser/step3-runtime-config.test.cjs": {
+      "gitBlob": "4ef62abf4fecb1ca0b2154094a98c14ab34cb911",
+      "mode": "100644",
+      "sha256": "c4a4c76b11cf08e35d9a6be67ab41415096a50af3ec5bba9de4d8bb5016ba6e7"
+    },
+    "test/browser/step3-stock-profile-states.cjs": {
+      "gitBlob": "9b4f92820786838a1a3108e1349ad5d54f6341f6",
+      "mode": "100644",
+      "sha256": "1c1e369445242e68f917db850dd2570bbb47dc1a8cefb85c4a25a5ca5b2d6a20"
+    },
+    "test/browser/step3-stock-profile.cjs": {
+      "gitBlob": "2f66fd2fa0067aa03fd06642e8baa8ba613ba297",
+      "mode": "100644",
+      "sha256": "1608e297a89da7158c37e739a7a4091b2ae6378c8e18931cc00fe0e327f2c5b8"
+    },
+    "test/browser/step3-ui-states.cjs": {
+      "gitBlob": "a01b2870fdfb490960f8094026fddcf54bfb947e",
+      "mode": "100644",
+      "sha256": "11829610879b4a6c3011034e7344482318057e5462a71e6cfd9edb15b18926fb"
+    }
+  }
+}

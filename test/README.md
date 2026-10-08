@@ -26,6 +26,10 @@ See [test conventions](../doc/testing/test-conventions.md) and the [acceptance c
 
 ## Step 3 browser regression
 
+Current results: [8 October follow-up](../doc/testing/sirapat-step3-followup-2026-10-08.md), with integrated develop and unmerged Stock/Profile candidate kept separate. `step3-local-runtime.cjs` starts disposable H2/Vite with real session/database providers, no `.env` import/demo seed, random private accounts and bootstrap readiness. Set `FINAL_JAVA`/`PLAYWRIGHT_MODULE` if needed. `FINAL_RUN_LABEL`, `FINAL_LOCAL_OUTPUT` and `FINAL_LOCAL_SCRIPTS` choose output and runners; see the [evidence reproduction guide](evidence/sirapat-step3-followup-2026-10-08/README.md).
+
+`step3-stock-profile.cjs` checks real Manager/Supervisor UI, persisted target/shortfall/active history/reactivation, Profile create/update/length/permissions and responsive360/768/1280 on isolated loopback runtime. `step3-stock-profile-states.cjs` checks controlled loading/empty/error and legacy presentation; it is fixture evidence. Feature code can be tested independently before merge, but final integrated/public reruns remain necessary. `evidence-source-hashes.cjs` writes/verifies SHA256 from exact Git blobs without checkout line-ending transformations.
+
 `node test/browser/step3-core-flow.cjs` uses actual cookies and independent Manager/Supervisor/Staff/Kitchen/two-phone contexts. Set `PLAYWRIGHT_MODULE` to an available Playwright installation if it is not on the module path. Chrome must be available. The runner creates uniquely named table/package/soup/menu test data through UI/domain APIs and completes its session; it retains that run's historical data for evidence. Use an isolated local database or an owner-approved public test tenant.
 
 - `FINAL_ENVIRONMENT`: `local-h2`, `local-postgres` or `public`; this is an operator declaration, not database/provider attestation.

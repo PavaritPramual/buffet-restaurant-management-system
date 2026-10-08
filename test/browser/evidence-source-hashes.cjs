@@ -21,7 +21,15 @@ if (require.main === module) {
   assert(['write','verify'].includes(command) && ref && file,'Usage: node evidence-source-hashes.cjs write|verify <commit> <manifest.json>')
   const actual = manifest(ref)
   if (command === 'write') fs.writeFileSync(file,JSON.stringify(actual,null,2)+'\n')
-  else assert.deepEqual(JSON.parse(fs.readFileSync(file,'utf8')),actual,'Manifest must match the named Git revision and every blob byte')
+  else {
+    const recorded = JSON.parse(fs.readFileSync(file,'utf8'))
+    assert.equal(recorded.sourceCommit,actual.sourceCommit,'Verify the recorded commit; a docs-only newer head needs a separate equivalence record')
+    assert.equal(recorded.byteFormat,actual.byteFormat)
+    assert.equal(recorded.algorithm,actual.algorithm)
+    assert.deepEqual(Object.keys(recorded).sort(),Object.keys(actual).sort())
+    assert.equal(Object.keys(recorded.files).length,Object.keys(actual.files).length,'Source file counts differ')
+    for (const [name,entry] of Object.entries(actual.files)) assert.deepEqual(recorded.files[name],entry,`Git blob identity/hash mismatch: ${name}`)
+  }
   console.log(`${command.toUpperCase()}: ${Object.keys(actual.files).length} canonical Git blob hashes at ${actual.sourceCommit}`)
 }
 module.exports = {manifest}

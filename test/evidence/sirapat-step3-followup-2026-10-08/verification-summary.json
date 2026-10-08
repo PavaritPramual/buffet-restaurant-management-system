@@ -1,0 +1,81 @@
+{
+  "generatedAt": "2026-10-08T05:44:36.154881+00:00",
+  "integratedBaseline": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+  "featureCandidate": "cc72fa0c9125c50de185e02940b3359faee776f8",
+  "runnerRevisions": {
+    "coreFlow": "4f8bc5a6fe072476772ef8c3ffcd610c9b35dc5c",
+    "stockProfile": "4e5b30986916742be5edcd02944b7dc9249a1df4",
+    "stockProfileStates": "b8084aa5a35aa798b3fd5fef5842c50c62e80f0a"
+  },
+  "groups": {
+    "develop": {
+      "sourceCommit": "4f8bc5a6fe072476772ef8c3ffcd610c9b35dc5c",
+      "backend": {
+        "tests": 337,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 27
+      },
+      "backendPassed": 310,
+      "frontend": {
+        "passed": 118,
+        "lintErrors": 0,
+        "lintWarnings": 4,
+        "build": "PASS"
+      },
+      "coreFlow": {
+        "counts": {
+          "passed": 16,
+          "failed": 0
+        },
+        "httpMocks": false,
+        "startedAt": "2026-10-08T05:36:08.579Z",
+        "finishedAt": "2026-10-08T05:36:32.532Z"
+      },
+      "screenshots": 32
+    },
+    "stock-profile": {
+      "sourceCommit": "cc72fa0c9125c50de185e02940b3359faee776f8",
+      "backend": {
+        "tests": 346,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 28
+      },
+      "backendPassed": 318,
+      "frontend": {
+        "passed": 121,
+        "lintErrors": 0,
+        "lintWarnings": 4,
+        "build": "PASS"
+      },
+      "coreFlow": {
+        "counts": {
+          "passed": 16,
+          "failed": 0
+        },
+        "httpMocks": false,
+        "startedAt": "2026-10-08T05:39:41.865Z",
+        "finishedAt": "2026-10-08T05:40:05.709Z"
+      },
+      "screenshots": 38,
+      "realStockProfile": {
+        "counts": {
+          "passed": 8,
+          "failed": 0
+        },
+        "httpMocks": false,
+        "startedAt": "2026-10-08T05:41:31.529Z",
+        "finishedAt": "2026-10-08T05:41:39.900Z"
+      },
+      "controlledStates": {
+        "passed": 10,
+        "httpMocks": true,
+        "executedAt": "2026-10-08T05:43:10.531Z"
+      }
+    }
+  },
+  "publicAcceptance": false,
+  "scope": "Local isolated H2; candidate branch checked before merge, not final integrated/public acceptance",
+  "latestCandidateHead": "5a75d42d280f0688edbd1ccd3d231d5353b3878e"
+}

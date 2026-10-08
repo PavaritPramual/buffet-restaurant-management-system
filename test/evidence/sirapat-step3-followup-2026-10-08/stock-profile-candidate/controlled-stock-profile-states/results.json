@@ -1,0 +1,79 @@
+{
+  "sourceCommit": "cc72fa0c9125c50de185e02940b3359faee776f8",
+  "executedAt": "2026-10-08T05:43:10.531Z",
+  "httpMocks": true,
+  "publicAcceptance": false,
+  "results": [
+    {
+      "page": "stock",
+      "state": "loading",
+      "result": "PASS",
+      "width": 1280,
+      "httpMocks": true
+    },
+    {
+      "page": "stock",
+      "state": "empty",
+      "result": "PASS",
+      "width": 1280,
+      "httpMocks": true
+    },
+    {
+      "page": "stock",
+      "state": "error",
+      "result": "PASS",
+      "width": 1280,
+      "httpMocks": true
+    },
+    {
+      "page": "stock-items",
+      "state": "loading",
+      "result": "PASS",
+      "width": 1280,
+      "httpMocks": true
+    },
+    {
+      "page": "stock-items",
+      "state": "empty",
+      "result": "PASS",
+      "width": 1280,
+      "httpMocks": true
+    },
+    {
+      "page": "stock-items",
+      "state": "error",
+      "result": "PASS",
+      "width": 1280,
+      "httpMocks": true
+    },
+    {
+      "page": "profile",
+      "state": "loading",
+      "result": "PASS",
+      "width": 1280,
+      "httpMocks": true
+    },
+    {
+      "page": "profile",
+      "state": "empty",
+      "result": "PASS",
+      "width": 1280,
+      "httpMocks": true
+    },
+    {
+      "page": "profile",
+      "state": "error",
+      "result": "PASS",
+      "width": 1280,
+      "httpMocks": true
+    },
+    {
+      "page": "profile",
+      "state": "legacy fallback",
+      "result": "PASS",
+      "width": 1280,
+      "httpMocks": true,
+      "scope": "UI presentation only; real legacy migration is covered by automated migration tests"
+    }
+  ]
+}

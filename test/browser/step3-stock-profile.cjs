@@ -6,6 +6,7 @@ const crypto = require('node:crypto')
 const {execFileSync} = require('node:child_process')
 const {validateRuntimeUrls} = require('./step3-runtime-config.cjs')
 const web = process.env.FINAL_WEB_URL, api = process.env.FINAL_API_URL, mode = process.env.FINAL_ENVIRONMENT
+assert(['local-h2','local-postgres'].includes(mode),'Candidate checks require an isolated local runtime; public acceptance uses the confirmed release procedure')
 validateRuntimeUrls(mode,web,api)
 assert.equal(process.env.FINAL_ALLOW_TEST_DATA,'true')
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright')
