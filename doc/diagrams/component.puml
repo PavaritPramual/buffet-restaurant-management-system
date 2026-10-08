@@ -3,7 +3,7 @@
 skinparam shadowing false
 skinparam backgroundColor #FFFDF9
 skinparam defaultFontName Tahoma
-title Runtime component layers - code baseline 6d83eac (8 Oct 2026)
+title Runtime component layers - code baseline adc5798 (8 Oct 2026)
 top to bottom direction
 component "React views / shared components\nCustomer / Staff / Kitchen / Manager" as Web
 package "Spring Boot REST application" {
@@ -16,7 +16,7 @@ package "Spring Boot REST application" {
  component "Domain entities\nTables / Sessions / Orders\nPayments / Users / Stock" as E
 }
 database "PostgreSQL\nSupabase Session Pooler + SSL" as DB
-component "Flyway\ncommon + postgresql V1-V14" as Fly
+component "Flyway\ncommon + postgresql V1-V15" as Fly
 Web --> C : JSON / staff login session / customer cookie
 C --> S : use cases
 S --> Repo : transactions / queries

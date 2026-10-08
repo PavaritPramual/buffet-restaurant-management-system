@@ -4,7 +4,9 @@
 
 **Code baseline:** [6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6) — develop หลัง PR #25/#26/#27/#29; PR #28 ยังไม่รวมใน baseline นี้
 
-สถานะ เอกสารและการตรวจ baseline รอบนี้จัดทำแล้ว รอศรัณย์ตรวจ architecture/contracts/JPA และศิระพัทธ์ตรวจภาพ/อ้างอิง/tests ผ่าน PR ของเอกสารนี้ การรับรอง Final release/public deployment ต้องมีหลักฐานรุ่นส่งแยก
+สถานะปัจจุบัน: เอกสารรอบ PR #31 ผ่านศรัณย์และศิระพัทธ์ review แล้วที่ head5939ecd และ merge เข้า developeeb4db8; baseline6d83eacด้านล่างเป็นหลักฐานรอบเดิม การรับรอง Final release/public deployment ต้องมีหลักฐานรุ่นส่งแยก
+
+**ตรวจหลังรวม Stock/Profile:** develop `adc5798b05279840dc6178f4291278467c929791` วันที่ 8 ตุลาคม 2026; รับรองห้า Entity ของปวริศช์ใน [ตาราง JPA รวม](jpa-entity-rationale.md#คำรับรองโมดูลปวริศช์หลังรวม-stockprofile) และตรวจ delta/หลักฐานรอบใหม่โดยแยกจากรายงานเดิม
 
 ## 1. หน้าที่แต่ละชั้นและจุดส่งต่อ
 
@@ -78,8 +80,8 @@ DiningSessionIntegrationTest ใช้ Mockito PaymentStatusLookup สำหร�
 
 ผลรันจริงรอบนี้และภาพที่ตรวจอยู่ใน [รายงานเอกสารโมดูล](../testing/pavarit-module-docs-report-2026-10-08.md); [Diagram index](../diagrams/README.md) แสดงส่วนที่เปลี่ยนและภาพที่ตรงเดิม
 
-- [ ] ศรัณย์รับรองเอกสาร architecture/contracts/JPA ของ PR รอบนี้
-- [ ] ศิระพัทธ์รับรอง diagram previews/references/tests ของ PR รอบนี้
+- [x] ประวัติ: ศรัณย์รับรอง scope architecture/contracts/JPA ของ PR #31 ที่ head5939ecd แล้ว
+- [x] ประวัติ: ศิระพัทธ์รับรอง scope diagram previews/references/tests ของ PR #31 ที่ head5939ecd แล้ว
 - [ ] ตรวจส่วนที่เปลี่ยนอีกครั้งเมื่อมี Final release รวม Stock/Profile และ production setup
 - [ ] Public HTTPS/Secure-cookie/timed-TTL/Core Flow, deployed SHA, Canva/export/ซ้อม และ release main ผ่านหลักฐานครบ
 
