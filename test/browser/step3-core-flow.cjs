@@ -234,17 +234,50 @@ async function main() {
     await confirm(a); await a.locator('.order-card').waitFor(); assert.equal(orderPosts,1)
     await shot('phoneA','customer-order-360.png')
     const orderId=(await request('phoneA','get',`/dining-sessions/${sessionId}/orders`))[0].orderId
+    const stateDenials = []
+    async function rejectTransition(name, id, status, expectedHttp, storedStatus) {
+      const endpoint = `/orders/${id}/status`
+      const response = await ctx[name].request.patch(api + endpoint, {
+        data: { status }, headers: { Origin: new URL(web).origin, 'X-User-Role': 'MANAGER' },
+      })
+      assert.equal(response.status(), expectedHttp, `${name} ${storedStatus} -> ${status}`)
+      const error = await response.json()
+      assert.equal(error.status, expectedHttp)
+      assert.equal(error.path, new URL(api + endpoint).pathname)
+      assert.equal(typeof error.message, 'string')
+      assert(error.message.length > 0)
+      assert.equal(typeof error.error, 'string')
+      assert(!Number.isNaN(Date.parse(error.timestamp)))
+      const stored = (await request('phoneA','get',`/dining-sessions/${sessionId}/orders`)).find(order => order.orderId === orderId)
+      assert.equal(stored.status, storedStatus, 'Rejected transition must leave the persisted order unchanged')
+      stateDenials.push({ role: name, from: storedStatus, requested: status, httpStatus: expectedHttp, unchanged: true, unknownOrder: id !== orderId })
+    }
+    scenario = 'State API rejects anonymous, wrong roles and skipped transitions'
+    await rejectTransition('anonymous',orderId,'PREPARING',401,'RECEIVED')
+    for (const name of ['manager','supervisor','staff']) await rejectTransition(name,orderId,'PREPARING',403,'RECEIVED')
+    await rejectTransition('kitchen',orderId,'READY',400,'RECEIVED')
+    await rejectTransition('kitchen',orderId,'unknown',400,'RECEIVED')
+    await rejectTransition('kitchen',Number.MAX_SAFE_INTEGER,'PREPARING',404,'RECEIVED')
+    pass(scenario,{orderId,denials:stateDenials.slice()})
+    scenario = 'single confirmed order and actual Kitchen Serving transitions'
     await kitchen.reload()
     let ticket=kitchen.locator('.order-board-card').filter({hasText:run})
     await ticket.getByRole('button',{name:'เริ่มเตรียมอาหาร'}).click()
     await ticket.getByRole('button',{name:'พร้อมเสิร์ฟแล้ว'}).waitFor(); await shot('kitchen','kitchen-preparing-768.png')
+    await rejectTransition('kitchen',orderId,'RECEIVED',400,'PREPARING')
     await ticket.getByRole('button',{name:'พร้อมเสิร์ฟแล้ว'}).click(); await ticket.waitFor({state:'hidden'})
     await staff.getByRole('link',{name:'งานเสิร์ฟ'}).click()
     ticket=staff.locator('.order-board-card').filter({hasText:run})
     await ticket.getByRole('button',{name:'เสิร์ฟแล้ว'}).waitFor(); await shot('staff','staff-serving-768.png')
+    await rejectTransition('kitchen',orderId,'SERVED',403,'READY')
+    await rejectTransition('kitchen',orderId,'PREPARING',400,'READY')
     await ticket.getByRole('button',{name:'เสิร์ฟแล้ว'}).click(); await ticket.waitFor({state:'hidden'})
     assert.equal((await request('phoneA','get',`/dining-sessions/${sessionId}/orders`))[0].status,'SERVED')
     pass(scenario,{orderId,status:'SERVED',orderPosts})
+    scenario = 'State API rejects reversal, wrong serving role and terminal changes'
+    await rejectTransition('staff',orderId,'SERVED',400,'SERVED')
+    await rejectTransition('kitchen',orderId,'READY',400,'SERVED')
+    pass(scenario,{orderId,denials:stateDenials.slice(7),terminalStatus:'SERVED'})
     scenario = 'bill request stops both phones and backend orders'
     await a.getByRole('button',{name:'ขอคิดบิล',exact:true}).click(); await confirm(a)
     for(const [name,page] of [['phoneA',a],['phoneB',b]]) {

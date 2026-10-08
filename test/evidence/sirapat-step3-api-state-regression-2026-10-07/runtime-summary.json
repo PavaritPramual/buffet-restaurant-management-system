@@ -1,0 +1,30 @@
+{
+  "database": "isolated in-memory H2",
+  "envFileImport": false,
+  "seedFixtures": false,
+  "providers": {
+    "masterData": "session",
+    "menu": "session",
+    "ordering": "database",
+    "diningSession": "session",
+    "fulfillment": "session",
+    "billing": "database",
+    "payment": "database"
+  },
+  "webUrl": "http://127.0.0.1:5177",
+  "apiUrl": "http://127.0.0.1:8087/api/v1",
+  "scripts": [
+    {
+      "script": "step3-core-flow.cjs",
+      "exitCode": 0
+    },
+    {
+      "script": "step3-ui-states.cjs",
+      "exitCode": 0
+    },
+    {
+      "script": "step3-concurrency.cjs",
+      "exitCode": 0
+    }
+  ]
+}

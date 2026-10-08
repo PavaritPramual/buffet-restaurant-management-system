@@ -1,0 +1,12 @@
+
+> frontend@0.0.0 test
+> vitest run
+
+
+ RUN  v5.0.1 C:/Bismarck/New folder/buffet-restaurant-management-system/code/frontend
+
+
+ Test Files  14 passed (14)
+      Tests  116 passed (116)
+   Start at  18:39:47
+   Duration  13.07s (environment 52%, import 28%, tests 15%, transform 4%)
