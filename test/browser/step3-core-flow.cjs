@@ -182,9 +182,11 @@ async function main() {
     const firstQr = await qr()
     await staff.getByRole('button',{name:'ปิดรอบกิน',exact:true}).click(); await confirm(staff)
     await staff.getByRole('alert').waitFor()
+    assert.equal(await staff.getByRole('alert').innerText(), 'กรุณาบันทึกการชำระเงินก่อนปิดรอบกิน')
     assert.equal((await request('staff','get',`/dining-sessions/${sessionId}`)).sessionStatus,'ACTIVE')
+    assert.equal((await request('manager','get','/tables')).find(row => row.id === table.id).status,'OCCUPIED')
     await shot('staff','staff-unpaid-close-768.png')
-    pass(scenario,{sessionId,tableId:table.id})
+    pass(scenario,{sessionId,tableId:table.id,message:'กรุณาบันทึกการชำระเงินก่อนปิดรอบกิน',sessionStatus:'ACTIVE',tableStatus:'OCCUPIED'})
     scenario = 'one-use QR and two independent phones'
     await a.goto(firstQr)
     await a.getByRole('button',{name:'เพิ่ม '+item.name,exact:true}).waitFor()
