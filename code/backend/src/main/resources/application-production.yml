@@ -1,0 +1,24 @@
+server:
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+        same-site: lax
+
+app:
+  master-data:
+    access-provider: session
+  menu:
+    admin-access-provider: session
+  ordering:
+    session-provider: database
+  dining-session:
+    staff-access-provider: session
+  fulfillment:
+    access-provider: session
+  billing:
+    context-provider: database
+  payment:
+    status-provider: database
