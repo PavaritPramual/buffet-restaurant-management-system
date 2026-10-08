@@ -195,13 +195,29 @@
       "path": "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionMigrationTest.java",
       "line": 14,
       "needle": "class DiningSessionMigrationTest"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/exception/GlobalExceptionHandler.java",
+      "line": 116,
+      "needle": "@ExceptionHandler(IllegalStateException.class)"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionIntegrationTest.java",
+      "line": 158,
+      "needle": "void rejectsOccupiedTableAndInvalidGuestCountsWithErrorResponse()"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionIntegrationTest.java",
+      "line": 183,
+      "needle": "void rejectsDisabledPackageOrSoup()"
     }
   ],
   "checkedAt": "2026-10-08",
   "timezone": "Asia/Bangkok",
   "documentCommits": [
     "d1ff4afdfa2fb160c8aefa1efdc43992b1c7e6de",
-    "52d17fd409ed483e7c859840a05afc783aabb9be"
+    "52d17fd409ed483e7c859840a05afc783aabb9be",
+    "085c6454a1bacf5044677fa17d90e9a91ba7b78f"
   ],
   "environment": {
     "os": "Windows",
@@ -282,16 +298,16 @@
     },
     {
       "name": "sequence-open-session",
-      "sourceCommit": "52d17fd409ed483e7c859840a05afc783aabb9be",
+      "sourceCommit": "085c6454a1bacf5044677fa17d90e9a91ba7b78f",
       "gitBlobSha256": {
-        "doc/diagrams/sequence-open-session.puml": "29ac5b38233a12b029f5350a1a359b4aae23e6998f2c978ed7862d0f176846fd",
-        "doc/diagrams/previews/sequence-open-session.svg": "d17ea0526d532f9f8d03953a60fa4cf98dcfabf6a4d8ed77ae39d54014b4f4bc"
+        "doc/diagrams/sequence-open-session.puml": "c67b8776ae8fd773d7d5198505eca73a09ac2e1e284b2cb171308a58a645c380",
+        "doc/diagrams/previews/sequence-open-session.svg": "22ee2a38c0b290344d2f45ba426332d062e8614084abc194008814727d575a9e"
       },
       "pngDimensions": [
         1391,
         838
       ],
-      "visualInspection": "passed; complete frame, readable labels, no clipping"
+      "visualInspection": "passed after PR31 review; HTTP 400 matches runtime, complete frame, no clipping"
     },
     {
       "name": "sequence-qr-exchange",
@@ -322,5 +338,25 @@
   ],
   "learningFileCount": 21,
   "runtimeDiff": "empty",
-  "scope": "documentation and diagram review only; no shared database access; no public runtime acceptance"
+  "scope": "documentation and diagram review only; no shared database access; no public runtime acceptance",
+  "reviewFixes": [
+    {
+      "pr": 31,
+      "reviewer": "sirapatw-sys",
+      "reviewedHead": "9f872ceaf3eac3b1d8c0b6b2ceff273d69018fd2",
+      "diagramCommit": "085c6454a1bacf5044677fa17d90e9a91ba7b78f",
+      "change": "Correct open-session rule errors from 409 to 400; missing table remains 404; do not change runtime",
+      "localTests": {
+        "suite": "DiningSessionIntegrationTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "database": "isolated H2",
+        "envFileImport": false,
+        "java": "21.0.11"
+      },
+      "plantUml": "1.2025.0; syntax/SVG/PNG passed after Maven validate; changed image inspected"
+    }
+  ]
 }

@@ -5,12 +5,12 @@
 ## Revision และขอบเขต
 
 - Code baseline [6d83eac](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6) เป็น develop ที่ merge แล้ว ไม่รวม PR #28 ที่ยังเปิดตอนเริ่มตรวจ
-- เอกสาร SOLID/JPA [d1ff4af](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/d1ff4afdfa2fb160c8aefa1efdc43992b1c7e6de) และ diagram [52d17fd](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/52d17fd409ed483e7c859840a05afc783aabb9be) คือสองชุดที่ตรวจ รายงาน/manifest เป็น commit ชุดถัดไป
+- เอกสาร SOLID/JPA [d1ff4af](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/d1ff4afdfa2fb160c8aefa1efdc43992b1c7e6de) และ diagram [52d17fd](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/52d17fd409ed483e7c859840a05afc783aabb9be) เป็นสองชุดรอบแรกก่อนรีวิว ส่วนแก้รีวิว PR #31 อยู่ในหัวข้อท้ายรายงาน
 - [เอกสารโมดูล](../architecture/pavarit-table-session-solid-jpa.md), [SOLID รวม](../solid-analysis.md), [Diagram index](../diagrams/README.md), [หลักฐาน structured](../../test/evidence/pavarit-module-docs-2026-10-08/validation.json)
 - Windows; local Java 26.0.1, PlantUML 1.2025.0 ใช้ Java 21.0.11 แบบ headless; H2 memory แยก และปิด `.env` import ด้วย `-Dspring.config.import=`
 - `git diff 6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6 -- code` ว่าง โค้ด runtime/API/DTO/migration ไม่เปลี่ยน และไม่ได้ติดต่อหรือ apply migration บน Supabase
 
-## ผลตรวจในเครื่องรอบนี้
+## ผลตรวจในเครื่องรอบแรกก่อนรีวิว
 
 รันจาก `code/backend` ก่อน render diagram
 
@@ -73,9 +73,9 @@ DiningSessionIntegrationTest ใช้ Mockito PaymentStatusLookup สำหร�
 & '<java21>' '-Djava.awt.headless=true' -jar '<plantuml.jar>' -nbthread 1 -tsvg -charset UTF-8 -o previews doc/diagrams/component.puml doc/diagrams/class-table-session.puml doc/diagrams/sequence-open-session.puml doc/diagrams/sequence-qr-exchange.puml doc/diagrams/domain-model.puml
 ```
 
-Source/SVG hashes ใน validation.json ใช้ bytes จาก Git blob ของ diagram commit หลีกเลี่ยงความต่าง LF/CRLF ใน Windows ไม่ใช้ hash ของภาพ PNG ที่ไม่ได้ส่งเป็นหลักฐาน source
+Source/SVG hashes ใน validation.json ใช้ bytes จาก Git blob ของ sourceCommit ที่ระบุแยกในแต่ละภาพ หลีกเลี่ยงความต่าง LF/CRLF ใน Windows ไม่ใช้ hash ของภาพ PNG ที่ไม่ได้ส่งเป็นหลักฐาน source
 
-ตรวจ references ซ้ำได้จาก root ด้วย `python test/evidence/pavarit-module-docs-2026-10-08/verify.py` ผลรอบนี้ source anchors 39, source links 66, relative links 80, code snippet 1 และ diagram hash pairs 5 ผ่านทั้งหมด การตรวจ source links เก่าที่ยังคงเป็นประวัติยืนยันว่าไฟล์/บรรทัดมีอยู่ ไม่ใช้แทนการรับรองคำอธิบายของโมดูลอื่น
+ตรวจ references ซ้ำได้จาก root ด้วย `python test/evidence/pavarit-module-docs-2026-10-08/verify.py` ผลรอบแรก source anchors 39, source links 66, relative links 80, code snippet 1 และ diagram hash pairs 5 ผ่านทั้งหมด การตรวจ source links เก่าที่ยังคงเป็นประวัติยืนยันว่าไฟล์/บรรทัดมีอยู่ ไม่ใช้แทนการรับรองคำอธิบายของโมดูลอื่น
 
 ## ตรวจความครบและส่งต่อ
 
@@ -88,3 +88,20 @@ Source/SVG hashes ใน validation.json ใช้ bytes จาก Git blob ข�
 - [ ] Public deployment/HTTPS/Secure cookie/timed-TTL/รุ่นที่ deploy/สไลด์และซ้อม/release main ยังรอหลักฐานแยก
 
 ไม่พบเหตุที่ต้องแก้ runtime ใน scope ที่ตรวจ งานเอกสารนี้ไม่ได้รับรองทั้งระบบหรือ public พร้อมส่ง และไม่มีการเปลี่ยน Payment/Stock/Profile ของเจ้าของอื่น หลังเปิด PR ให้รอ review ตามข้อตกลง
+
+## แก้รีวิว PR #31 — HTTP status ของการเปิดรอบ
+
+ศิระพัทธ์ขอแก้ sequence-open-session ที่ head9f872ce เพราะ note เดิมระบุ occupied/capacity/inactive เป็น409 แต่ runtime ตอบ400 แก้ source/SVG และ Diagram index ที่ [085c645](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/085c6454a1bacf5044677fa17d90e9a91ba7b78f) โดยคง code baseline6d83eac ไม่เปลี่ยน runtime/API/DTO/migration
+
+- [GlobalExceptionHandler บรรทัด116](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6/code/backend/src/main/java/com/buffetrestaurant/exception/GlobalExceptionHandler.java#L116) แปลง IllegalStateException เป็น HTTP400
+- [occupied/capacity tests](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6/code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionIntegrationTest.java#L158) และ [inactive package/soup tests](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6/code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionIntegrationTest.java#L183) คาดหวัง Bad Request ตรงกับภาพใหม่
+- ระบุ missing table เป็น404 ส่วน package/soup ที่ไม่มีหรือไม่ active เป็น400 ให้ตรงการเลือก exception ของ openSession ไม่ใช้คำว่า missing resource รวมทุกกรณี
+- รัน Maven validate แล้ว syntax/render SVG/PNG ด้วย PlantUML1.2025.0 / Java21.0.11 และตรวจภาพที่แก้ครบ ไม่มีข้อความล้น; อัปเดต hashes ของภาพนี้จาก Git blob ของ085c645 ส่วนอีก4ภาพคง revision เดิม
+- ทวน `DiningSessionIntegrationTest` บน H2 แยกพร้อมปิด `.env` import ด้วยคำสั่งด้านล่าง ได้ **11/11**, failures/errors/skipped=0 ไม่ใช่การรัน24testsหรือPostgreSQLใหม่รอบนี้
+
+```powershell
+.\mvnw.cmd '-Dspring.config.import=' validate
+.\mvnw.cmd '-Dspring.config.import=' '-Dtest=DiningSessionIntegrationTest' test
+```
+
+รอบแรก wrapper ใน sandbox ค้างก่อนเริ่ม Maven จึงหยุดและทวนด้วย Java21.0.11 ได้ BUILD SUCCESS; ไม่มี product test failure เพิ่ม source anchors3จุดของ handler/tests เป็น42จุด ผล verify.py หลังแก้เป็น source links69, relative links80, code snippet1, diagram hash pairs5 ผ่านทั้งหมด และ `git diff --check` ผ่าน ยังรอศิระพัทธ์/ศรัณย์ review ของ PR นี้ รวมถึง Final/public gates เดิม
