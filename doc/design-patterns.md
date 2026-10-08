@@ -29,6 +29,8 @@
 
 ### Strategy
 
+รายละเอียดที่เจ้าของ Billing/Payment ตรวจจาก source revision `bdd3bd7` อยู่ใน [Billing/Payment Strategy, SOLID และ JPA notes](architecture/teeramet-billing-payment-solid-jpa.md). เอกสารนี้ไม่ใช้ผล CI แทนการตรวจ public payment flow.
+
 [BillingEngine.java:21](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingEngine.java#L21) implements BillCalculator และ compose pricing/discount interfaces. invalid pricing ถูกปฏิเสธก่อน discount. คำนวณ precise BigDecimal แล้ว HALF_UP payable totalสองตำแหน่ง; DTO ใช้ BillSummaryและPayment ใช้ยอดบันทึกจริง. BillingContext มาจาก session snapshot ผ่าน DiningSessionBillingReader; null discountContext หมายถึงไม่มี promotion
 
 [BillingEngineTest.java:12](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/test/java/com/buffetrestaurant/service/billing/BillingEngineTest.java#L12) ตรวจ invalid/replacement strategies และ rounding; PaymentIntegrationTest/PostgresPaymentIntegrationTest ตรวจ snapshot, duplicate และ Payment/close concurrency. Strategy ไม่รับผิดชอบ authorization หรือ DB locks

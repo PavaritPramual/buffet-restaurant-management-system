@@ -8,6 +8,7 @@
 
 - [ปวริศช์ — Table/Package/Soup, DiningSession/QR และ shared providers](architecture/pavarit-table-session-solid-jpa.md): SOLID, JPA/SQL lifecycle, snapshot/เวลา, transaction/lock และข้อจำกัดพร้อม source/tests ของ baseline `6d83eac`
 - [ศิระพัทธ์ — Menu/Ordering](architecture/sirapat-menu-ordering-solid-jpa.md): หลักฐานตาม scope ของเจ้าของ; การยืนยันรุ่น Final และโมดูลที่เหลือยังเป็น gate แยก
+- [ธีรเมธ — Billing/Payment](architecture/teeramet-billing-payment-solid-jpa.md): Strategy, price snapshot, rounding, payment transaction/JPA และ tests ที่ revision `bdd3bd7`; public release gate ยังแยก
 
 ## S — Single Responsibility
 

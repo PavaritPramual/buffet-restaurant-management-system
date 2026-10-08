@@ -1,7 +1,7 @@
 # JPA Entity Rationale
 
 สถานะ: เอกสารอธิบาย mapping ที่ **implemented อยู่แล้ว** (ตรวจกับ `code/backend/.../domain/*.java` และ migration V1–V15) ไม่มีการเปลี่ยน mapping เพื่อให้เอกสารดูดีขึ้น
-การยืนยันเหตุผลเชิงออกแบบจากเจ้าของแต่ละ Entity: Auth/Stock/Profile = เมธัส/ปวริศช์ (ในเอกสารนี้); Menu/Ordering = [sirapat-menu-ordering-solid-jpa.md](sirapat-menu-ordering-solid-jpa.md); Table/Package/Soup/Session/Customer grants = ปวริศช์ รับรอง mapping ของ develop `adc5798` วันที่ 8 ตุลาคม 2026 ตามหัวข้อด้านล่าง; Order/Payment ที่ยังระบุ "รอเจ้าของยืนยัน" คงรอเจ้าของโมดูลนั้น
+การยืนยันเหตุผลเชิงออกแบบจากเจ้าของแต่ละ Entity: Auth/Stock/Profile = เมธัส/ปวริศช์ (ในเอกสารนี้); Menu/Ordering = [sirapat-menu-ordering-solid-jpa.md](sirapat-menu-ordering-solid-jpa.md); Table/Package/Soup/Session/Customer grants = ปวริศช์ รับรอง mapping ของ develop `adc5798` วันที่ 8 ตุลาคม 2026 ตามหัวข้อด้านล่าง; Payment = [ธีรเมธอธิบาย mapping/Strategy/transaction ที่ revision `bdd3bd7`](teeramet-billing-payment-solid-jpa.md); Order ที่ยังระบุ "รอเจ้าของยืนยัน" คงรอเจ้าของโมดูลนั้น
 association ส่วนใหญ่ใช้ `LAZY` ยกเว้น `UserProfile.user` ที่ประกาศ `@OneToOne` โดยไม่กำหนด fetch จึงเป็น **EAGER (ค่าเริ่มต้นของ JPA สำหรับ `@OneToOne`)**; ทุก FK มี index ที่ใช้ใน query หลัก
 
 | Entity → table | ความสัมพันธ์/cardinality | Owner side, FK, ON DELETE | Cascade / fetch | ผลต่อ query และประวัติ |
@@ -19,7 +19,7 @@ association ส่วนใหญ่ใช้ `LAZY` ยกเว้น `UserPro
 | `CustomerSessionGrant` → `customer_session_grants` | JPA N : 1 session; optional=false; ไม่มี collection ฝั่ง session | grant ถือ session_id NOT NULL, SQL ON DELETE CASCADE; token_hash UNIQUE, idx_customer_grants_session | @ManyToOne LAZY; ไม่มี JPA cascade | ปวริศช์ยืนยัน: hash เท่านั้นและตรวจ expiresAt ทุกคำขอ; close ลบ grants ชัดเจน; SQL CASCADE ทำงานเมื่อ parent ถูกลบที่ DB ไม่ใช่ JPA cascade และไม่ใช้แทน close rule |
 | `CustomerOrder` → `orders` | N : 1 กับ session โดย `session_id` เป็นคอลัมน์ `Long` (ไม่ใช่ `@ManyToOne`); 1 : N กับ `OrderItem` | FK ที่ DB (V7) RESTRICT, `idx_orders_session`, `idx_orders_status`; ฝั่ง JPA `@OneToMany(mappedBy="order")` | `cascade=ALL`, `orphanRemoval=true`, LAZY | บันทึกออเดอร์พร้อมรายการใน transaction เดียว; ไม่ผูก entity session จึงลด join ต่อ query แต่ต้อง join ด้วยมือ; รอเจ้าของยืนยัน |
 | `OrderItem` → `order_items` | N : 1 กับ order (LAZY); `menu_item_id` เป็น `Long` | Owner = item; FK order ON DELETE CASCADE, `idx_order_items_order`; FK menu_item RESTRICT; quantity > 0 | ตาม order | snapshot `item_name` รักษาประวัติใบสั่ง |
-| `Payment` → `payments` | 1 : 1 กับ session โดย `session_id` เป็น `Long` UNIQUE | FK RESTRICT; amount ≥ 0; method CHECK CASH/QR/CARD; status CHECK PENDING/PAID/FAILED | ไม่ cascade | UNIQUE บังคับ 1 session ต่อ 1 payment; ไม่ลบ session ที่มี payment; รอเจ้าของยืนยัน |
+| `Payment` → `payments` | 1 : 0..1 กับ session ใน domain โดย `session_id` เป็น plain `Long` UNIQUE ใน Entity | FK RESTRICT; amount ≥ 0; method CHECK CASH/QR/CARD; status CHECK PENDING/PAID/FAILED | ไม่มี JPA association จึงไม่มี cascade หรือ fetch mode | UNIQUE บังคับ 1 session ต่อ 1 payment; ไม่ลบ session ที่มี payment; เจ้าของยืนยันที่ [Payment notes](teeramet-billing-payment-solid-jpa.md) revision `bdd3bd7` |
 
 ## หมายเหตุสำคัญ
 - `orders.session_id`, `order_items.menu_item_id`, `payments.session_id` เป็น plain `Long` ใน JPA แต่มี FK จริงใน DB — เป็นการเลือกของเจ้าของ module ไม่ได้แก้ในงานนี้
