@@ -9,9 +9,9 @@ Manager จัดการข้อมูลร้านและสต็อก
 
 **สไลด์ฉบับล่วงหน้า ยังไม่รับรอง:** [Canva ทีม v02b](https://www.canva.com/d/yWw6P3disBOSfHS) แก้ข้อเท็จจริงตามรีวิว PR #24 เฉพาะ4หน้า คง76หน้า ลำดับและผู้พูดเดิมไว้ก่อน เป้าพรีเซนต์12นาทีและ runbook ยังเป็นร่าง รอให้โค้ดทุกส่วนเสร็จแล้วทบทวนเนื้อหา/การเรียง/ช่วงพูด ดู [guide/version](doc/slide/README.md), [coverage](doc/slide/course-diagram-coverage.md) และ [notes](doc/slide/team-final-canva-v02-content.md) ใช้Canvaเป็นต้นฉบับและเก็บทั้งPPTXกับPDFที่exportจากCanvaตามเวอร์ชัน ยังไม่มีไฟล์exportของร่างนี้
 
-Code baseline `develop 472fba4` ณ 7 ตุลาคม2026: Step2ปิดแล้วและPR#22รวมlocalregression/AdminShell/testpreparation
-เอกสารและสไลด์ปวริศช์ชุดนี้รอreview **ยังไม่ใช่ Final ที่พร้อมส่ง** Public deployment, Stock target/active, Profileละเอียด, SOLID gaps, Gitเกณฑ์รายคน และreleaseยังต้องปิด
-ดู [Requirement Matrix](doc/planning/step3-requirement-matrix.md), [Step3 plan](doc/planning/step3-final-plan.md) และ [Notionสด](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6)
+Code baseline: merged [`develop adc5798`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/adc5798b05279840dc6178f4291278467c929791) ณ 8 ตุลาคม 2026. CI [run 37738400052](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37738400052) ผ่าน Backend/PostgreSQL 348/348, Frontend 121/121, URL guards 6/6, lint 0 errors/4 existing warnings และ build ผ่าน. Stock target/active และ Profile fields อยู่ใน V15 ที่ merge ผ่าน [PR #28](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/28) พร้อม tests และ reviewer approvals; หลักฐาน Stock/Profile candidate browser ระบุแยกใน [follow-up report](doc/testing/sirapat-step3-followup-2026-10-08.md)
+
+เอกสาร/สไลด์และ CI **ยังไม่ใช่การรับรอง Final**. Public deployment/URL, V15 central-schema approval/validate, integrated public regression, reviewed release บน main/deployed SHA และสไลด์ export/ซ้อมทีมยังต้องปิดตามหลักฐานจริง ดู [Requirement Matrix](doc/planning/step3-requirement-matrix.md), [Git audit](doc/planning/step3-git-audit.md), [Step3 plan](doc/planning/step3-final-plan.md) และ [Notion](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6)
 
 **เกณฑ์Gitที่อาจารย์ปรับ:** ขั้นต่ำ5meaningfulcommitsต่อคนตามการแจ้งวันที่7ตุลาคม2026 ดู [criteria update](doc/planning/course-criteria-updates.md) และ [Git audit](doc/planning/step3-git-audit.md)
 
@@ -77,11 +77,11 @@ Frontendค่าlocal `VITE_API_BASE_URL=http://localhost:8080/api/v1` แล�
 
 Flywayเป็นผู้จัดการschema JPAใช้ `ddl-auto: validate` และ `open-in-view: false`
 Locations `db/migration/common` + `h2` หรือ `postgresql` ตามenvironment **ห้ามแก้migrationที่applyแล้ว**
-V1baselineเปล่า V2tables V3packages/soups V4menu/order V5fulfillmentsnapshot V6sessions/grants V7ordersFK V8pricesnapshot V9payments V10auth V11stock V12paymentprivileges V13tableprivileges V14billrequest
+V1baselineเปล่า V2tables V3packages/soups V4menu/order V5fulfillmentsnapshot V6sessions/grants V7ordersFK V8pricesnapshot V9payments V10auth V11stock V12paymentprivileges V13tableprivileges V14billrequest V15stocktarget/activeและprofile first/last/phone
 ตรวจคำอธิบายไฟล์จริงจาก [migrations](code/backend/src/main/resources/db/migration) ไม่เดาจากinstalled_rank
 
-ตรวจ Supabase กลางแบบอ่านอย่างเดียววันที่ 7 ตุลาคม 2026 พบ Flyway V1–V14 success=true รวม V13/V14 ที่ลงวันที่ 6 ตุลาคม และ checksum ตรงไฟล์ใน repo ดู [หลักฐาน SELECT/checksum/schema/grants](doc/testing/pr24-review-fixes-report.md#หลักฐาน-supabase-v13v14) V9 ลงหลัง V10/V11 ตาม installed_rank
-ผลนี้เป็น metadata readback ผ่าน connector ไม่ใช่การรันแอป/JPA validate ใหม่หรือการตรวจ public deployment และไม่มีการ apply/repair migration ใน PR นี้ Final Stock/Profile ต้อง forward migration เลขว่างจริง review และขออนุมัติฐานกลางใหม่
+เอกสาร migration V13–V15 และ read-only central schema evidence อยู่ใน [schema delta](doc/database/auth-stock-schema-delta.md) และ [canonical dictionary](doc/database/step2-schema-approved.md). PR #28 เพิ่ม forward migration V15 สำหรับ stock target/active และ profile fields พร้อม migration/integration tests
+การ readback เป็น metadata/schema evidence ไม่ใช่การยืนยัน public app runtime หรือการอนุมัติย้อนหลัง; formal V15 approval, Flyway validate/checksum comparison และ release database verification ยังเป็น gates แยก ห้าม apply ซ้ำหรือ repair history เพื่อให้ผ่านเฉยๆ
 Startup defaultFlywayenabledอาจapplypendingmigrations อย่าเริ่มimageใหม่ชี้ฐานกลางก่อนรับรอง pendingfiles ไม่repairhistoryให้ผ่านเฉยๆ
 
 ProvisionManagerแรกบนระบบจริงใช้ `BOOTSTRAP_ADMIN_ENABLED`, `BOOTSTRAP_ADMIN_USERNAME`, `BOOTSTRAP_ADMIN_PASSWORD` และoptionaldisplay/email ตามตัวอย่าง
@@ -169,9 +169,9 @@ npm run lint
 npm run build
 ```
 
-[CIของdevelop472fba4](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37503690105): backend+PostgreSQL303/303 frontend116/116 URLguards6/6 lint0errors/4existingwarnings buildผ่าน
-[PR#22 report](doc/testing/sirapat-step3-premerge-report.md) แยกlocalH2 realHTTP/cookies14PASS ก่อนmerge/hashตรงhead617d742 ออกจากhistoricalUIfixtures และpublicที่ยังไม่ตรวจ
-งานdocsนี้ใช้CIbaseline ไม่อ้างว่ารันbackend/frontendใหม่ ดู [docs verification](doc/testing/pavarit-step3-docs-report.md)
+[CI ล่าสุดของ `develop adc5798`](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37738400052): Backend/PostgreSQL348/348, frontend121/121, URLguards6/6, lint0errors/4warningsเดิม, buildผ่าน จาก job logs
+[PR#32 report](doc/testing/sirapat-step3-followup-2026-10-08.md) แยก develop regression, Stock/Profile candidate 8/8, controlled fixtures และ public gates ตาม revision; candidate/browser evidence ไม่ใช่ public acceptance
+การแก้เอกสารครั้งนี้ใช้ CI ดังกล่าวเป็นหลักฐาน baseline ไม่อ้างว่ารัน backend/frontend ใหม่ รายละเอียดของ PR ที่เกี่ยวข้องอยู่ใน [PR #32 report](doc/testing/sirapat-step3-followup-2026-10-08.md) และ [Pavarit module docs report](doc/testing/pavarit-module-docs-report-2026-10-08.md)
 
 ## Deployment URL
 
@@ -204,6 +204,6 @@ docker-compose.yml
 ## Git workflow และชุดนำเสนอ
 
 Personalbranch →reviewedPR→develop →reviewedreleasePR→main ทุกคนใช้บัญชีตน Commitเป็นงานที่มีความหมาย ไม่เติมจำนวน
-[Git audit snapshot ก่อนแก้ PR #24](doc/planning/step3-git-audit.md) แสดงทั้งห้าบัญชี branches/PRreviews/candidatecommitcounts และข้อขาดจริง
+[Git audit ล่าสุด](doc/planning/step3-git-audit.md) แสดง develop snapshot หลัง PR #32, author candidates, PR/reviewer/merge history และสิ่งที่สมาชิกยังต้องยืนยัน
 [สไลด์ทีมปัจจุบัน](doc/slide/README.md) / [Diagram coverage](doc/slide/course-diagram-coverage.md) / [runbook12นาที](doc/slide/team-final-12-minute-runbook.md)
 ร่างPPTX/PDFรายคนเดิมเป็นประวัติ รุ่นส่งใช้Canvaพร้อมไฟล์PPTX/PDFที่exportจากCanvaและownerรับรองตามreleaseจริง
