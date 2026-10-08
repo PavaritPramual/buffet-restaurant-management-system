@@ -1,0 +1,15 @@
+
+> frontend@0.0.0 test
+> vitest run
+
+
+ RUN  v5.0.1 D:/673380278-9/2569/CP353002-PrinciplesOfSoftwareDesign/PROJECT/code/frontend
+
+
+ Test Files  14 passed (14)
+      Tests  121 passed (121)
+   Start at  19:17:01
+   Duration  8.04s (environment 48%, tests 32%, import 13%, transform 6%)
+
+    Isolate  14 workers spawned · ~2.56s startup each (spawn + environment, per file)
+             at least ~698ms faster with isolate: false — reuses workers across files instead of one per file

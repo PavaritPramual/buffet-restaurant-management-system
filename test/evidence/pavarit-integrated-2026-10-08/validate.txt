@@ -1,0 +1,12 @@
+[INFO] Scanning for projects...
+[INFO]
+[INFO] -----------< com.buffetrestaurant:buffet-restaurant-backend >-----------
+[INFO] Building Buffet Restaurant Management System Backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.519 s
+[INFO] Finished at: 2569-10-08T19:19:42+07:00
+[INFO] ------------------------------------------------------------------------

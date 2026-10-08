@@ -1,0 +1,48 @@
+{
+  "sourceCommit": "adc5798b05279840dc6178f4291278467c929791",
+  "startedAt": "2026-10-08T12:19:09.950Z",
+  "finishedAt": "2026-10-08T12:20:06.877Z",
+  "database": "fresh isolated in-memory H2",
+  "envFileImport": false,
+  "seedFixtures": false,
+  "httpMocks": "specified per runner",
+  "providers": {
+    "masterData": "session",
+    "menu": "session",
+    "ordering": "database",
+    "diningSession": "session",
+    "fulfillment": "session",
+    "billing": "database",
+    "payment": "database"
+  },
+  "webUrl": "http://127.0.0.1:5283",
+  "apiUrl": "http://127.0.0.1:8183/api/v1",
+  "scripts": [
+    {
+      "script": "step3-core-flow.cjs",
+      "exitCode": 0,
+      "runnerSha256": "057d193c1f8b255055819ff89492a062a5cae9069147ad8d8b6047cbc9bd498d"
+    },
+    {
+      "script": "step3-stock-profile.cjs",
+      "exitCode": 0,
+      "runnerSha256": "6b765e4e9212166e013237d1b09660e2b77bba9c4a654b9e29ca5e6cef51e300"
+    },
+    {
+      "script": "step3-ui-states.cjs",
+      "exitCode": 0,
+      "runnerSha256": "11829610879b4a6c3011034e7344482318057e5462a71e6cfd9edb15b18926fb"
+    },
+    {
+      "script": "step3-concurrency.cjs",
+      "exitCode": 0,
+      "runnerSha256": "2e72f8c207a91dabaddf107e0fced851f638cc1ca1a4affd8c37cb6fd64d4770"
+    },
+    {
+      "script": "step3-stock-profile-states.cjs",
+      "exitCode": 0,
+      "runnerSha256": "318c5f4a8c7033c4936770662f3a6fbdd340ecba772d8595023dbd3bdc19a26a"
+    }
+  ],
+  "publicAcceptance": false
+}
