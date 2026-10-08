@@ -8,7 +8,7 @@
 |---|---|---|
 | Component | แก้ baseline และจำกัดข้ออ้าง constructor/interfaces ตามขอบเขต services ที่ตรวจ | [source](component.puml) / [SVG](previews/component.svg) |
 | Class Table/Session/QR | แก้ทิศทาง JPA owner, ไม่มี reverse collections/cascade, เพิ่ม adapters และแยกเวลา/ราคา internal | [source](class-table-session.puml) / [SVG](previews/class-table-session.svg) |
-| Sequence เปิดรอบ | แก้ Staff response ที่เดิมอ้างว่ามีราคา snapshot; เพิ่ม UTC mapping และ Billing reader | [source](sequence-open-session.puml) / [SVG](previews/sequence-open-session.svg) |
+| Sequence เปิดรอบ | แก้ Staff response ที่เดิมอ้างว่ามีราคา snapshot; เพิ่ม UTC mapping/Billing reader; แก้รีวิว PR #31 ให้ occupied/capacity/missing or inactive package-soup เป็น HTTP 400 และ missing table เป็น 404 ตาม runtime | [source](sequence-open-session.puml) / [SVG](previews/sequence-open-session.svg) |
 | Sequence แลก QR | แก้ reply ผ่าน Controller ตามโค้ด และอายุ grant เป็น 8 ชั่วโมงแน่นอน | [source](sequence-qr-exchange.puml) / [SVG](previews/sequence-qr-exchange.svg) |
 | Domain ส่วน Table/Session/Grant | ความสัมพันธ์เดิมตรง; เพิ่ม note แยก Domain cardinality จาก JPA mapping และ snapshot/lifecycle | [source](domain-model.puml) / [SVG](previews/domain-model.svg) |
 | Use Case Customer/Staff | ตรงเดิมใน scope เปิดรอบ/แลก QR/ขอคิดบิล/close; ไม่แก้ source/preview | [source](use-case-service-customer.puml) / [SVG](previews/use-case-service-customer.svg) |
