@@ -78,6 +78,15 @@ class ProductionCookieConfigurationTest {
         assertThat(customerCookie).contains("customer_session=", "HttpOnly", "Secure", "SameSite=Lax");
     }
 
+    @Test
+    void unknownApiDoesNotReceiveTheSpaFallback() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder(
+                URI.create("http://localhost:" + port + "/api/v1/nonexistent")).GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(response.body()).doesNotContain("<html", "<!doctype html");
+    }
+
     private HttpResponse<String> post(String path, String body, boolean withOrigin) throws Exception {
         HttpRequest.Builder request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path))
                 .header("Content-Type", "application/json")
