@@ -26,11 +26,16 @@ async function main() {
     for(const config of scenarios) for(const state of ['loading','empty','error']) {
       let release
       const gate=new Promise(resolve=>{release=resolve})
-      const handler=async route=>{
+      const handlers=[]
+      const handler=route=>{
+        const action=(async()=>{
         const endpoint=new URL(route.request().url()).pathname.replace('/api/v1','')
         if(!config.endpoints.includes(endpoint)||route.request().method()!=='GET') return route.continue()
         if(state==='loading') await gate
         await route.fulfill({status:state==='error'?503:200,contentType:'application/json',body:JSON.stringify(state==='error'?{status:503,error:'Service Unavailable',message:'Controlled Stock/Profile error',path:'/api/v1'+endpoint,timestamp:new Date().toISOString()}:[])})
+        })()
+        handlers.push(action)
+        return action
       }
       await page.route('**/api/v1/**',handler)
       try {
@@ -41,7 +46,7 @@ async function main() {
         assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),1280,'Document overflow')
         await page.screenshot({path:path.join(output,`${config.name}-${state}-1280.png`),fullPage:true})
         results.push({page:config.name,state,result:'PASS',width:1280,httpMocks:true})
-      } finally {release();await page.unroute('**/api/v1/**',handler)}
+      } finally {release();await Promise.all(handlers);await page.unroute('**/api/v1/**',handler)}
     }
     const legacy=[{id:999999,username:'isolated-legacy-fixture',displayName:'ชื่อเดิมของพนักงาน',email:null,role:'SERVICE_STAFF',active:true,firstName:null,lastName:null,phoneNumber:null}]
     await page.route('**/api/v1/admin/users',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(legacy)}))
