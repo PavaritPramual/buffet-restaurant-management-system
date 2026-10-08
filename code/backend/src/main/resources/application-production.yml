@@ -1,3 +1,10 @@
+spring:
+  datasource:
+    hikari:
+      # Render has seen intermittent TLS handshake resets when connecting to
+      # the Supabase pooler. Flyway still requires a real connection to start.
+      initialization-fail-timeout: ${DB_INITIALIZATION_FAIL_TIMEOUT_MS:120000}
+
 server:
   forward-headers-strategy: framework
   servlet:
