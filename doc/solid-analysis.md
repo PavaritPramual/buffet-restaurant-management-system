@@ -1,6 +1,13 @@
 # SOLID analysis — Architecture refactor
 
-โค้ดอ้างอิง `de7b5d546a05ad3ccef8c641ee5c53d638a8e039` วันที่ 7 ตุลาคม 2026 ต่อจาก PR #24 ที่ merge เข้า develop `0dbbe1b7deae5db4189aa803f04a5246ccee8746`. เอกสารนี้อธิบายโค้ดและ tests ที่แก้แล้ว รอ reviewer รับรองใน PR ถัดไป; ไม่ใช่รับรอง Final/public deployment ทั้งระบบ. [เอกสารก่อน refactor](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/0dbbe1b7deae5db4189aa803f04a5246ccee8746/doc/solid-analysis.md) เป็นประวัติ G01–G05 ก่อนแก้
+ตัวอย่าง refactor ด้านล่างอ้างโค้ด `de7b5d546a05ad3ccef8c641ee5c53d638a8e039` วันที่ 7 ตุลาคม 2026 ต่อจาก PR #24; เก็บ commit นี้เพื่อให้ลิงก์ไฟล์/บรรทัดเดิมตรวจย้อนกลับได้ [เอกสารก่อน refactor](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/0dbbe1b7deae5db4189aa803f04a5246ccee8746/doc/solid-analysis.md) เป็นประวัติ G01–G05 ก่อนแก้
+
+**สถานะปัจจุบัน 8 ตุลาคม 2026:** [PR #25](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/25) ผ่านรีวิวและ merge แล้วที่ `cb612d9`; ไม่ได้รอ review ของ refactor เดิมอีก การตรวจเอกสารโมดูลปวริศช์รอบใหม่อ้าง develop `6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6` และยังรอ peer review ของ PR เอกสารนี้ ไม่ใช่รับรอง Final/public deployment ทั้งระบบ
+
+## เอกสารตามเจ้าของโมดูล
+
+- [ปวริศช์ — Table/Package/Soup, DiningSession/QR และ shared providers](architecture/pavarit-table-session-solid-jpa.md): SOLID, JPA/SQL lifecycle, snapshot/เวลา, transaction/lock และข้อจำกัดพร้อม source/tests ของ baseline `6d83eac`
+- [ศิระพัทธ์ — Menu/Ordering](architecture/sirapat-menu-ordering-solid-jpa.md): หลักฐานตาม scope ของเจ้าของ; การยืนยันรุ่น Final และโมดูลที่เหลือยังเป็น gate แยก
 
 ## S — Single Responsibility
 
@@ -54,16 +61,16 @@ SessionContextProvider, DiningSessionBillingReader, PaymentStatusLookup แล�
 - [UserSessionKeys.java:5](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/main/java/com/buffetrestaurant/common/UserSessionKeys.java#L5) รักษาค่า userContext เดิม; Service ไม่ import Controller
 - Cookie/CORS/origin settings รับผ่าน constructor พร้อมค่า default เดิม. @Autowired ที่ constructor สำหรับเลือก production constructor ไม่ใช่ field injection
 
-## ข้อจำกัดที่ต้องปิดก่อนรับรอง Final
+## ผล review ของ refactor เดิม และ gate Final ที่ยังเหลือ
 
 | ข้อเดิม | การแก้รอบนี้ | สถานะ |
 |---|---|---|
-| G01 / C06 field EntityManager | constructor final รวม cookie/CORS config | implement/tests ผ่าน รอ review |
-| G02 / D05 concrete processors/Auth | focused auth contracts และ StockTransactionProcessor | implement/tests ผ่าน รอ review |
-| G03 / C03 Service import Controller | shared UserSessionKeys และ UserContextProvider | source check/tests ผ่าน รอ review |
-| G04 business/access collaborators | BillCalculator, CustomerSessionVerifier, UserContextProvider | implement/tests ผ่าน รอ review |
-| G05 / O02 state-specific factory | validated registry + resolver contract แทน switch | startup/transition tests ผ่าน รอ review |
-| L04 nullability/roles | contracts + invalid-result guards + fixture roles ตรง runtime | contract/security tests ผ่าน รอ review |
+| G01 / C06 field EntityManager | constructor final รวม cookie/CORS config | PR #25 review/merge ผ่านแล้ว |
+| G02 / D05 concrete processors/Auth | focused auth contracts และ StockTransactionProcessor | PR #25 review/merge ผ่านแล้ว |
+| G03 / C03 Service import Controller | shared UserSessionKeys และ UserContextProvider | PR #25 review/merge ผ่านแล้ว |
+| G04 business/access collaborators | BillCalculator, CustomerSessionVerifier, UserContextProvider | PR #25 review/merge ผ่านแล้ว |
+| G05 / O02 state-specific factory | validated registry + resolver contract แทน switch | PR #25 review/merge ผ่านแล้ว |
+| L04 nullability/roles | contracts + invalid-result guards + fixture roles ตรง runtime | PR #25 review/merge ผ่านแล้ว |
 
 ยังต้อง owner confirmation ของแต่ละโมดูล รวม Stock/Profile/deploy ใหม่ ตรวจ release commit และ public flow อีกครั้ง. การเพิ่ม interfaces และผล tests นี้ไม่ใช่ใบรับรอง SOLID ทุกคลาสโดยอัตโนมัติ
 

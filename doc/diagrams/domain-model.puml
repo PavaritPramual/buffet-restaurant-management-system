@@ -5,7 +5,7 @@ skinparam classAttributeIconSize 0
 skinparam backgroundColor #FFFDF9
 skinparam defaultFontName Tahoma
 
-title Domain Model - Buffet Restaurant Management System
+title Domain Model - Buffet Restaurant Management System (baseline 6d83eac)
 
 skinparam classAttributeIconSize 0
 skinparam shadowing false
@@ -42,6 +42,13 @@ class CustomerSessionGrant {
     createdAt
     expiresAt
 }
+
+note right of DiningSession
+ Conceptual domain relationships are not reverse JPA collections.
+ Session owns table/package/soup FK associations; Grant owns session_id.
+ Opening-price snapshot stays internal to the Billing reader.
+ PAID and COMPLETED are separate; bill request keeps the session ACTIVE.
+end note
 
 class BuffetPackage {
     id
@@ -124,6 +131,6 @@ StockItem "1" -- "0..*" StockTransaction : tracked by >
 UserAccount "1" -- "0..*" StockTransaction : recorded by >
 
 note bottom of StockItem
- openingTargetStock / active planned for Final; absent in 472fba4.
+ openingTargetStock / active planned for Final; absent in baseline 6d83eac.
 end note
 @enduml

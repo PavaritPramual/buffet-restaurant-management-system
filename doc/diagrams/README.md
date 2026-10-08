@@ -1,6 +1,20 @@
 # Diagram index — ครบตามใบงานข้อ 9.1
 
-โค้ดปัจจุบันหลัง architecture refactor `de7b5d546a05ad3ccef8c641ee5c53d638a8e039` วันที่7ตุลาคม2026; diagramที่ไม่เปลี่ยนยังอ้าง baseline `472fba4` จำนวน **23 diagram รายละเอียด และ5ภาพย่อสำหรับนำเสนอ** ทุกภาพมี PlantUML source/SVG ภาพ public deployment เป็น design เท่านั้น รอ peer review ไม่ใช้จำนวนไฟล์รับรอง public หรือ Final
+ชุดเดิมหลัง architecture refactor `de7b5d546a05ad3ccef8c641ee5c53d638a8e039` มี **23 diagram รายละเอียด และ5ภาพย่อสำหรับนำเสนอ**; PR #24/#25 ผ่าน review/merge แล้ว และ PR #26 ปรับ State resolver sources/previews เพิ่ม ทุกภาพมี PlantUML source/SVG ภาพ public deployment เป็น design เท่านั้น ไม่ใช้จำนวนไฟล์รับรอง public หรือ Final
+
+**ตรวจโมดูลปวริศช์ 8 ตุลาคม 2026:** code baseline `6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6`; ตารางต่อไปนี้เป็น scope ของ PR เอกสารรอบใหม่ ยังรอศรัณย์/ศิระพัทธ์ review ของรอบนี้ ภาพอื่นคง revision และการตรวจของเจ้าของเดิม
+
+| ภาพที่ตรวจ | ผลเทียบโค้ด | Source / preview |
+|---|---|---|
+| Component | แก้ baseline และจำกัดข้ออ้าง constructor/interfaces ตามขอบเขต services ที่ตรวจ | [source](component.puml) / [SVG](previews/component.svg) |
+| Class Table/Session/QR | แก้ทิศทาง JPA owner, ไม่มี reverse collections/cascade, เพิ่ม adapters และแยกเวลา/ราคา internal | [source](class-table-session.puml) / [SVG](previews/class-table-session.svg) |
+| Sequence เปิดรอบ | แก้ Staff response ที่เดิมอ้างว่ามีราคา snapshot; เพิ่ม UTC mapping/Billing reader; แก้รีวิว PR #31 ให้ occupied/capacity/missing or inactive package-soup เป็น HTTP 400 และ missing table เป็น 404 ตาม runtime | [source](sequence-open-session.puml) / [SVG](previews/sequence-open-session.svg) |
+| Sequence แลก QR | แก้ reply ผ่าน Controller ตามโค้ด และอายุ grant เป็น 8 ชั่วโมงแน่นอน | [source](sequence-qr-exchange.puml) / [SVG](previews/sequence-qr-exchange.svg) |
+| Domain ส่วน Table/Session/Grant | ความสัมพันธ์เดิมตรง; เพิ่ม note แยก Domain cardinality จาก JPA mapping และ snapshot/lifecycle | [source](domain-model.puml) / [SVG](previews/domain-model.svg) |
+| Use Case Customer/Staff | ตรงเดิมใน scope เปิดรอบ/แลก QR/ขอคิดบิล/close; ไม่แก้ source/preview | [source](use-case-service-customer.puml) / [SVG](previews/use-case-service-customer.svg) |
+| Use Case รวม เฉพาะโมดูลปวริศช์ | ตรงเดิมใน scope Table/Package/Soup/Session/QR; ไม่รับรองรายละเอียด Auth/Stock/Payment ของเจ้าของอื่น | [source](use-case.puml) / [SVG](previews/use-case.svg) |
+
+เหตุผล/source/tests อยู่ใน [เอกสารโมดูลปวริศช์](../architecture/pavarit-table-session-solid-jpa.md) และ [รายงานตรวจรอบนี้](../testing/pavarit-module-docs-report-2026-10-08.md)
 
 [ตารางเทียบโจทย์และหน้าสไลด์](../slide/course-diagram-coverage.md) · [Use Case Descriptions](../system-design/use-cases.md) · [Canonical Data Dictionary](../database/step2-schema-approved.md)
 

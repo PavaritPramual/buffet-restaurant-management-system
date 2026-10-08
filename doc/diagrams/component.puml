@@ -3,7 +3,7 @@
 skinparam shadowing false
 skinparam backgroundColor #FFFDF9
 skinparam defaultFontName Tahoma
-title Runtime component layers - architecture refactor (7 Oct 2026)
+title Runtime component layers - code baseline 6d83eac (8 Oct 2026)
 top to bottom direction
 component "React views / shared components\nCustomer / Staff / Kitchen / Manager" as Web
 package "Spring Boot REST application" {
@@ -34,7 +34,8 @@ note bottom of Contracts
 end note
 note bottom of Auth
  Shared UserSessionKeys removes the service-to-controller dependency.
- Business policies use interfaces; constructor injection only.
+ Session collaborations use verifier / reader / payment-lookup contracts.
+ The inspected services use constructor injection; JPA and domain dependencies remain.
  Public deployment and Final release still require their own acceptance.
 end note
 @enduml

@@ -1,7 +1,7 @@
 @startuml
 skinparam shadowing false
 skinparam defaultFontName Tahoma
-title Open session and Staff QR - runtime 472fba4
+title Open session and Staff QR - code baseline 6d83eac
 autonumber
 actor SERVICE_STAFF as Staff
 boundary DiningSessionController as C
@@ -20,12 +20,14 @@ group single transaction
  S -> S : generate SecureRandom QR token\nconstruct session with packagePriceAtOpen
  S -> DB : table.occupy(); save(table)\nsaveAndFlush(session ACTIVE)
 end
-S --> C : DiningSessionResponse (Staff-only QR token + snapshot)
+S --> C : DiningSessionResponse (Staff-only QR token; no price snapshot)
 C --> Staff : 201 + Location
 Staff -> Staff : QRCodeSVG points to /customer/qr#token=...\npoll/get Staff session to show rotated QR
 note over C,DB
- Missing resource ->404; invalid DTO ->400;
- occupied/capacity/inactive business rule ->409.
+ Missing table ->404; invalid DTO ->400;
+ occupied/capacity/missing or inactive package-soup ->400.
  Row lock prevents two ACTIVE sessions for one table.
+ packagePriceAtOpen stays internal; Billing reads it through its reader.
+ startTime: LocalDateTime from UTC Clock; mapper emits UTC OffsetDateTime.
 end note
 @enduml

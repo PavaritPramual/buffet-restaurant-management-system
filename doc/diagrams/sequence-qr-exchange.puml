@@ -1,7 +1,7 @@
 @startuml
 skinparam shadowing false
 skinparam defaultFontName Tahoma
-title QR exchange and customer authorization - actual flow
+title QR exchange and customer authorization - code baseline 6d83eac
 autonumber
 actor Customer
 boundary "Customer React page" as UI
@@ -16,7 +16,7 @@ C -> C : CustomerOriginGuard
 C -> Access : exchange(A)
 group single transaction
  Access -> DB : findBySessionTokenForUpdate(A); require ACTIVE
- Access -> Access : random credential; SHA256 hash; expiry <=8h
+ Access -> Access : random credential; SHA256 hash; expiry = createdAt + 8h
  Access -> DB : insert grant(hash, session, expiry)\nrotate QR token; flush
 end
 Access --> C : ExchangeResult(customer DTO, raw credential)
@@ -25,6 +25,7 @@ note over C,DB : Cookie path /api/v1/dining-sessions; SameSite/secure are config
 UI -> C : GET /customer-context with cookie (refresh/no new QR)
 C -> Access : requireContext(cookie)
 Access -> DB : hash -> grant; expiry + ACTIVE
-Access --> UI : customer DTO; no QR token or price snapshot
+Access --> C : customer DTO; no QR token or price snapshot
+C --> UI : 200 + no-store; CustomerSessionResponse
 note over UI,DB : Reusing A ->404. Multiple devices scan successive rotated QR codes.\nMissing/invalid/expired grant ->401; wrong/inactive session ->404.\nClose deletes grants, so old cookie ->401.\nNew invalid QR must show error without falling back to old session.
 @enduml

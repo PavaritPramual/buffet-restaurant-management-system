@@ -4,7 +4,7 @@ skinparam shadowing false
 skinparam classAttributeIconSize 0
 skinparam backgroundColor #FFFDF9
 skinparam defaultFontName Tahoma
-title Table / DiningSession / customer grants - actual classes
+title Table / DiningSession / customer grants - code baseline 6d83eac
 class RestaurantTable {
  id : Long
  tableNumber : String
@@ -56,29 +56,46 @@ class CustomerBillingService {
 }
 interface CustomerSessionVerifier
 interface BillCalculator
+class DatabaseSessionContextProvider
+interface SessionContextProvider
+SessionContextProvider <|.. DatabaseSessionContextProvider
+DatabaseSessionContextProvider --> CustomerSessionVerifier : read / order verification
 CustomerSessionVerifier <|.. CustomerSessionAccessService
 CustomerBillingService --> CustomerSessionVerifier
 CustomerBillingService --> BillCalculator
 interface DiningSessionBillingReader
+class DatabaseDiningSessionBillingReader {
+ +requireBySessionId(id) : BillingSnapshot
+}
+DiningSessionBillingReader <|.. DatabaseDiningSessionBillingReader
+DatabaseDiningSessionBillingReader --> DiningSessionRepository
 interface PaymentStatusLookup
 interface DiningSessionRepository {
  +findByIdForUpdate(id)
  +findBySessionTokenForUpdate(token)
 }
-RestaurantTable "1" -- "0..*" DiningSession
-BuffetPackage "1" -- "0..*" DiningSession
-Soup "1" -- "0..*" DiningSession
-DiningSession "1" -- "0..*" CustomerSessionGrant
+DiningSession "0..*" --> "1" RestaurantTable : table_id / LAZY / no JPA cascade
+DiningSession "0..*" --> "1" BuffetPackage : package_id / LAZY / no JPA cascade
+DiningSession "0..*" --> "1" Soup : soup_id / LAZY / no JPA cascade
+CustomerSessionGrant "0..*" --> "1" DiningSession : session_id / LAZY / no JPA cascade
 DiningSessionService <|.. DiningSessionServiceImpl
 DiningSessionServiceImpl --> DiningSessionRepository
-DiningSessionServiceImpl --> PaymentStatusLookup : same-session PAID
+DiningSessionServiceImpl --> PaymentStatusLookup : ObjectProvider / same-session PAID
 CustomerSessionAccessService --> DiningSessionRepository : QR / order locks
 CustomerBillingService --> DiningSessionRepository : bill-request lock
-DiningSessionBillingReader ..> DiningSession : read snapshot
+DatabaseDiningSessionBillingReader ..> DiningSession : read opening-price snapshot
 note bottom of DiningSession
  ACTIVE -> COMPLETED only after PAID + separate close.
  CANCELLED is declared in enum; no cancel endpoint implemented.
  Bill request keeps ACTIVE but blocks new Orders.
- QR token is Staff-only; customers receive no snapshot/QR token.
+ QR token is Staff-only; neither Staff nor Customer DTO exposes the price snapshot.
+ Billing reads packagePriceAtOpen through DiningSessionBillingReader.
+ start/end: LocalDateTime + SQL TIMESTAMP; mapper labels API timestamps UTC.
+ billRequestedAt: OffsetDateTime + TIMESTAMP WITH TIME ZONE.
+end note
+note bottom of CustomerSessionGrant
+ SQL ON DELETE CASCADE belongs to the grant FK, not JPA cascade.
+ Close explicitly deletes grants; expiry is checked on each request.
+ Parent entities do not declare inverse session/grant collections.
 end note
 @enduml
