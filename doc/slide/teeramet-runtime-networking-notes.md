@@ -1,6 +1,6 @@
 # ธีรเมธ — เนื้อหา Canva ส่วน Runtime/Network (รอตรวจรวม)
 
-อ้าง source `bdd3bd7` และผล public check วันที่ 8 ตุลาคม 2026; ยังไม่ใช่ PDF/Canva ฉบับส่งหรือผลทดสอบ Billing/Payment บน release จริง. ใช้คู่กับ [Deployment Diagram](../diagrams/deployment-production-runtime.md) และ [runbook](../deployment/production-runbook.md). เมื่อทีมใส่ลง Canva ให้เปลี่ยน SHA/ผลตรวจตามรุ่นที่ deploy จริงก่อน export PDF.
+อ้าง source/release `2f8bc4b` และผล public check วันที่ 9 ตุลาคม 2026; ยังไม่ใช่ PDF/Canva ฉบับส่งหรือผลทดสอบ Billing/Payment ที่ต้องล็อกอิน. ใช้คู่กับ [Deployment Diagram](../diagrams/deployment-production-runtime.md) และ [runbook](../deployment/production-runbook.md). เมื่อทีมใส่ลง Canva ให้ตรวจ SHA/ผลทดสอบตามรุ่นที่จะส่งจริงก่อน export PDF.
 
 ## สไลด์: เว็บและ API อยู่ URL เดียว
 
@@ -26,4 +26,4 @@
 
 **คำพูดประมาณ 35 วินาที:** “CI ที่ผ่านยืนยันโค้ด แต่ไม่ยืนยัน release บน Render. เราต้องดู commit ที่ deploy จริง ตรวจ cookie โดยไม่คัดลอกค่า ตรวจบิลจากราคา snapshot และยอด backend หลังจ่ายซ้ำต้องถูกปฏิเสธ โต๊ะไม่ว่างจนพนักงานกดปิด. หลัง redeploy ต้องดูข้อมูลถาวรอีกครั้ง; Staff session ในหน่วยความจำอาจต้องล็อกอินใหม่”
 
-**สถานะสำหรับผู้รวมสไลด์:** PR #35 head `bdd3bd7` และ CI ผ่าน; public root/Swagger/health เปิดได้ แต่ `/kitchen/` และ `/Customer/QR/` ยัง 404 ตอนตรวจ จึงต้อง deploy commit ใหม่และทดสอบซ้ำ. ยังไม่มีผล login/QR/Billing/Payment ด้วยบัญชีทดสอบบน public URL. อย่าใส่เครื่องหมายผ่านใน Canva/PDF ก่อนมีหลักฐานนั้น.
+**สถานะสำหรับผู้รวมสไลด์:** PR #35 head `2f8bc4b` และ CI ผ่าน; ภาพ Render Deploys จากเจ้าของแสดง commit นี้ Live. Public root/Swagger/health และ `/kitchen/` กับ `/Customer/QR/` เปิดได้; unknown API/asset ยัง 404 ตามที่ควร. ยังไม่มีผล login/QR/Billing/Payment ด้วยบัญชีทดสอบบน public URL. อย่าใส่เครื่องหมายผ่านใน Canva/PDF ก่อนมีหลักฐานนั้น.
