@@ -75,10 +75,10 @@ export const stockApi = {
       params: itemId ? { itemId } : undefined,
     })).data
   },
-  async stockIn(itemId: number, quantity: string, reason: string) {
+  async stockIn(itemId: number, quantity: number, reason: string) {
     return (await apiClient.post<StockTransaction>(`/stock/${itemId}/in`, { quantity, reason })).data
   },
-  async adjust(itemId: number, quantityDelta: string, reason: string) {
+  async adjust(itemId: number, quantityDelta: number, reason: string) {
     return (await apiClient.post<StockTransaction>(`/stock/${itemId}/adjustments`, { quantityDelta, reason })).data
   },
 }
@@ -87,7 +87,7 @@ export const usersApi = {
   async list() {
     return (await apiClient.get<UserRecord[]>('/admin/users')).data
   },
-  async create(user: { username: string; password: string; displayName: string; email: string; role: UserRole } & UserProfileInput) {
+  async create(user: { username: string; password: string; displayName: string; email: string | null; role: UserRole } & UserProfileInput) {
     return (await apiClient.post<UserRecord>('/admin/users', user)).data
   },
   async updateProfile(id: number, profile: UserProfileInput) {

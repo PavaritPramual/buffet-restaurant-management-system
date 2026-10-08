@@ -1,0 +1,246 @@
+{
+  "startedAt": "2026-10-07T11:49:06.442Z",
+  "finishedAt": "2026-10-07T11:49:29.862Z",
+  "sourceCommit": "f97ef42872b5d0fd585d475815166b42b021bc62",
+  "sourceTree": "dirty working tree; pair with source diff",
+  "environment": "local-h2",
+  "webUrl": "http://127.0.0.1:5177",
+  "apiUrl": "http://127.0.0.1:8087/api/v1",
+  "deployedCommit": null,
+  "deployedCommitSource": null,
+  "browser": "145.0.7632.117",
+  "httpMocks": false,
+  "counts": {
+    "passed": 16,
+    "failed": 0
+  },
+  "pending": [
+    "Stock target/active and Profile owner implementation/UI review",
+    "Public release schema/provider confirmation and full release rerun"
+  ],
+  "results": [
+    {
+      "name": "real staff logins and role matrix",
+      "result": "PASS",
+      "detail": "Four independent cookie contexts; invalid login, anonymous and spoofed-header denial"
+    },
+    {
+      "name": "direct URL case and trailing slash guards",
+      "result": "PASS",
+      "detail": "Actual protected routes with real roles"
+    },
+    {
+      "name": "Manager master data UI",
+      "result": "PASS",
+      "detail": {
+        "tableId": 1,
+        "packageId": 1
+      }
+    },
+    {
+      "name": "Manager category and Menu CRUD through UI",
+      "result": "PASS",
+      "detail": {
+        "categoryId": 1,
+        "menuItemId": 1,
+        "createUpdateDelete": "UI only; real HTTP responses and persisted reload",
+        "deletedItemId": 2,
+        "deletedCategoryId": 2
+      }
+    },
+    {
+      "name": "open actual session and reject unpaid close",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "tableId": 1
+      }
+    },
+    {
+      "name": "one-use QR and two independent phones",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "phones": 2,
+        "qrReuseStatus": 404
+      }
+    },
+    {
+      "name": "same-tab fresh QR resets cart and reload restores cookie without re-exchange",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "sameDocument": true,
+        "rescanExchanges": 1,
+        "cartReset": true,
+        "phones": 2
+      }
+    },
+    {
+      "name": "State API rejects anonymous, wrong roles and skipped transitions",
+      "result": "PASS",
+      "detail": {
+        "orderId": 1,
+        "denials": [
+          {
+            "role": "anonymous",
+            "from": "RECEIVED",
+            "requested": "PREPARING",
+            "httpStatus": 401,
+            "unchanged": true,
+            "unknownOrder": false
+          },
+          {
+            "role": "manager",
+            "from": "RECEIVED",
+            "requested": "PREPARING",
+            "httpStatus": 403,
+            "unchanged": true,
+            "unknownOrder": false
+          },
+          {
+            "role": "supervisor",
+            "from": "RECEIVED",
+            "requested": "PREPARING",
+            "httpStatus": 403,
+            "unchanged": true,
+            "unknownOrder": false
+          },
+          {
+            "role": "staff",
+            "from": "RECEIVED",
+            "requested": "PREPARING",
+            "httpStatus": 403,
+            "unchanged": true,
+            "unknownOrder": false
+          },
+          {
+            "role": "kitchen",
+            "from": "RECEIVED",
+            "requested": "READY",
+            "httpStatus": 400,
+            "unchanged": true,
+            "unknownOrder": false
+          },
+          {
+            "role": "kitchen",
+            "from": "RECEIVED",
+            "requested": "unknown",
+            "httpStatus": 400,
+            "unchanged": true,
+            "unknownOrder": false
+          },
+          {
+            "role": "kitchen",
+            "from": "RECEIVED",
+            "requested": "PREPARING",
+            "httpStatus": 404,
+            "unchanged": true,
+            "unknownOrder": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "single confirmed order and actual Kitchen Serving transitions",
+      "result": "PASS",
+      "detail": {
+        "orderId": 1,
+        "status": "SERVED",
+        "orderPosts": 1
+      }
+    },
+    {
+      "name": "State API rejects reversal, wrong serving role and terminal changes",
+      "result": "PASS",
+      "detail": {
+        "orderId": 1,
+        "denials": [
+          {
+            "role": "kitchen",
+            "from": "PREPARING",
+            "requested": "RECEIVED",
+            "httpStatus": 400,
+            "unchanged": true,
+            "unknownOrder": false
+          },
+          {
+            "role": "kitchen",
+            "from": "READY",
+            "requested": "SERVED",
+            "httpStatus": 403,
+            "unchanged": true,
+            "unknownOrder": false
+          },
+          {
+            "role": "kitchen",
+            "from": "READY",
+            "requested": "PREPARING",
+            "httpStatus": 400,
+            "unchanged": true,
+            "unknownOrder": false
+          },
+          {
+            "role": "staff",
+            "from": "SERVED",
+            "requested": "SERVED",
+            "httpStatus": 400,
+            "unchanged": true,
+            "unknownOrder": false
+          },
+          {
+            "role": "kitchen",
+            "from": "SERVED",
+            "requested": "READY",
+            "httpStatus": 400,
+            "unchanged": true,
+            "unknownOrder": false
+          }
+        ],
+        "terminalStatus": "SERVED"
+      }
+    },
+    {
+      "name": "bill request stops both phones and backend orders",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "phones": 2,
+        "rejectedOrderStatus": 409
+      }
+    },
+    {
+      "name": "payment recorded; both customers show total due and paid",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "amount": 997.5,
+        "dueAmount": 0
+      }
+    },
+    {
+      "name": "explicit close returns AVAILABLE and revokes both phones",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "tableStatus": "AVAILABLE",
+        "phonesRevoked": 2
+      }
+    },
+    {
+      "name": "four-role protected API401 hides mounted UI",
+      "result": "PASS",
+      "detail": "All four mounted shells receive real protected HTTP401 after server-side invalidation; no UI logout or HTTP mocks; not a timed TTL-expiry test"
+    },
+    {
+      "name": "Staff and Kitchen explicit UI logout revokes access",
+      "result": "PASS",
+      "detail": "Separate successful login and UI logout for both roles; protected APIs return HTTP401"
+    },
+    {
+      "name": "Swagger customer bill contract",
+      "result": "PASS",
+      "detail": "HTTP200 and bill paths present"
+    }
+  ]
+}

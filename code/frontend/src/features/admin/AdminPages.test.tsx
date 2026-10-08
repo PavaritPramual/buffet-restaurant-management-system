@@ -74,7 +74,7 @@ describe('Admin stock and user pages', () => {
     fireEvent.change(screen.getByLabelText('เหตุผล'), { target: { value: 'รับจากผู้ขาย' } })
     fireEvent.click(screen.getByRole('button', { name: 'บันทึกรายการ' }))
 
-    await waitFor(() => expect(stockApi.stockIn).toHaveBeenCalledWith(4, '2.5', 'รับจากผู้ขาย'))
+    await waitFor(() => expect(stockApi.stockIn).toHaveBeenCalledWith(4, 2.5, 'รับจากผู้ขาย'))
   })
 
   it('shows target and shortfall and blocks stock-in/adjustment for inactive items', async () => {

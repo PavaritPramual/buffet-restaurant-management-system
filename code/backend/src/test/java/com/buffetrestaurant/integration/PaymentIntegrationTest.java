@@ -154,8 +154,9 @@ class PaymentIntegrationTest {
                 .andExpect(jsonPath("$.sessionId").value(SESSION_ID))
                 .andExpect(jsonPath("$.paymentMethod").value(method.name()))
                 .andExpect(jsonPath("$.paymentStatus").value("PAID"))
+                .andExpect(jsonPath("$.amount").isNumber())
                 .andExpect(jsonPath("$.amount").value(997.50))
-                .andExpect(jsonPath("$.paidAt").isNotEmpty());
+                .andExpect(jsonPath("$.paidAt").value(org.hamcrest.Matchers.endsWith("Z")));
 
         Payment saved = payments.findBySessionId(SESSION_ID).orElseThrow();
 
@@ -237,7 +238,8 @@ class PaymentIntegrationTest {
     void rejectsClosingWithoutPayment() throws Exception {
         mvc.perform(post("/api/v1/dining-sessions/" + SESSION_ID + "/close")
                         .session(staffSession))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("กรุณาบันทึกการชำระเงินก่อนปิดรอบกิน"));
 
         assertThat(jdbc.queryForObject(
                 "SELECT status FROM dining_sessions WHERE id = ?",

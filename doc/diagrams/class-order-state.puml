@@ -23,6 +23,14 @@ class OrderStateConfig <<Configuration>>
 class OrderFulfillmentServiceImpl {
  +advanceStatus(id, request) : OrderResponse
 }
+interface OrderFulfillmentAccessProvider {
+ +requireKitchenAccess()
+ +requireServiceStaffAccess()
+}
+class SessionOrderFulfillmentAccessProvider {
+ +requireKitchenAccess()
+ +requireServiceStaffAccess()
+}
 class CustomerOrder {
  status : OrderStatus
 }
@@ -38,6 +46,8 @@ OrderFulfillmentServiceImpl --> OrderStateResolver : resolve persisted enum
 RegistryOrderStateResolver o-- OrderState : validated registrations
 OrderStateConfig ..> OrderState : four singleton beans
 OrderFulfillmentServiceImpl --> CustomerOrder : validates next / writes status
+OrderFulfillmentServiceImpl --> OrderFulfillmentAccessProvider : authorize each request
+OrderFulfillmentAccessProvider <|.. SessionOrderFulfillmentAccessProvider
 note bottom of RegistryOrderStateResolver
  Duplicate or missing statuses fail startup.
  Null lookup is rejected. Resolution has no state-specific switch.
@@ -47,6 +57,7 @@ note bottom of ServedState
  Terminal next() rejects with BusinessRuleException.
  KITCHEN_STAFF: RECEIVED -> PREPARING -> READY.
  SERVICE_STAFF: READY -> SERVED.
+ 401 without login; 403 for wrong role; X-User-Role is not authority.
  Context is service; entity stores enum, not State object.
 end note
 @enduml

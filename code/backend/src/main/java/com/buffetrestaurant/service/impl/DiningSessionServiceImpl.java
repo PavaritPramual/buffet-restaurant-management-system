@@ -157,7 +157,7 @@ public class DiningSessionServiceImpl implements DiningSessionService {
         }
         PaymentStatusLookup.PaymentVerification verification = paymentStatusLookup.findPaymentForSession(sessionId);
         if (verification == null) {
-            throw new IllegalStateException("No payment result is available for this dining session");
+            throw new IllegalStateException("กรุณาบันทึกการชำระเงินก่อนปิดรอบกิน");
         }
         if (!sessionId.equals(verification.sessionId())) {
             throw new IllegalStateException("Payment result belongs to a different dining session");

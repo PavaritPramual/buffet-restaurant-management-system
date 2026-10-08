@@ -20,7 +20,7 @@ Fragmentไม่เป็นHTTPrequest path หน้าCustomerล้างfr
 
 CustomerOrderingServiceImpl ใช้ SessionContextProviderตรวจรอบACTIVE เมนูตามpackageและquantity ก่อนwriteผ่านrequireSessionForOrderล็อกsessionเดียวกับclose/billrequest
 
-OrderFulfillmentServiceImpl resolve OrderStatusผ่านOrderStateFactoryและตรวจcurrent.next()ก่อนเปลี่ยน persisted enum ไม่ใช่ให้CustomerOrderมีnextState() ครัว RECEIVED→PREPARING→READY และServiceStaff READY→SERVED ภาพปรับตามcookie/lock/stateจริงแล้ว ยังต้องownerยืนยันและตรวจreleaseFinalอีกครั้ง
+OrderFulfillmentServiceImpl resolve OrderStatusผ่านOrderStateResolver (runtime RegistryOrderStateResolver) และตรวจcurrent.next()ก่อนเปลี่ยน persisted enum ไม่ใช่ให้CustomerOrderมีnextState() ครัว RECEIVED→PREPARING→READY และServiceStaff READY→SERVED ภาพปรับตามcookie/lock/stateจริงแล้ว ยังต้องownerยืนยันและตรวจreleaseFinalอีกครั้ง
 
 ## 4. ขอคิดบิล ชำระ และ close
 

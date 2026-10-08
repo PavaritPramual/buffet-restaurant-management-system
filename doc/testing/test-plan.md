@@ -1,10 +1,10 @@
 # Final test plan — Buffet Restaurant Management System
 
-Owner: ศิระพัทธ์. Updated 6 October 2026 from [Notion Step 3](https://app.notion.com/p/37e90b8ff964834fad3701e2d8115de2). Each feature owner tests their module; ปวริศช์ reviews E2E/traceability and ศรัณย์ reviews API/State. Final acceptance requires the reviewed release commit to be deployed and checked.
+Owner: ศิระพัทธ์. Updated 7 October 2026 from [Notion Step 3](https://app.notion.com/p/a9e90b8ff9648363a6ab81b48fd70816). Each feature owner tests their module; ปวริศช์ reviews E2E/traceability and ศรัณย์ reviews API/State. Final acceptance requires the reviewed release commit to be deployed and checked.
 
 ## Scope and baseline
 
-Start from integrated develop **54e3538** (PR #21). Table/Session, cookie authentication, Menu/Ordering, Kitchen/Serving, request bill, Payment, close and Manager master-data screens are implemented. [Step 2 closure](pavarit-step2-close-report.md) and [completion report](pavarit-step2-completion-report.md) are historical evidence. Their 303 backend / 109 frontend results do not certify a later release.
+Latest integrated regression baseline: develop **cb612d9** (PR #25). The [API/State and regression report](sirapat-step3-api-state-regression-report.md) records fresh local results and separately identifies the unmerged PR #26 review. The initial Step 3 baseline **54e3538** (PR #21), [Step 2 closure](pavarit-step2-close-report.md), and [completion report](pavarit-step2-completion-report.md) are historical evidence. Their 303 backend / 109 frontend results do not certify a later release. Table/Session, cookie authentication, Menu/Ordering, Kitchen/Serving, request bill, Payment, close and Manager master-data screens are implemented.
 
 Final adds Stock opening target/active lifecycle and separate Profile names/phone (เมธัส), production deployment (ธีรเมธ), release integration (ปวริศช์) and API audit (ศรัณย์). ศิระพัทธ์ owns Customer/shared UI fixes, regression, responsive review and evidence. Feature UI defects go to that feature's owner with reproduction steps. No new gateway, WebSocket, analytics or automatic stock purchasing.
 
@@ -39,7 +39,7 @@ Record source revision/tree or diff identity, commands, environment, start/end t
 | QR-02 | Two independent phones redeem successive refreshed QR codes | Wrong session/forged credential rejected; old QR cannot be reused |
 | QR-03 | Same-tab new QR clears old menu/cart/history; latest context wins | Late old menu/order/bill cannot overwrite new scan; retry consumed QR via cookie |
 | ORDER-01 | Package menu, quantities/removal, confirmation, one order | Zero/negative/duplicate/unavailable/out-of-package rejected without saving; pending double clicks send one POST |
-| ORDER-02 | RECEIVED → PREPARING → READY → SERVED through Kitchen/Staff | Wrong role/invalid transition denied; refresh before acknowledgement preserves one card/latest status |
+| ORDER-02 | RECEIVED → PREPARING → READY → SERVED through Kitchen/Staff | Real cookie HTTP401/403/400/404, skipped/reversed/terminal/unknown-enum transitions; ErrorResponse fields and persisted status unchanged; refresh before acknowledgement preserves one card/latest status |
 | BILL-01 | Confirmation → REQUESTED; both phones stop orders; Staff badge | Cookie/Origin/session guards; idempotent request; Order after request=409 |
 | BILL-02 | Payment → PAID, due=0, paid=recorded amount; still ACTIVE | Payment before request=409; duplicate does not add payment; closed session cannot pay/order |
 | CLOSE-01 | Separate confirmed close → AVAILABLE and customer access revoked | Unpaid close denied; PostgreSQL Order/Request Bill/Payment/Close recheck after session lock |
@@ -68,4 +68,4 @@ One ordering tab per browser profile is supported. Another tab exchanging a diff
 3. Public URL/deployed commit/schema/provider confirmation supplied; public regression rerun with separate role/device contexts and dynamic IDs.
 4. ปวริศช์ E2E/traceability and ศรัณย์ API review recorded; main/release/deployed revision matches evidence. ศิระพัทธ์ cannot self-approve team gates.
 
-Current runs/dependencies: [Step 3 report](sirapat-step3-report.md). Module contribution: [Menu SOLID/JPA notes](../architecture/sirapat-menu-ordering-solid-jpa.md).
+Current runs/dependencies: [API/State and regression report](sirapat-step3-api-state-regression-report.md). Initial historical run: [Step 3 report](sirapat-step3-report.md). Module contribution: [Menu SOLID/JPA notes](../architecture/sirapat-menu-ordering-solid-jpa.md).

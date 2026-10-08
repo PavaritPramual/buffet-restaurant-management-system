@@ -42,7 +42,7 @@ export default function UsersPage() {
     setSaving(true)
     setError('')
     try {
-      await usersApi.create({ username, password, displayName, email, role, firstName: firstName.trim(), lastName: lastName.trim(), phoneNumber: phoneNumber.trim() })
+      await usersApi.create({ username, password, displayName, email: email.trim() || null, role, firstName: firstName.trim(), lastName: lastName.trim(), phoneNumber: phoneNumber.trim() })
       setUsername('')
       setPassword('')
       setDisplayName('')

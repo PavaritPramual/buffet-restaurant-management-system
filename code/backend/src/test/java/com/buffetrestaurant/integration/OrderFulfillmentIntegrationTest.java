@@ -90,7 +90,8 @@ class OrderFulfillmentIntegrationTest {
         mockMvc.perform(get("/api/v1/orders/incoming").header(ROLE_HEADER, KITCHEN))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].orderId").value(order.getId()))
-                .andExpect(jsonPath("$[0].status").value("RECEIVED"));
+                .andExpect(jsonPath("$[0].status").value("RECEIVED"))
+                .andExpect(jsonPath("$[0].createdAt").value(org.hamcrest.Matchers.endsWith("Z")));
 
         mockMvc.perform(patchStatus(order.getId(), "PREPARING", KITCHEN))
                 .andExpect(status().isOk())

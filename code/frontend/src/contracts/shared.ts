@@ -63,6 +63,6 @@ export interface PaymentResult {
 export interface UserContext {
   userId: number
   username: string
+  displayName: string
   role: UserRole
-  active: boolean
 }

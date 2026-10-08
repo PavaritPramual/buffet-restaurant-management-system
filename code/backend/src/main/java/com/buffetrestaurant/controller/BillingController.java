@@ -3,8 +3,12 @@ package com.buffetrestaurant.controller;
 import com.buffetrestaurant.common.ApiPaths;
 import com.buffetrestaurant.dto.request.BillingPreviewRequest;
 import com.buffetrestaurant.dto.response.BillSummary;
+import com.buffetrestaurant.dto.response.ErrorResponse;
 import com.buffetrestaurant.service.billing.BillingPreviewService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(ApiPaths.API_V1 + "/billing")
 @Tag(name = "Billing")
+@SecurityRequirement(name = "staffSessionCookie")
 public class BillingController {
     private final BillingPreviewService billingPreviewService;
 
@@ -28,11 +33,23 @@ public class BillingController {
             description = "Accepts only sessionId. Prices, counts and discounts come from the backend. "
                     + "Does not record a payment or close the session. Requires a logged-in SERVICE_STAFF.")
     @ApiResponse(responseCode = "200", description = "Bill summary")
-    @ApiResponse(responseCode = "400", description = "Invalid session ID or session is not ACTIVE")
-    @ApiResponse(responseCode = "404", description = "Session not found")
-    @ApiResponse(responseCode = "401", description = "Login required")
-    @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required")
-    @ApiResponse(responseCode = "503", description = "Billing session provider is not configured")
+    @ApiResponse(responseCode = "400", description = "Invalid session ID or session is not ACTIVE",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "404", description = "Session not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "401", description = "Login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "SERVICE_STAFF role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "503", description = "Billing session provider is not configured",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Only the session identifier is accepted; monetary values are resolved from server data.",
+            required = true,
+            content = @io.swagger.v3.oas.annotations.media.Content(
+                    examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                            name = "billPreviewRequest",
+                            value = "{\"sessionId\":12}")))
     public BillSummary preview(@Valid @RequestBody BillingPreviewRequest request) {
         return billingPreviewService.preview(request.sessionId());
     }

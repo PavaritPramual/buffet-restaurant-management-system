@@ -1,6 +1,6 @@
 # Order Fulfillment State Diagram
 
-Owner: ศรัณย์. Matches `service/state/*State.java` (`OrderStateResolver` / `RegistryOrderStateResolver`,
+Reviewed against `origin/develop` after architecture refactor PR #25 on 7 October 2026. Owner: ศรัณย์. Matches `service/state/*State.java` (`OrderStateResolver` / `RegistryOrderStateResolver`,
 `ReceivedState`, `PreparingState`, `ReadyState`, `ServedState`) and
 `OrderFulfillmentServiceImpl.advanceStatus`.
 
@@ -41,7 +41,20 @@ All three reuse the `OrderResponse` shape (`OrderFulfillmentContext`): `orderId`
 
 ### Current authorization — architecture refactor
 
-`SessionOrderFulfillmentAccessProvider` depends on `UserContextProvider`, implemented by `SessionUserContextProvider` and the staff HTTP login session. Production frontend does not send `X-User-Role`; spoofing it cannot grant access. No login returns 401; a logged-in wrong role returns 403. Fixtures apply only to explicitly configured tests/demo, not production authority. MANAGER and SUPERVISOR cannot use the Kitchen/Serving flows.
+`SessionOrderFulfillmentAccessProvider` depends on `UserContextProvider`, implemented by `SessionUserContextProvider` and the staff HTTP login session. A caller-supplied `X-User-Role` cannot grant access. The session-backed integration test exercises actual login and shows anonymous requests return 401; a logged-in wrong role returns 403 without changing the order. MANAGER and SUPERVISOR cannot use the Kitchen/Serving flows. This proves the session provider when configured, not the public deployment (there is no confirmed public URL).
+
+## State Pattern problem, context and tests
+
+The fulfillment service previously needed to guard arbitrary status changes with scattered conditionals. The State Pattern gives each status its own transition rule so `OrderFulfillmentServiceImpl` asks the current state for its only legal successor rather than duplicating a list of allowed pairs. The service is the context; `CustomerOrder` persists only the `OrderStatus` enum; `OrderStateResolver` resolves the corresponding state through the validated `RegistryOrderStateResolver`; and `ReceivedState`, `PreparingState`, `ReadyState`, and terminal `ServedState` define transition behavior.
+
+| Attempt | Expected result | Evidence |
+|---|---|---|
+| `RECEIVED → PREPARING → READY → SERVED` with the correct Kitchen/Service roles | All transitions succeed | `OrderStateTest`, `OrderFulfillmentIntegrationTest`, `SessionFulfillmentIntegrationTest` |
+| `RECEIVED → READY` or `PREPARING → RECEIVED` | `400 ErrorResponse`; persisted status unchanged | `OrderFulfillmentIntegrationTest` |
+| Any transition from `SERVED` | `400 ErrorResponse`; terminal state remains | `OrderStateTest`, `OrderFulfillmentIntegrationTest` |
+| Kitchen tries `SERVED`, Service tries `PREPARING`, or Manager/Supervisor tries either role flow | `403 ErrorResponse`; persisted status unchanged | `SessionFulfillmentIntegrationTest` |
+| Anonymous request, including a spoofed `X-User-Role` header | `401 ErrorResponse` | `SessionFulfillmentIntegrationTest` |
+| Unknown order ID | `404 ErrorResponse` | `OrderFulfillmentIntegrationTest` |
 
 [PlantUML state source](state-order.puml) · [SVG preview](previews/state-order.svg) · [class participants](class-order-state.puml)
 

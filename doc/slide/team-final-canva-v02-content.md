@@ -139,7 +139,7 @@ public BillCalculationStrategy billCalculationStrategy() {
 
 ช่วงนำเสนอ 12 นาที ใช้หน้านี้ประมาณ 20 วินาที
 
-Open Closed ใช้กับจุดที่ต้องเปลี่ยนนโยบายราคา Runtime เลือก child rate 0.5 และ PromotionDiscountStrategy ไม่อ้างว่าเพิ่ม order status ใหม่ได้โดยไม่แก้ factory เพราะ OrderStateFactory มี switch ที่เป็นข้อจำกัดอีกแบบ
+Open Closed ใช้กับจุดที่ต้องเปลี่ยนนโยบายราคา Runtime เลือก child rate 0.5 และ PromotionDiscountStrategy ส่วน State ใช้ `OrderStateResolver` กับ registry ที่ตรวจว่ามี state ครบทุก enum และไม่มีค่าซ้ำ การเพิ่มสถานะยังต้องแก้ enum, transition, API/UI และลงทะเบียน policy ใหม่ จึงไม่อ้างว่าเพิ่มสถานะได้โดยไม่แก้ส่วนที่เกี่ยวข้อง
 
 ## หน้า 08 — L การแทน implementation ต้องรักษาสัญญา
 
@@ -158,6 +158,8 @@ public OrderState next() {
 ```
 
 [ServedState.java บรรทัด 20](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/state/ServedState.java#L20)
+
+ตัวอย่างนี้แสดงการ resolve ผ่าน `OrderStateResolver` ที่ inject เข้า service; implementation ปัจจุบันคือ `RegistryOrderStateResolver` ซึ่งตรวจ registration ตอนประกอบระบบ ไม่ใช่ static factory
 
 ### คำพูดประกอบ
 
@@ -242,7 +244,7 @@ public OrderState next() {
 
 ช่วงนำเสนอ 12 นาที ใช้หน้านี้ประมาณ 40 วินาที
 
-เริ่มจากปัญหาว่ากฎ transition จะกระจัดกระจายใน service ถ้าใช้เงื่อนไขทุกคู่ State ให้แต่ละสถานะรู้ next หนึ่งตัว ส่วน actor authorization อยู่ provider อีกชั้น Entity เก็บ enum STRING ไม่เก็บ State object
+ปัญหาคือ client ส่งสถานะปลายทางใดก็ได้และกฎอาจกระจัดกระจายใน service State ทำให้แต่ละสถานะรู้ next ที่ถูกต้องหนึ่งตัว Context คือ OrderFulfillmentServiceImpl; Factory resolve จาก enum; Received/Preparing/Ready/Served เป็น transition classes ส่วน actor authorization อยู่ SessionOrderFulfillmentAccessProvider อีกชั้น Entity เก็บ enum STRING ไม่เก็บ State object Unit/API tests ครอบคลุมทางผ่าน, skip, reverse, terminal และ role ที่ผิด
 
 ## หน้า 12 — Strategy แยกนโยบายคำนวณจากงานรับชำระ
 
@@ -362,13 +364,15 @@ Local frontend5173 backend8080 configureddatabase Composeไม่มีDBcontai
 ### ตัวอย่างจากโค้ดจริง
 
 ```java
-OrderState state = OrderStateFactory.forStatus(OrderStatus.RECEIVED);
+private final OrderStateResolver resolver = new RegistryOrderStateResolver(
+        java.util.List.of(ReceivedState.INSTANCE, PreparingState.INSTANCE, ReadyState.INSTANCE, ServedState.INSTANCE));
+OrderState state = resolver.resolve(OrderStatus.RECEIVED);
 
 assertThat(state.status()).isEqualTo(OrderStatus.RECEIVED);
 assertThat(state.next().status()).isEqualTo(OrderStatus.PREPARING);
 ```
 
-[OrderStateTest.java บรรทัด 14](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/test/java/com/buffetrestaurant/service/state/OrderStateTest.java#L14)
+[OrderStateTest.java บรรทัด 14](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/cb612d9bd396f7ec5b4ca6c70925acf087e305a6/code/backend/src/test/java/com/buffetrestaurant/service/state/OrderStateTest.java#L14)
 
 ### คำพูดประกอบ
 
@@ -592,7 +596,7 @@ private List<OrderItem> items = new ArrayList<>();
 
 ### คำพูดประกอบ
 
-ตัวอย่าง OneToMany เป็นโค้ดจริง CustomerOrder รายการ order_items อยู่ใน aggregate ของ Order ส่วน Session อ้างข้อมูลแม่ Table Package Soup แบบ ManyToOne LAZY โดยไม่มี cascade ที่จะลบข้อมูลแม่ตามรอบกิน ประวัติจริงต้องพิจารณาทั้ง JPA และ FK
+ตัวอย่าง OneToMany เป็นโค้ดจริง CustomerOrder เป็นเจ้าของ lifecycle ของ OrderItem จึง cascade persist/update และ orphan delete เฉพาะ child ส่วน OrderItem.order เป็น ManyToOne LAZY ไม่มี cascade กลับไปลบ parent ความสัมพันธ์ Session กับ Table/Package/Soup เป็น ManyToOne LAZY ไม่มี cascade ที่จะลบข้อมูลแม่ตามรอบกิน ประวัติจริงต้องพิจารณาทั้ง JPA และ FK ดู rationale เพิ่มใน architecture/JPA note
 
 ## หน้า 31 — FK รักษาประวัติเมื่อข้อมูลต้นทางถูกลบ
 
@@ -765,30 +769,31 @@ Transaction boundary อยู่ use case ที่ต้องเปลี่�
 
 ### คำพูดประกอบ
 
-FulfillmentServiceเป็นContext OrderStateคือinterface statesสี่singleton implementations Entityเก็บenum ไม่เก็บStateobject
+FulfillmentServiceเป็นContext OrderStateคือinterface statesสี่singleton implementations และ service พึ่ง OrderFulfillmentAccessProvider; session implementation ตรวจ role จริง Entityเก็บenum ไม่เก็บStateobject
 
 ## หน้า 39 — Service ตรวจ next ก่อนบันทึกสถานะ
 
 ผู้บรรยาย `sarun_673380515-1_02` · Behavioral Patterns
 
-- Factory แปลง enum เป็น State
+- Injected `OrderStateResolver` resolves the enum through the validated registry
 - เทียบ next กับคำขอของผู้ใช้
+- ตรวจสิทธิ์ staff session ก่อนแก้ไข
 - เปลี่ยน Entity เมื่อ transition ถูกต้อง
 
 ### ตัวอย่างจากโค้ดจริง
 
 ```java
-OrderState current = OrderStateFactory.forStatus(order.getStatus());
+OrderState current = stateResolver.resolve(order.getStatus());
 OrderState next = current.next();
 if (next.status() != requestedStatus) {
     throw new BusinessRuleException("Cannot change order " + orderId + " status from " + order.getStatus()
 ```
 
-[OrderFulfillmentServiceImpl.java บรรทัด 59](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/472fba4f25a27fa2e3cd1e1213151ce971646f3a/code/backend/src/main/java/com/buffetrestaurant/service/impl/OrderFulfillmentServiceImpl.java#L59)
+[OrderFulfillmentServiceImpl.java บรรทัด 59](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/cb612d9bd396f7ec5b4ca6c70925acf087e305a6/code/backend/src/main/java/com/buffetrestaurant/service/impl/OrderFulfillmentServiceImpl.java#L59)
 
 ### คำพูดประกอบ
 
-ตัวอย่างจาก OrderFulfillmentServiceImpl ซึ่งเป็น Context ที่ใช้ pattern จริง เลือก State จาก status เรียก next และเทียบ requested status ก่อน updateStatus ไม่สาธิต skip ด้วยการ set enum โดยตรง Factory switch เป็น tradeoff ของ workflow สี่สถานะที่เป็น shared contract
+ตัวอย่างจาก OrderFulfillmentServiceImpl ซึ่งเป็น Context ที่ใช้ pattern จริง resolve State จาก status ผ่าน `OrderStateResolver` ที่ inject ไว้ (runtime คือ `RegistryOrderStateResolver`) เรียก next และเทียบ requested status ก่อน updateStatus ขณะเดียวกัน access provider ตรวจ KITCHEN_STAFF หรือ SERVICE_STAFF; role ผิดได้ 403 และไม่เขียนสถานะ การเพิ่มสถานะยังต้องแก้ shared enum, transition, API/UI และเพิ่ม registration ให้ครบ
 
 ## หน้า 40 — State Diagram แสดงลำดับ Order และสิทธิ์
 
@@ -804,7 +809,7 @@ if (next.status() != requestedStatus) {
 
 ### คำพูดประกอบ
 
-สถานะRECEIVEDPREPARINGREADYเป็นหน้าที่ครัว READYไปSERVEDเป็นServiceStaff SERVEDterminal skip/reverseถูกปฏิเสธ
+สถานะRECEIVEDPREPARINGREADYเป็นหน้าที่ครัว READYไปSERVEDเป็นServiceStaff SERVEDterminal skip/reverseถูกปฏิเสธ ทดสอบ roleผิดได้403และสถานะเดิมไม่เปลี่ยน
 
 ## หน้า 41 — Class Diagram แสดง composition ของ Strategy
 
@@ -1305,7 +1310,7 @@ return adultTotal.add(childTotal);
 
 - ราคาเป็น DECIMAL 10,2
 - Stock เป็น DECIMAL 12,3
-- paidAt และ billRequestedAt มี timezone
+- API timestamps เป็น ISO-8601 UTC (`Z`)
 
 ### ตัวอย่างจากโค้ดจริง
 
@@ -1319,7 +1324,7 @@ private BigDecimal packagePriceAtOpen;
 
 ### คำพูดประกอบ
 
-packagePriceAtOpenและPackageprecision10scale2ตรงกัน Stockใช้12,3 start/endSessionยังLocalDateTimeห้ามบอกว่าทุกtimestampเป็นtimezone Paymentใช้OffsetDateTimeและnullablepaid_atก่อนPAID bill_requested_atใช้TIMESTAMPWITHTIMEZONE ข้อมูลตามcanonicaldictionaryปัจจุบัน
+packagePriceAtOpenและPackageprecision10scale2ตรงกัน Stockใช้12,3 Session start/end เก็บLocalDateTimeภายใน แต่serviceใช้UTC Clockและmapperส่งออกเป็นOffsetDateTime UTC; Stockใช้Instant Payment/billRequestedAtใช้OffsetDateTime UTC JSON จึงมี timezone Z ไม่ใช่เวลาไร้เขตเวลา ตรวจ enum เป็นuppercaseและเงิน/stock decimal เป็นJSON numberตาม API contract
 
 ## หน้า 65 — ระบบที่ตรวจแล้วรันด้วย frontend กับ backend แยก
 
@@ -1425,7 +1430,7 @@ UserAccount มี UserProfile ได้ 0..1 จาก shared PK/FK ใน DB c
 
 ### คำพูดประกอบ
 
-Scenarioสี่รวมCustomerOrderingServiceกับOrderFulfillmentService StateFactorycurrent.next thenEntityupdate ไม่ใช้APIprepare/ready/serveเก่าที่ไม่มี
+Scenarioสี่รวมCustomerOrderingServiceกับOrderFulfillmentService OrderStateResolver.resolve(currentStatus) → current.next() → update Entity ไม่ใช้APIprepare/ready/serveเก่าที่ไม่มี
 
 ## หน้า 72 — Activity ของครัวและการยืนยันเสิร์ฟ
 

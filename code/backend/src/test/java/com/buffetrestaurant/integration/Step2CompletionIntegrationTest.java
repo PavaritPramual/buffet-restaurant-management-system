@@ -46,7 +46,8 @@ class Step2CompletionIntegrationTest {
         var other = new Cookie(CustomerSessionAccessService.COOKIE_NAME, access.exchange(jdbc.queryForObject("SELECT session_token FROM dining_sessions WHERE id=940001",String.class)).credential());
         mvc.perform(get("/api/v1/dining-sessions/940001/bill-status").cookie(customer)).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("NOT_REQUESTED")).andExpect(jsonPath("$.bill.totalAmount").value(997.50));
         mvc.perform(post("/api/v1/dining-sessions/940001/bill-request").cookie(customer).header("Origin","http://localhost:5173"))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("REQUESTED")).andExpect(jsonPath("$.requestedAt").isNotEmpty());
+                .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("REQUESTED"))
+                .andExpect(jsonPath("$.requestedAt").value(org.hamcrest.Matchers.endsWith("Z")));
         entityManager.flush();
         var first = jdbc.queryForObject("SELECT bill_requested_at FROM dining_sessions WHERE id=940001", java.time.OffsetDateTime.class);
         mvc.perform(post("/api/v1/dining-sessions/940001/bill-request").cookie(other).header("Origin","http://localhost:5173")).andExpect(status().isOk());
@@ -75,17 +76,22 @@ class Step2CompletionIntegrationTest {
                 .andExpect(status().isConflict());
         mvc.perform(get("/api/v1/dining-sessions/940001/bill-status").cookie(customer))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("NOT_REQUESTED"))
+                .andExpect(jsonPath("$.bill.totalAmount").isNumber())
+                .andExpect(jsonPath("$.dueAmount").isNumber())
+                .andExpect(jsonPath("$.paidAmount").isNumber())
                 .andExpect(jsonPath("$.bill.totalAmount").value(997.50))
                 .andExpect(jsonPath("$.dueAmount").value(997.50)).andExpect(jsonPath("$.paidAmount").value(0));
         assertThat(jdbc.queryForObject("SELECT count(*) FROM payments WHERE session_id=940001", Integer.class)).isZero();
         mvc.perform(post("/api/v1/dining-sessions/940001/bill-request").cookie(customer).header("Origin","http://localhost:5173"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("REQUESTED"))
+                .andExpect(jsonPath("$.dueAmount").isNumber()).andExpect(jsonPath("$.paidAmount").isNumber())
                 .andExpect(jsonPath("$.bill.totalAmount").value(997.50))
                 .andExpect(jsonPath("$.dueAmount").value(997.50)).andExpect(jsonPath("$.paidAmount").value(0));
         mvc.perform(post("/api/v1/payments").session(staff).contentType(MediaType.APPLICATION_JSON).content(payment))
                 .andExpect(status().isCreated()).andExpect(jsonPath("$.paymentStatus").value("PAID"));
         mvc.perform(get("/api/v1/dining-sessions/940001/bill-status").cookie(customer))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("PAID"))
+                .andExpect(jsonPath("$.dueAmount").isNumber()).andExpect(jsonPath("$.paidAmount").isNumber())
                 .andExpect(jsonPath("$.bill.totalAmount").value(997.50))
                 .andExpect(jsonPath("$.dueAmount").value(0)).andExpect(jsonPath("$.paidAmount").value(997.50));
         mvc.perform(post("/api/v1/dining-sessions/940001/orders").cookie(customer).header("Origin","http://localhost:5173")

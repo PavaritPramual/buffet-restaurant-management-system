@@ -11,7 +11,7 @@ it('creates zero-balance stock metadata without sending a quantity', async () =>
   await screen.findByText('ยังไม่มีรายการ')
   for(const [label, value] of [['รหัสสต็อก','S01'],['ชื่อรายการ','เนื้อ'],['หน่วย','kg'],['ยอดแจ้งเตือนต่ำ','2.5'],['ยอดเป้าหมายก่อนเปิดร้าน','10']]) fireEvent.change(screen.getByLabelText(label), { target: { value } })
   fireEvent.click(screen.getByRole('button', { name: 'บันทึก' }))
-  await waitFor(() => expect(post).toHaveBeenCalledWith('/stock/items', { sku: 'S01', name: 'เนื้อ', unit: 'kg', lowStockThreshold: '2.5', openingTargetStock: '10' }))
+    await waitFor(() => expect(post).toHaveBeenCalledWith('/stock/items', { sku: 'S01', name: 'เนื้อ', unit: 'kg', lowStockThreshold: 2.5, openingTargetStock: 10 }))
   expect(screen.queryByLabelText('ยอดคงเหลือ')).toBeNull()
 })
 it('lets the manager deactivate a stock item through the stock active endpoint', async () => {
@@ -22,6 +22,20 @@ it('lets the manager deactivate a stock item through the stock active endpoint',
   fireEvent.click(screen.getByRole('button', { name: 'ปิดใช้งาน' }))
   fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))
   await waitFor(() => expect(put).toHaveBeenCalledWith('/stock/items/7/active', { active: false }))
+})
+it('sends package prices as JSON numbers', async () => {
+  vi.spyOn(apiClient, 'get').mockResolvedValue({ data: [] })
+  const post = vi.spyOn(apiClient, 'post').mockResolvedValue({ data: { id: 1 } })
+  render(<MasterDataPage kind="buffet-packages" />)
+  await screen.findByText('ยังไม่มีรายการ')
+  fireEvent.change(screen.getByLabelText('ชื่อรายการ'), { target: { value: 'Standard' } })
+  fireEvent.change(screen.getByLabelText('ราคา'), { target: { value: '299.50' } })
+  fireEvent.click(screen.getByRole('button', { name: 'บันทึก' }))
+  await waitFor(() => expect(post).toHaveBeenCalledWith('/buffet-packages', {
+    name: 'Standard',
+    price: 299.5,
+    description: '',
+  }))
 })
 it('requires confirmation to reactivate a package and prevents duplicate actions', async () => {
   vi.spyOn(apiClient, 'get').mockResolvedValue({ data: [{ id: 1, name: 'Standard', price: 299, active: false }] })
