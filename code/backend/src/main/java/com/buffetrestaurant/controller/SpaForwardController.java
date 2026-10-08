@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class SpaForwardController {
 
     @GetMapping({
-            "/admin", "/admin/**",
-            "/staff/**",
-            "/kitchen",
-            "/billing/preview",
-            "/customer/qr"
+            "/{section:(?i:admin|staff)}",
+            "/{section:(?i:admin|staff)}/**",
+            "/{section:(?i:kitchen)}", "/{section:(?i:kitchen)}/",
+            "/{section:(?i:billing)}/{page:(?i:preview)}",
+            "/{section:(?i:billing)}/{page:(?i:preview)}/",
+            "/{section:(?i:customer)}/{page:(?i:qr)}",
+            "/{section:(?i:customer)}/{page:(?i:qr)}/"
     })
     public String forwardFrontendRoutes() {
         return "forward:/index.html";

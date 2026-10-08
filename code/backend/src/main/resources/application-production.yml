@@ -15,6 +15,8 @@ server:
         same-site: lax
 
 app:
+  customer-cookie:
+    secure: true
   master-data:
     access-provider: session
   menu:
