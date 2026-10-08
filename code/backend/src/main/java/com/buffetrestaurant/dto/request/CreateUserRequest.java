@@ -22,6 +22,15 @@ public record CreateUserRequest(
         String email,
         @NotNull
         @Schema(description = "Staff role", example = "SERVICE_STAFF")
-        UserRole role
+        UserRole role,
+        @NotBlank @Size(max = 100)
+        @Schema(description = "First name", example = "Somchai")
+        String firstName,
+        @NotBlank @Size(max = 100)
+        @Schema(description = "Last name", example = "Jaidee")
+        String lastName,
+        @Size(max = 20)
+        @Schema(description = "Optional phone number", example = "0812345678", nullable = true)
+        String phoneNumber
 ) {
 }

@@ -25,6 +25,9 @@ class StockItem {
  unit : String
  quantity : BigDecimal
  lowStockThreshold : BigDecimal
+ openingTargetStock : BigDecimal (V15)
+ active : boolean (V15)
+ +getShortfall() : BigDecimal
  +applyDelta(delta) : void
 }
 class StockTransaction {
@@ -45,10 +48,10 @@ StockTransactionTemplate --> StockTransactionRepository
 StockTransactionTemplate --> UserAccountRepository
 StockItem "1" -- "0..*" StockTransaction
 note bottom of StockTransactionTemplate
- final workflow: actor -> delta -> nonnegative balance
+ final workflow: actor -> active guard (409) -> delta -> nonnegative balance
  -> apply/save -> audit actor/reason/balance.
  Transaction belongs to StockService, not the template.
  Types: IN / ADJUSTMENT. Adjustment uses signed delta.
- openingTargetStock / active remain Final work, not current fields.
+ openingTargetStock/active implemented by V15; shortfall is derived, not persisted.
 end note
 @enduml

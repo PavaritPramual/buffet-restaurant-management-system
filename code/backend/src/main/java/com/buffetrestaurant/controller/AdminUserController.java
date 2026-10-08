@@ -1,6 +1,7 @@
 package com.buffetrestaurant.controller;
 
 import com.buffetrestaurant.dto.request.CreateUserRequest;
+import com.buffetrestaurant.dto.request.UpdateUserProfileRequest;
 import com.buffetrestaurant.dto.response.ErrorResponse;
 import com.buffetrestaurant.dto.response.UserResponse;
 import com.buffetrestaurant.domain.enums.UserRole;
@@ -18,7 +19,9 @@ import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +49,13 @@ public class AdminUserController {
     public List<UserResponse> list(HttpServletRequest request) {
         users.requireAnyRole(request, UserRole.MANAGER);
         return authService.listUsers();
+    }
+
+    @PutMapping("/{id}/profile")
+    public UserResponse updateProfile(@PathVariable Long id, @RequestBody UpdateUserProfileRequest body,
+            HttpServletRequest request) {
+        users.requireAnyRole(request, UserRole.MANAGER);
+        return authService.updateProfile(id, body);
     }
 
     @PostMapping

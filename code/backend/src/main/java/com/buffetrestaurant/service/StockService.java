@@ -39,7 +39,7 @@ public class StockService {
         if (items.findBySku(request.sku().trim()).isPresent()) {
             throw new com.buffetrestaurant.exception.DuplicateResourceException("Stock SKU already exists");
         }
-        return StockItemResponse.from(items.saveAndFlush(new StockItem(request.sku().trim(), request.name().trim(), request.unit().trim(), java.math.BigDecimal.ZERO, request.lowStockThreshold())));
+        return StockItemResponse.from(items.saveAndFlush(new StockItem(request.sku().trim(), request.name().trim(), request.unit().trim(), java.math.BigDecimal.ZERO, request.lowStockThreshold(), targetOrZero(request))));
     }
 
     @Transactional
@@ -52,7 +52,19 @@ public class StockService {
             throw new com.buffetrestaurant.exception.DuplicateResourceException("SKU and unit cannot change after stock transactions exist");
         }
         item.updateDetails(request.sku().trim(), request.name().trim(), request.unit().trim(), request.lowStockThreshold());
+        if (request.openingTargetStock() != null) item.updateOpeningTarget(request.openingTargetStock());
         return StockItemResponse.from(items.saveAndFlush(item));
+    }
+
+    @Transactional
+    public StockItemResponse setActive(Long id, boolean active) {
+        StockItem item = findItem(id);
+        item.changeActive(active);
+        return StockItemResponse.from(items.saveAndFlush(item));
+    }
+
+    private static java.math.BigDecimal targetOrZero(com.buffetrestaurant.dto.request.StockItemRequest request) {
+        return request.openingTargetStock() == null ? java.math.BigDecimal.ZERO : request.openingTargetStock();
     }
 
     @Transactional(readOnly = true)

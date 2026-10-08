@@ -47,7 +47,7 @@ export default function StockPage() {
 
   async function submitChange(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!selected || inFlight.current) return
+    if (!selected || !selected.active || inFlight.current) return
     if (mode === 'ADJUSTMENT') { setConfirming(true); return }
     await saveChange()
   }
@@ -96,16 +96,18 @@ export default function StockPage() {
     <section className="admin-section">
       <div className="admin-section-heading"><h2>วัตถุดิบคงเหลือ</h2><span>{loading ? 'กำลังโหลด...' : `${items.length} รายการ`}</span></div>
       <div className="admin-table-wrap"><table className="admin-table">
-        <thead><tr><th>วัตถุดิบ</th><th>รหัส</th><th>คงเหลือ</th><th>จุดเตือน</th><th>อัปเดตล่าสุด</th>{canMoveStock && <th>รายการ</th>}</tr></thead>
+        <thead><tr><th>วัตถุดิบ</th><th>รหัส</th><th>คงเหลือ</th><th>จุดเตือน</th><th>เป้าหมายก่อนเปิดร้าน</th><th>ขาด</th><th>อัปเดตล่าสุด</th>{canMoveStock && <th>รายการ</th>}</tr></thead>
         <tbody>{items.map((item) => <tr key={item.id}>
-          <td><strong>{item.name}</strong><span className="table-secondary">{item.unit}</span></td>
+          <td><strong>{item.name}</strong><span className="table-secondary">{item.unit}{!item.active && ' · ปิดใช้งาน'}</span></td>
           <td className="table-code">{item.sku}</td>
           <td><span className={item.quantity <= item.lowStockThreshold ? 'stock-quantity stock-low' : 'stock-quantity'}>{quantity(item.quantity)} {item.unit}</span></td>
           <td>{quantity(item.lowStockThreshold)} {item.unit}</td>
+          <td>{quantity(item.openingTargetStock)} {item.unit}</td>
+          <td className={item.shortfall > 0 ? 'stock-low' : ''}>{quantity(item.shortfall)} {item.unit}</td>
           <td>{dateTime(item.updatedAt)}</td>
-          {canMoveStock && <td><div className="stock-actions"><button title={`รับเข้า ${item.name}`} onClick={() => { setSelected(item); setMode('IN'); setAmount(''); setReason('') }}>รับเข้า</button><button title={`ปรับยอด ${item.name}`} onClick={() => { setSelected(item); setMode('ADJUSTMENT'); setAmount(''); setReason('') }}>ปรับยอด</button></div></td>}
+          {canMoveStock && <td><div className="stock-actions"><button disabled={!item.active} title={item.active ? `รับเข้า ${item.name}` : 'รายการปิดใช้งาน'} onClick={() => { setSelected(item); setMode('IN'); setAmount(''); setReason('') }}>รับเข้า</button><button disabled={!item.active} title={item.active ? `ปรับยอด ${item.name}` : 'รายการปิดใช้งาน'} onClick={() => { setSelected(item); setMode('ADJUSTMENT'); setAmount(''); setReason('') }}>ปรับยอด</button></div></td>}
         </tr>)}
-          {!loading && items.length === 0 && <tr><td colSpan={canMoveStock ? 6 : 5} className="admin-empty">ยังไม่มีรายการสต็อก</td></tr>}
+          {!loading && items.length === 0 && <tr><td colSpan={canMoveStock ? 8 : 7} className="admin-empty">ยังไม่มีรายการสต็อก</td></tr>}
         </tbody>
       </table></div>
     </section>

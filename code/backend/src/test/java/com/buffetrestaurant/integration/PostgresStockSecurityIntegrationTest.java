@@ -77,7 +77,7 @@ class PostgresStockSecurityIntegrationTest {
         profiles.deleteAll();
         users.deleteAll();
         var manager = authService.createUser(new CreateUserRequest("postgres-manager", "password123",
-                "Postgres Manager", null, UserRole.MANAGER));
+                "Postgres Manager", null, UserRole.MANAGER, "Postgres", "Manager", null));
         actor = new UserContext(manager.id(), manager.username(), manager.displayName(), manager.role());
         itemId = items.save(new StockItem("PG-LOCK", "Concurrent rice", "kg",
                 BigDecimal.ZERO, BigDecimal.ZERO)).getId();

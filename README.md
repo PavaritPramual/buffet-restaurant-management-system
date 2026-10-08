@@ -125,7 +125,7 @@ PowerShellจากcode/backend:
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=demo" "-Dspring-boot.run.arguments=--app.menu.admin-access-provider=session --app.ordering.session-provider=database --app.fulfillment.access-provider=session"
 ```
 
-Demoใช้H2memory+common/H2migrations+seed; restartแล้วข้อมูลหาย Managerตัวอย่าง `admin/admin123` เป็นข้อมูลdemoที่ประกาศในDemoDataSeeder
+Demoใช้H2memory+common/H2migrations+seed; restartแล้วข้อมูลหาย Managerตัวอย่าง `admin/admin123` เป็นข้อมูลdemo(`[TEST DATA]`)ที่ประกาศในDemoDataSeeder ห้ามใช้กับฐานกลาง ดูขั้นตอนรันซ้ำที่ [doc/setup-demo-data.md](doc/setup-demo-data.md)
 สร้างบัญชีSERVICE_STAFF/KITCHEN_STAFFผ่านManagerก่อนทดลองครบทุกrole คำสั่งนี้overridefixturedefaultsของdemoprofileให้ใช้login/customergrantจริง; ถ้ารันdemoprofileเปล่า Menu/Ordering/Fulfillmentเป็นfixtures จึงไม่ใช่หลักฐานintegration
 
 ### Flowแต่ละrole

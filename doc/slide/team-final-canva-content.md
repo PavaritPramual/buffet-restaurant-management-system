@@ -235,7 +235,7 @@ stock_items 1 → N stock_transactions
 
 ### คำพูดและรายละเอียดประกอบ
 
-ความสัมพันธ์ One-to-One และ One-to-Many ตรงเกณฑ์วิชา และมี Many-to-Many สำหรับเมนูในแพ็กเกจ orders และ payments เก็บ sessionId เป็น scalar ใน JPA แต่ฐานข้อมูลมี FK จริง จึงต้องแยกสิ่งที่เป็น database relationship ออกจาก object association Profile ใช้ชื่อจริงตาราง app_users และ fields display_name/email ใน baseline ชื่อและโทรศัพท์ละเอียดเป็นงาน Final ที่ยังไม่รวม
+ความสัมพันธ์ One-to-One และ One-to-Many ตรงเกณฑ์วิชา และมี Many-to-Many สำหรับเมนูในแพ็กเกจ orders และ payments เก็บ sessionId เป็น scalar ใน JPA แต่ฐานข้อมูลมี FK จริง จึงต้องแยกสิ่งที่เป็น database relationship ออกจาก object association ใน baseline รอบ Step 2 Profile ใช้ชื่อตาราง `user_profiles` และ fields `display_name`/`email`; ต่อมา V15 เพิ่ม firstName/lastName/phoneNumber (nullable สำหรับข้อมูลเดิม) ตาม [Auth/Stock schema delta](../database/auth-stock-schema-delta.md)
 
 ### แหล่งอ้างอิง
 

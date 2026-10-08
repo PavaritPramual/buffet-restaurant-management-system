@@ -1,19 +1,22 @@
 # Data Dictionary และ schema ที่รับรองสำหรับ Step 2
 
-ตรวจ schema จาก Supabase และ Flyway V1–V12 เมื่อ 6 ตุลาคม 2026 ปวริศช์รับรอง extensions ตามแผนปิด Step 2; รายละเอียดนี้เป็น canonical implementation ของรอบนี้ เอกสาร design เดิมเก็บเป็นประวัติ การเปลี่ยน schema ที่ apply แล้วต้องใช้ forward migration
+ขอบเขตเอกสาร canonical นี้คือ baseline Step 2 ที่ตรวจ schema จาก Supabase และ Flyway V1–V12 เมื่อ 6 ตุลาคม 2026 และปวริศช์รับรอง extensions ตามแผนปิด Step 2; ไม่ใช่รายการสถานะล่าสุดของ migration ทุก version เอกสาร design เดิมเก็บเป็นประวัติ การเปลี่ยน schema ที่ apply แล้วต้องใช้ forward migration
+
+**สถานะ migration ฐานกลาง ณ 8 ต.ค. 2026:** read-only inspection ที่ reviewer รายงานพบ V13, V14 และ V15 ใน `flyway_schema_history` ด้วย `success=true`; sanitized history และ schema readback อยู่ใน [auth-stock-schema-delta.md](auth-stock-schema-delta.md). V15 ใช้ forward migration และ schema readback ตรงกับคอลัมน์ใน migration แต่ข้อมูลตรวจ history ไม่ใช่หลักฐานอนุมัติ V15 และไม่ใช่ผล Flyway `validate`/checksum comparison กับไฟล์ของ commit ปัจจุบัน รายละเอียดและหลักฐานที่ยังรอแยกในเอกสาร delta; ห้ามตีความว่า V15 ยังไม่ apply หรือ apply ซ้ำเพื่อแก้เอกสาร
 
 ## การตัดสินใจ
 
-**Customer Billing extension:** V14 เพิ่ม `bill_requested_at` ที่แถวรอบกิน nullable/default NULL แบบ TIMESTAMP WITH TIME ZONE ไม่เพิ่มสถานะรอบใหม่ เมื่อขอแล้ว Order ใหม่ถูกปฏิเสธด้วย 409 แต่ Payment/close ยังแยกกัน V13/V14 ยังไม่ apply Supabase และรอ review/deployment
+**Customer Billing extension:** V14 เพิ่ม `bill_requested_at` ที่แถวรอบกิน nullable/default NULL แบบ TIMESTAMP WITH TIME ZONE ไม่เพิ่มสถานะรอบใหม่ เมื่อขอแล้ว Order ใหม่ถูกปฏิเสธด้วย 409 แต่ Payment/close ยังแยกกัน สถานะฐานกลางที่ตรวจพบ: V14 success=true; ดูรายละเอียดใน [auth-stock-schema-delta.md](auth-stock-schema-delta.md)
 
-**Security เพิ่มเติม:** PR ปิด Step 2 เสนอ V13 เพื่อ revoke client/PUBLIC grants ที่ตกค้างของ application tables/sequences และเปิด RLS `restaurant_tables` คง columns/FKs และ applied V1–V12 ทุกไฟล์ V13 ผ่านฐาน PostgreSQL แยกแต่ยังไม่ apply Supabase ให้ DB reviewer ตรวจและยืนยัน deployment ก่อนปิดขั้น
+**Security เพิ่มเติม:** PR ปิด Step 2 เสนอ V13 เพื่อ revoke client/PUBLIC grants ที่ตกค้างของ application tables/sequences และเปิด RLS `restaurant_tables` คง columns/FKs และ applied V1–V12 ทุกไฟล์ read-only inspection วันที่ 8 ต.ค. ที่ reviewer รายงานพบ V13 success=true ในฐานกลาง; หลักฐาน approval/validate เป็นคนละ gate กับสถานะ apply
 
 - คง `menu_items.image_url` สำหรับรูปเมนู; `orders.table_number` และ `order_items.item_name` เป็น snapshot เพื่อรักษาประวัติหลังแก้ข้อมูลต้นทาง
 - ใช้ timestamp with time zone คู่กับ Java OffsetDateTime ตาม migration/API จริง; จำนวนอาหารต้องบวก และคง supporting indexes ตาม query paths
 - Billing ใช้ `package_price_at_open`; Payment คำนวณยอดฝั่ง backendและบันทึก paid_at เมื่อ PAID; การชำระแยกจากการปิดรอบ
 - Auth ใช้ `app_users`, BCrypt `password_hash` และ profile shared PK/display_name; Stock ใช้ DECIMAL(12,3), sku, quantity/low_stock_threshold และ required audit reason
-- เลื่อนชื่อ/นามสกุล/โทรศัพท์, opening_target_stock และ active/inactive ของ Stock ไป Final ตามข้อตกลง ไม่อ้างว่า fields เหล่านี้มีแล้ว
-- ข้อมูลเป้าหมายออกแบบเดิมที่เลื่อนต้องมี task แยก การรับรองนี้จำกัดที่ Step 2; ข้อเสนอใน PR นี้ยังต้องผ่าน reviewer ก่อนปิดขั้น
+- **ประวัติการตัดสินใจ Step 2 ณ 6 ต.ค. 2026:** เลื่อนชื่อ/นามสกุล/โทรศัพท์, opening_target_stock และ active/inactive ของ Stock ไป Final ตามข้อตกลง; ภายหลัง implement และมีรายงาน apply V15 ตามเอกสาร delta โดยการตัดสินใจ Step 2 นี้ไม่ใช่การอนุมัติ V15
+- **ประวัติ ณ 6 ต.ค. 2026 (superseded):** ข้อความในรอบก่อนที่ระบุ V13/V14 รอ apply/review หรือยังไม่ apply สะท้อนสถานะ/ข้อมูล ณ เวลานั้นเท่านั้น; read-only inspection วันที่ 8 ต.ค. รายงานว่า V13–V15 success=true ตาม Flyway history ปัจจุบันยังรอหลักฐานอนุมัติ V15 และผล validate/checksum comparison
+- Data Dictionary นี้รับรองเฉพาะขอบเขต Step 2; schema V15 และสถานะ deployment ปัจจุบันให้ดูเอกสาร delta โดยไม่ตีความการพบใน history เป็น approval
 
 ## app_users
 

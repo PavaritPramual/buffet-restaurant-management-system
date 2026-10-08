@@ -171,7 +171,8 @@ Entity ต้องใช้ `@Enumerated(EnumType.STRING)` เท่านั�
 
 - UserSessionKeys.USER_CONTEXT_SESSION_KEY ยังคงค่า `userContext`; ไม่อ้าง constant จาก Controller
 - UserContextProvider สำเร็จเมื่อ userId เป็นบวก username ไม่ว่าง role มีค่า; displayName อาจไม่มีค่า. Missing/malformed identity → 401, complete identity กับ role ผิด → 403. Header role ไม่เพิ่มสิทธิ์
-- AuthenticationService แยกจาก UserAdministrationService (list/create เท่านั้น). ไม่เพิ่ม User/Profile fields หรือ endpoints
+- AuthenticationService แยกจาก UserAdministrationService (list/create/updateProfile). V15 เพิ่ม Profile `firstName`/`lastName` (บังคับสำหรับบัญชีใหม่) และ `phoneNumber` (optional, max 20, ไม่มี pattern เพราะรูปแบบเบอร์ยังไม่มีผู้ถือ Data Dictionary ยืนยัน) ใน create/list response และ `PUT /api/v1/admin/users/{id}/profile` (MANAGER เท่านั้น; เก็บ `displayName`/`email` เดิม)
+- Stock V15: `openingTargetStock` (≥ 0), `active`, `shortfall = max(target − quantity, 0)` (คำนวณตอนอ่าน) ผ่าน `POST/PUT /api/v1/stock/items`, `PUT /api/v1/stock/items/{id}/active`; item inactive ปฏิเสธ stock-in/adjustment ด้วย 409 แต่อ่านประวัติได้
 - CustomerSessionVerifier แยก read/context จาก requireSessionForOrder; runtime order verification ต้องใช้ transaction/lock และปฏิเสธรอบขอคิดบิลหรือปิดแล้ว
 - SessionContextProvider ไม่มี fallback read สำหรับ order อีกต่อไป; implementations ต้องประกาศ order behavior เอง. Fixture เป็น synthetic และไม่พิสูจน์ DB lock
 - BillingContextProvider คืน snapshot/counts/status ของ ID เดียวกัน ไม่คืน null. discountContext เป็น nullได้หมายถึงไม่มี promotion

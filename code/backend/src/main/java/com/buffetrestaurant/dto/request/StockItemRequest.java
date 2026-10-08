@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
-
 public record StockItemRequest(
         @NotBlank @Size(max = 40)
         @Schema(description = "Unique stock item code", example = "ING-001")
@@ -21,6 +20,11 @@ public record StockItemRequest(
         @NotNull @DecimalMin("0") @Digits(integer = 9, fraction = 3)
         @Schema(description = "Low-stock notification threshold; JSON number with up to three decimal places",
                 type = "number", format = "double", implementation = Double.class, example = "2.500")
-        BigDecimal lowStockThreshold
+        BigDecimal lowStockThreshold,
+        @DecimalMin("0") @Digits(integer = 9, fraction = 3)
+        @Schema(description = "Optional opening target stock; JSON number with up to three decimal places",
+                type = "number", format = "double", implementation = Double.class, example = "10.000",
+                nullable = true)
+        BigDecimal openingTargetStock
 ) {
 }

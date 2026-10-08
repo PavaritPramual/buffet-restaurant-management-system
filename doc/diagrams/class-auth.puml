@@ -21,10 +21,15 @@ class UserProfile {
 userId : Long
 displayName : String
 email : String
+firstName : String
+lastName : String
+phoneNumber : String
++updateContact(firstName, lastName, phoneNumber)
 }
 class AuthService {
 +authenticate(username, password) : UserContext
 +createUser(request) : UserResponse
++updateProfile(id, request) : UserResponse
 }
 interface UserAccountRepository <<Repository>>
 interface UserProfileRepository <<Repository>>
@@ -59,7 +64,7 @@ note bottom of AuthService
 Authentication and user administration have separate contracts.
 Profile is optional in the database (0..1).
 createUser creates both; authenticate requires a profile.
-Only list/create user with basic displayName/email is implemented.
+Only list/create/updateProfile are implemented; V15 profile names/phone are nullable for legacy rows.
 Incomplete session identities return 401; disallowed roles return 403.
 end note
 @enduml

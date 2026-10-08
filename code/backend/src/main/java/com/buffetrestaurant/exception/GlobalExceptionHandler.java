@@ -40,6 +40,14 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, message, request.getRequestURI());
     }
 
+    @ExceptionHandler(InactiveStockItemException.class)
+    public ResponseEntity<ErrorResponse> handleInactiveStockItem(
+            InactiveStockItemException exception,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.CONFLICT, exception.getMessage(), request.getRequestURI());
+    }
+
     @ExceptionHandler(StockRuleViolationException.class)
     public ResponseEntity<ErrorResponse> handleStockRuleViolation(
             StockRuleViolationException exception,

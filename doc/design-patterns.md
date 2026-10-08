@@ -42,3 +42,5 @@
 ## หลักฐานและการรับรอง
 
 [รายงาน tests](testing/architecture-refactor-report.md) · [SOLID](solid-analysis.md) · [Requirement Matrix](planning/step3-requirement-matrix.md). รอศรัณย์/ธีรเมธ/เมธัส/ศิระพัทธ์ตรวจตามพื้นที่ ยังไม่ติ๊ก public/release หรือรับรองสไลด์
+
+รายละเอียด Template Method ของ Stock (ขั้นร่วม/steps ที่ override/transaction/audit/inactive guard) และ SOLID ดู [architecture/template-method-auth-stock.md](architecture/template-method-auth-stock.md)

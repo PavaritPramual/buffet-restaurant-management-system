@@ -75,6 +75,13 @@ public class StockController {
         return stockService.updateItem(id, body);
     }
 
+    @org.springframework.web.bind.annotation.PutMapping("/items/{id}/active")
+    public StockItemResponse setActive(@PathVariable Long id,
+            @Valid @RequestBody com.buffetrestaurant.dto.request.StockItemActiveRequest body, HttpServletRequest request) {
+        users.requireAnyRole(request, UserRole.MANAGER);
+        return stockService.setActive(id, body.active());
+    }
+
     @GetMapping
     @Operation(summary = "List stock items and current quantities")
     @ApiResponse(responseCode = "200", description = "Stock item list")

@@ -26,5 +26,5 @@ Domain Model คือแบบจำลองโครงสร้างขอ�
 | **Order** | แทนคำสั่งอาหารในแต่ละรอบของโต๊ะ บันทึกเวลาที่สั่งและสถานะ (RECEIVED, PREPARING, READY, SERVED) |
 | **OrderItem** | เก็บรายละเอียดแต่ละรายการอาหารภายใน Order เช่น เมนู จำนวน และหมายเหตุเพิ่มเติม |
 | **Payment** | เก็บข้อมูลการชำระเงินของ Dining Session เช่น ยอดเงินสุทธิ วิธีชำระ (CASH / QR / CARD) และสถานะการชำระ |
-| **StockItem** | ปัจจุบันมี sku/name/unit/quantity/lowStockThreshold ส่วน opening target และ active อยู่ Final ยังไม่ implement |
+| **StockItem** | มี sku/name/unit/quantity/lowStockThreshold และ V15 `openingTargetStock`/`active`; shortfall คำนวณจาก target − quantity ตอนอ่าน |
 | **StockTransaction** | บันทึกประวัติ stock-in (`IN`) และ adjustment (`ADJUSTMENT`) ด้วย signed delta พร้อม balanceAfter เหตุผลและผู้บันทึก ไม่ใช่การตั้งยอดตรวจนับโดยตรง |
