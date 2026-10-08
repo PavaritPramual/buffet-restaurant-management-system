@@ -1,0 +1,43 @@
+{
+  "verifiedAt": "2026-10-08T05:53:39.772Z",
+  "runs": [
+    {
+      "label": "develop",
+      "sourceCommit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "runId": 37719753927,
+      "url": "https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37719753927",
+      "conclusion": "success",
+      "backend": {
+        "tests": 339,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "frontendPassed": 118,
+      "urlGuardsPassed": 6,
+      "lintErrors": 0,
+      "lintWarnings": 4,
+      "build": "PASS",
+      "scope": "isolated CI; separate from local browser/public acceptance"
+    },
+    {
+      "label": "stock-profile-candidate",
+      "sourceCommit": "cc72fa0c9125c50de185e02940b3359faee776f8",
+      "runId": 37730612713,
+      "url": "https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37730612713",
+      "conclusion": "success",
+      "backend": {
+        "tests": 348,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "frontendPassed": 121,
+      "urlGuardsPassed": 6,
+      "lintErrors": 0,
+      "lintWarnings": 4,
+      "build": "PASS",
+      "scope": "isolated CI; separate from local browser/public acceptance"
+    }
+  ]
+}

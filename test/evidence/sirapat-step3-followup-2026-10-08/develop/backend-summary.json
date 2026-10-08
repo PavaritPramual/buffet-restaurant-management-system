@@ -1,0 +1,337 @@
+{
+  "errors": 0.0,
+  "failures": 0.0,
+  "skipped": 27.0,
+  "suites": [
+    {
+      "errors": 0,
+      "tests": 2,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.config.BootstrapAdminConfigTest"
+    },
+    {
+      "errors": 0,
+      "tests": 11,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.controller.BillingControllerTest"
+    },
+    {
+      "errors": 0,
+      "tests": 2,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.controller.OpenApiContractIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 14,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.controller.OrderFulfillmentControllerTest"
+    },
+    {
+      "errors": 0,
+      "tests": 4,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.controller.PaymentAuthorizationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 17,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.controller.RestaurantTableControllerTest"
+    },
+    {
+      "errors": 0,
+      "tests": 1,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.controller.SystemControllerTest"
+    },
+    {
+      "errors": 0,
+      "tests": 2,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.domain.enums.SharedEnumSerializationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 3,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.exception.EnumErrorResponseTest"
+    },
+    {
+      "errors": 0,
+      "tests": 6,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.AuthStockIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 6,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.CatalogIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 1,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.CatalogMigrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 1,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.DemoDataSeederTest"
+    },
+    {
+      "errors": 0,
+      "tests": 11,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.DiningSessionIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 2,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.DiningSessionMigrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 1,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.DiningSessionPaymentUnavailableIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 1,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.DiningSessionStaffAccessDisabledIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 27,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.DisposablePostgresDatabaseTest"
+    },
+    {
+      "errors": 0,
+      "tests": 1,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.MenuAdminDisabledIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 16,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.MenuCatalogIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 4,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.MenuOrderingMigrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 15,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.OrderFulfillmentIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 2,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.OrderingDisabledIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 15,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.OrderingIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 12,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.PaymentIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 2,
+      "failures": 0,
+      "skipped": 2,
+      "name": "com.buffetrestaurant.integration.PostgresApplicationClientAccessTest"
+    },
+    {
+      "errors": 0,
+      "tests": 1,
+      "failures": 0,
+      "skipped": 1,
+      "name": "com.buffetrestaurant.integration.PostgresDiningSessionMigrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 1,
+      "failures": 0,
+      "skipped": 1,
+      "name": "com.buffetrestaurant.integration.PostgresMenuOrderingMigrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 8,
+      "failures": 0,
+      "skipped": 8,
+      "name": "com.buffetrestaurant.integration.PostgresOrderCloseConcurrencyTest"
+    },
+    {
+      "errors": 0,
+      "tests": 13,
+      "failures": 0,
+      "skipped": 13,
+      "name": "com.buffetrestaurant.integration.PostgresPaymentIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 2,
+      "failures": 0,
+      "skipped": 2,
+      "name": "com.buffetrestaurant.integration.PostgresStockSecurityIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 11,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.RestaurantTableIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 11,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.SessionFulfillmentIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 7,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.integration.Step2CompletionIntegrationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 3,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.AuthServiceTest"
+    },
+    {
+      "errors": 0,
+      "tests": 17,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.billing.BillingEngineTest"
+    },
+    {
+      "errors": 0,
+      "tests": 2,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.billing.StandardBillCalculationTest"
+    },
+    {
+      "errors": 0,
+      "tests": 3,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.CustomerBillingContractTest"
+    },
+    {
+      "errors": 0,
+      "tests": 10,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.DatabaseBillingContextContractTest"
+    },
+    {
+      "errors": 0,
+      "tests": 9,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.fixture.FixtureOrderFulfillmentAccessProviderTest"
+    },
+    {
+      "errors": 0,
+      "tests": 20,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.OrderFulfillmentServiceTest"
+    },
+    {
+      "errors": 0,
+      "tests": 16,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.RestaurantTableServiceTest"
+    },
+    {
+      "errors": 0,
+      "tests": 3,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.SessionContextProviderContractTest"
+    },
+    {
+      "errors": 0,
+      "tests": 8,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.SessionUserContextProviderTest"
+    },
+    {
+      "errors": 0,
+      "tests": 6,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.state.OrderStateResolverTest"
+    },
+    {
+      "errors": 0,
+      "tests": 4,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.state.OrderStateTest"
+    },
+    {
+      "errors": 0,
+      "tests": 3,
+      "failures": 0,
+      "skipped": 0,
+      "name": "com.buffetrestaurant.service.StockTransactionTemplateTest"
+    }
+  ],
+  "tests": 337.0
+}

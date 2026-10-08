@@ -1,0 +1,28 @@
+{
+  "sourceCommit": "cc72fa0c9125c50de185e02940b3359faee776f8",
+  "startedAt": "2026-10-08T05:42:49.262Z",
+  "finishedAt": "2026-10-08T05:43:10.558Z",
+  "database": "fresh isolated in-memory H2",
+  "envFileImport": false,
+  "seedFixtures": false,
+  "httpMocks": "specified per runner",
+  "providers": {
+    "masterData": "session",
+    "menu": "session",
+    "ordering": "database",
+    "diningSession": "session",
+    "fulfillment": "session",
+    "billing": "database",
+    "payment": "database"
+  },
+  "webUrl": "http://127.0.0.1:5177",
+  "apiUrl": "http://127.0.0.1:8087/api/v1",
+  "scripts": [
+    {
+      "script": "step3-stock-profile-states.cjs",
+      "exitCode": 0,
+      "runnerSha256": "318c5f4a8c7033c4936770662f3a6fbdd340ecba772d8595023dbd3bdc19a26a"
+    }
+  ],
+  "publicAcceptance": false
+}

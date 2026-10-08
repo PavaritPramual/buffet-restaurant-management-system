@@ -1,0 +1,115 @@
+{
+  "sourceCommit": "cc72fa0c9125c50de185e02940b3359faee776f8",
+  "runnerSha256": "b9d9c7a29c4032d0a9169f7cd4b2ad3d74af449aac7376b72f029eb03c50c689",
+  "environment": "local-h2",
+  "webUrl": "http://127.0.0.1:5177",
+  "apiUrl": "http://127.0.0.1:8087/api/v1",
+  "startedAt": "2026-10-08T05:41:31.529Z",
+  "finishedAt": "2026-10-08T05:41:39.900Z",
+  "httpMocks": false,
+  "publicAcceptance": false,
+  "counts": {
+    "passed": 8,
+    "failed": 0
+  },
+  "results": [
+    {
+      "name": "Stock defaults and decimal target through Manager UI",
+      "result": "PASS",
+      "detail": {
+        "itemId": 2,
+        "defaultTarget": 0,
+        "defaultActive": true,
+        "target": 5.125,
+        "quantity": 0,
+        "shortfall": 5.125
+      }
+    },
+    {
+      "name": "Negative target validation preserves stock",
+      "result": "PASS",
+      "detail": {
+        "httpStatus": 400,
+        "unchanged": true,
+        "browserMin": 0
+      }
+    },
+    {
+      "name": "Supervisor stock-in and confirmed adjustment through UI",
+      "result": "PASS",
+      "detail": {
+        "quantity": 3.125,
+        "shortfall": 2,
+        "historyEntries": 2,
+        "confirmation": true
+      }
+    },
+    {
+      "name": "Deactivate through UI; inactive movements denied and history retained",
+      "result": "PASS",
+      "detail": {
+        "httpStatuses": [
+          409,
+          409
+        ],
+        "movementButtonsDisabled": true,
+        "unchanged": true,
+        "historyRetained": true
+      }
+    },
+    {
+      "name": "Stock activation permissions and reactivation",
+      "result": "PASS",
+      "detail": {
+        "roleDenials": [
+          403,
+          403,
+          403,
+          401
+        ],
+        "reactivated": true,
+        "quantity": 6.125,
+        "shortfall": 0
+      }
+    },
+    {
+      "name": "Manager creates and edits Profile through UI",
+      "result": "PASS",
+      "detail": {
+        "userId": 5,
+        "createAndUpdateThroughUI": true,
+        "optionalEmailAndPhone": true,
+        "legacyIdentityFieldsPreserved": true,
+        "phonePolicy": "max length only"
+      }
+    },
+    {
+      "name": "Profile required/length and role denials preserve saved data",
+      "result": "PASS",
+      "detail": {
+        "validationDenials": 4,
+        "roleDenials": [
+          403,
+          403,
+          403,
+          401
+        ],
+        "unchanged": true,
+        "browserRequiredAndMaxLength": true
+      }
+    },
+    {
+      "name": "Stock/Profile responsive real data at 360/768/1280",
+      "result": "PASS",
+      "detail": {
+        "widths": [
+          360,
+          768,
+          1280
+        ],
+        "documentOverflow": false,
+        "httpMocks": false
+      }
+    }
+  ]
+}

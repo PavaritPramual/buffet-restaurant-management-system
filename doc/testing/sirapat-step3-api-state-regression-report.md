@@ -1,5 +1,7 @@
 # ศิระพัทธ์ — ผลตรวจ API/State และ regression รอบส่งตรวจ
 
+**Historical snapshot — 7 October:** PR #29/#26/#27 merge แล้ววันที่ 8 ต.ค.; สถานะ unmerged/dependencies ด้านล่างเป็นข้อมูลขณะรันเดิม. ผลล่าสุดแยก develop กับ PR #28 candidate อยู่ใน [รายงาน 8 ตุลาคม](sirapat-step3-followup-2026-10-08.md). canonical Git hashes เพิ่มใน evidence index ตาม reviewer feedback โดยไม่แก้ผลรันเก่า.
+
 วันที่ 7 ตุลาคม 2026 (Asia/Bangkok). เจ้าของ: ศิระพัทธ์. Reviewer: ปวริศช์ (E2E/traceability), ศรัณย์ (API/State).
 
 **ผล:** integrated develop ผ่าน local regression รอบใหม่: real HTTP/browser Core Flow **16 PASS / 0 FAIL** รวมคำขอ State ที่ต้องถูกปฏิเสธ **12 กรณี** พร้อมตรวจ `ErrorResponse` และ persisted status หลังทุกคำขอ. ส่งเป็น PR ของ tests/docs/evidence เข้า develop ได้; **ยังไม่รับรอง Final/public release**.

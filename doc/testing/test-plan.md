@@ -1,10 +1,10 @@
 # Final test plan — Buffet Restaurant Management System
 
-Owner: ศิระพัทธ์. Updated 7 October 2026 from [Notion Step 3](https://app.notion.com/p/a9e90b8ff9648363a6ab81b48fd70816). Each feature owner tests their module; ปวริศช์ reviews E2E/traceability and ศรัณย์ reviews API/State. Final acceptance requires the reviewed release commit to be deployed and checked.
+Owner: ศิระพัทธ์. Updated 8 October 2026 from [Notion Step 3](https://app.notion.com/p/a9e90b8ff9648363a6ab81b48fd70816). Each feature owner tests their module; ปวริศช์ reviews E2E/traceability and ศรัณย์ reviews API/State. Final acceptance requires the reviewed release commit to be deployed and checked.
 
 ## Scope and baseline
 
-Latest integrated regression baseline: develop **cb612d9** (PR #25). The [API/State and regression report](sirapat-step3-api-state-regression-report.md) records fresh local results and separately identifies the unmerged PR #26 review. The initial Step 3 baseline **54e3538** (PR #21), [Step 2 closure](pavarit-step2-close-report.md), and [completion report](pavarit-step2-completion-report.md) are historical evidence. Their 303 backend / 109 frontend results do not certify a later release. Table/Session, cookie authentication, Menu/Ordering, Kitchen/Serving, request bill, Payment, close and Manager master-data screens are implemented.
+Latest integrated regression baseline: develop **6d83eac**, after PR #26/#27/#29 merged. The [8 October follow-up report](sirapat-step3-followup-2026-10-08.md) records local/CI/browser results separately from unmerged Stock/Profile candidate PR #28 **cc72fa0**, which can be tested before merge. The [7 October report](sirapat-step3-api-state-regression-report.md), initial baseline54e3538, Step2 closure and older counts are historical. Table/Session, cookie authentication, Menu/Ordering, Kitchen/Serving, request bill, Payment, close and Manager master-data screens are implemented.
 
 Final adds Stock opening target/active lifecycle and separate Profile names/phone (เมธัส), production deployment (ธีรเมธ), release integration (ปวริศช์) and API audit (ศรัณย์). ศิระพัทธ์ owns Customer/shared UI fixes, regression, responsive review and evidence. Feature UI defects go to that feature's owner with reproduction steps. No new gateway, WebSocket, analytics or automatic stock purchasing.
 
@@ -51,7 +51,7 @@ Record source revision/tree or diff identity, commands, environment, start/end t
 | MIGRATION-01 | H2/PG fresh+upgrade preserve users/shared PK/display_name/email/history | Owner checks number/history/checksum/grants; no destructive shared DB run |
 | DEPLOY-01 | Same-origin HTTPS web/API/Swagger; actual providers/final schema/deep links | Cold start/loading, failures, invalid cookie/Origin; no fixtures or leaked credentials |
 
-Stock/Profile exact endpoints and phone validation policy await their owner's reviewed contract. Do not invent them. See [traceability](requirement-test-traceability.md).
+PR #28 supplies Stock/Profile endpoints and a max-length-only phone policy: Manager uses PUT /stock/items/{id}/active and PUT /admin/users/{id}/profile. Independent candidate checks cover real UI/HTTP before merge; feature/migration review and integrated/public reruns remain gates. See [traceability](requirement-test-traceability.md).
 
 ## Browser and responsive procedure
 
@@ -68,4 +68,4 @@ One ordering tab per browser profile is supported. Another tab exchanging a diff
 3. Public URL/deployed commit/schema/provider confirmation supplied; public regression rerun with separate role/device contexts and dynamic IDs.
 4. ปวริศช์ E2E/traceability and ศรัณย์ API review recorded; main/release/deployed revision matches evidence. ศิระพัทธ์ cannot self-approve team gates.
 
-Current runs/dependencies: [API/State and regression report](sirapat-step3-api-state-regression-report.md). Initial historical run: [Step 3 report](sirapat-step3-report.md). Module contribution: [Menu SOLID/JPA notes](../architecture/sirapat-menu-ordering-solid-jpa.md).
+Current runs/dependencies: [8 October follow-up](sirapat-step3-followup-2026-10-08.md). Historical runs: [7 October report](sirapat-step3-api-state-regression-report.md) and [initial Step3 report](sirapat-step3-report.md). Module contribution: [Menu SOLID/JPA notes](../architecture/sirapat-menu-ordering-solid-jpa.md).
