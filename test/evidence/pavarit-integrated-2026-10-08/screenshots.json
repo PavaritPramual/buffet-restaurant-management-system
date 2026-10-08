@@ -1,0 +1,426 @@
+[
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/concurrency-fixtures/order-error-retained.png",
+    "sha256": "bf5509fd80e1a9e900912955fc64ea5ddecd7f300df3a33afc40b6804c7ed5c0",
+    "size": [
+      360,
+      1257
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/concurrency-fixtures/restored-table-B.png",
+    "sha256": "1b955081619392f98fb6cc4f85af03437627b8e5c89f9042aaac38c0fe0293b0",
+    "size": [
+      360,
+      1257
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/concurrency-fixtures/single-order.png",
+    "sha256": "d47e1907487b973f391a2f3fea9e16978e5ca2e29479357d6abe05f8bed202fa",
+    "size": [
+      360,
+      1257
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/customer-confirm-360.png",
+    "sha256": "059238a339bda6839777d7bb4385a8815741a0d91905dfa95f1f437a138b8999",
+    "size": [
+      360,
+      1207
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/customer-order-360.png",
+    "sha256": "46398d64fbc99b8327f394ad90277dd02e212618b3cfd4e0baac8c2a6e34463b",
+    "size": [
+      360,
+      1312
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/customer-paid-360.png",
+    "sha256": "ab356d7fe1791cf5bae871b0546f59bfaac032b07860a93a36f98cf12eca8053",
+    "size": [
+      360,
+      1328
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/customer-rescan-restored-360.png",
+    "sha256": "d3120d78df062bad02a3b9b20ea02eaef596798569f6a5db2cac7f6d1347ba1a",
+    "size": [
+      360,
+      1207
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/customer-second-phone-requested-360.png",
+    "sha256": "de53d1f776d602120298db2197125c5da5a48080b5c50ed3c9bd5058cb026f9e",
+    "size": [
+      360,
+      1183
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/kitchen-768.png",
+    "sha256": "f0fe392f37093d22466097e1812f00da8843e387f701f120a9e8d120f2ecdeda",
+    "size": [
+      768,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/kitchen-expired-768.png",
+    "sha256": "d5a5b7593aff4e5141df7a481da0d0b6e448d4b2a707775ea6ef084213c92b8a",
+    "size": [
+      768,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/kitchen-preparing-768.png",
+    "sha256": "84e881dc370ac6f7257a1af7813d3667feea07e040d754abefe83b0e88c7c67a",
+    "size": [
+      768,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/manager-expired-1280.png",
+    "sha256": "e54f22b26794646305ef836163debb491ed830d233644079b68cecba89af2d64",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/manager-menu-after-delete-1280.png",
+    "sha256": "45f8a766334e1dca698e75cd241300ed12cd82e2f4ccebbc0a4bc483655988f2",
+    "size": [
+      1280,
+      1265
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/manager-menu-created-edited-1280.png",
+    "sha256": "45f8a766334e1dca698e75cd241300ed12cd82e2f4ccebbc0a4bc483655988f2",
+    "size": [
+      1280,
+      1265
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/manager-menu-delete-confirm-1280.png",
+    "sha256": "9becbcd85f84e03dd4c2b19ac4e3ff13ca507913529df6b07088da8a3be25048",
+    "size": [
+      1280,
+      1400
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/manager-tables-1280.png",
+    "sha256": "5b47d04b7eea71951c95a88e61e7d1966eaf668caad305d1b237ac7ec11b0bd0",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/staff-expired-768.png",
+    "sha256": "85188fb33c77d2715502bf991a9711b6232ec6457a3b7261f59147025657858b",
+    "size": [
+      768,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/staff-paid-768.png",
+    "sha256": "183d3e7035b3ab1defaec6efaf6e848bcd40bad473fae2962f06550464264752",
+    "size": [
+      768,
+      1309
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/staff-serving-768.png",
+    "sha256": "61346c2494abff09748cd1ab1397e7b23dbd21198f463b233f8e5e5d57c24a75",
+    "size": [
+      768,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/core-flow/staff-unpaid-close-768.png",
+    "sha256": "e7e8f09411c70aaf6485517f2a8eccac627775cdd9cd8bb28e6135d777e01d27",
+    "size": [
+      768,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile/profile-1280.png",
+    "sha256": "ec49e875e741d3ca93f54ddf341ee4243c0cfe8ce1daba6125c75de8f2ef4cae",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile/profile-360.png",
+    "sha256": "5703e1fd0cb6e9fc0aa2d0a60bae3fca35027af0126624e2c57601b6122100d4",
+    "size": [
+      360,
+      1517
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile/profile-768.png",
+    "sha256": "b9d17de07355901ad28916b9beffd376a2fb7cf805dd039da5c1439d2741ac31",
+    "size": [
+      768,
+      1055
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile/profile-edited-1280.png",
+    "sha256": "ec49e875e741d3ca93f54ddf341ee4243c0cfe8ce1daba6125c75de8f2ef4cae",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile/stock-1280.png",
+    "sha256": "a2cc6917e54dba61ee2681f109eafd73f381538b38325415ab1acf26c5a49c8c",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile/stock-360.png",
+    "sha256": "6c2d3f2c02af0e0ba17e3c71724cf5747b5730960e240b3b5d6a7d7f9e715fd4",
+    "size": [
+      360,
+      1091
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile/stock-768.png",
+    "sha256": "507d12844fd4a43a7b15d9e235953b372fc980f1fb014d3cc791701c582f5d35",
+    "size": [
+      768,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile/stock-adjust-confirm-1280.png",
+    "sha256": "b2261596d0d77e40faeb1d020c4fd5f7fd95d559088c99b5433fa5122229a375",
+    "size": [
+      1280,
+      1020
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile/stock-deactivate-confirm-1280.png",
+    "sha256": "8f6510236df829f965db660e728464e2824103ac68cb3bbbc627f2ca13c8f184",
+    "size": [
+      1280,
+      1229
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile/stock-inactive-history-1280.png",
+    "sha256": "8619ad2c8570a7824a499af291f2b25becb57fb60c3c8f5514fc099f9a44f62f",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile/stock-target-1280.png",
+    "sha256": "fbb432f6219e96fd32ebc8f8decd52925b7dbbff319d0ebb3dd331de1e49ea74",
+    "size": [
+      1280,
+      1229
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile-fixtures/profile-empty-1280.png",
+    "sha256": "28931daaebe6dd90dfe5b114e5e3e602943802bc8cae06389c811855f9d9b9d7",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile-fixtures/profile-error-1280.png",
+    "sha256": "3a719d79a2d98b49d523afccc5559e55be3f3fe81a6b56e1cc0cf8c86233a6ae",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile-fixtures/profile-legacy-fallback-1280.png",
+    "sha256": "1964d2de05d0b71e850575a96f688285570dbf3e71c14395161427fa1bea4e88",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile-fixtures/profile-loading-1280.png",
+    "sha256": "6e08d855b7e16c75ec3cc77f7ff452146aee51571555a95655f73b5a1869d04c",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile-fixtures/stock-empty-1280.png",
+    "sha256": "48b88ed2a5821ae3c6e9c0c432aa5c3679ac2b68b68a3bdfb373716dd9a75a94",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile-fixtures/stock-error-1280.png",
+    "sha256": "d11f13a2c2e234ae72616e1677d2ebc99a9ff78993c28a9293978eb087a6721c",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile-fixtures/stock-items-empty-1280.png",
+    "sha256": "40af8da3d27c1326950114e0513ca7473809b888b20a0a9210ad746fa2ab0946",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile-fixtures/stock-items-error-1280.png",
+    "sha256": "f782b6ac8949fcd545c6c875255e0248c46f1e952c6ae87614d6a7c9d879fd35",
+    "size": [
+      1280,
+      1011
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile-fixtures/stock-items-loading-1280.png",
+    "sha256": "3ecfa8d82b0ee9d11fb3316bf0ff07b046a74583d0dae789ccd5019688d8faca",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/stock-profile-fixtures/stock-loading-1280.png",
+    "sha256": "37c5f7aaf005099c0373eaecfce3468823593829ecb0598d9646fb7e2b8f079b",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/ui-state-fixtures/customer-empty-360.png",
+    "sha256": "8c468ff0449e6add13af04652690b2d5307e3b7f44f95fc0b459f6e949fe407f",
+    "size": [
+      360,
+      1024
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/ui-state-fixtures/customer-error-360.png",
+    "sha256": "160a3543d39b339cc0212a6962f2ca4bfbb90eb561329d2a7935261c9c988a08",
+    "size": [
+      360,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/ui-state-fixtures/customer-loading-360.png",
+    "sha256": "9ea242c416506bd0c82e43dcfcef2234f86477a2dda4625c5423ac89bd76fc18",
+    "size": [
+      360,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/ui-state-fixtures/kitchen-empty-768.png",
+    "sha256": "f0fe392f37093d22466097e1812f00da8843e387f701f120a9e8d120f2ecdeda",
+    "size": [
+      768,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/ui-state-fixtures/kitchen-error-768.png",
+    "sha256": "46f07fd4a8c0e4f9696e5ab0a99fe4297f23759a90f4959d5930653e66c7ae34",
+    "size": [
+      768,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/ui-state-fixtures/kitchen-loading-768.png",
+    "sha256": "a1a929fab84b22e0fad3c302f7dfb424cdd2a63152f1236aaab1cd9ada332937",
+    "size": [
+      768,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/ui-state-fixtures/manager-empty-1280.png",
+    "sha256": "8f38f5f49f431a2f01b60e279349685567d124e27fe26c9ddeac168841847ad0",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/ui-state-fixtures/manager-error-1280.png",
+    "sha256": "c588a29b11bb7f5e853e454772c5b41b61f3574ebdc7e696a55d72295c362fd3",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/ui-state-fixtures/manager-loading-1280.png",
+    "sha256": "37c5f7aaf005099c0373eaecfce3468823593829ecb0598d9646fb7e2b8f079b",
+    "size": [
+      1280,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/ui-state-fixtures/staff-empty-768.png",
+    "sha256": "4aa4c6540d07cdf41a550256720653750244fa615578c0b7798ee3994b3c2e77",
+    "size": [
+      768,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/ui-state-fixtures/staff-error-768.png",
+    "sha256": "e9943bf069d852b5be1f170e9b73b37e44b4798ac12f9beece80031cee1e9fc3",
+    "size": [
+      768,
+      1000
+    ]
+  },
+  {
+    "path": "test/evidence/pavarit-integrated-2026-10-08/browser/ui-state-fixtures/staff-loading-768.png",
+    "sha256": "3012336d7d33a28652f6e2e0be434e20136682f1025098020f76743c0a3bf896",
+    "size": [
+      768,
+      1000
+    ]
+  }
+]

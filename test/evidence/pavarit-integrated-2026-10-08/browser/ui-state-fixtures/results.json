@@ -1,0 +1,67 @@
+{
+  "executedAt": "2026-10-08T12:19:59.163Z",
+  "environment": "local H2; controlled HTTP response fixtures",
+  "publicAcceptance": false,
+  "results": [
+    {
+      "name": "customer",
+      "width": 360,
+      "states": [
+        "loading",
+        "empty",
+        "error"
+      ],
+      "result": "PASS",
+      "style": {
+        "font": "\"Noto Sans Thai\", system-ui, sans-serif",
+        "primary": "#9a3412"
+      },
+      "source": "Full Customer HTTP context fixture; no real grant"
+    },
+    {
+      "name": "staff",
+      "width": 768,
+      "states": [
+        "loading",
+        "empty",
+        "error"
+      ],
+      "result": "PASS",
+      "style": {
+        "font": "\"Noto Sans Thai\", system-ui, sans-serif",
+        "primary": "#9a3412"
+      },
+      "source": "Real employee cookie/shell; targeted data response fixture"
+    },
+    {
+      "name": "kitchen",
+      "width": 768,
+      "states": [
+        "loading",
+        "empty",
+        "error"
+      ],
+      "result": "PASS",
+      "style": {
+        "font": "\"Noto Sans Thai\", system-ui, sans-serif",
+        "primary": "#9a3412"
+      },
+      "source": "Real employee cookie/shell; targeted data response fixture"
+    },
+    {
+      "name": "manager",
+      "width": 1280,
+      "states": [
+        "loading",
+        "empty",
+        "error"
+      ],
+      "result": "PASS",
+      "style": {
+        "font": "\"Noto Sans Thai\", system-ui, sans-serif",
+        "primary": "#9a3412"
+      },
+      "source": "Real employee cookie/shell; targeted data response fixture"
+    }
+  ]
+}

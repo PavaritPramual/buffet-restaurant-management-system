@@ -1,0 +1,420 @@
+{
+  "codeBaseline": "adc5798b05279840dc6178f4291278467c929791",
+  "diagramDocumentCommit": "8efe5b5ba78b7d676caab09f68242bcc2835078d",
+  "createdAt": "2026-10-08T12:23:44.050937+00:00",
+  "runtimeDiff": "empty; only documentation was dirty during browser execution",
+  "documents": [
+    "doc/architecture/jpa-entity-rationale.md",
+    "doc/architecture/pavarit-table-session-solid-jpa.md",
+    "doc/diagrams/README.md",
+    "doc/testing/pavarit-integrated-validation-2026-10-08.md"
+  ],
+  "anchors": [
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/RestaurantTable.java",
+      "line": 15,
+      "needle": "public class RestaurantTable {"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/RestaurantTableServiceImpl.java",
+      "line": 34,
+      "needle": "private RestaurantTable lockForMaintenance(Long id) {"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/main/resources/db/migration/common/V2__create_restaurant_tables.sql",
+      "line": 8,
+      "needle": "CREATE INDEX IF NOT EXISTS idx_tables_status ON restaurant_tables(status);"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/BuffetPackage.java",
+      "line": 13,
+      "needle": "public class BuffetPackage {"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/Soup.java",
+      "line": 12,
+      "needle": "public class Soup {"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/main/resources/db/migration/postgresql/V3__create_buffet_packages_and_soups.sql",
+      "line": 4,
+      "needle": "price DECIMAL(10, 2) NOT NULL CHECK (price > 0),"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/DiningSession.java",
+      "line": 25,
+      "needle": "@ManyToOne(fetch = FetchType.LAZY, optional = false)"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/main/resources/db/migration/postgresql/V6__create_dining_sessions.sql",
+      "line": 13,
+      "needle": "CONSTRAINT fk_dining_sessions_table FOREIGN KEY (table_id)"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/main/resources/db/migration/common/V8__snapshot_session_package_price.sql",
+      "line": 2,
+      "needle": "ADD COLUMN package_price_at_open DECIMAL(10, 2);"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/CustomerSessionGrant.java",
+      "line": 21,
+      "needle": "@ManyToOne(fetch = FetchType.LAZY, optional = false)"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/main/resources/db/migration/postgresql/V6__create_dining_sessions.sql",
+      "line": 32,
+      "needle": "CONSTRAINT fk_customer_grants_session FOREIGN KEY (session_id)"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java",
+      "line": 146,
+      "needle": "public DiningSessionResponse closeSession(Long sessionId) {"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionIntegrationTest.java",
+      "line": 201,
+      "needle": "void billingReaderUsesPriceAtOpenAfterCatalogPriceChanges() throws Exception {"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionIntegrationTest.java",
+      "line": 217,
+      "needle": "void qrExchangeRotatesTokenAndPaidCloseRevokesCustomerCookies() throws Exception {"
+    },
+    {
+      "commit": "adc5798b05279840dc6178f4291278467c929791",
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/Step2CompletionIntegrationTest.java",
+      "line": 111,
+      "needle": "@Test void priceSnapshotAndPaidStatusUseRecordedAmountWithoutClosing() throws Exception {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/DiningSessionController.java",
+      "line": 28,
+      "needle": "public class DiningSessionController {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/dto/response/DiningSessionResponse.java",
+      "line": 7,
+      "needle": "public record DiningSessionResponse("
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/dto/response/CustomerSessionResponse.java",
+      "line": 5,
+      "needle": "public record CustomerSessionResponse("
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/RestaurantTableServiceImpl.java",
+      "line": 34,
+      "needle": "private RestaurantTable lockForMaintenance(Long id) {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/CatalogService.java",
+      "line": 19,
+      "needle": "public class CatalogService {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/Step2CompletionIntegrationTest.java",
+      "line": 22,
+      "needle": "class Step2CompletionIntegrationTest {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java",
+      "line": 89,
+      "needle": "public DiningSessionResponse openSession(OpenDiningSessionRequest request) {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DiningSessionServiceImpl.java",
+      "line": 146,
+      "needle": "public DiningSessionResponse closeSession(Long sessionId) {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionIntegrationTest.java",
+      "line": 53,
+      "needle": "class DiningSessionIntegrationTest {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerSessionAccessService.java",
+      "line": 56,
+      "needle": "public ExchangeResult exchange(String qrToken) {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerSessionAccessService.java",
+      "line": 76,
+      "needle": "public SessionContextSnapshot requireSession(Long sessionId, String credential, boolean forOrder) {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerSessionAccessService.java",
+      "line": 107,
+      "needle": "private CustomerSessionGrant requireActiveGrant(String credential) {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/repository/DiningSessionRepository.java",
+      "line": 12,
+      "needle": "public interface DiningSessionRepository extends JpaRepository<DiningSession, Long> {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/PostgresOrderCloseConcurrencyTest.java",
+      "line": 40,
+      "needle": "class PostgresOrderCloseConcurrencyTest {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/mapper/DiningSessionMapper.java",
+      "line": 11,
+      "needle": "public DiningSessionResponse toResponse(DiningSession diningSession) {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DatabaseSessionContextProvider.java",
+      "line": 10,
+      "needle": "public class DatabaseSessionContextProvider implements SessionContextProvider {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/DatabaseDiningSessionBillingReader.java",
+      "line": 20,
+      "needle": "public BillingSnapshot requireBySessionId(Long sessionId) {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/integration/payment/PaymentStatusLookup.java",
+      "line": 6,
+      "needle": "public interface PaymentStatusLookup {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/test/java/com/buffetrestaurant/service/SessionContextProviderContractTest.java",
+      "line": 13,
+      "needle": "class SessionContextProviderContractTest {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/config/MasterDataAccessConfig.java",
+      "line": 20,
+      "needle": "public class MasterDataAccessConfig implements WebMvcConfigurer {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/SessionDiningSessionStaffAccessProvider.java",
+      "line": 9,
+      "needle": "public class SessionDiningSessionStaffAccessProvider implements DiningSessionStaffAccessProvider {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/CustomerBillingService.java",
+      "line": 30,
+      "needle": "public CustomerBillingService(CustomerSessionVerifier access, DiningSessionRepository sessions,"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/test/java/com/buffetrestaurant/service/CustomerBillingContractTest.java",
+      "line": 18,
+      "needle": "class CustomerBillingContractTest {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/CustomerSessionVerifier.java",
+      "line": 7,
+      "needle": "public interface CustomerSessionVerifier {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/RestaurantTable.java",
+      "line": 15,
+      "needle": "public class RestaurantTable {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/resources/db/migration/common/V2__create_restaurant_tables.sql",
+      "line": 1,
+      "needle": "CREATE TABLE IF NOT EXISTS restaurant_tables ("
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/resources/db/migration/postgresql/V6__create_dining_sessions.sql",
+      "line": 1,
+      "needle": "CREATE TABLE public.dining_sessions ("
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/BuffetPackage.java",
+      "line": 13,
+      "needle": "public class BuffetPackage {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/resources/db/migration/postgresql/V3__create_buffet_packages_and_soups.sql",
+      "line": 1,
+      "needle": "CREATE TABLE buffet_packages ("
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/resources/db/migration/common/V8__snapshot_session_package_price.sql",
+      "line": 2,
+      "needle": "ADD COLUMN package_price_at_open DECIMAL(10, 2);"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/Soup.java",
+      "line": 12,
+      "needle": "public class Soup {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/DiningSession.java",
+      "line": 20,
+      "needle": "public class DiningSession {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/resources/db/migration/common/V7__link_orders_to_dining_sessions.sql",
+      "line": 2,
+      "needle": "ADD CONSTRAINT fk_orders_dining_session"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/CustomerSessionGrant.java",
+      "line": 16,
+      "needle": "public class CustomerSessionGrant {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/resources/db/migration/common/V14__add_session_bill_request.sql",
+      "line": 2,
+      "needle": "ALTER TABLE dining_sessions ADD COLUMN bill_requested_at TIMESTAMP WITH TIME ZONE DEFAULT NULL;"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/DiningSessionMigrationTest.java",
+      "line": 14,
+      "needle": "class DiningSessionMigrationTest {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/CustomerSessionController.java",
+      "line": 61,
+      "needle": "ResponseCookie cookie = ResponseCookie.from(CustomerSessionAccessService.COOKIE_NAME, result.credential())"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerOrderingServiceImpl.java",
+      "line": 46,
+      "needle": "public OrderResponse placeOrder(Long sessionId, String sessionToken, PlaceOrderRequest request) {"
+    },
+    {
+      "commit": "6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6",
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/CustomerBillingService.java",
+      "line": 41,
+      "needle": "public CustomerBillStatusResponse request(Long id, String credential) {"
+    }
+  ],
+  "diagrams": [
+    {
+      "name": "component",
+      "sourceCommit": "8efe5b5ba78b7d676caab09f68242bcc2835078d",
+      "change": "V15/baseline + new SVG",
+      "hashes": {
+        "doc/diagrams/component.puml": "5e3dab2f8c99d624d8f30d312fc44362be1af3a59ef241bc2b7773b0476602b7",
+        "doc/diagrams/previews/component.svg": "5cbe6fa2b49031e165d94dfed78e835adcd40b9355af55d04da0da4c403c5ee0"
+      }
+    },
+    {
+      "name": "class-table-session",
+      "sourceCommit": "8efe5b5ba78b7d676caab09f68242bcc2835078d",
+      "change": "reviewed same; no source/SVG change",
+      "hashes": {
+        "doc/diagrams/class-table-session.puml": "671ccd1c6c0ee2c1fff7d40b593dd8228bbccaa9abe9fee3702607cc996a7e92",
+        "doc/diagrams/previews/class-table-session.svg": "68ab3bb50a97f3a0b7c557a609878f8607a0739d562197b2cebdff3ee7bee0ae"
+      }
+    },
+    {
+      "name": "sequence-open-session",
+      "sourceCommit": "8efe5b5ba78b7d676caab09f68242bcc2835078d",
+      "change": "reviewed same; no source/SVG change",
+      "hashes": {
+        "doc/diagrams/sequence-open-session.puml": "c67b8776ae8fd773d7d5198505eca73a09ac2e1e284b2cb171308a58a645c380",
+        "doc/diagrams/previews/sequence-open-session.svg": "22ee2a38c0b290344d2f45ba426332d062e8614084abc194008814727d575a9e"
+      }
+    },
+    {
+      "name": "sequence-qr-exchange",
+      "sourceCommit": "8efe5b5ba78b7d676caab09f68242bcc2835078d",
+      "change": "reviewed same; no source/SVG change",
+      "hashes": {
+        "doc/diagrams/sequence-qr-exchange.puml": "9de8b84356aec89a045d8a79c70b5d9a978e92328d27b9c01d8dbf8b08a48c1c",
+        "doc/diagrams/previews/sequence-qr-exchange.svg": "403158d4511b7891c7218e7063fb997c0c413cf2b37a86a5833e3034b86d6941"
+      }
+    },
+    {
+      "name": "domain-model",
+      "sourceCommit": "8efe5b5ba78b7d676caab09f68242bcc2835078d",
+      "change": "reviewed same; no source/SVG change",
+      "hashes": {
+        "doc/diagrams/domain-model.puml": "f492473c681be470b74ee9d495208abd1d547321d844a04c6e7ed35ed051b96b",
+        "doc/diagrams/previews/domain-model.svg": "00aa76e721ba58858eadc6d2abb7d2d645023c9f48be4f16247360492423b2ca"
+      }
+    },
+    {
+      "name": "use-case-service-customer",
+      "sourceCommit": "8efe5b5ba78b7d676caab09f68242bcc2835078d",
+      "change": "reviewed same; no source/SVG change",
+      "hashes": {
+        "doc/diagrams/use-case-service-customer.puml": "3928af8c4e78e3a466598aac666f01a40bc937fea10d1019ecb8e247387dc024",
+        "doc/diagrams/previews/use-case-service-customer.svg": "94946583424077ff152c121caf30612c07338082ea875ee975d9cb207da29fd3"
+      }
+    },
+    {
+      "name": "use-case",
+      "sourceCommit": "8efe5b5ba78b7d676caab09f68242bcc2835078d",
+      "change": "reviewed same; no source/SVG change",
+      "hashes": {
+        "doc/diagrams/use-case.puml": "6bc370d7c472641db63c2c4a71f44ad746fafb86bc9f8a8e299416a51ab4234b",
+        "doc/diagrams/previews/use-case.svg": "f7298a71bc2bad43d42f9457a33ccab4801eb860c527e62ebc888ec193bd0184"
+      }
+    }
+  ],
+  "backend": {
+    "tests": 348,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "expectedBrowser": {
+    "core-flow": 16,
+    "stock-profile": 8,
+    "ui-state-fixtures": 12,
+    "concurrency-fixtures": 3,
+    "stock-profile-fixtures": 10
+  },
+  "publicAcceptance": false,
+  "centralMigrationApplied": false,
+  "bugFixes": [],
+  "learningFilesUnchanged": 21
+}

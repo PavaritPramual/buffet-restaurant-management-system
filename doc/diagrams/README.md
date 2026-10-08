@@ -2,7 +2,23 @@
 
 ชุดเดิมหลัง architecture refactor `de7b5d546a05ad3ccef8c641ee5c53d638a8e039` มี **23 diagram รายละเอียด และ5ภาพย่อสำหรับนำเสนอ**; PR #24/#25 ผ่าน review/merge แล้ว และ PR #26 ปรับ State resolver sources/previews เพิ่ม ทุกภาพมี PlantUML source/SVG ภาพ public deployment เป็น design เท่านั้น ไม่ใช้จำนวนไฟล์รับรอง public หรือ Final
 
-**ตรวจโมดูลปวริศช์ 8 ตุลาคม 2026:** code baseline `6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6`; ตารางต่อไปนี้เป็น scope ของ PR เอกสารรอบใหม่ ยังรอศรัณย์/ศิระพัทธ์ review ของรอบนี้ ภาพอื่นคง revision และการตรวจของเจ้าของเดิม
+**ประวัติตรวจโมดูลปวริศช์ใน PR #31:** code baseline `6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6`; scope ตารางต่อไปนี้ผ่านศรัณย์/ศิระพัทธ์ review ที่ head5939ecd และ merge แล้ว ภาพอื่นคง revision และการตรวจของเจ้าของเดิม
+
+## ตรวจหลังรวม Stock/Profile — develop adc5798
+
+ปวริศช์ตรวจ 8 ตุลาคม 2026 เทียบ code `adc5798b05279840dc6178f4291278467c929791` พร้อม Entity/providers/roles/transaction/response ของส่วนตน; ชุดนี้รอ review ของ PR รอบใหม่ ไม่ใช่รับรอง public หรือ Final. Class/Sequence ที่ระบุ baseline6d83eac ยังคงเป็นภาพรอบเดิมที่ตรวจว่าพฤติกรรมส่วนตนไม่เปลี่ยน ไม่ได้เปลี่ยนชื่อ baseline โดยไม่มีเหตุผล
+
+| ภาพ | ผลตรวจหลัง merge | Source / preview |
+|---|---|---|
+| Component | แก้ baseline เป็น adc5798 และ Flyway V1–V15 ตาม schema ที่รวมแล้ว; layers/providers ของส่วนตนคงเดิม; validate/render และตรวจภาพใหม่ | [source](component.puml) / [SVG](previews/component.svg) |
+| Class Table/Session/QR | associations, FK owner, LAZY/no JPA cascade, snapshot และชนิดเวลาตรงเดิม; ไม่เปลี่ยน source/SVG | [source](class-table-session.puml) / [SVG](previews/class-table-session.svg) |
+| Sequence เปิดรอบ | transaction/row lock, Staff-only QR, HTTP400/404 และ snapshot reader ตรงเดิม | [source](sequence-open-session.puml) / [SVG](previews/sequence-open-session.svg) |
+| Sequence แลก QR | fragment/body/cookie, single-use/rotation, expiry และ revoke ตรงเดิม | [source](sequence-qr-exchange.puml) / [SVG](previews/sequence-qr-exchange.svg) |
+| Domain ส่วน Table/Session/Grant | cardinality ตรงเดิม แยก Domain จาก JPA associations; ไม่รับรองส่วน Stock/Profile แทนเจ้าของ | [source](domain-model.puml) / [SVG](previews/domain-model.svg) |
+| Use Case Customer/Staff | เปิดรอบ/แลก QR/ขอคิดบิล/close และ actor rights ของส่วนตนตรงเดิม | [source](use-case-service-customer.puml) / [SVG](previews/use-case-service-customer.svg) |
+| Use Case รวม เฉพาะโมดูลตน | Table/Package/Soup/Session/QR ตรงเดิม; ไม่รับรอง Auth/Stock/Payment ทั้งภาพแทนเจ้าของ | [source](use-case.puml) / [SVG](previews/use-case.svg) |
+
+คำรับรอง JPA อยู่ใน [ตารางกลาง](../architecture/jpa-entity-rationale.md) และผลรอบใหม่อยู่ใน [รายงานระบบรวม](../testing/pavarit-integrated-validation-2026-10-08.md). ตารางด้านล่างเป็นประวัติ delta ของ PR #31
 
 | ภาพที่ตรวจ | ผลเทียบโค้ด | Source / preview |
 |---|---|---|
