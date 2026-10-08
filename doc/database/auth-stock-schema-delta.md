@@ -11,11 +11,11 @@ The design baseline remains in [data-dictionary-design.md](data-dictionary-desig
 | Stock `current_stock`, `minimum_stock`, `opening_target_stock`, `active` | `stock_items.quantity`, `low_stock_threshold`, `opening_target_stock`, `active`, `sku`, `updated_at` | Quantity and target use `DECIMAL(12,3)` to support measured ingredients. V15 implements the target and active lifecycle; see the V15 schema table below. |
 | Transaction `user_id`, `type`, `quantity`, nullable reason | `actor_user_id`, `transaction_type`, `quantity_delta`, required reason, `balance_after` | `IN` and `ADJUSTMENT` are the implemented transaction types. `balance_after` is kept as an audit snapshot; deleted users become a null actor, though user deletion is not currently exposed. |
 
-V10 creates the common Auth/Stock tables. V11 applies PostgreSQL RLS and revokes access from `PUBLIC`, `anon`, and `authenticated`. JDBC ของแอปใช้ postgres และ BYPASSRLS จึงต้องตรวจสิทธิ์ผ่าน API ไม่อ้างว่า FORCE RLS จำกัด backend ได้ V1–V12 อยู่ใน develop และ Supabase แล้ว รวม Payment V9/V12
+V10 creates the common Auth/Stock tables. V11 applies PostgreSQL RLS and revokes access from `PUBLIC`, `anon`, and `authenticated`. JDBC ของแอปใช้ postgres และ BYPASSRLS จึงต้องตรวจสิทธิ์ผ่าน API ไม่อ้างว่า FORCE RLS จำกัด backend ได้ V1–V12 อยู่ใน develop และมีรายงาน apply ฐานกลาง รวม Payment V9/V12; สถานะ V13–V15 ที่ตรวจพบในฐานกลางแยกไว้ด้านล่าง
 
-ประวัติ Supabase ณ 6 ตุลาคม: V9 installed_rank 11 หลัง V10/V11 และ V12 rank 12 ไม่ได้ตรวจยืนยันวิธีหรือผู้รัน Flyway validate/checksum ผ่านทั้ง 12 และ runtime เริ่มได้โดย outOfOrder=false/pending=0 ห้ามแก้ migration ที่ apply แล้วหรือใช้ repair เพื่อทำให้ผ่านโดยไม่สืบสาเหตุ
+ประวัติ Supabase ณ 6 ตุลาคม (ข้อมูลก่อนหน้า): V9 installed_rank 11 หลัง V10/V11 และ V12 rank 12; ตอนนั้นไม่ได้ตรวจยืนยันวิธีหรือผู้รัน และบันทึกว่า Flyway validate/checksum ผ่านทั้ง 12 กับ runtime เริ่มได้โดย `outOfOrder=false/pending=0` ห้ามแก้ migration ที่ apply แล้วหรือใช้ repair เพื่อทำให้ผ่านโดยไม่สืบสาเหตุ
 
-Stock-in/adjustment/history และ User/login ทดสอบผ่าน UI จริงบน PostgreSQL แยกแล้ว รายละเอียดและขอบเขตอยู่ใน [รายงานปิด Step 2](../testing/pavarit-step2-close-report.md) งานที่เลื่อนไป Final ต้องมี task แยก และ Step 2 ยังรอ PR รวมผ่านรีวิว/merge กับ smoke จาก develop
+Stock-in/adjustment/history และ User/login ทดสอบผ่าน UI จริงบน PostgreSQL แยกแล้ว รายละเอียดและขอบเขตอยู่ใน [รายงานปิด Step 2](../testing/pavarit-step2-close-report.md) งานที่เลื่อนไป Final ต้องมี task แยก
 
 ## Final delta: V15 (implemented ใน repo; สถานะฐานกลางดูหัวข้อ "สถานะ V15 บนฐานกลาง")
 
@@ -33,13 +33,22 @@ Stock-in/adjustment/history และ User/login ทดสอบผ่าน UI 
 
 ## สถานะ V15 บนฐานกลาง (ปัจจุบัน)
 
-- **Repo/tests:** implemented; H2 และ PostgreSQL Testcontainers (`PostgresStockProfileMigrationTest`, `PostgresStockSecurityIntegrationTest`) ผ่าน การทดสอบบน DB ทิ้งได้ **ไม่ใช่หลักฐานรับรองการ apply ฐานกลาง**
-- **ฐานกลาง: ยังไม่ยืนยัน** — มีบันทึก readback ของทีม dev (ด้านล่าง) ว่า apply แล้ว แต่ **ยังไม่ได้แนบ** หลักฐานอนุมัติ V15 แยกจาก V13/V14, sanitized Flyway history (version/script/checksum/success) และ validate ที่ตรงกับไฟล์ใน commit นี้ จึงยังยืนยันการ apply ไม่ได้ และห้าม apply ซ้ำเพื่อแก้เอกสาร
-- **Canonical:** [step2-schema-approved.md](step2-schema-approved.md) ครอบคลุม V1–V12 เท่านั้น ไม่มีคอลัมน์ V15 และ V13/V14 ยังไม่ apply Supabase
+- **Repo/tests:** implemented; H2 และ PostgreSQL Testcontainers (`PostgresStockProfileMigrationTest`, `PostgresStockSecurityIntegrationTest`) ผ่าน การทดสอบบน DB ทิ้งได้ไม่ใช่หลักฐานแทนการตรวจฐานกลางหรือ approval
+- **ฐานกลาง — apply ที่ตรวจพบ:** จาก read-only inspection ของ reviewer วันที่ 8 ต.ค. 2026 พบ V13–V15 ใน Flyway history ด้วย `success=true` พร้อม checksum/script ตามตาราง sanitized ด้านล่าง และ schema readback ตรงกับคอลัมน์ V15
+- **หลักฐานที่ยังขาด:** ยังไม่มีหลักฐานอนุมัติ V15 แยกจาก V13/V14 และไม่มีผล Flyway `validate`/checksum comparison ที่ตรวจ migration file ของ commit นี้ สถานะจึงเป็น **V13–V15 apply แล้วตาม history ที่ reviewer ตรวจพบ; V15 approval และการยืนยัน checksum/validate ยังรอหลักฐาน** การตรวจ history นี้ไม่ใช่การรัน validate และไม่ใช่การอนุมัติย้อนหลัง
+- ห้าม apply ซ้ำ, แก้ history หรือใช้ `repair` เพื่อปรับเอกสาร สถานะ canonical Step 2/ข้อจำกัดการอนุมัติแยกใน [step2-schema-approved.md](step2-schema-approved.md)
 - Notion ยังไม่ได้ sync จากเอกสารนี้
 
-### ประวัติรอบก่อน (7 ต.ค. 2026 ก่อน readback) — superseded
+### Sanitized read-only history/schema readback (reviewer ตรวจ 8 ต.ค. 2026)
 
-เคยระบุว่า central apply/readback = planned (รออนุมัติ) ข้อความนี้ถูกแทนที่ด้วยรายการสถานะข้างต้น
+| Rank | Version | Script | Checksum | Success | Installed on |
+| ---: | --- | --- | ---: | --- | --- |
+| 13 | 13 | `V13__restrict_remaining_client_database_access.sql` | `419855576` | true | — |
+| 14 | 14 | `V14__add_session_bill_request.sql` | `-1840534327` | true | — |
+| 15 | 15 | `V15__add_stock_target_active_and_profile_names.sql` | `-1092732854` | true | `2026-10-07 11:32:31.146844` |
 
-**Central apply readback (7 ต.ค. 2026 18:32 +07, ทีม dev รายงาน; หลักฐานต้นทางยังไม่แนบ จึงยังยืนยันไม่ได้):** มีรายงานว่า Flyway validate 15 migrations ผ่าน, migrate v14→v15 สำเร็จ; `flyway_schema_history` rank 15 version 15 success=true; columns/ชนิด/nullable/default ตรง V15; CHECK `chk_stock_opening_target_nonnegative` มีอยู่; แอปเริ่มได้ด้วย `ddl-auto: validate` (JPA ผ่าน); stock_items และ user_profiles บนฐานกลางว่าง (0 แถว) จึงไม่มีข้อมูลเดิมให้ตรวจ backfill ซึ่งครอบคลุมโดย H2/PostgreSQL migration tests แทน
+Schema readback ที่ reviewer รายงาน: `stock_items.opening_target_stock NUMERIC(12,3) NOT NULL DEFAULT 0`; `stock_items.active BOOLEAN NOT NULL DEFAULT true`; `user_profiles.first_name`, `last_name`, `phone_number` nullable; มี CHECK `chk_stock_opening_target_nonnegative`. รายการนี้เป็น readback แบบ sanitized ไม่ใช่ผล validate และไม่ได้ยืนยันว่า checksum ในฐานตรงกับ migration file ของ commit ปัจจุบัน
+
+### ประวัติข้อความสถานะก่อนตรวจ 8 ต.ค. 2026 — superseded
+
+ข้อความเดิมระบุว่า central apply/readback planned หรือยังไม่ยืนยันการ apply และกล่าวว่า V13/V14 ยังไม่ apply; ข้อมูลดังกล่าวเป็นสถานะ/ความรู้ก่อน read-only inspection ของ reviewer วันที่ 8 ต.ค. และถูกแทนที่ด้วยสถานะกับหลักฐานที่รายงานข้างต้น
