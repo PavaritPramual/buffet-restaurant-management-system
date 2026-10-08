@@ -18,7 +18,8 @@ final class DatabaseTlsDiagnostic {
     private DatabaseTlsDiagnostic() {}
 
     static void runWhenEnabled() {
-        if (!"true".equalsIgnoreCase(System.getenv("DB_TLS_DIAGNOSTIC"))) {
+        String profiles = System.getenv().getOrDefault("SPRING_PROFILES_ACTIVE", "");
+        if (!Arrays.asList(profiles.split(",")).contains("production")) {
             return;
         }
         String host = System.getenv("SUPABASE_DB_HOST");
