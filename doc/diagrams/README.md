@@ -15,7 +15,7 @@
 | Manager / Supervisor Use Case | reflect Manager contact-profile update fields and limited account-edit scope | [source](use-case-management.puml) / [SVG](previews/use-case-management.svg) |
 | All actors Use Case | update baseline revision and include Manager contact-profile update | [source](use-case.puml) / [SVG](previews/use-case.svg) |
 
-เป็น source/documentation review ของ merged baseline ไม่ใช่ peer approval หรือ Final release sign-off. Public flow/denial evidence แยกอยู่ใน [PR #36 report](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/codex/sirapat-public-regression/doc/testing/sirapat-public-regression-2026-10-09.md); deployed revision ยัง owner-reported.
+เป็น source/documentation review ของ merged baseline ไม่ใช่ peer approval หรือ Final release sign-off. Public flow/denial evidence แยกอยู่ใน [PR #36 report](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/b2928f564b796b0e7a5e7260e0f3f567ca40a386/doc/testing/sirapat-public-regression-2026-10-09.md); deployed revision ยัง owner-reported.
 
 **ประวัติตรวจโมดูลปวริศช์ใน PR #31:** code baseline `6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6`; scope ตารางต่อไปนี้ผ่านศรัณย์/ศิระพัทธ์ review ที่ head5939ecd และ merge แล้ว ภาพอื่นคง revision และการตรวจของเจ้าของเดิม
 
