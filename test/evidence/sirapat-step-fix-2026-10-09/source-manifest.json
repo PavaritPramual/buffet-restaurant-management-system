@@ -1,0 +1,35 @@
+{
+  "base": "96da8ea",
+  "branch": "sirapat_673380293-3_01",
+  "normalization": "UTF-8, CRLF converted to LF before SHA-256; no backend/schema/PR39 source included",
+  "files": [
+    {
+      "path": "code/frontend/src/FoundationApp.tsx",
+      "sha256": "222f691f137c1ea1d0a8b2c4c9b5c867517ef20f3d73b10ed128db7bc3e7e65c"
+    },
+    {
+      "path": "code/frontend/src/features/auth/StaffShell.tsx",
+      "sha256": "ccc8bc50705671666f2d065d05b30d1fd381ae7fd6c6fb948b875c52bfc4c106"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/CustomerOrderingPage.tsx",
+      "sha256": "b6dd16c204026492de3aaaf2a5191c1fff2add15c126666445fe86c506c7c704"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/api.ts",
+      "sha256": "ee593c05f423fdb7700249a68715b1f14e463685e74b6fc8ebbdf59e49ad825c"
+    },
+    {
+      "path": "code/frontend/src/FoundationApp.test.tsx",
+      "sha256": "164e98d0135c9e3e3f2551eac199f05d956bd41d5d36a05f5d21208973c7f826"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/CustomerAccessExpiry.test.tsx",
+      "sha256": "7be01c6861a3cd0ec1b9ca80014c3cfb31c2bda5e86665bd723bc5f20d49b067"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/CustomerOrderingPage.test.tsx",
+      "sha256": "6cf2d3e1e0a89efd57b031e8cf5b140a47580238f9973a9a2583e02210254186"
+    }
+  ]
+}

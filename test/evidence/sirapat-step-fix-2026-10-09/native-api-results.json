@@ -1,0 +1,47 @@
+{
+  "environment": "isolated H2; real database providers; no shared DB",
+  "provenance": "native API assertions, separate from CUA UI checks",
+  "kitchenOrders": [
+    {
+      "orderId": 1,
+      "sessionId": 1,
+      "items": [
+        {
+          "menuItemId": 3,
+          "name": "กุ้งทดสอบ 3",
+          "quantity": 1
+        },
+        {
+          "menuItemId": 1,
+          "name": "หมูสไลซ์ทดสอบ 1",
+          "quantity": 1
+        },
+        {
+          "menuItemId": 30,
+          "name": "เส้นอุด้งทดสอบ 30",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "orderId": 2,
+      "sessionId": 2,
+      "items": [
+        {
+          "menuItemId": 1,
+          "name": "หมูสไลซ์ทดสอบ 1",
+          "quantity": 1
+        }
+      ]
+    }
+  ],
+  "firstPayment": {
+    "amount": 499,
+    "paymentStatus": "PAID"
+  },
+  "closedSessions": [
+    1,
+    2
+  ],
+  "tableStatus": "AVAILABLE"
+}

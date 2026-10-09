@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, Outlet, useMatch, useNavigate } from 'react-router-dom'
 import { authApi, getErrorMessage, roleLabels } from '../admin/api'
 import type { UserContext } from '../admin/api'
@@ -11,18 +11,23 @@ export default function StaffShell() {
   const [checking, setChecking] = useState(true)
   const [loggingOut, setLoggingOut] = useState(false)
   const [error, setError] = useState('')
+  const authRevision = useRef(0)
+  const logoutPending = useRef(false)
 
   useEffect(() => {
     let active = true
+    const revision = ++authRevision.current
+    const isCurrent = () => active && revision === authRevision.current
     const handleSessionExpired = () => {
+      ++authRevision.current
       setUser(null)
       navigate('/admin', { replace: true })
     }
     window.addEventListener('auth:session-expired', handleSessionExpired)
     authApi.current()
-      .then((currentUser) => { if (active) setUser(currentUser) })
-      .catch(() => { if (active) navigate('/admin', { replace: true }) })
-      .finally(() => { if (active) setChecking(false) })
+      .then((currentUser) => { if (isCurrent()) setUser(currentUser) })
+      .catch(() => { if (isCurrent()) navigate('/admin', { replace: true }) })
+      .finally(() => { if (isCurrent()) setChecking(false) })
     return () => {
       active = false
       window.removeEventListener('auth:session-expired', handleSessionExpired)
@@ -30,16 +35,18 @@ export default function StaffShell() {
   }, [navigate])
 
   async function handleLogout() {
+    if (logoutPending.current) return
+    logoutPending.current = true
+    const revision = ++authRevision.current
     setLoggingOut(true)
     setError('')
     try {
       await authApi.logout()
-      setUser(null)
-      navigate('/admin', { replace: true })
+      if (revision === authRevision.current) { setUser(null); navigate('/admin', { replace: true }) }
     } catch (requestError) {
-      setError(getErrorMessage(requestError))
+      if (revision === authRevision.current) setError(getErrorMessage(requestError))
     } finally {
-      setLoggingOut(false)
+      if (revision === authRevision.current) { logoutPending.current = false; setLoggingOut(false) }
     }
   }
 
