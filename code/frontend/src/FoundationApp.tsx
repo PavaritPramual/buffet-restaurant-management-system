@@ -8,6 +8,7 @@ import MasterDataPage from './features/admin/MasterDataPage'
 import UsersPage from './features/admin/UsersPage'
 import CustomerOrderingPage from './features/ordering/CustomerOrderingPage'
 import MenuAdminPage from './features/ordering/MenuAdminPage'
+import { menuRemovalGateway } from './features/ordering/api'
 import StaffTablesPage from './features/staff-tables/StaffTablesPage'
 import DiningSessionPage from './features/staff-tables/DiningSessionPage'
 import KitchenBoardPage from './features/fulfillment/KitchenBoardPage'
@@ -37,7 +38,7 @@ export default function FoundationApp() {
         <Route path="soups" element={<MasterDataPage key="soups" kind="soups" />} />
         <Route path="stock-items" element={<MasterDataPage key="stock" kind="stock" />} />
         <Route path="users" element={<UsersPage />} />
-        <Route path="menu" element={<MenuAdminPage />} />
+        <Route path="menu" element={<MenuAdminPage removalGateway={menuRemovalGateway} />} />
       </Route>
     </Route>
     <Route path="*" element={<Navigate to="/admin" replace />} />

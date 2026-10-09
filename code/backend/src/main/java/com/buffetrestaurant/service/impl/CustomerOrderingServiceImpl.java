@@ -9,6 +9,7 @@ import com.buffetrestaurant.dto.response.MenuItemResponse;
 import com.buffetrestaurant.dto.response.OrderResponse;
 import com.buffetrestaurant.exception.BusinessRuleException;
 import com.buffetrestaurant.exception.ResourceNotFoundException;
+import com.buffetrestaurant.exception.MenuConflictException;
 import com.buffetrestaurant.mapper.OrderingMapper;
 import com.buffetrestaurant.repository.CustomerOrderRepository;
 import com.buffetrestaurant.repository.MenuItemRepository;
@@ -52,9 +53,17 @@ public class CustomerOrderingServiceImpl implements CustomerOrderingService {
             }
         }
         CustomerOrder order = new CustomerOrder(sessionId, session.tableNumber());
+        // Match menu maintenance's row lock; sort IDs so multi-item orders cannot deadlock.
+        Map<Long, MenuItem> lockedItems = new LinkedHashMap<>();
+        for (Long id : new java.util.TreeSet<>(quantities.keySet())) {
+            lockedItems.put(id, menuItemRepository.findByIdForUpdate(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Menu item not found with id: " + id)));
+        }
         for (Map.Entry<Long, Integer> entry : quantities.entrySet()) {
-            MenuItem item = menuItemRepository.findById(entry.getKey())
-                    .orElseThrow(() -> new ResourceNotFoundException("Menu item not found with id: " + entry.getKey()));
+            MenuItem item = lockedItems.get(entry.getKey());
+            if (item.isArchived() || item.getCategory().isArchived()) {
+                throw new MenuConflictException(MenuConflictException.Reason.ITEM_ARCHIVED);
+            }
             if (!item.isAvailable()) throw new BusinessRuleException("Menu item is unavailable: " + item.getName());
             if (!item.getPackageIds().contains(session.packageId())) throw new BusinessRuleException("Menu item is not included in this package: " + item.getName());
             order.addItem(item.getId(), item.getName(), entry.getValue());

@@ -45,3 +45,5 @@ Owner: ศิระพัทธ์. [Test plan](test-plan.md). Latest integrated
 | Test strategy/QR/frontend slides | [8 October personal content/notes draft](../slide/sirapat-step3-quality-2026-10-08-draft.md): develop339/118 and candidate348/121 explicitly separated; public pending. Older303/116 PPTX/PDF remain historical; team Canva remains draft | Final revision numbers/URLs + reviewed team deck/PDF + five-person rehearsal |
 
 Requirements: [Step3](https://app.notion.com/p/a9e90b8ff9648363a6ab81b48fd70816), [Regression](https://app.notion.com/p/85290b8ff96482c59ba201e5d9a767fd), [Stock](https://app.notion.com/p/80d90b8ff964820d8ad38171aeed722c), [Profile](https://app.notion.com/p/5e690b8ff96483c9ab05015e38d972c6). Tests and documents do not constitute another person's approval.
+
+R01-A (9 October 2026): current implementation/test mapping and separate local browser/API evidence are in [Sirapat R01-A report](sirapat-r01-a-2026-10-09.md). Migration V18 is allocated in PR46; combined V16/V17/V18 validation, actual shared FK audit and public deployed-SHA acceptance remain release gates.

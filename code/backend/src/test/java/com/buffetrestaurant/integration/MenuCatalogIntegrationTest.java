@@ -88,10 +88,10 @@ class MenuCatalogIntegrationTest {
         MockHttpSession manager = login(UserRole.MANAGER);
 
         mvc.perform(delete("/api/v1/menu-categories/" + category.getId()).session(manager))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.message").value(
-                        "หมวดหมู่นี้ยังมีเมนูอยู่ กรุณาย้ายเมนูไปหมวดอื่นก่อนลบหมวดหมู่นี้"));
+                        "หมวดหมู่นี้ยังมีเมนูในรายการใช้งาน กรุณาย้ายหรือเก็บเมนูออกก่อน"));
 
         entities.flush();
         entities.clear();
@@ -106,10 +106,10 @@ class MenuCatalogIntegrationTest {
         MockHttpSession manager = login(UserRole.MANAGER);
 
         mvc.perform(delete("/api/v1/menu-categories/" + category.getId()).session(manager))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.message").value(
-                        "หมวดหมู่นี้ยังมีเมนูอยู่ กรุณาย้ายเมนูไปหมวดอื่นก่อนลบหมวดหมู่นี้"));
+                        "หมวดหมู่นี้ยังมีเมนูในรายการใช้งาน กรุณาย้ายหรือเก็บเมนูออกก่อน"));
 
         entities.flush();
         entities.clear();
@@ -144,7 +144,9 @@ class MenuCatalogIntegrationTest {
         assertThat(persisted.isAvailable()).isFalse();
         mvc.perform(delete("/api/v1/menu-items/" + id).session(manager)).andExpect(status().isNoContent());
         entities.flush(); entities.clear();
-        assertThat(items.findById(id)).isEmpty();
+        assertThat(items.findById(id)).isPresent();
+        assertThat(items.findById(id).orElseThrow().isArchived()).isTrue();
+        assertThat(items.findById(id).orElseThrow().getPackageIds()).containsExactly(updatedPackage.getId());
         mvc.perform(get("/api/v1/menu-items/" + id)).andExpect(status().isNotFound());
     }
 
@@ -200,7 +202,7 @@ class MenuCatalogIntegrationTest {
     void categoryWithItemsCannotBeDeletedAndValidationUsesSharedErrorResponse() throws Exception {
         MockHttpSession manager = login(UserRole.MANAGER);
         mvc.perform(delete("/api/v1/menu-categories/" + category.getId()).session(manager))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isConflict());
         mvc.perform(post("/api/v1/menu-categories").session(manager).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\" \"}"))
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.path").value("/api/v1/menu-categories"))

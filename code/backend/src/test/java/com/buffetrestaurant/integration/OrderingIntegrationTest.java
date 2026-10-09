@@ -255,24 +255,23 @@ class OrderingIntegrationTest {
     }
 
     @Test
-    void deleteMenuItem_whenItemHasOrderHistory_returns400AndKeepsHistory() throws Exception {
+    void deleteMenuItem_whenItemHasOrderHistory_archivesAndKeepsHistory() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวผัด", true, null, Set.of(1L)));
         CustomerOrder order = new CustomerOrder(1L, "T01");
         order.addItem(item.getId(), item.getName(), 1);
         orderRepository.saveAndFlush(order);
 
         mockMvc.perform(delete("/api/v1/menu-items/" + item.getId()))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(
-                        "เมนูนี้มีประวัติการสั่งซื้อ จึงลบถาวรไม่ได้"));
+                .andExpect(status().isNoContent());
 
         assertThat(itemRepository.existsById(item.getId())).isTrue();
+        assertThat(itemRepository.findById(item.getId()).orElseThrow().isArchived()).isTrue();
         assertThat(orderRepository.count()).isOne();
     }
 
     @Test
-    void deleteMenuItem_whenItemHasNoOrderHistory_returns204() throws Exception {
-        MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวผัด", true, null, Set.of(1L)));
+    void deleteMenuItem_whenItemHasNoReferences_returns204() throws Exception {
+        MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวผัด", true, null, Set.of()));
 
         mockMvc.perform(delete("/api/v1/menu-items/" + item.getId()))
                 .andExpect(status().isNoContent());

@@ -18,4 +18,8 @@ public interface MenuCatalogService {
     MenuItemResponse createMenuItem(MenuItemRequest request);
     MenuItemResponse updateMenuItem(Long id, MenuItemRequest request);
     void deleteMenuItem(Long id);
+    List<MenuCategoryResponse> getArchivedCategories();
+    MenuCategoryResponse restoreCategory(Long id);
+    PageResponse<MenuItemResponse> getArchivedMenuItems(int page, int size, String sort);
+    MenuItemResponse restoreMenuItem(Long id);
 }
