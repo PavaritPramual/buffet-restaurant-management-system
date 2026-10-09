@@ -1,0 +1,17 @@
+[
+  {
+    "role": "supervisor",
+    "home": "/admin/stock",
+    "logoutProtectedRoute": "login"
+  },
+  {
+    "role": "kitchen",
+    "home": "/kitchen",
+    "logoutProtectedRoute": "login"
+  },
+  {
+    "role": "staff",
+    "home": "/staff/tables",
+    "logoutProtectedRoute": "login"
+  }
+]

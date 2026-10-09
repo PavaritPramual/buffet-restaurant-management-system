@@ -23,6 +23,15 @@ export function getCustomerApiError(error: unknown) {
   const message = getApiError(error)
   return customerMessages[message] ?? message
 }
+export function customerErrorStatus(error: unknown): number | undefined {
+  if (typeof error !== 'object' || !error || !('response' in error)) return undefined
+  return (error as { response?: { status?: number } }).response?.status
+}
+// A missing menu in an order is also 404; confirm the cookie context for that call.
+export function isCustomerAccessExpired(error: unknown, sessionResource = true) {
+  const status = customerErrorStatus(error)
+  return status === 401 || (sessionResource && status === 404)
+}
 interface QrScan { token: string; promise: Promise<SessionContext>; settled: boolean; failed: boolean }
 // Coordination is limited to this tab. The customer cookie is shared across tabs;
 // use one ordering tab per browser (see doc/testing/test-plan.md for recovery).
