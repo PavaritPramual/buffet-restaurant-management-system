@@ -84,7 +84,7 @@ class PostgresPaymentIntegrationTest extends PaymentIntegrationTest {
                 if (!start.await(10, TimeUnit.SECONDS)) throw new AssertionError("Start timed out");
                 MockHttpSession session = new MockHttpSession();
                 session.setAttribute(UserSessionKeys.USER_CONTEXT_SESSION_KEY,
-                        new UserContext(1L, "staff", "Staff", UserRole.SERVICE_STAFF));
+                        new UserContext(918101L, "staff-test", "Test Staff", UserRole.SERVICE_STAFF));
                 return mvc.perform(post("/api/v1/payments").session(session)
                         .contentType("application/json")
                         .content("{\"sessionId\":918001,\"paymentMethod\":\"CASH\"}"))
