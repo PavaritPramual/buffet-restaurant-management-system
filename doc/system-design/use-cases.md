@@ -1,6 +1,6 @@
 # Use cases และ Use Case Descriptions
 
-อัปเดตจากโค้ด develop `472fba4` วันที่ 7 ตุลาคม 2026 โดยรักษาต้นทาง [Notion Use cases](https://app.notion.com/p/3d3cb2e9d47a80819cf9e6b549adba17) ไว้เป็นประวัติ ภาพและคำอธิบายนี้อ้าง implementation ปัจจุบัน รอ peer review และไม่รับรอง public deployment
+ตรวจภาพและคำอธิบายเทียบกับ merged `develop d84f071` วันที่ 9 ตุลาคม 2026 โดยรักษาต้นทาง [Notion Use cases](https://app.notion.com/p/3d3cb2e9d47a80819cf9e6b549adba17) ไว้เป็นประวัติ. มี public URL และ regression report แล้ว แต่การตรวจนี้ไม่รับรอง deployed SHA หรือ Final release.
 
 [ภาพรวม](../diagrams/previews/use-case.svg) · [Customer/Service/Kitchen](../diagrams/previews/use-case-service-customer.svg) · [Manager/Supervisor](../diagrams/previews/use-case-management.svg) · [source](../diagrams/use-case.puml)
 
@@ -88,4 +88,4 @@
 
 ## ขอบเขตที่เพิ่มจาก baseline เดิม
 
-Stock opening target/lifecycle และ Profile firstName/lastName/phoneNumber implement ด้วย V15 แล้ว; public Deployment ยังเป็นแบบออกแบบ ไม่ใช่ผลตรวจ runtime
+Stock opening target/lifecycle และ Profile firstName/lastName/phoneNumber implement ด้วย V15 แล้ว. PR #36 มีหลักฐาน public regression สำหรับ Stock/Profile และ Fulfillment; owner-reported deployment SHA ยังไม่ independently attested และไม่ใช่การรับรอง Final release.

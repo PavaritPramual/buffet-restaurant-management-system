@@ -1,5 +1,5 @@
 @startuml
-title Activity Diagram - Kitchen Order Processing
+title Kitchen/Serving order fulfillment - role and State guards (develop d84f071)
 
 |Customer|
 start
@@ -10,29 +10,58 @@ start
 :ตั้งสถานะเริ่มต้น = RECEIVED;
 
 |Kitchen Staff|
-:ดู Incoming Orders;
-:กดรับ Order เพื่อเริ่มทำ;
+:ขออ่าน Incoming Orders;
 
 |System|
-:เปลี่ยนสถานะ = PREPARING;
+if (role = KITCHEN_STAFF?) then (อนุญาต)
+    :แสดง RECEIVED / PREPARING;
+else (ปฏิเสธ)
+    :ปฏิเสธการอ่าน (403);
+endif
+
+|Kitchen Staff|
+:ขอเริ่มทำ Order (RECEIVED → PREPARING);
+
+|System|
+if (role ถูกต้องและเป็น next state?) then (อนุญาต)
+    :บันทึก PREPARING;
+else (ปฏิเสธ)
+    :ปฏิเสธคำขอ; state เดิมไม่เปลี่ยน;
+endif
 
 |Kitchen Staff|
 :ปรุงและจัดเตรียมอาหารตาม Order;
 
-if (อาหารปรุงเสร็จสมบูรณ์?) then (พร้อมเสิร์ฟ)
-    |System|
-    :เปลี่ยนสถานะ = READY;
+|Kitchen Staff|
+:ขอเปลี่ยน PREPARING → READY;
 
-    |Service Staff|
-    :ตรวจสอบ Order ที่ READY;
-    :นำอาหารไปส่งมอบที่โต๊ะลูกค้า;
-    :กดยืนยันการเสิร์ฟอาหาร;
+|System|
+if (role ถูกต้องและเป็น next state?) then (อนุญาต)
+    :บันทึก READY;
+else (ปฏิเสธ)
+    :ปฏิเสธคำขอ; state เดิมไม่เปลี่ยน;
+endif
 
-    |System|
-    :เปลี่ยนสถานะ = SERVED;
-else (ยังไม่พร้อม)
-    |Kitchen Staff|
-    :เตรียมอาหารต่อ;
+|Service Staff|
+:ขออ่าน READY Orders;
+
+|System|
+if (role = SERVICE_STAFF?) then (อนุญาต)
+    :แสดง READY Orders;
+else (ปฏิเสธ)
+    :ปฏิเสธการอ่าน (403);
+endif
+
+|Service Staff|
+:ตรวจสอบ Order ที่ READY;
+:นำอาหารไปส่งมอบที่โต๊ะลูกค้า;
+:ขอยืนยันการเสิร์ฟ (READY → SERVED);
+
+|System|
+if (role ถูกต้องและเป็น next state?) then (อนุญาต)
+    :บันทึก SERVED;
+else (ปฏิเสธ)
+    :ปฏิเสธคำขอ; state เดิมไม่เปลี่ยน;
 endif
 
 stop
