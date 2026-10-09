@@ -45,6 +45,7 @@ public class StockService {
     @Transactional
     public StockItemResponse updateItem(Long id, @Valid com.buffetrestaurant.dto.request.StockItemRequest request) {
         StockItem item = findItem(id);
+        rejectArchived(item);
         if (items.findBySku(request.sku().trim()).filter(other -> !other.getId().equals(id)).isPresent()) {
             throw new com.buffetrestaurant.exception.DuplicateResourceException("Stock SKU already exists");
         }
@@ -59,8 +60,47 @@ public class StockService {
     @Transactional
     public StockItemResponse setActive(Long id, boolean active) {
         StockItem item = findItem(id);
+        rejectArchived(item);
         item.changeActive(active);
         return StockItemResponse.from(items.saveAndFlush(item));
+    }
+
+    /**
+     * Hard-deletes an item that never had a transaction and holds no stock; otherwise archives it so
+     * history and the remaining quantity are kept. Quantity is never edited to make a delete pass.
+     */
+    @Transactional
+    public void removeItem(Long id) {
+        StockItem item = findItem(id);
+        if (item.isArchived()) return;
+        if (!transactions.existsByStockItemId(id) && item.getQuantity().signum() == 0) {
+            items.delete(item);
+            items.flush();
+        } else {
+            item.archive();
+            items.saveAndFlush(item);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<StockItemResponse> archivedItems() {
+        return items.findAllByArchivedAtIsNotNullOrderByNameAsc().stream().map(StockItemResponse::from).toList();
+    }
+
+    @Transactional
+    public StockItemResponse restoreItem(Long id) {
+        StockItem item = findItem(id);
+        if (item.isArchived()) {
+            item.restore();
+            items.saveAndFlush(item);
+        }
+        return StockItemResponse.from(item);
+    }
+
+    private static void rejectArchived(StockItem item) {
+        if (item.isArchived()) {
+            throw new com.buffetrestaurant.exception.ResourceConflictException("รายการนี้ถูกเก็บออกแล้ว กรุณากู้คืนก่อนแก้ไข");
+        }
     }
 
     private static java.math.BigDecimal targetOrZero(com.buffetrestaurant.dto.request.StockItemRequest request) {
@@ -69,7 +109,7 @@ public class StockService {
 
     @Transactional(readOnly = true)
     public List<StockItemResponse> overview() {
-        return items.findAllByOrderByNameAsc().stream().map(StockItemResponse::from).toList();
+        return items.findAllByArchivedAtIsNullOrderByNameAsc().stream().map(StockItemResponse::from).toList();
     }
 
     @Transactional

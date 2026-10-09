@@ -38,6 +38,9 @@ public class StockItem {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(name = "archived_at")
+    private Instant archivedAt;
+
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
@@ -71,6 +74,18 @@ public class StockItem {
         this.active = active;
     }
 
+    /** Removes the item from operational use while keeping its balance and history. */
+    public void archive() {
+        if (archivedAt != null) return;
+        this.active = false;
+        this.archivedAt = Instant.now();
+    }
+
+    /** Restoring never reactivates the item; activation is a separate explicit action. */
+    public void restore() {
+        this.archivedAt = null;
+    }
+
     /** Units missing against the opening target; never negative and never persisted. */
     public BigDecimal getShortfall() {
         return openingTargetStock.subtract(quantity).max(BigDecimal.ZERO);
@@ -93,5 +108,7 @@ public class StockItem {
     public BigDecimal getLowStockThreshold() { return lowStockThreshold; }
     public BigDecimal getOpeningTargetStock() { return openingTargetStock; }
     public boolean isActive() { return active; }
+    public Instant getArchivedAt() { return archivedAt; }
+    public boolean isArchived() { return archivedAt != null; }
     public Instant getUpdatedAt() { return updatedAt; }
 }

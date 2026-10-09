@@ -25,11 +25,14 @@ public record StockItemResponse(
         @Schema(description = "Whether the item can be used in stock transactions", example = "true")
         boolean active,
         @Schema(description = "ISO-8601 UTC timestamp", example = "2026-10-07T08:09:10Z")
-        Instant updatedAt
+        Instant updatedAt,
+        @Schema(description = "Set when the item was removed from active use but kept for history; null otherwise",
+                example = "2026-10-09T08:09:10Z", nullable = true)
+        Instant archivedAt
 ) {
     public static StockItemResponse from(StockItem item) {
         return new StockItemResponse(item.getId(), item.getSku(), item.getName(), item.getUnit(),
                 item.getQuantity(), item.getLowStockThreshold(), item.getOpeningTargetStock(),
-                item.getShortfall(), item.isActive(), item.getUpdatedAt());
+                item.getShortfall(), item.isActive(), item.getUpdatedAt(), item.getArchivedAt());
     }
 }

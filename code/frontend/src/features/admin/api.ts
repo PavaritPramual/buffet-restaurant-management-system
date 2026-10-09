@@ -26,6 +26,7 @@ export type StockItem = {
   openingTargetStock: number
   shortfall: number
   active: boolean
+  archivedAt: string | null
   updatedAt: string
 }
 
@@ -50,6 +51,8 @@ export type UserRecord = {
   firstName: string | null
   lastName: string | null
   phoneNumber: string | null
+  active: boolean
+  archivedAt: string | null
 }
 
 export type UserProfileInput = { firstName: string; lastName: string; phoneNumber: string }
@@ -66,9 +69,20 @@ export const authApi = {
   },
 }
 
+export const removedMessage = 'นำรายการออกจากรายการใช้งานแล้ว ประวัติยังคงอยู่ในรายการเก็บออก'
+
 export const stockApi = {
   async overview() {
     return (await apiClient.get<StockItem[]>('/stock')).data
+  },
+  async archived() {
+    return (await apiClient.get<StockItem[]>('/stock/items/archived')).data
+  },
+  async remove(id: number) {
+    await apiClient.delete(`/stock/items/${id}`)
+  },
+  async restore(id: number) {
+    return (await apiClient.post<StockItem>(`/stock/items/${id}/restore`)).data
   },
   async history(itemId?: number) {
     return (await apiClient.get<StockTransaction[]>('/stock/transactions', {
@@ -89,6 +103,18 @@ export const usersApi = {
   },
   async create(user: { username: string; password: string; displayName: string; email: string | null; role: UserRole } & UserProfileInput) {
     return (await apiClient.post<UserRecord>('/admin/users', user)).data
+  },
+  async archived() {
+    return (await apiClient.get<UserRecord[]>('/admin/users/archived')).data
+  },
+  async remove(id: number) {
+    await apiClient.delete(`/admin/users/${id}`)
+  },
+  async restore(id: number) {
+    return (await apiClient.post<UserRecord>(`/admin/users/${id}/restore`)).data
+  },
+  async setActive(id: number, active: boolean) {
+    return (await apiClient.put<UserRecord>(`/admin/users/${id}/active`, { active })).data
   },
   async updateProfile(id: number, profile: UserProfileInput) {
     return (await apiClient.put<UserRecord>(`/admin/users/${id}/profile`, profile)).data

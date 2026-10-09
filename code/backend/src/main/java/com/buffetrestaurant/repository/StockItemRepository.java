@@ -11,6 +11,8 @@ import jakarta.persistence.LockModeType;
 
 public interface StockItemRepository extends JpaRepository<StockItem, Long> {
     List<StockItem> findAllByOrderByNameAsc();
+    List<StockItem> findAllByArchivedAtIsNullOrderByNameAsc();
+    List<StockItem> findAllByArchivedAtIsNotNullOrderByNameAsc();
     Optional<StockItem> findBySku(String sku);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
