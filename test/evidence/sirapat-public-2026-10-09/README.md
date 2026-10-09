@@ -5,9 +5,12 @@ See [full report](../../../doc/testing/sirapat-public-regression-2026-10-09.md).
 - API: 12 passed scenario groups, separate cookie jars, no HTTP mocks, 09:15:41–09:16:19 ICT.
 - Browser: 12 passed scenario groups, 32 unique JPEG screenshots, shared browser context, 09:17:29–09:29:47 ICT.
 - Local changed UI: 1 missing-QR case, Thai guidance, isolated H2; 1 screenshot.
+- Supplementary larger menu/QR run:30 new available foods/5categories plus2 unavailable; customer UI order3 contains6menus/8pieces, Kitchen receives all, reload persists, bill499 and session4 explicitly closed. Three additional screenshots inspected; this does not change the main12/12 group counts. See [volume results](volume/results.json), [browser](volume/browser-results.json), [hashes](volume/screenshot-manifest.json).
+- Separate3-slide editable QA PPTX/PDF and full notes delivered per user's instruction to defer Canva. Every slide and PowerPoint PDF page inspected; [validation](slide-validation.json).
 - Source manifests: d84f071 baseline and 11edeb0 submitted production tree, 352 canonical Git blobs each.
 - Integrated CI: run 37868211120, backend 352/352 (0 skipped), frontend121/121, guards6/6.
 - PR #36 CI at9b9eddf: [run37876116678](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37876116678) passed Backend/PostgreSQL352/352, changed Frontend125/125, guards6/6, lint/build; [summary](pr36-ci.json). Subsequent documentation-only evidence update records this result; it does not replace latest-head CI.
+- PR #36 CI ata43a558: [run37876412024](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37876412024), same counts/checks passed; [summary](pr36-ci-a43a558.json). Latest final evidence-commit CI is recorded on the PR to avoid recursive documentation commits.
 - Local backend: 322 passed + 28 skipped = 350 discovered. Changed frontend125/125; lint0 errors/4 existing warnings; build passed.
 - Public revision 2f8bc4b is owner-reported, not live-attested. Thai source fix was not deployed during this run.
 - No elapsed TTL test, physical mobile test, second browser profile test or public permanent-delete test.

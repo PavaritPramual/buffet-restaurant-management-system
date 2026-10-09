@@ -1,6 +1,6 @@
 # สไลด์ทีมปัจจุบัน — Canva v02b ฉบับล่วงหน้า
 
-เนื้อหา QA ของศิระพัทธ์อัปเดต 9 ต.ค.: [ผล public, ขอบเขตหลักฐาน และ speaker notes 3 หน้า](sirapat-public-quality-2026-10-09.md). เป็นเนื้อหาสำหรับผู้รวม Canva ยังไม่ใช่การแก้/ส่งออก/รับรองชุด Canva; ตัวเลขเก่าในร่างทีมต้องปรับเมื่อ owner รวมเนื้อหา.
+QA ของศิระพัทธ์อัปเดต 9 ต.ค.: ผู้ใช้ให้ข้าม Canva และทำไฟล์แยกเพื่อใส่เอง ได้ [PPTX แก้ไขได้ 3 หน้า](sirapat-qa-2026-10-09/sirapat-qa-v01.pptx), [PDF](sirapat-qa-2026-10-09/sirapat-qa-v01.pdf) และ [speaker notes เต็ม](sirapat-public-quality-2026-10-09.md). รวมผล public, CI352/125 และการเพิ่ม30อาหาร/QRสั่ง6เมนู8ชิ้นถึงครัว ตรวจภาพครบทุกหน้าแล้ว ดู [หลักฐาน](../../test/evidence/sirapat-public-2026-10-09/slide-validation.json). ไฟล์แยกนี้สร้างตามคำสั่งล่าสุด ไม่ใช่ไฟล์ส่งออกจาก Canva หรือการรับรองชุดทีม; ตัวเลขเก่าในร่างทีมต้องปรับเมื่อ owner รวมเนื้อหา.
 
 เนื้อหาที่ธีรเมธเตรียมให้ผู้รวม Canva สำหรับ runtime/network และ release checks: [teeramet-runtime-networking-notes.md](teeramet-runtime-networking-notes.md). ยังไม่ใช่หน้าสไลด์หรือ PDF ฉบับรับรอง.
 

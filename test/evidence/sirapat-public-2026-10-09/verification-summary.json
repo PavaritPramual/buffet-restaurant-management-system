@@ -1,9 +1,31 @@
 {
-  "verifiedAt": "2026-10-09T02:43:10.843Z",
+  "verifiedAt": "2026-10-09T03:13:21.740Z",
   "apiGroups": 12,
   "browserGroups": 12,
   "publicScreenshots": 32,
-  "localLinksVerified": 19,
+  "publicScreenshotsScope": "main run; supplementary volume run has 3 additional images",
+  "supplementaryVolume": {
+    "newAvailableMenus": 30,
+    "newUnavailableMenus": 2,
+    "categories": 5,
+    "browserOrderId": 3,
+    "orderLines": 6,
+    "pieces": 8,
+    "kitchenReceived": true,
+    "persistedAfterCustomerReload": true,
+    "paidAndClosedSession": 4,
+    "screenshots": 3,
+    "claimBoundary": "real public QR-link UI; no physical camera/device or independent browser profile claim"
+  },
+  "ownerSlides": {
+    "editableSlides": 3,
+    "fullNotes": 3,
+    "pdfPages": 3,
+    "allFinalSlidesAndPdfPagesVisuallyInspected": true,
+    "packageFontGeometryImport": "PASS",
+    "canvaEdited": false
+  },
+  "localLinksVerified": 38,
   "canonicalFilesPerManifest": 352,
   "runner": {
     "testedSource": "11edeb0",

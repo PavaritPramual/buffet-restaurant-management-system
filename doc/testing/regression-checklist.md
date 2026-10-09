@@ -8,8 +8,9 @@ See [public report](sirapat-public-regression-2026-10-09.md). These checks recor
 - [x] Local backend322 passed/28 skipped of350; changed frontend125/125, lint0 errors/4 existing warnings, build passed.
 - [x] Real public HTTPS API12 groups and browser12 groups; four roles, QR, State denials, bill/payment/close and Stock/Profile persistence.
 - [x] Two independent customer cookie jars in API; one customer browser context; limitations explicitly recorded.
-- [x] Public32 screenshots and local Thai-fix screenshot inspected; canonical Git source hashes and current traceability saved.
-- [x] Own SOLID/JPA rationale rechecked; three QA slide content blocks and complete speaker notes prepared for Canva merger.
+- [x] Public32 main +3 supplementary screenshots and local Thai-fix screenshot inspected; canonical Git source hashes and current traceability saved.
+- [x] Added30 available foods/5categories; QR customer placed6menu lines/8pieces, Kitchen received and customer reload persisted order3; bill499/session4 closed.
+- [x] Own SOLID/JPA rationale rechecked; separate editable3-slide QA PPTX/PDF with complete notes delivered per user's Canva-defer instruction; every slide/PDF page inspected.
 - [ ] Review/merge/redeploy Thai QR recovery and recheck the changed public UI.
 - [ ] Elapsed8-hour customer expiry / staffTTL, live deployed SHA/runtime/schema and release approval.
 - [ ] Canonical Canva owner review, content/order merge, actual Canva export and team rehearsal.

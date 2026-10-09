@@ -8,6 +8,8 @@ Latest integrated regression baseline: develop **d84f071**, 9 October 2026, incl
 
 Final adds Stock opening target/active lifecycle and separate Profile names/phone (เมธัส), production deployment (ธีรเมธ), release integration (ปวริศช์) and API audit (ศรัณย์). ศิระพัทธ์ owns Customer/shared UI fixes, regression, responsive review and evidence. Feature UI defects go to that feature's owner with reproduction steps. No new gateway, WebSocket, analytics or automatic stock purchasing.
 
+Additional user-requested volume check, 9 October: created30 available foods/5labelled categories plus2 unavailable. Real customer QR UI produced order3 with6menu lines/8pieces, Kitchen received it and customer reload persisted it; bill499/session4 explicitly closed. This supplements the main12/12 groups. Separate3-slide editable PPTX/PDF with complete notes and page inspection is delivered under doc/slide per the user's instruction to defer Canva.
+
 ## Layers and evidence
 
 | Layer | Purpose | Evidence and limits |
@@ -28,7 +30,7 @@ Record source revision/tree or diff identity, commands, environment, start/end t
 - Environment-driven PostgreSQL tests require ALLOW_DESTRUCTIVE_DB_TESTS=true, explicit loopback JDBC port, buffet_test_ database name without options and database comment buffet-disposable-test-only. Payment uses a non-superuser backend role. See [testing guide](../../test/README.md).
 - Never run destructive tests/demo seeding on team Supabase. Shared forward migrations require owner review; do not edit V1–V14, repair checksums or reserve another owner's migration number.
 - Local browser uses isolated runtime and real session/database providers. H2 demo must override its Menu/Ordering/Fulfillment fixture defaults; disable .env import for that process.
-- Public browser uses owner-supplied HTTPS URL, four test accounts and approved test tenant/data scope. No demo login or seed creation on public. Deployed revision is supplied by runtime owner; a page title cannot prove it.
+- Public browser uses owner-supplied HTTPS URL, four test accounts and approved test data scope. The user explicitly authorized creating test role accounts and requested many foods; create only labelled QA data through the real application's API/UI. Do not enable application demo/fixture providers or run database seed scripts. Deployed revision is supplied by runtime owner; a page title cannot prove it.
 - Exclude passwords, cookies, QR credentials and storage state. Mask the entire Staff QR card in images; never save QR URLs, request bodies or authorization headers.
 
 ## Regression cases

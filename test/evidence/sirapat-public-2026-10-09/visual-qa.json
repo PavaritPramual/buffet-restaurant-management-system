@@ -1,6 +1,6 @@
 {
   "reviewedAt": "2026-10-09",
-  "method": "Visual inspection of all 32 public screenshots in four labelled contact sheets; full-size local customer fix inspected",
+  "method": "Visual inspection of all 32 public screenshots in four labelled contact sheets; full-size local customer fix inspected; all three supplementary volume screenshots individually inspected at full size",
   "publicImages": 32,
   "localImages": 1,
   "observations": [
@@ -13,5 +13,7 @@
   "limitations": [
     "Desktop viewport emulation, not physical-device verification.",
     "Static images do not prove timing, animation or complete keyboard accessibility."
-  ]
+  ],
+  "supplementaryPublicImages": 3,
+  "totalImages": 36
 }

@@ -8,11 +8,13 @@ Owner: ศิระพัทธ์. [Test plan](test-plan.md). Latest integrated
 |---|---|---|
 | Catalog / pagination / roles | Public Manager create/edit/reload/sort and delete confirmation/cancel; API role matrix and invalid sort; baseline CI | No permanent public deletion; image behavior remains automated coverage |
 | QR / Order / State / Bill / Close | API two independent cookie jars, one-use/revocation/validation/12 State denials; browser cart/rescan/status/payment/close | One browser context; no physical-device or timed-delay claim |
+| Many-menu customer QR | User-requested30 available foods/5categories +2 unavailable; filters6/category,32available cards, cart preserved; real UI order3/6lines/8pieces, Kitchen receipt and customer reload; bill499/session4 closed | Supplementary real public check; main12/12group counts unchanged; QR link redemption, no physical camera/device claim |
 | AUTH / Secure cookie | Real HTTPS attributes, invalid login401, four-role login/logout protected401 | Elapsed customer8h/staffTTL not executed |
 | STOCK / PROFILE | Public active/inactive/targets/history/role/validation API; browser confirmation/movements/profile update persisted after reload | Final feature-owner and migration/release attestation remain |
-| Responsive / feedback | Public32 images,360/768/1280 in report; local Thai QR screenshot; changed frontend125 tests | Loading/remount/race fixtures are component/historical evidence, not fresh public outage simulation |
+| Responsive / feedback | Public32 main +3 volume images,360/768/1280 in report; local Thai QR screenshot; changed frontend125 tests | Loading/remount/race fixtures are component/historical evidence, not fresh public outage simulation |
 | QR Thai recovery | CustomerOrderingPage.test.tsx missing/expired/inactive/used-QR retry; local real API missing-session browser | Review/merge/redeploy and changed public rerun |
 | Migrations / PG contention | d84f071 CI backend352/352,0 skips; local322 passed/28 skipped | Local Docker unavailable; CI and public schema attestation are separate |
+| Owner QA presentation | Separate3-slide editable PPTX/PDF, full notes, package/font/geometry/import and every-slide/PDF-page inspection | User will insert into Canva; team approval/export/rehearsal separate |
 
 ## Coverage inventory and historical gates
 
