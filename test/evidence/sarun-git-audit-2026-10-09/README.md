@@ -2,9 +2,9 @@
 
 ## Current snapshot
 
-This directory retains multiple point-in-time snapshots. The `d84f071` files are historical: 137 non-merge commits at 10:31 ICT. The `a6da906` files are the post-PR #36 snapshot: 142 non-merge commits at 12:51 ICT. The current `d4633d5` files record refs fetched on 9 October 2026 at 14:57 ICT, after PR #38 merged; `origin/develop` was `d4633d52f7ece4bc1645594f85fc1a8548f458df` with 143 non-merge commits. Each inventory contains commit SHA, Git author name, author date, subject, and changed paths. The corresponding branch inventory records all five personal branch refs, candidate-author counts, and graph ahead/behind relative to the same `origin/develop`.
+This directory retains multiple point-in-time snapshots. The `d84f071` files are historical: 137 non-merge commits at 10:31 ICT. The `a6da906` files are the post-PR #36 snapshot: 142 non-merge commits at 12:51 ICT. The current `d4633d5` files record refs fetched on 9 October 2026 at 15:03 ICT, after PR #38 merged and PR #37 was synced; `origin/develop` was `d4633d52f7ece4bc1645594f85fc1a8548f458df` with 143 non-merge commits. Each inventory contains commit SHA, Git author name, author date, subject, and changed paths. The corresponding branch inventory records all five personal branch refs, candidate-author counts, and graph ahead/behind relative to the same `origin/develop`.
 
-Sarun's remote branch ref in the current snapshot was `c2a4507`; it predates the later sync of PR #37 with develop `d4633d5`. Open PR #37 commits are not counted as merged `develop` work.
+Sarun's remote branch ref in the current snapshot is `475584c`; PR #37 is synced to develop `d4633d5`. Open PR #37 commits are not counted as merged `develop` work. Methus's current branch ref is `d85d374`; its one branch-only author candidate is not merged work.
 
 Earlier snapshots in [`../sarun-git-audit-2026-10-08/`](../sarun-git-audit-2026-10-08/) remain unchanged and historical.
 
