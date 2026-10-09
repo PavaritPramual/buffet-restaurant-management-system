@@ -60,14 +60,14 @@ sequenceDiagram
     Service->>Guard: Require Manager (direct calls too)
     Service->>DB: Lock resource row in transaction
     alt Table ACTIVE or OCCUPIED
-        Service-->>UI: 409 ErrorResponse; unchanged
+        Service-->>UI: 409 ErrorResponse, unchanged
     else Already archived
-        Service-->>UI: 204; no mutation
+        Service-->>UI: 204, no mutation
     else Any session/history or package membership
-        Service->>DB: Archive; retain references and snapshots
+        Service->>DB: Archive, retain references and snapshots
         Service-->>UI: 204
     else No references
-        Service->>DB: DELETE + flush; FK authority remains
+        Service->>DB: DELETE + flush, FK authority remains
         Service-->>UI: 204 (FK conflict rolls back, 409)
     end
     Manager->>UI: Archived list / confirm restore
@@ -75,9 +75,9 @@ sequenceDiagram
     Boundary->>Service: Restore (Manager checks at both layers)
     Service->>DB: Lock resource
     alt Archived to restored
-        Service->>DB: archived=false; table AVAILABLE or catalog inactive
+        Service->>DB: archived=false, table AVAILABLE or catalog inactive
     else Already restored
-        Service->>DB: No change; preserve active/OCCUPIED
+        Service->>DB: No change, preserve active/OCCUPIED
     end
     Service-->>UI: 200 current DTO
 ```
