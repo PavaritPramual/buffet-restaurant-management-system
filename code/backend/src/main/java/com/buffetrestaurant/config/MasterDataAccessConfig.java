@@ -31,7 +31,9 @@ public class MasterDataAccessConfig implements WebMvcConfigurer {
                 Class<?> controller = method.getBeanType();
                 if (controller != RestaurantTableController.class && controller != BuffetPackageController.class
                         && controller != SoupController.class) return true;
-                if ("GET".equals(request.getMethod()) || "HEAD".equals(request.getMethod())) {
+                if (request.getRequestURI().endsWith("/archived") || request.getRequestURI().endsWith("/archived/")) {
+                    users.requireAnyRole(request, UserRole.MANAGER);
+                } else if ("GET".equals(request.getMethod()) || "HEAD".equals(request.getMethod())) {
                     users.requireAnyRole(request, UserRole.SERVICE_STAFF, UserRole.MANAGER, UserRole.SUPERVISOR);
                 } else {
                     users.requireAnyRole(request, UserRole.MANAGER);

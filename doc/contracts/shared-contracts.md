@@ -4,6 +4,8 @@
 
 ## Conventions
 
+R01-B Table/Package/Soup add `archived: boolean` (non-null, default false). See [removal contract](deletion-contract.md) and [V17 field/restore semantics](../database/pavarit-r01-b-schema-delta.md). These master-data fields are not added to CustomerSessionResponse or BillingContext. The existing session-scoped package endpoint retains its BuffetPackageResponse shape. Team forward migration reservation: Methus V16, Pavarit V17, Sirapat V18; no shared apply is authorized here.
+
 - Base API: `/api/v1`
 - ID ใช้ JSON number และ Java `Long`
 - จำนวนเงินใช้ JSON number และ Java `BigDecimal`
@@ -30,6 +32,10 @@ Owner: ปวริศช์ — Table & Dining Session
 ลูกค้าเปิด `/customer/qr#token={sessionToken}`; หน้าเว็บล้าง fragment แล้วส่ง token ใน body ของ `POST /api/v1/dining-sessions/qr-exchange` พร้อม `Origin` ที่อนุญาต Backend หมุน QR token และออก `customer_session` แบบสุ่มใน `HttpOnly` cookie อายุสูงสุด 8 ชั่วโมง เก็บเฉพาะ SHA-256 hash ของ credential ใน `customer_session_grants` ลูกค้าหลายเครื่องแลก QR รุ่นถัดไปได้คนละ credential
 
 Customer response มีเพียง `sessionId`, `packageId`, `tableNumber`, `sessionStatus`; ไม่ส่ง `sessionToken`, ราคา snapshot หรือข้อมูล Billing คำขอเมนู/ออเดอร์ต้องมี cookie ของ session เดียวกันที่ยัง `ACTIVE` และคำขอเขียนต้องผ่าน Origin check การปิดรอบเพิกถอน credentials ทั้งหมด
+
+### Customer package read after archive — R01-B
+
+`GET /dining-sessions/{sessionId}/package` ตรวจ cookie ผ่าน CustomerSessionVerifier และอ่านได้เฉพาะแพ็กเกจที่ผูกกับ ACTIVE session นั้น แม้แพ็กเกจ inactive/archived แล้ว โดย CustomerSessionPackageService แยกจาก CatalogService ที่ใช้จัดการข้อมูลหลัก. Response ยังคง BuffetPackageResponse เดิมและ Cache-Control no-store; ไม่เพิ่ม endpoint/field, ไม่คืน QR หรือราคา snapshot. แพ็กเกจที่เก็บออกยังไม่อยู่ในรายการหลักและไม่รับเลือกเปิดรอบใหม่. cookie ขาด/ผิดได้401, cookie ผิดรอบได้404, หลังcloseสิทธิ์เดิมถูกเพิกถอน. Billing/Payment ยังคำนวณจากราคา snapshot ไม่ใช้ราคาปัจจุบันที่ package read แสดง
 
 ### Staff DiningSessionResponse — U02
 

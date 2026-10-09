@@ -1,5 +1,9 @@
 # Diagram index — ครบตามใบงานข้อ 9.1
 
+## R01-B archive delta — V17
+
+[Entity/FK และ removal/restore sequence (Mermaid source/preview)](r01-b-removal.md) แสดงสาม archived fields และ Manager/service guards/locks ที่เพิ่มใน R01-B. PlantUML/SVG baseline เดิมเก็บเป็นประวัติ ไม่อ้างว่า baseline เดิมมี archive state แล้ว; [Data Dictionary delta](../database/pavarit-r01-b-schema-delta.md) ระบุค่าเริ่มต้น constraints และขอบเขตที่ยังไม่ apply ฐานกลาง
+
 ## U02 — Staff display names (9 October 2026)
 
 Reviewed against `develop` baseline `96da8ea7560225f9037ac9be2debfd496802ab57` plus the U02 patch. Staff `DiningSessionResponse` adds `packageName` and `soupName` as current catalog display names; [shared contract](../contracts/shared-contracts.md#staff-diningsessionresponse--u02) defines their semantics. Class/sequence diagrams reference the response type without enumerating DTO fields, so their source and SVG remain valid and unchanged. ERD, JPA associations, transactions/locks, actors, QR/customer credential separation and Billing price snapshot are unchanged. This review does not certify public deployment or the future R01 deletion design.

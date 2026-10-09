@@ -140,7 +140,8 @@ class Step2CompletionIntegrationTest {
                         "ไม่สามารถแก้ไขหรือลบโต๊ะได้ ขณะยังมีรอบใช้งานอยู่"));
         jdbc.update("UPDATE dining_sessions SET status='COMPLETED' WHERE id=940001"); jdbc.update("UPDATE restaurant_tables SET status='AVAILABLE' WHERE id=940001"); entityManager.clear();
         mvc.perform(delete("/api/v1/tables/940001").session(manager))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message").value("โต๊ะนี้มีประวัติการใช้งาน จึงลบถาวรไม่ได้"));
+                .andExpect(status().isNoContent());
+        assertThat(jdbc.queryForObject("SELECT archived FROM restaurant_tables WHERE id=940001", Boolean.class)).isTrue();
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM dining_sessions WHERE id=940001", Integer.class)).isEqualTo(1);
     }
 }

@@ -92,7 +92,7 @@ public class DiningSessionServiceImpl implements DiningSessionService {
         RestaurantTable table = tableRepository.findByIdForUpdate(request.tableId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Restaurant table not found with id: " + request.tableId()));
-        if (!TableStatus.AVAILABLE.equals(table.getStatus())) {
+        if (table.isArchived() || !TableStatus.AVAILABLE.equals(table.getStatus())) {
             throw new IllegalStateException(UserFacingMessages.TABLE_NOT_AVAILABLE);
         }
 
@@ -104,11 +104,11 @@ public class DiningSessionServiceImpl implements DiningSessionService {
             throw new IllegalStateException(UserFacingMessages.guestCountExceedsCapacity(table.getCapacity()));
         }
 
-        BuffetPackage buffetPackage = packageRepository.findById(request.packageId())
-                .filter(BuffetPackage::isActive)
+        BuffetPackage buffetPackage = packageRepository.findByIdForUpdate(request.packageId())
+                .filter(p -> p.isActive() && !p.isArchived())
                 .orElseThrow(() -> new IllegalStateException("Buffet package is not active or does not exist"));
-        Soup soup = soupRepository.findById(request.soupId())
-                .filter(Soup::isActive)
+        Soup soup = soupRepository.findByIdForUpdate(request.soupId())
+                .filter(s -> s.isActive() && !s.isArchived())
                 .orElseThrow(() -> new IllegalStateException("Soup is not active or does not exist"));
 
         DiningSession diningSession = new DiningSession(

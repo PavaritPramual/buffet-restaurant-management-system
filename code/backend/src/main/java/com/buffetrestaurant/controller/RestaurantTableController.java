@@ -29,6 +29,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Restaurant Table Management", description = "Operations for managing restaurant tables and viewing table status")
 public class RestaurantTableController {
 
+    @GetMapping("/archived")
+    @Operation(summary = "Manager: list archived tables")
+    public List<TableResponse> archived() { return tableService.getArchivedTables(); }
+
+    @PostMapping("/{id}/restore")
+    @Operation(summary = "Manager: restore an archived table as AVAILABLE; retries preserve current state")
+    public TableResponse restore(@PathVariable Long id) { return tableService.restoreTable(id); }
+
     private final RestaurantTableService tableService;
 
     public RestaurantTableController(RestaurantTableService tableService) {
