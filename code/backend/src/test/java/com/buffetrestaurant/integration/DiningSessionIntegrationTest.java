@@ -162,6 +162,7 @@ class DiningSessionIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON).content(openRequest(1, 0)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("โต๊ะไม่ว่าง กรุณาเลือกโต๊ะที่พร้อมใช้งาน"))
                 .andExpect(jsonPath("$.path").value("/api/v1/dining-sessions"));
 
         table.makeAvailable();
@@ -169,7 +170,9 @@ class DiningSessionIntegrationTest {
         mockMvc.perform(post("/api/v1/dining-sessions")
                         .contentType(MediaType.APPLICATION_JSON).content(openRequest(4, 1)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Bad Request"));
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message")
+                        .value("จำนวนผู้ใช้บริการเกินความจุของโต๊ะ (สูงสุด 4 คน)"));
         mockMvc.perform(post("/api/v1/dining-sessions")
                         .contentType(MediaType.APPLICATION_JSON).content(openRequest(0, 0)))
                 .andExpect(status().isBadRequest());

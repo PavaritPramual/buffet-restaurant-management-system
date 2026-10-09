@@ -269,7 +269,7 @@ class RestaurantTableServiceTest {
         // When & Then
         assertThatThrownBy(() -> tableService.deleteTable(1L))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Cannot delete table while it is occupied");
+                .hasMessageContaining("ไม่สามารถลบโต๊ะได้ เนื่องจากโต๊ะยังไม่ว่าง");
         verify(tableRepository, never()).delete(any(RestaurantTable.class));
     }
 

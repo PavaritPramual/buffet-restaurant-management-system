@@ -84,6 +84,22 @@ class MenuCatalogIntegrationTest {
     }
 
     @Test
+    void deletingCategoryWithMenuItemsReturnsThaiErrorAndPreservesBothRecords() throws Exception {
+        MockHttpSession manager = login(UserRole.MANAGER);
+
+        mvc.perform(delete("/api/v1/menu-categories/" + category.getId()).session(manager))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value(
+                        "หมวดหมู่นี้ยังมีเมนูอยู่ กรุณาย้ายหรือเก็บเมนูออกก่อน"));
+
+        entities.flush();
+        entities.clear();
+        assertThat(categories.findById(category.getId())).isPresent();
+        assertThat(items.findById(item.getId())).isPresent();
+    }
+
+    @Test
     void managerCanCreateReadUpdateAndDeleteItemIncludingPackageLinksAndOptionalFields() throws Exception {
         MockHttpSession manager = login(UserRole.MANAGER);
         String body = mvc.perform(post("/api/v1/menu-items").session(manager)

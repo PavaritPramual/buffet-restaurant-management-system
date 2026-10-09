@@ -264,7 +264,7 @@ class OrderingIntegrationTest {
         mockMvc.perform(delete("/api/v1/menu-items/" + item.getId()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(
-                        "Cannot delete a menu item with order history; mark it unavailable instead"));
+                        "เมนูนี้มีประวัติการสั่งซื้อ จึงลบถาวรไม่ได้"));
 
         assertThat(itemRepository.existsById(item.getId())).isTrue();
         assertThat(orderRepository.count()).isOne();
