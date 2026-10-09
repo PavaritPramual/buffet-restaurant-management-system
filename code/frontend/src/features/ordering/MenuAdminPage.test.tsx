@@ -3,6 +3,8 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import MenuAdminPage from './MenuAdminPage'
 import * as api from './api'
+import * as managerApi from '../admin/manager-operations-api'
+vi.mock('../admin/manager-operations-api', () => ({ forceDeleteMenu: vi.fn() }))
 
 vi.mock('./api', async () => {
   const actual = await vi.importActual<typeof import('./api')>('./api')
@@ -30,6 +32,40 @@ function mockCatalog() {
 }
 
 describe('MenuAdminPage', () => {
+  it('requires a force-delete reason and removes the menu only after confirmation succeeds', async () => {
+    mockCatalog()
+    vi.mocked(api.getMenuItems).mockResolvedValueOnce({ content: [menuItem], page: 0, size: 10, totalElements: 1, totalPages: 1 })
+      .mockResolvedValue({ content: [], page: 0, size: 10, totalElements: 0, totalPages: 0 })
+    vi.mocked(managerApi.forceDeleteMenu).mockResolvedValue(undefined)
+    render(<MenuAdminPage />)
+    fireEvent.click(await screen.findByRole('button', { name: 'บังคับลบ' }))
+    const dialog = screen.getByRole('dialog')
+    expect((within(dialog).getByRole('button', { name: 'ยืนยันบังคับลบเมนู' }) as HTMLButtonElement).disabled).toBe(true)
+    expect(managerApi.forceDeleteMenu).not.toHaveBeenCalled()
+    fireEvent.change(within(dialog).getByLabelText('เหตุผลในการบังคับดำเนินการ'), { target: { value: '  ล้างข้อมูลทดสอบ  ' } })
+    fireEvent.click(within(dialog).getByRole('button', { name: 'ยืนยันบังคับลบเมนู' }))
+    await screen.findByText('บังคับลบเมนูออกแล้ว ประวัติออเดอร์เดิมยังคงอยู่')
+    expect(managerApi.forceDeleteMenu).toHaveBeenCalledExactlyOnceWith(10, 'ล้างข้อมูลทดสอบ')
+    expect(api.deleteMenuItem).not.toHaveBeenCalled()
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(screen.queryByText('ไก่ทอด')).toBeNull()
+  })
+
+  it('keeps a failed force-delete dialog and reason for retry, and cancel makes no second mutation', async () => {
+    mockCatalog()
+    vi.mocked(api.getMenuItems).mockResolvedValue({ content: [menuItem], page: 0, size: 10, totalElements: 1, totalPages: 1 })
+    vi.mocked(managerApi.forceDeleteMenu).mockRejectedValueOnce({ response: { data: { message: 'ไม่สามารถลบได้ในขณะนี้' } } })
+    render(<MenuAdminPage />)
+    fireEvent.click(await screen.findByRole('button', { name: 'บังคับลบ' }))
+    fireEvent.change(screen.getByLabelText('เหตุผลในการบังคับดำเนินการ'), { target: { value: 'ข้อมูลทดสอบ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันบังคับลบเมนู' }))
+    await waitFor(() => expect(within(screen.getByRole('dialog')).getByRole('alert').textContent).toBe('ไม่สามารถลบได้ในขณะนี้'))
+    expect((screen.getByLabelText('เหตุผลในการบังคับดำเนินการ') as HTMLInputElement).value).toBe('ข้อมูลทดสอบ')
+    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'ยกเลิก' }))
+    expect(managerApi.forceDeleteMenu).toHaveBeenCalledTimes(1)
+    expect(screen.getByText('ไก่ทอด')).toBeTruthy()
+  })
+
   it('resets pagination when sorting changes and sends the selected API sort', async () => {
     mockCatalog()
     vi.mocked(api.getMenuItems).mockResolvedValue({ content: [menuItem], page: 0, size: 10, totalElements: 11, totalPages: 2 })

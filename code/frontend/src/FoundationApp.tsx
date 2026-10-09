@@ -8,6 +8,7 @@ import MasterDataPage from './features/admin/MasterDataPage'
 import UsersPage from './features/admin/UsersPage'
 import CustomerOrderingPage from './features/ordering/CustomerOrderingPage'
 import MenuAdminPage from './features/ordering/MenuAdminPage'
+import ManagerSessionsPage from './features/admin/ManagerSessionsPage'
 import StaffTablesPage from './features/staff-tables/StaffTablesPage'
 import DiningSessionPage from './features/staff-tables/DiningSessionPage'
 import KitchenBoardPage from './features/fulfillment/KitchenBoardPage'
@@ -37,6 +38,7 @@ export default function FoundationApp() {
         <Route path="stock-items" element={<MasterDataPage key="stock" kind="stock" />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="menu" element={<MenuAdminPage />} />
+        <Route path="sessions" element={<ManagerSessionsPage />} />
       </Route>
     </Route>
     <Route path="*" element={<DesignSystemPage />} />

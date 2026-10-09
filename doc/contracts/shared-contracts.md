@@ -181,3 +181,7 @@ Entity ต้องใช้ `@Enumerated(EnumType.STRING)` เท่านั�
 - OrderStateResolver รับ non-null enum และคืน State; registry ตรวจครบและไม่ซ้ำตอน startup. เปลี่ยน registration ได้โดยไม่แก้ resolver; enum/API/UI workflow ใหม่ยังต้อง review ร่วม
 
 HTTP routes, public DTOs/enums และ cookie settings ไม่เปลี่ยน. Fixture Fulfillment ปรับ role ให้ตรง runtime: Kitchen เท่านั้นทำครัว และ Service Staff เท่านั้นเสิร์ฟ; Manager/Supervisor ใช้ทั้งสอง flow ไม่ได้
+
+### Manager force actions — 2026-10-09 extension
+
+เพิ่ม Manager-only routes และ DTO สำหรับบังคับปิดรอบกิน/บังคับลบเมนู พร้อมเหตุผลและ audit โดยใช้ enum CANCELLED เดิม เก็บประวัติ Order/Payment และปฏิเสธ QR/Order จากรอบที่ปิด เมนูที่ลบไม่แสดงใน catalog แต่คง referenced row ไว้ อ่าน [Manager force actions contract](manager-force-actions.md) สำหรับ V16/V17, authorization, locking, reviewer และ deployment/rollback gates

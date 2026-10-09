@@ -62,6 +62,9 @@ class PostgresOrderCloseConcurrencyTest {
     @Autowired private com.buffetrestaurant.service.PaymentService payments;
 
     @Autowired private com.buffetrestaurant.service.CustomerBillingService billing;
+    @Autowired private com.buffetrestaurant.service.ManagerOperationsService manager;
+    @Autowired private com.buffetrestaurant.repository.MenuItemRepository menus;
+    @MockitoBean private com.buffetrestaurant.service.UserContextProvider users;
     private String credential;
 
     @BeforeEach
@@ -79,6 +82,9 @@ class PostgresOrderCloseConcurrencyTest {
                 + "VALUES (990001,990001,'Race Item',true)");
         jdbc.update("INSERT INTO package_menu_items(package_id,menu_item_id) VALUES (990001,990001)");
         credential = customerAccess.exchange("race-qr").credential();
+        when(users.requireCurrentRequestRole(com.buffetrestaurant.domain.enums.UserRole.MANAGER))
+                .thenReturn(new com.buffetrestaurant.dto.response.UserContext(990001L, "race-manager", "Race Manager",
+                        com.buffetrestaurant.domain.enums.UserRole.MANAGER));
         when(paymentStatusLookup.findPaymentForSession(SESSION_ID)).thenReturn(
                 new PaymentStatusLookup.PaymentVerification(SESSION_ID, PaymentStatus.PAID));
     }
@@ -98,6 +104,7 @@ class PostgresOrderCloseConcurrencyTest {
         jdbc.update("DELETE FROM orders WHERE session_id = ?", SESSION_ID);
         jdbc.update("DELETE FROM customer_session_grants WHERE session_id = ?", SESSION_ID);
         jdbc.update("DELETE FROM payments WHERE session_id = ?", SESSION_ID);
+        jdbc.update("DELETE FROM manager_operations WHERE resource_id = ?", SESSION_ID);
         jdbc.update("DELETE FROM package_menu_items WHERE package_id = 990001");
         jdbc.update("DELETE FROM menu_items WHERE id = ?", MENU_ID);
         jdbc.update("DELETE FROM menu_categories WHERE id = 990001");
@@ -339,24 +346,119 @@ class PostgresOrderCloseConcurrencyTest {
         } finally { release.countDown(); executor.shutdownNow(); }
     }
 
+    @Test
+    void orderCommitsBeforeWaitingForceCloseAndHistoryIsPreserved() throws Exception {
+        CountDownLatch locked = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            var order = CompletableFuture.runAsync(() -> transactions.executeWithoutResult(status -> {
+                ordering.placeOrder(SESSION_ID, credential,
+                        new PlaceOrderRequest(List.of(new OrderItemRequest(MENU_ID, 2))));
+                locked.countDown(); await(release);
+            }), executor);
+            assertThat(locked.await(5, TimeUnit.SECONDS)).isTrue();
+            var close = CompletableFuture.runAsync(() -> manager.forceClose(SESSION_ID, "Reset test table"), executor);
+            waitForSessionLockWait();
+            release.countDown(); order.join(); close.join();
+            assertThat(jdbc.queryForObject("SELECT status FROM dining_sessions WHERE id=?", String.class, SESSION_ID)).isEqualTo("CANCELLED");
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM orders WHERE session_id=?", Integer.class, SESSION_ID)).isOne();
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM payments WHERE session_id=?", Integer.class, SESSION_ID)).isZero();
+        } finally { release.countDown(); executor.shutdownNow(); }
+    }
+
+    @Test
+    void forceCloseHoldingLockRejectsWaitingOrderAndRevokesGrant() throws Exception {
+        CountDownLatch locked = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            var close = CompletableFuture.runAsync(() -> transactions.executeWithoutResult(status -> {
+                manager.forceClose(SESSION_ID, "Reset test table");
+                locked.countDown(); await(release);
+            }), executor);
+            assertThat(locked.await(5, TimeUnit.SECONDS)).isTrue();
+            var order = CompletableFuture.supplyAsync(() -> {
+                try {
+                    ordering.placeOrder(SESSION_ID, credential,
+                            new PlaceOrderRequest(List.of(new OrderItemRequest(MENU_ID, 1))));
+                    return true;
+                } catch (UnauthorizedException | ResourceNotFoundException exception) { return false; }
+            }, executor);
+            waitForSessionLockWait();
+            release.countDown(); close.join();
+            assertThat(order.join()).isFalse();
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM orders WHERE session_id=?", Integer.class, SESSION_ID)).isZero();
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM customer_session_grants WHERE session_id=?", Integer.class, SESSION_ID)).isZero();
+        } finally { release.countDown(); executor.shutdownNow(); }
+    }
+
+    @Test
+    void forceDeleteHoldingMenuLockRejectsStaleCartAfterCommit() throws Exception {
+        CountDownLatch locked = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            var deletion = CompletableFuture.runAsync(() -> transactions.executeWithoutResult(status -> {
+                manager.forceDeleteMenu(MENU_ID, "Remove test food");
+                locked.countDown(); await(release);
+            }), executor);
+            assertThat(locked.await(5, TimeUnit.SECONDS)).isTrue();
+            var order = CompletableFuture.supplyAsync(() -> {
+                try {
+                    ordering.placeOrder(SESSION_ID, credential,
+                            new PlaceOrderRequest(List.of(new OrderItemRequest(MENU_ID, 1))));
+                    return true;
+                } catch (ResourceNotFoundException exception) { return false; }
+            }, executor);
+            waitForLockWait("menu_items", 1);
+            release.countDown(); deletion.join();
+            assertThat(order.join()).isFalse();
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM orders WHERE session_id=?", Integer.class, SESSION_ID)).isZero();
+        } finally { release.countDown(); executor.shutdownNow(); }
+    }
+
+    @Test
+    void orderHoldingMenuLockCommitsBeforeForceDeleteWithoutLosingItemHistory() throws Exception {
+        CountDownLatch locked = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            var order = CompletableFuture.runAsync(() -> transactions.executeWithoutResult(status -> {
+                menus.findByIdForUpdate(MENU_ID).orElseThrow();
+                locked.countDown(); await(release);
+                ordering.placeOrder(SESSION_ID, credential,
+                        new PlaceOrderRequest(List.of(new OrderItemRequest(MENU_ID, 2))));
+            }), executor);
+            assertThat(locked.await(5, TimeUnit.SECONDS)).isTrue();
+            var deletion = CompletableFuture.runAsync(() -> manager.forceDeleteMenu(MENU_ID, "Remove test food"), executor);
+            waitForLockWait("menu_items", 1);
+            release.countDown(); order.join(); deletion.join();
+            assertThat(jdbc.queryForObject("SELECT item_name FROM order_items WHERE menu_item_id=?", String.class, MENU_ID)).isEqualTo("Race Item");
+            assertThat(jdbc.queryForObject("SELECT deleted_at IS NOT NULL FROM menu_items WHERE id=?", Boolean.class, MENU_ID)).isTrue();
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM manager_operations WHERE resource_id=?", Integer.class, MENU_ID)).isOne();
+        } finally { release.countDown(); executor.shutdownNow(); }
+    }
+
     private void pay() {
         payments.pay(new com.buffetrestaurant.dto.request.CreatePaymentRequest(SESSION_ID,
                 com.buffetrestaurant.domain.enums.PaymentMethod.CASH));
     }
 
     private void waitForSessionLockWait() throws Exception { waitForSessionLockWait(1); }
-    private void waitForSessionLockWait(int minimum) throws Exception {
+    private void waitForSessionLockWait(int minimum) throws Exception { waitForLockWait("dining_sessions", minimum); }
+    private void waitForLockWait(String table, int minimum) throws Exception {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
         while (System.nanoTime() < deadline) {
             Integer blocked = jdbc.queryForObject(
                     "SELECT count(*) FROM pg_stat_activity WHERE datname = current_database() "
                     + "AND pid <> pg_backend_pid() AND state = 'active' AND wait_event_type = 'Lock' "
-                    + "AND query LIKE '%dining_sessions%'",
-                    Integer.class);
+                    + "AND query LIKE ?",
+                    Integer.class, "%" + table + "%");
             if (blocked != null && blocked >= minimum) return;
             Thread.sleep(25);
         }
-        throw new AssertionError("Worker did not reach the database session lock");
+        throw new AssertionError("Worker did not reach the database lock on " + table);
     }
 
     private static void await(CountDownLatch latch) {

@@ -52,9 +52,14 @@ public class CustomerOrderingServiceImpl implements CustomerOrderingService {
             }
         }
         CustomerOrder order = new CustomerOrder(sessionId, session.tableNumber());
+        // Serialize ordering against catalog removal; always acquire item locks in ID order.
+        Map<Long, MenuItem> lockedItems = new LinkedHashMap<>();
+        for (Long id : quantities.keySet().stream().sorted().toList()) {
+            lockedItems.put(id, menuItemRepository.findByIdForUpdate(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Menu item not found with id: " + id)));
+        }
         for (Map.Entry<Long, Integer> entry : quantities.entrySet()) {
-            MenuItem item = menuItemRepository.findById(entry.getKey())
-                    .orElseThrow(() -> new ResourceNotFoundException("Menu item not found with id: " + entry.getKey()));
+            MenuItem item = lockedItems.get(entry.getKey());
             if (!item.isAvailable()) throw new BusinessRuleException("Menu item is unavailable: " + item.getName());
             if (!item.getPackageIds().contains(session.packageId())) throw new BusinessRuleException("Menu item is not included in this package: " + item.getName());
             order.addItem(item.getId(), item.getName(), entry.getValue());

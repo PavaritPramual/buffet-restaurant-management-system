@@ -23,17 +23,23 @@ public class OrderFulfillmentServiceImpl implements OrderFulfillmentService {
     private final OrderingMapper mapper;
     private final OrderFulfillmentAccessProvider accessProvider;
     private final OrderStateResolver stateResolver;
+    private final com.buffetrestaurant.repository.DiningSessionRepository sessions;
+    private final jakarta.persistence.EntityManager entities;
 
     public OrderFulfillmentServiceImpl(
             CustomerOrderRepository orderRepository,
             OrderingMapper mapper,
             OrderFulfillmentAccessProvider accessProvider,
-            OrderStateResolver stateResolver
+            OrderStateResolver stateResolver,
+            com.buffetrestaurant.repository.DiningSessionRepository sessions,
+            jakarta.persistence.EntityManager entities
     ) {
         this.orderRepository = orderRepository;
         this.mapper = mapper;
         this.accessProvider = accessProvider;
         this.stateResolver = stateResolver;
+        this.sessions = sessions;
+        this.entities = entities;
     }
 
     @Override
@@ -59,6 +65,12 @@ public class OrderFulfillmentServiceImpl implements OrderFulfillmentService {
             accessProvider.requireKitchenAccess();
         }
         CustomerOrder order = findOrThrow(orderId);
+        sessions.findByIdForUpdate(order.getSessionId()).ifPresent(session -> {
+            entities.refresh(session, jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
+            if (session.getStatus() == com.buffetrestaurant.domain.enums.DiningSessionStatus.CANCELLED) {
+                throw new BusinessRuleException("รอบกินนี้ถูกบังคับปิดแล้ว ไม่สามารถดำเนินการออเดอร์ต่อได้");
+            }
+        });
         OrderState current = stateResolver.resolve(order.getStatus());
         OrderState next = current.next();
         if (next.status() != requestedStatus) {

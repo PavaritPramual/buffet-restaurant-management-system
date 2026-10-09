@@ -106,4 +106,9 @@ public class DiningSession {
     public void rotateQrToken(String nextToken) {
         this.sessionToken = nextToken;
     }
+
+    public void forceClose(LocalDateTime closedAt) {
+        this.status = DiningSessionStatus.CANCELLED;
+        this.endTime = closedAt;
+    }
 }

@@ -1,0 +1,22 @@
+{
+  "environment": "isolated in-memory H2",
+  "httpMocks": false,
+  "fixturePreparation": "native HTTP API",
+  "browserActions": "CUA browser: customer QR/order, normal delete blocked, force delete with reason, stale cart rejected, force close unpaid with reason, old customer cookie revoked after reload",
+  "apiAssertions": {
+    "cancelled": "CANCELLED",
+    "table": "AVAILABLE before reopening",
+    "payment": "404; no fabricated payment",
+    "currentUnredeemedQr": "404 after forced closure",
+    "incomingOrders": 0,
+    "cancelledFulfillment": "400",
+    "deletedMenu": "404",
+    "auditActions": [
+      "FORCE_CLOSE_SESSION",
+      "FORCE_DELETE_MENU"
+    ],
+    "otherStaffRoles": "403 for both force endpoints",
+    "reopenedSession": 2
+  },
+  "publicAcceptance": false
+}

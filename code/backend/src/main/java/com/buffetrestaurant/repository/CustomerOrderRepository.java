@@ -16,10 +16,16 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Lo
     Optional<CustomerOrder> findByIdAndSessionId(Long id, Long sessionId);
 
     @EntityGraph(attributePaths = "items")
-    List<CustomerOrder> findByStatusInOrderByCreatedAtAsc(Collection<OrderStatus> statuses);
+    @org.springframework.data.jpa.repository.Query("select o from CustomerOrder o where o.status in :statuses "
+            + "and not exists (select s.id from DiningSession s where s.id = o.sessionId "
+            + "and s.status = com.buffetrestaurant.domain.enums.DiningSessionStatus.CANCELLED) order by o.createdAt asc")
+    List<CustomerOrder> findByStatusInOrderByCreatedAtAsc(@org.springframework.data.repository.query.Param("statuses") Collection<OrderStatus> statuses);
 
     @EntityGraph(attributePaths = "items")
-    List<CustomerOrder> findByStatusOrderByCreatedAtAsc(OrderStatus status);
+    @org.springframework.data.jpa.repository.Query("select o from CustomerOrder o where o.status = :status "
+            + "and not exists (select s.id from DiningSession s where s.id = o.sessionId "
+            + "and s.status = com.buffetrestaurant.domain.enums.DiningSessionStatus.CANCELLED) order by o.createdAt asc")
+    List<CustomerOrder> findByStatusOrderByCreatedAtAsc(@org.springframework.data.repository.query.Param("status") OrderStatus status);
 
     @Override
     @EntityGraph(attributePaths = "items")

@@ -37,6 +37,9 @@ public class MenuItem {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
+    @Column(name = "deleted_at")
+    private java.time.OffsetDateTime deletedAt;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "package_menu_items", joinColumns = @JoinColumn(name = "menu_item_id"))
     @Column(name = "package_id", nullable = false)
@@ -68,6 +71,12 @@ public class MenuItem {
     public boolean isAvailable() { return available; }
     public void setAvailable(boolean available) { this.available = available; }
     public String getImageUrl() { return imageUrl; }
+    public java.time.OffsetDateTime getDeletedAt() { return deletedAt; }
+    public void removeFromCatalog(java.time.OffsetDateTime now) {
+        this.deletedAt = now;
+        this.available = false;
+        this.packageIds.clear();
+    }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public Set<Long> getPackageIds() { return packageIds; }
     public void setPackageIds(Set<Long> packageIds) { this.packageIds = new LinkedHashSet<>(packageIds); }

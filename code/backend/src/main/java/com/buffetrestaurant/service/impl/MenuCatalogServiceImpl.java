@@ -94,7 +94,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
         Sort.Direction direction = Sort.Direction.fromString(directionValue);
         Sort ordering = Sort.by(direction, field);
         if (!"id".equals(field)) ordering = ordering.and(Sort.by("id"));
-        Page<MenuItem> result = itemRepository.findAll(PageRequest.of(page, size, ordering));
+        Page<MenuItem> result = itemRepository.findByDeletedAtIsNull(PageRequest.of(page, size, ordering));
         return new PageResponse<>(result.getContent().stream().map(mapper::toResponse).toList(),
                 result.getNumber(), result.getSize(), result.getTotalElements(), result.getTotalPages());
     }
@@ -105,7 +105,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
     public MenuItemResponse createMenuItem(MenuItemRequest request) {
         adminAccessProvider.requireMenuWriteAccess();
         String name = request.name().trim();
-        if (itemRepository.existsByNameIgnoreCase(name)) throw new DuplicateResourceException("Menu item already exists: " + name);
+        if (itemRepository.existsByNameIgnoreCaseAndDeletedAtIsNull(name)) throw new DuplicateResourceException("Menu item already exists: " + name);
         requirePackages(request.packageIds());
         MenuItem item = new MenuItem(requireCategory(request.categoryId()), name, clean(request.description()),
                 request.available(), clean(request.imageUrl()), request.packageIds());
@@ -115,9 +115,9 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
     @Transactional
     public MenuItemResponse updateMenuItem(Long id, MenuItemRequest request) {
         adminAccessProvider.requireMenuWriteAccess();
-        MenuItem item = requireItem(id);
+        MenuItem item = requireItemForUpdate(id);
         String name = request.name().trim();
-        if (itemRepository.existsByNameIgnoreCaseAndIdNot(name, id)) throw new DuplicateResourceException("Menu item already exists: " + name);
+        if (itemRepository.existsByNameIgnoreCaseAndIdNotAndDeletedAtIsNull(name, id)) throw new DuplicateResourceException("Menu item already exists: " + name);
         requirePackages(request.packageIds());
         item.setCategory(requireCategory(request.categoryId()));
         item.setName(name);
@@ -131,7 +131,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
     @Transactional
     public void deleteMenuItem(Long id) {
         adminAccessProvider.requireMenuWriteAccess();
-        MenuItem item = requireItem(id);
+        MenuItem item = requireItemForUpdate(id);
         if (orderItemRepository.existsByMenuItemId(id)) {
             throw new BusinessRuleException("Cannot delete a menu item with order history; mark it unavailable instead");
         }
@@ -143,7 +143,11 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
     }
 
     private MenuItem requireItem(Long id) {
-        return itemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Menu item not found with id: " + id));
+        return itemRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new ResourceNotFoundException("Menu item not found with id: " + id));
+    }
+
+    private MenuItem requireItemForUpdate(Long id) {
+        return itemRepository.findByIdForUpdate(id).orElseThrow(() -> new ResourceNotFoundException("Menu item not found with id: " + id));
     }
 
     private void requirePackages(Set<Long> packageIds) {

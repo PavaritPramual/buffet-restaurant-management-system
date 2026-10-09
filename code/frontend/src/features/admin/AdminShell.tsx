@@ -103,6 +103,7 @@ export default function AdminShell() {
         {user.role === 'MANAGER' && <><NavLink to="/admin/tables">โต๊ะ</NavLink><NavLink to="/admin/packages">แพ็กเกจ</NavLink><NavLink to="/admin/soups">น้ำซุป</NavLink><NavLink to="/admin/stock-items">รายการสต็อก</NavLink></>}
         {user.role === 'MANAGER' && <NavLink to="/admin/users">พนักงาน</NavLink>}
         {user.role === 'MANAGER' && <NavLink to="/admin/menu">เมนูอาหาร</NavLink>}
+        {user.role === 'MANAGER' && <NavLink to="/admin/sessions">จัดการรอบกิน</NavLink>}
       </nav>
       {logoutError && <p className="admin-error" role="alert">ออกจากระบบไม่สำเร็จ: {logoutError}</p>}
       <div className="admin-sidebar-user">

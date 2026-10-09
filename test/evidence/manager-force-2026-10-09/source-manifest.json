@@ -1,0 +1,124 @@
+{
+  "baseCommit": "a6da906bfb7d3c2d7a9bb3e8b5601a7886219bcc",
+  "branch": "codex/manager-force-actions",
+  "capturedAt": "2026-10-09T07:43:06.5984717Z",
+  "sourceEncoding": "UTF-8 without BOM, CRLF normalized to LF",
+  "files": [
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/ManagerOperationsController.java",
+      "sha256": "a005e75ab8fadd997a8e80a1b726936ae484f7d8ebf30dd28841e4fd6b2985cb"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/DiningSession.java",
+      "sha256": "ba3bc3c55ae17c5a8f6130453b15bfe6e4c38b86989a5c4b542b87196e121d22"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/ManagerOperation.java",
+      "sha256": "415c300f0f02512fb3529b8ce0fd336d7323119ca01fa36c96337d4b869b8312"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/MenuItem.java",
+      "sha256": "aae40cc0b7b2301b6285da16e60a11d75347496de9645901ffff22325b04cf7a"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/dto/request/ForceOperationRequest.java",
+      "sha256": "03e3c907c814584b7de6ce46b7534c8007c28aeda4a61def1209f6b4f3f3243f"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/dto/response/ManagerDiningSessionResponse.java",
+      "sha256": "9d35fefe12ecd6633cf9702a66a6959bfda21dc0a5ba7d9cba48d186f24b812e"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/repository/CustomerOrderRepository.java",
+      "sha256": "81f23605843d27ec73f04b7fe2dd7217179072909c9ad4aea65a87f1bf1c15dd"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/repository/ManagerOperationRepository.java",
+      "sha256": "8afe422f5c792087c0653e971b5f0b2312fa20475f6bc62c791afdb593f8f7c6"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/repository/MenuItemRepository.java",
+      "sha256": "aa6af49f372b753723c648cbde36bfb028d97827319e1b3894fee1737bb53bea"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerOrderingServiceImpl.java",
+      "sha256": "c78634cc2e79b2a214dc86aa9ca32fc65f480910ce2f167e19f8cfa21da45f5c"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/MenuCatalogServiceImpl.java",
+      "sha256": "3717461ce778814dd8f8388422216275a93970ff4d759e06c7c0419a81e6a2e3"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/OrderFulfillmentServiceImpl.java",
+      "sha256": "52ff261b5bbefc5d616de84cbc81dc345bf3faf032cc713e61ed111ca97284f1"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/ManagerOperationsService.java",
+      "sha256": "48a346c638bdfe0d7d1049c368dac464090ef509f459f4c9a858739059fabbd3"
+    },
+    {
+      "path": "code/backend/src/main/resources/db/migration/common/V16__add_manager_force_operations.sql",
+      "sha256": "54e9da2afa7d1264e81c77873b765da4d21cdc4f90ddaeb381e6293c0783b4ad"
+    },
+    {
+      "path": "code/backend/src/main/resources/db/migration/postgresql/V17__restrict_manager_operation_audit_access.sql",
+      "sha256": "6826a32ba448f8c3fed573a51724349d33fa0cb4e7ca234e39615bed0c089e6b"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/ManagerOperationsIntegrationTest.java",
+      "sha256": "f411870c8c32e45b948cb6fe677821f128bf35ba2604e74d61a6fa5e4633b129"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/MenuOrderingMigrationTest.java",
+      "sha256": "8f75e6d4dc27cb0193011c90751caa85169d7578bd886b01dac7b49fb3ea18a1"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/PostgresMenuOrderingMigrationTest.java",
+      "sha256": "20b24cf0fdccc73780cda5420894e703113f4a345fd36a22922d65366186b783"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/PostgresOrderCloseConcurrencyTest.java",
+      "sha256": "d1c99fbdf2d61b3edd6fa7b073ccc097c5fa40b5dccd21b4c388588cc4dad37b"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/service/OrderFulfillmentServiceTest.java",
+      "sha256": "2f128bbefc0fab35192f206114559b837ee68abbad98cb4a559704508f028290"
+    },
+    {
+      "path": "code/frontend/src/features/admin/AdminShell.tsx",
+      "sha256": "f33dcd78ae5e2ed8afed1bcc55b39505de31cd87604b0d451872375f1091dba8"
+    },
+    {
+      "path": "code/frontend/src/features/admin/ForceActionDialog.tsx",
+      "sha256": "0e04691232241d097d68dc1e75efc75600af3870a5a915da320d09a6f5387310"
+    },
+    {
+      "path": "code/frontend/src/features/admin/manager-operations-api.ts",
+      "sha256": "961d0ac9ee5dc09116ed329d74858512a6ce6f98b8d4d4ab01dafd5d1449d330"
+    },
+    {
+      "path": "code/frontend/src/features/admin/manager-operations.css",
+      "sha256": "c539f13e32763003e85aa4cebfe72393492576636476ca5fee3cabecd09c5a75"
+    },
+    {
+      "path": "code/frontend/src/features/admin/ManagerSessionsPage.test.tsx",
+      "sha256": "6c57f667e2f0da59c904c763fb24663de68bda9cacad6f3243455f7cad3c6637"
+    },
+    {
+      "path": "code/frontend/src/features/admin/ManagerSessionsPage.tsx",
+      "sha256": "05043242b949ee2b0ab0cad45ea6b2b561ecd35b753b5a3111ed99583b0833d7"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/MenuAdminPage.test.tsx",
+      "sha256": "413e9e96a828da9faaf18ffc0be74f14ef58a8be67485259fa36ec0658cebf62"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/MenuAdminPage.tsx",
+      "sha256": "ea169026b044160ce62c7e05ff98a80b22c30b88e286ff7a61da2d0d84700bde"
+    },
+    {
+      "path": "code/frontend/src/FoundationApp.tsx",
+      "sha256": "fd5f47058b6b70eeaa54c19cf46ef0c43362a68c6145bf9bba48333df34747fa"
+    }
+  ]
+}

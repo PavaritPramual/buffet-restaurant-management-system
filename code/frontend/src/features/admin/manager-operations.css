@@ -1,0 +1,4 @@
+.manager-operations-page { display: grid; gap: 24px; min-width: 0; }
+.manager-session-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px; }
+.manager-session-cards h3 { margin-top: 0; }
+.manager-operations-page td { overflow-wrap: anywhere; max-width: 300px; }

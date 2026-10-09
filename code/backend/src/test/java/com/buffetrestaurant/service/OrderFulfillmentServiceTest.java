@@ -43,7 +43,9 @@ class OrderFulfillmentServiceTest {
                         com.buffetrestaurant.service.state.ReceivedState.INSTANCE,
                         com.buffetrestaurant.service.state.PreparingState.INSTANCE,
                         com.buffetrestaurant.service.state.ReadyState.INSTANCE,
-                        com.buffetrestaurant.service.state.ServedState.INSTANCE)));
+                        com.buffetrestaurant.service.state.ServedState.INSTANCE)),
+                org.mockito.Mockito.mock(com.buffetrestaurant.repository.DiningSessionRepository.class),
+                org.mockito.Mockito.mock(jakarta.persistence.EntityManager.class));
     }
 
     private CustomerOrder orderWithStatus(Long id, OrderStatus status) {
