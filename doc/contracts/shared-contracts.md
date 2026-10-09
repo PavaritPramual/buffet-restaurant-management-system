@@ -30,6 +30,17 @@ Owner: ปวริศช์ — Table & Dining Session
 
 Customer response มีเพียง `sessionId`, `packageId`, `tableNumber`, `sessionStatus`; ไม่ส่ง `sessionToken`, ราคา snapshot หรือข้อมูล Billing คำขอเมนู/ออเดอร์ต้องมี cookie ของ session เดียวกันที่ยัง `ACTIVE` และคำขอเขียนต้องผ่าน Origin check การปิดรอบเพิกถอน credentials ทั้งหมด
 
+### Staff DiningSessionResponse — U02
+
+Staff endpoints `POST /dining-sessions`, `GET /dining-sessions/{id}`, `GET /dining-sessions/active` และ `POST /dining-sessions/{id}/close` เพิ่มสอง field ต่อไปนี้ โดยรักษา field เดิมทุกตัว
+
+| Field | JSON type | Nullable | Notes |
+|---|---|---|---|
+| `packageName` | string | No | ชื่อปัจจุบันของแพ็กเกจผ่าน JPA relationship รวมรายการ inactive และรอบที่ปิดแล้ว |
+| `soupName` | string | No | ชื่อปัจจุบันของน้ำซุปผ่าน JPA relationship รวมรายการ inactive และรอบที่ปิดแล้ว |
+
+Mapper อ่านชื่อภายใน transaction ของ DiningSession service เดิม หน้า Staff ไม่เรียก Catalog API เพิ่มเพื่อประกอบชื่อ ชื่อไม่ใช่ snapshot: การเปลี่ยนชื่อข้อมูลหลักเปลี่ยนชื่อที่แสดงในรอบเก่าด้วย แต่ราคา Billing ยังคงอ่าน `packagePriceAtOpen` ผ่าน reader เดิม ไม่เพิ่มชื่อให้ Customer DTO หรือ SessionContext ของ Ordering ไม่เปลี่ยน ERD, migration, สิทธิ์, QR/cookie หรือกฎ Payment/close
+
 ## OrderFulfillmentContext
 
 Owner: ศิระพัทธ์ (Order data) / ศรัณย์ (fulfillment contract review)

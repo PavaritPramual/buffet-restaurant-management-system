@@ -23,6 +23,7 @@ function renderStaff() {
 
 const context = {
   sessionId: 32, sessionToken: 'demo-token', packageId: 5, tableId: 7, tableNumber: 'T07', soupId: 2,
+  packageName: 'บุฟเฟต์มาตรฐาน', soupName: 'น้ำซุปต้มยำ',
   sessionStatus: 'ACTIVE' as const, adultCount: 2, childCount: 1, startTime: '2026-09-26T10:00:00+07:00', endTime: null,
 }
 
@@ -43,6 +44,8 @@ describe('Staff table flow', () => {
       tableId: 7, packageId: 5, soupId: 2, adultCount: 1, childCount: 0,
     }))
     expect(await screen.findByText('QR สำหรับลูกค้า')).toBeTruthy()
+    expect(screen.getByText('แพ็กเกจ บุฟเฟต์มาตรฐาน · น้ำซุป น้ำซุปต้มยำ')).toBeTruthy()
+    expect(screen.queryByText('แพ็กเกจ #5 · น้ำซุป #2')).toBeNull()
     expect(container.querySelector('svg title')?.textContent).toBe('QR โต๊ะ T07')
     expect(screen.getByRole('link').getAttribute('href')).toContain('/customer/qr#token=demo-token')
   })
@@ -83,7 +86,25 @@ describe('Staff table flow', () => {
     </Routes></MemoryRouter>)
 
     expect(await screen.findByText('รอบกินนี้ปิดแล้ว QR จึงใช้ไม่ได้')).toBeTruthy()
+    expect(screen.getByText('แพ็กเกจ บุฟเฟต์มาตรฐาน · น้ำซุป น้ำซุปต้มยำ')).toBeTruthy()
+    expect(api.getPackages).not.toHaveBeenCalled()
+    expect(api.getSoups).not.toHaveBeenCalled()
     expect(screen.queryByRole('link')).toBeNull()
     expect(document.querySelector('svg title')).toBeNull()
+  })
+
+  it('shows loading then the detail error without fetching catalog names', async () => {
+    let rejectRequest!: (error: Error) => void
+    vi.mocked(api.getDiningSession).mockReturnValue(new Promise((_, reject) => { rejectRequest = reject }))
+    render(<MemoryRouter initialEntries={['/staff/sessions/32']}><Routes>
+      <Route path="/staff/sessions/:sessionId" element={<DiningSessionPage />} />
+    </Routes></MemoryRouter>)
+
+    expect(screen.getByText('กำลังโหลดรายละเอียดรอบกิน…')).toBeTruthy()
+    rejectRequest(new Error('ไม่สามารถโหลดรายละเอียดรอบกินได้'))
+    expect((await screen.findByRole('alert')).textContent).toContain('ไม่สามารถโหลดรายละเอียดรอบกินได้')
+    expect(screen.queryByText('แพ็กเกจ บุฟเฟต์มาตรฐาน · น้ำซุป น้ำซุปต้มยำ')).toBeNull()
+    expect(api.getPackages).not.toHaveBeenCalled()
+    expect(api.getSoups).not.toHaveBeenCalled()
   })
 })

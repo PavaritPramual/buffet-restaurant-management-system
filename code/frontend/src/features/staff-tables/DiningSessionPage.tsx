@@ -61,7 +61,7 @@ export default function DiningSessionPage() {
         <Card className="staff-session-summary">
           <div className="staff-table-card-heading"><div><small>โต๊ะ</small><h2>{session.tableNumber}</h2></div><StatusBadge tone={session.sessionStatus === 'ACTIVE' ? 'info' : 'neutral'}>{session.sessionStatus === 'ACTIVE' ? 'กำลังใช้งาน' : 'ปิดรอบแล้ว'}</StatusBadge></div>
           <dl><div><dt>ผู้ใหญ่</dt><dd>{session.adultCount} คน</dd></div><div><dt>เด็ก</dt><dd>{session.childCount} คน</dd></div><div><dt>เริ่มรอบ</dt><dd>{new Date(session.startTime).toLocaleString('th-TH')}</dd></div></dl>
-          <p>แพ็กเกจ #{session.packageId} · น้ำซุป #{session.soupId}</p>
+          <p>แพ็กเกจ {session.packageName} · น้ำซุป {session.soupName}</p>
           {session.sessionStatus === 'ACTIVE' && (
             <>
               <Button

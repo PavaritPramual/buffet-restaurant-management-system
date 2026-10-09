@@ -23,6 +23,12 @@ public record DiningSessionResponse(
         OffsetDateTime endTime,
         @Schema(description = "ISO-8601 UTC timestamp; null until requested", example = "2026-10-07T07:45:00Z",
                 nullable = true)
-        OffsetDateTime billRequestedAt
+        OffsetDateTime billRequestedAt,
+        @Schema(description = "Current package display name, not a name snapshot; billing uses the price at open.",
+                example = "บุฟเฟต์มาตรฐาน", accessMode = Schema.AccessMode.READ_ONLY)
+        String packageName,
+        @Schema(description = "Current soup display name, including inactive catalog entries.",
+                example = "น้ำซุปใส", accessMode = Schema.AccessMode.READ_ONLY)
+        String soupName
 ) {
 }

@@ -1,5 +1,9 @@
 # Diagram index — ครบตามใบงานข้อ 9.1
 
+## U02 — Staff display names (9 October 2026)
+
+Reviewed against `develop` baseline `96da8ea7560225f9037ac9be2debfd496802ab57` plus the U02 patch. Staff `DiningSessionResponse` adds `packageName` and `soupName` as current catalog display names; [shared contract](../contracts/shared-contracts.md#staff-diningsessionresponse--u02) defines their semantics. Class/sequence diagrams reference the response type without enumerating DTO fields, so their source and SVG remain valid and unchanged. ERD, JPA associations, transactions/locks, actors, QR/customer credential separation and Billing price snapshot are unchanged. This review does not certify public deployment or the future R01 deletion design.
+
 สำหรับ production topology ที่แยกผล public HTTP จริงออกจาก configuration และระบุข้อจำกัดของ deployed SHA ดู [Deployment runtime diagram (Mermaid)](deployment-production-runtime.md). ภาพ PlantUML `deployment-production-design.puml` ด้านล่างยังเป็น design เดิม ไม่ใช่ใบรับรอง release.
 
 ชุดเดิมหลัง architecture refactor `de7b5d546a05ad3ccef8c641ee5c53d638a8e039` มี **23 diagram รายละเอียด และ5ภาพย่อสำหรับนำเสนอ**; PR #24/#25 ผ่าน review/merge แล้ว และ PR #26 ปรับ State resolver sources/previews เพิ่ม ทุกภาพมี PlantUML source/SVG ภาพ public deployment เป็น design เท่านั้น ไม่ใช้จำนวนไฟล์รับรอง public หรือ Final

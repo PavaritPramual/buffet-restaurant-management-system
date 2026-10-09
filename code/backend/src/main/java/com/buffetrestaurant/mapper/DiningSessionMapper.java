@@ -21,7 +21,9 @@ public class DiningSessionMapper {
                 diningSession.getChildCount(),
                 asUtcOffset(diningSession.getStartTime()),
                 diningSession.getEndTime() == null ? null : asUtcOffset(diningSession.getEndTime()),
-                diningSession.getBillRequestedAt()
+                diningSession.getBillRequestedAt(),
+                diningSession.getBuffetPackage().getName(),
+                diningSession.getSoup().getName()
         );
     }
 
