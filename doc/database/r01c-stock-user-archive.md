@@ -59,4 +59,6 @@
 | Backend `./mvnw.cmd test` | H2 | 359 tests, 0 fail, 0 error, 25 skipped (ชุด Postgres ข้ามเพราะไม่ตั้ง env) |
 | `StockUserArchiveIntegrationTest` | H2 | 9/9 ผ่าน (ลบจริง, เก็บออก, legacy qty>0, RBAC/forged header, revoke session/login, actor name คงอยู่, self guard, last-Manager) |
 | Frontend lint/build/test | - | lint ผ่าน (warning เดิม), build ผ่าน, 130/130 tests |
-| PostgreSQL (`Postgres*MigrationTest`, `PostgresStockSecurityIntegrationTest`) | PostgreSQL | **ยังไม่ได้รันในเครื่อง** (Docker daemon ไม่ทำงาน) ต้องรันด้วย `MENU_TEST_PG_URL`, `*_PG_USER/PASSWORD`, `ALLOW_DESTRUCTIVE_DB_TESTS=true` ก่อน merge โดย ปวริศช์/CI |
+| `PostgresStockUserArchiveIntegrationTest` (ชุดเดียวกับ H2 9 เคส) | PostgreSQL 16 (Testcontainers) | 9/9 ผ่าน (apply V16 บน PostgreSQL จริง) |
+| `PostgresStockProfileMigrationTest`, `PostgresStockSecurityIntegrationTest` | PostgreSQL 16 (Testcontainers) | 1/1 และ 2/2 ผ่าน |
+| `PostgresMenuOrderingMigrationTest` | PostgreSQL 16 (container ชั่วคราว `buffet_test_*`) | 1/1 ผ่าน (รายการเวอร์ชันมี 16) |
