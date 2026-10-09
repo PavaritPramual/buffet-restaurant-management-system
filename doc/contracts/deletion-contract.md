@@ -1,6 +1,6 @@
 # Resource Removal and History Contract
 
-**Status:** Proposed shared contract for owner review; not yet implemented or accepted by module owners.
+**Status:** Shared contract reviewed and approved by Pavarit on 2026-10-09 in [PR #41](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/41). This approves the contract baseline, not any resource implementation, schema/FK design, migration, or public acceptance.
 **Scope:** U03 user-facing errors and R01 removal/archive semantics. This contract does not authorize a schema migration or production-data operation.
 
 ## Rules
@@ -60,13 +60,19 @@ The `DELETE` action's user-visible success must say that the item was removed fr
 - Reject self-close. Serialize last-Manager validation and account closure in one transaction by locking active Manager rows in deterministic ID order before counting/updating; concurrent closures must not leave zero active Managers. Restore does not bypass the explicit activation flow.
 - Foreign keys from orders, order items, bills, payments, dining sessions, stock transactions, and actor/user audit references must use `ON DELETE RESTRICT`/`NO ACTION`, never `CASCADE` or `SET NULL`. Service-level existence checks are an early user-facing guard only; database constraints are the race-safe authority.
 - Map FK constraint violations during hard-delete to `409 ErrorResponse` and roll back the whole transaction with no partial mutation. Keep unique/other integrity conflicts distinguishable where needed.
-- Entity owners and Methus must inventory and attest the actual FK actions before implementation. Pavarit will review the FK inventory and allocate the migration version; do not edit applied migrations or apply to the shared database before explicit approval.
+- Entity owners and Methus must inventory and attest the actual FK actions before implementation. Methus inspects history/FK state and prepares the forward-migration proposal; Pavarit reviews the FK inventory, allocates the Flyway version, and approves before any shared-database application. Do not edit applied migrations or apply to the shared database before explicit approval.
 
 Existing `active`/`available` filters continue to describe temporary service availability, not archive status. Archive reads use a distinct route so archived records cannot leak into customer/staff operational lists by accidentally omitting a filter.
 
+### Owner decisions required before implementation
+
+- For every unique business key (including table number, category/package/soup/stock-item names, and username/email), the Entity owner must specify whether archived rows continue reserving the value or whether reuse is allowed. If reuse is allowed, document the index strategy and ensure a restore collision returns `409 ErrorResponse` with no mutation. Do not introduce partial unique indexes without owner and migration review.
+- Restore of a menu item is allowed only when its parent category is not archived. Archiving a menu item retains its package links and history; it must not be orderable while archived. Restore must not silently restore or recreate related resources.
+- Define stable domain error identifiers for new archive, restore, authorization, and conflict cases; do not derive localized copy by parsing arbitrary exception text. Keep `ErrorResponse` fields and the reviewed legacy U03 status behavior.
+
 ## U03 message requirements
 
-Messages are selected from stable domain error identifiers/types, not by matching or translating arbitrary English exception strings. Keep the existing response fields (`timestamp`, `status`, `error`, `message`, `path`) and established HTTP status.
+New error messages must be selected from stable domain error identifiers/types, not by matching or translating arbitrary English exception strings. The U03 copy in this change is centralized in `UserFacingMessages`; new archive errors should use stable identifiers. Keep the existing response fields (`timestamp`, `status`, `error`, `message`, `path`) and established HTTP status.
 
 | Situation | Thai `message` copy | Status/body |
 |---|---|---|
@@ -86,8 +92,8 @@ Validation errors continue to use the shared `ErrorResponse`; translate only the
 Before implementation, each Entity owner must confirm whether history/FK references exist, the archive DTO fields, main/archive filtering, and restore preconditions. If an archive field is needed:
 
 1. Entity owner records the exact field/behavior delta.
-2. Methus inspects actual history and allocates a new forward-only migration version.
+2. Methus inspects actual history/FK state and prepares a forward-only migration proposal; Pavarit allocates its version and approves it before application.
 3. Do not edit an applied migration or apply the change to the shared database before owner review and Pavarit approval.
-4. Add tests for hard-delete-with-no-history, archive-with-history, main/archive filtering, restore → activate/open session → repeat restore, authorization at controller and service layers, FK conflict/no-partial-write, and history preservation.
+4. The implementing owner adds executable tests for hard-delete-with-no-history, archive-with-history, main/archive filtering, restore → activate/open session → repeat restore, authorization at controller and service layers, FK conflict/no-partial-write, unique-key restore collisions, parent/child restore preconditions, and history preservation.
 
-Current code has no general archive state/list contract. Existing `active` flags and `DELETE` endpoints are not proof that these requirements are met. The current category delete guard checks all menu items regardless of availability. The current U03 error statuses remain compatibility behavior; R01 target conflicts are separately stated above. This document must be reviewed by Pavarit (business rules), Sirapat (UI/copy), and Methus (Auth/DB) before owner implementation.
+As of the PR #41 baseline, current code has no general archive state/list implementation. Existing `active` flags and `DELETE` endpoints are not proof that these requirements are met. The current category delete guard checks all menu items regardless of availability. The current U03 error statuses remain compatibility behavior; R01 target conflicts are separately stated above. The shared contract review is complete; Entity owners must now record resource-specific field/behavior deltas and obtain the required FK, schema, migration, and API/UI reviews before implementing their resources. Executable archive-contract tests and review of owner PRs remain pending until those implementations exist. This document does not certify public acceptance.
