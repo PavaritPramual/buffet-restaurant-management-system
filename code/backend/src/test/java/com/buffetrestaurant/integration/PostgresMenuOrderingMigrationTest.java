@@ -40,6 +40,11 @@ class PostgresMenuOrderingMigrationTest {
                     indexes.next();
                     assertThat(indexes.getInt(1)).as(table + " has no redundant working index").isZero();
                 }
+                // Inspect PUBLIC ACLs too; role_table_grants omits PUBLIC grants.
+                try (var grants = sql.executeQuery("SELECT count(*) FROM pg_class c CROSS JOIN LATERAL aclexplode(COALESCE(c.relacl,acldefault('r',c.relowner))) a LEFT JOIN pg_roles r ON r.oid=a.grantee WHERE c.oid='public." + table + "'::regclass AND (a.grantee=0 OR r.rolname IN ('anon','authenticated'))")) {
+                    grants.next();
+                    assertThat(grants.getInt(1)).as(table + " has no direct client or PUBLIC grants").isZero();
+                }
             }
             for (String table : new String[]{"menu_categories", "menu_items", "package_menu_items", "orders", "order_items"}) {
                 try (var row = sql.executeQuery("SELECT relrowsecurity FROM pg_class WHERE oid='public." + table + "'::regclass")) {

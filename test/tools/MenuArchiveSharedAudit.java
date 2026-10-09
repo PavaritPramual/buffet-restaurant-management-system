@@ -28,7 +28,7 @@ public class MenuArchiveSharedAudit {
                   'archiveColumns',(SELECT jsonb_agg(jsonb_build_object('table',table_name,'type',data_type,'nullable',is_nullable)) FROM information_schema.columns WHERE table_schema='public' AND table_name IN ('menu_items','menu_categories') AND column_name='archived_at'),
                   'rls',(SELECT jsonb_agg(jsonb_build_object('table',relname,'enabled',relrowsecurity)) FROM pg_class WHERE oid IN ('public.menu_items'::regclass,'public.menu_categories'::regclass)),
                   'backendUpdate',(SELECT jsonb_agg(jsonb_build_object('table',relname,'allowed',has_table_privilege(current_user,oid,'UPDATE')) ORDER BY relname) FROM pg_class WHERE oid IN ('public.menu_items'::regclass,'public.menu_categories'::regclass)),
-                  'clientGrants',(SELECT count(*) FROM information_schema.role_table_grants WHERE table_schema='public' AND table_name IN ('menu_items','menu_categories') AND grantee IN ('PUBLIC','anon','authenticated'))
+                  'clientGrants',(SELECT count(*) FROM pg_class c CROSS JOIN LATERAL aclexplode(COALESCE(c.relacl,acldefault('r',c.relowner))) a LEFT JOIN pg_roles r ON r.oid=a.grantee WHERE c.oid IN ('public.menu_items'::regclass,'public.menu_categories'::regclass) AND (a.grantee=0 OR r.rolname IN ('anon','authenticated')))
                 )
                 """;
             try(var statement=connection.createStatement(); var result=statement.executeQuery(query)){result.next();System.out.println(result.getString(1));}
