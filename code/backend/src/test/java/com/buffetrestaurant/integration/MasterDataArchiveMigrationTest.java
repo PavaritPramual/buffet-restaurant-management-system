@@ -16,7 +16,8 @@ class MasterDataArchiveMigrationTest {
             sql.execute("INSERT INTO soups(id,name,active) VALUES (1,'Legacy',true)");
             Flyway flyway=Flyway.configure().dataSource(url,"sa","").locations("classpath:db/migration/common","classpath:db/migration/h2").load();
             flyway.migrate(); flyway.validate();
-            assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("17");
+            assertThat(flyway.info().applied()).extracting(m -> m.getVersion().getVersion()).contains("17");
+            assertThat(flyway.info().pending()).isEmpty();
             for(String table:new String[]{"restaurant_tables","buffet_packages","soups"}) {
                 try(var rows=sql.executeQuery("SELECT archived FROM "+table+" WHERE id=1")) {
                     assertThat(rows.next()).isTrue(); assertThat(rows.getBoolean(1)).isFalse();

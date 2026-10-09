@@ -104,3 +104,23 @@ Diagram delta เป็น Mermaid ที่มี source ฝังใน Markdo
 Regression backend ใช้ MockMvc กับ Spring context, Controller/Service/Repository และ session login จริง: Manager สร้างสต็อกยอดศูนย์ผ่าน POST `/stock/items` → GET `/stock` เห็นรายการ → PUT metadata → PUT active=false → GET `/stock` ยังอ่านรายการเดิมได้ ตรวจ OpenAPI ที่สร้างจาก runtime ว่ามี GET `/stock`, POST `/stock/items` และไม่มี GET `/stock/items`. Frontend tests ตรวจ URL list และ reload หลัง create/active พร้อมรักษา mutation URLs
 
 การตรวจนี้ไม่ใช่ browser/public acceptance หรือการทวน full PostgreSQL suite รอบใหม่ ผลรอบเดิมยังเป็นประวัติ รอ CI บน head ที่ push และศิระพัทธ์ตรวจซ้ำ ไม่ apply V17 บน Supabase และไม่ merge เอง
+
+## แก้ข้อยืนยันก่อน merge จากเมธัส
+
+รีวิวบน `93309ba3662b28c245a28383d50e9a7f3eb45f8e` approve ส่วน SQL แบบมีเงื่อนไข ขอหลักฐาน CHECK PostgreSQL, การ map CHECK/FK เป็น409 และให้ tests ไม่ล้มเมื่อ V16/V18 รวม
+
+- เปลี่ยน H2/PostgreSQL MenuOrderingMigrationTest จาก containsExactly เป็น containsSubsequence ของ required baseline พร้อม validate/pending ว่าง รักษาลำดับและยอมรับ migration ที่เพิ่ม ไม่ลบ assertion เวอร์ชันเดิม
+- H2 archive upgrade test ตรวจ applied มีV17/pendingว่างแทนบังคับ current=17 เพื่อรองรับV18
+- เพิ่ม PostgresMasterDataArchiveMigrationTest ใช้ PostgreSQL16 container ใหม่ upgradeจากV15พร้อมlegacy rows ตรวจ defaults=false, CHECK ทั้งสาม, safe archive และ FK RESTRICT ข้อมูลคงอยู่เมื่อปฏิเสธ
+- Test-only HTTP probe เรียก JdbcTemplate กับฐาน PostgreSQLจริงแล้วส่ง exception ผ่าน GlobalExceptionHandler production เดิม CHECK SQLSTATE23514 และ FK23503 คืน ErrorResponse409 ไม่มี endpoint ใหม่ในแอปจริง และไม่ได้ใช้ probe เป็นหลักฐาน authentication
+- เอกสารยืนยัน V16 ต้องเข้าก่อนV17และห้ามapplyV17ฐานกลางก่อนV16 ไม่ใช้repair/outOfOrderข้าม gate ไม่เปลี่ยนไฟล์migrationหรือproduction source
+
+ผล 9 ตุลาคม 2026 Java21/Docker Desktop ปิด `.env` import ไม่เชื่อม Supabase:
+
+| Suite/คำสั่ง focused | ผล |
+|---|---|
+| `MenuOrderingMigrationTest,MasterDataArchiveMigrationTest,PostgresMasterDataArchiveMigrationTest,MasterDataRemovalIntegrationTest,EnumErrorResponseTest` | **16 passed, 0 failures/errors/skipped**; H2 tests และ PostgreSQL16 Testcontainers จริง |
+| `PostgresMenuOrderingMigrationTest,PostgresMasterDataRemovalConcurrencyTest` | **8 passed, 0 failures/errors/skipped**; PostgreSQL18.6 ใหม่บน loopback port15439, marked databases ตาม helper/CI SQL |
+| `MasterDataArchiveMigrationTest,PostgresMasterDataArchiveMigrationTest` หลังปรับ assertion current-version และเพิ่ม SQLSTATE | **2 passed, 0 failures/errors/skipped**; เป็น rerun ไม่บวกเป็น tests ใหม่ |
+
+รวม24กรณีไม่ซ้ำ รัน26ครั้งเพราะ rerun2. PostgreSQL18 มี warning เดิมว่า Flywayรุ่นนี้รับรองถึง17 จึงบันทึกแยกจาก PostgreSQL16 ที่ใช้ตรวจ CHECK; testsผ่านจริง. ไม่รันfrontendซ้ำเพราะแก้เฉพาะtests/docs ไม่มีruntime/API/DTO/UI/schema changes. ผลfrontend157และCIของ93309baเป็น baseline; รอCIheadใหม่และเมธัสตรวจหลักฐาน ไม่รับรองfullV1–V18/publicจากชุดนี้
