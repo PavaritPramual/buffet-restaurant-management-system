@@ -37,11 +37,16 @@ public class AuthService implements AuthenticationService, UserAdministrationSer
     @Transactional(readOnly = true)
     public UserContext authenticate(String username, String password) {
         UserAccount user = users.findByUsername(username)
-                .filter(UserAccount::isActive)
+                .filter(account -> account.isActive() && !account.isArchived())
                 .filter(account -> passwordEncoder.matches(password, account.getPasswordHash()))
                 .orElseThrow(InvalidCredentialsException::new);
         UserProfile profile = profiles.findByUserId(user.getId()).orElseThrow(InvalidCredentialsException::new);
         return new UserContext(user.getId(), user.getUsername(), profile.getDisplayName(), user.getRole());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isLoginAllowed(Long userId) {
+        return users.findById(userId).filter(account -> account.isActive() && !account.isArchived()).isPresent();
     }
 
     @Transactional
@@ -72,16 +77,17 @@ public class AuthService implements AuthenticationService, UserAdministrationSer
         return phone == null || phone.isBlank() ? null : phone.trim();
     }
 
-    private static UserResponse toResponse(UserAccount user, UserProfile profile) {
+    static UserResponse toResponse(UserAccount user, UserProfile profile) {
         return new UserResponse(user.getId(), user.getUsername(),
                 profile == null ? "" : profile.getDisplayName(), profile == null ? null : profile.getEmail(),
                 user.getRole(), profile == null ? null : profile.getFirstName(),
-                profile == null ? null : profile.getLastName(), profile == null ? null : profile.getPhoneNumber());
+                profile == null ? null : profile.getLastName(), profile == null ? null : profile.getPhoneNumber(),
+                user.isActive(), user.getArchivedAt());
     }
 
     @Transactional(readOnly = true)
     public List<UserResponse> listUsers() {
-        return users.findAllByOrderByUsernameAsc().stream().map(user -> {
+        return users.findAllByArchivedAtIsNullOrderByUsernameAsc().stream().map(user -> {
             UserProfile profile = profiles.findByUserId(user.getId()).orElse(null);
             return toResponse(user, profile);
         }).toList();

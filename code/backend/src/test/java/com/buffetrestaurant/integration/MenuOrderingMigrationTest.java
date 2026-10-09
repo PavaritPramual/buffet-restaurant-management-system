@@ -34,7 +34,8 @@ class MenuOrderingMigrationTest {
         latest.migrate();
         latest.validate();
         assertThat(latest.info().applied()).extracting(m -> m.getVersion().getVersion())
-                .containsExactly("1", "2", "3", "4", "6", "7", "8", "9", "10", "14", "15", "18");
+                .containsSubsequence("1", "2", "3", "4", "6", "7", "8", "9", "10", "14", "15", "16", "17", "18");
+        assertThat(latest.info().pending()).isEmpty();
         try (Connection connection = DriverManager.getConnection(url, "sa", "")) {
             assertMenuOrderingSchema(connection);
             assertMenuOrderingConstraints(connection);

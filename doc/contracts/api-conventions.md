@@ -131,7 +131,7 @@ YYYY-MM-DDTHH:mm:ss[.fraction]Z
 | Read (single) | `200 OK` | ถ้าไม่พบ resource → `404 Not Found` |
 | Read (list) | `200 OK` | คืน array ว่างถ้าไม่มีข้อมูล ไม่ใช่ 404 |
 | Update | `200 OK` พร้อมคืน resource ที่อัปเดตแล้ว | มาตรฐานเดียวของทีม — ทุก Module ต้องคืน resource ฉบับล่าสุดใน body เสมอ ห้ามคืน `204 No Content` สำหรับ Update |
-| Delete / archive | `204 No Content` | ข้อเสนอเรื่อง hard-delete เทียบกับ archive, archived-list, restore, repeat request และ safety conflicts อยู่ใน [draft deletion contract](deletion-contract.md); รอ owner review ก่อน implementation. ถ้าไม่พบ resource → `404 Not Found` |
+| Delete / archive | `204 No Content` | แนวทาง hard-delete, archive, archived-list, restore, repeat request และ safety conflicts อยู่ใน [shared deletion contract](deletion-contract.md) (approved baseline; implementation ต้องผ่าน resource-owner/schema/migration gates). ถ้าไม่พบ resource → `404 Not Found` |
 | Validation Error | `400 Bad Request` | ใช้ `ErrorResponse` ตามรูปแบบด้านล่าง |
 
 **Status code อื่นที่ใช้ร่วม:**

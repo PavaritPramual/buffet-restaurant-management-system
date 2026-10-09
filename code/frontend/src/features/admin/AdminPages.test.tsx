@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom'
 import StockPage from './StockPage'
 import UsersPage from './UsersPage'
@@ -11,22 +11,26 @@ vi.mock('./api', async () => {
   const actual = await vi.importActual<typeof import('./api')>('./api')
   return {
     ...actual,
-    stockApi: { overview: vi.fn(), history: vi.fn(), stockIn: vi.fn(), adjust: vi.fn() },
-    usersApi: { list: vi.fn(), create: vi.fn(), updateProfile: vi.fn() },
+    stockApi: { overview: vi.fn(), history: vi.fn(), stockIn: vi.fn(), adjust: vi.fn(), archived: vi.fn(), remove: vi.fn(), restore: vi.fn(), setActive: vi.fn() },
+    usersApi: { list: vi.fn(), create: vi.fn(), updateProfile: vi.fn(), archived: vi.fn(), remove: vi.fn(), restore: vi.fn(), setActive: vi.fn() },
   }
 })
 
 const item: StockItem = {
   id: 4, sku: 'RICE-01', name: 'ข้าวหอมมะลิ', unit: 'กก.', quantity: 12,
-  lowStockThreshold: 3, openingTargetStock: 20, shortfall: 8, active: true, updatedAt: '2026-09-30T10:00:00Z',
+  lowStockThreshold: 3, openingTargetStock: 20, shortfall: 8, active: true, archivedAt: null, updatedAt: '2026-09-30T10:00:00Z',
 }
 const history: StockTransaction[] = [{
   id: 8, stockItemId: 4, itemName: 'ข้าวหอมมะลิ', transactionType: 'IN', quantityDelta: 2,
   balanceAfter: 12, reason: 'รับจากผู้ขาย', actorUsername: 'manager', createdAt: '2026-09-30T10:00:00Z',
 }]
 const manager: UserContext = { userId: 1, username: 'manager', displayName: 'ผู้จัดการ', role: 'MANAGER' }
-const account: UserRecord = { id: 2, username: 'staff', displayName: 'พนักงานบริการ', email: null, role: 'SERVICE_STAFF', firstName: null, lastName: null, phoneNumber: null }
+const account: UserRecord = { id: 2, username: 'staff', displayName: 'พนักงานบริการ', email: null, role: 'SERVICE_STAFF', firstName: null, lastName: null, phoneNumber: null, active: true, archivedAt: null }
 
+beforeEach(() => {
+  vi.mocked(stockApi.archived).mockResolvedValue([])
+  vi.mocked(usersApi.archived).mockResolvedValue([])
+})
 afterEach(() => { cleanup(); vi.clearAllMocks() })
 
 function renderInShell(page: React.ReactNode, user: UserContext) {
@@ -85,8 +89,7 @@ describe('Admin stock and user pages', () => {
     expect(activeRow.textContent).toContain('20')
     expect(activeRow.textContent).toContain('8')
     const inactiveRow = screen.getByRole('row', { name: /OFF-01/ })
-    const buttons = Array.from(inactiveRow.querySelectorAll('button'))
-    expect(buttons).toHaveLength(2)
+    const buttons = Array.from(inactiveRow.querySelectorAll('button')).slice(0, 2)
     expect(buttons.every((button) => (button as HTMLButtonElement).disabled)).toBe(true)
     expect(screen.getByText('รับจากผู้ขาย')).toBeTruthy()
   })

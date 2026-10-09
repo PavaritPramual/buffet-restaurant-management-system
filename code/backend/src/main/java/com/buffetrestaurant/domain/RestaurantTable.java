@@ -28,6 +28,13 @@ public class RestaurantTable {
     @Column(name = "status", nullable = false, length = 20)
     private TableStatus status = TableStatus.AVAILABLE;
 
+    @Column(nullable = false)
+    private boolean archived;
+
+    public boolean isArchived() { return archived; }
+    public void archive() { archived = true; }
+    public void restore() { if (archived) { archived = false; status = TableStatus.AVAILABLE; } }
+
     public RestaurantTable() {
     }
 

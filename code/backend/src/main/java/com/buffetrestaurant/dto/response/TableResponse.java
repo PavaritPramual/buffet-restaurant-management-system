@@ -6,6 +6,10 @@ public record TableResponse(
         Long id,
         String tableNumber,
         Integer capacity,
-        TableStatus status
+        TableStatus status,
+        boolean archived
 ) {
+    public TableResponse(Long id, String tableNumber, Integer capacity, TableStatus status) {
+        this(id, tableNumber, capacity, status, false);
+    }
 }

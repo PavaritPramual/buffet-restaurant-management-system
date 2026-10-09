@@ -7,6 +7,7 @@ import com.buffetrestaurant.exception.AuthenticationRequiredException;
 import com.buffetrestaurant.exception.RoleAccessDeniedException;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -14,12 +15,32 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class SessionUserContextProviderTest {
-    private final UserContextProvider users = new SessionUserContextProvider();
+    private final AuthenticationService accounts = mock(AuthenticationService.class);
+    private final UserContextProvider users = new SessionUserContextProvider(accounts);
+
+    @BeforeEach
+    void accountsAreUsable() { when(accounts.isLoginAllowed(anyLong())).thenReturn(true); }
 
     @AfterEach
     void clearRequest() { RequestContextHolder.resetRequestAttributes(); }
+
+    @Test
+    void rejectsAndRevokesStaleSessionWhenAccountIsInactiveArchivedOrDeleted() {
+        when(accounts.isLoginAllowed(3L)).thenReturn(false);
+        var request = new MockHttpServletRequest();
+        request.getSession().setAttribute(UserSessionKeys.USER_CONTEXT_SESSION_KEY,
+                new UserContext(3L, "staff", "Staff", UserRole.MANAGER));
+        var session = (org.springframework.mock.web.MockHttpSession) request.getSession(false);
+        assertThatThrownBy(() -> users.requireAnyRole(request, UserRole.MANAGER))
+                .isInstanceOf(AuthenticationRequiredException.class);
+        assertThat(session.isInvalid()).isTrue();
+        assertThat(request.getSession(false)).isNull();
+    }
 
     static Stream<Object> malformedIdentities() {
         return Stream.of("not-an-identity",

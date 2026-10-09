@@ -84,8 +84,9 @@ class CatalogIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Standard Plus"));
 
-        mockMvc.perform(delete("/api/v1/buffet-packages/" + saved.getId()))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(patch("/api/v1/buffet-packages/" + saved.getId() + "/active")
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"active\":false}"))
+                .andExpect(status().isOk());
         assertThat(packageRepository.findById(saved.getId())).isPresent()
                 .get().extracting(BuffetPackage::isActive).isEqualTo(false);
 
@@ -97,8 +98,9 @@ class CatalogIntegrationTest {
     @Test
     void soupCanBeDisabledAndRestoredForSelection() throws Exception {
         Soup soup = soupRepository.save(new Soup("Tom Yum"));
-        mockMvc.perform(delete("/api/v1/soups/" + soup.getId()))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(patch("/api/v1/soups/" + soup.getId() + "/active")
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"active\":false}"))
+                .andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/soups").param("active", "true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));

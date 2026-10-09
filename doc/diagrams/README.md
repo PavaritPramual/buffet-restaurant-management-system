@@ -1,5 +1,9 @@
 # Diagram index — ครบตามใบงานข้อ 9.1
 
+## R01-B archive delta — V17
+
+[Entity/FK และ removal/restore sequence (Mermaid source/preview)](r01-b-removal.md) แสดงสาม archived fields และ Manager/service guards/locks ที่เพิ่มใน R01-B. PlantUML/SVG baseline เดิมเก็บเป็นประวัติ ไม่อ้างว่า baseline เดิมมี archive state แล้ว; [Data Dictionary delta](../database/pavarit-r01-b-schema-delta.md) ระบุค่าเริ่มต้น constraints และขอบเขตที่ยังไม่ apply ฐานกลาง
+
 ## U02 — Staff display names (9 October 2026)
 
 Reviewed against `develop` baseline `96da8ea7560225f9037ac9be2debfd496802ab57` plus the U02 patch. Staff `DiningSessionResponse` adds `packageName` and `soupName` as current catalog display names; [shared contract](../contracts/shared-contracts.md#staff-diningsessionresponse--u02) defines their semantics. Class/sequence diagrams reference the response type without enumerating DTO fields, so their source and SVG remain valid and unchanged. ERD, JPA associations, transactions/locks, actors, QR/customer credential separation and Billing price snapshot are unchanged. This review does not certify public deployment or the future R01 deletion design.
@@ -38,6 +42,18 @@ Reviewed against `develop` baseline `96da8ea7560225f9037ac9be2debfd496802ab57` p
 | Use Case รวม เฉพาะโมดูลตน | Table/Package/Soup/Session/QR ตรงเดิม; ไม่รับรอง Auth/Stock/Payment ทั้งภาพแทนเจ้าของ | [source](use-case.puml) / [SVG](previews/use-case.svg) |
 
 คำรับรอง JPA อยู่ใน [ตารางกลาง](../architecture/jpa-entity-rationale.md) และผลรอบใหม่อยู่ใน [รายงานระบบรวม](../testing/pavarit-integrated-validation-2026-10-08.md). ตารางด้านล่างเป็นประวัติ delta ของ PR #31
+
+### ตรวจ Auth / Stock / Activity / ERD เทียบ V15 (9 ตุลาคม 2026)
+
+render ใหม่เฉพาะภาพที่ source เปลี่ยนจริง ภาพอื่นไม่แตะ
+
+| ภาพ | สิ่งที่แก้ | Source / preview |
+|---|---|---|
+| ERD | title เป็น Flyway V1–V15 (เดิมเขียน V1–V14 แต่มีคอลัมน์ V15 แล้ว) | [source](er-diagram.puml) / [SVG](previews/er-diagram.svg) |
+| Class Auth | เพิ่ม id/username/createdAt, `listUsers`, `/me`, methods ของ AdminUserController และ note Manager-only/ชื่อบังคับที่ API แต่ DB nullable | [source](class-auth.puml) / [SVG](previews/class-auth.svg) |
+| Class Stock Template | เพิ่ม `createItem/updateItem/setActive/overview/history`, `updateDetails/updateOpeningTarget/changeActive`, แก้ `StockTransaction` เป็น `quantityDelta/transactionType/createdAt` | [source](class-stock-template.puml) / [SVG](previews/class-stock-template.svg) |
+| Activity Stock | เพิ่มวงจร item (create/edit/active), inactive → 409 ก่อนคำนวณ และ balance ติดลบ → 400 | [source](activity-stock.puml) / [SVG](previews/activity-stock.svg) |
+| Domain Model | `StockItem` เพิ่ม openingTargetStock/active; `StockTransaction` ใช้ชื่อฟิลด์ตรง entity; ลบ note ว่า "planned for Final" | [source](domain-model.puml) / [SVG](previews/domain-model.svg) |
 
 | ภาพที่ตรวจ | ผลเทียบโค้ด | Source / preview |
 |---|---|---|

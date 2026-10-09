@@ -1,5 +1,7 @@
 # Data Dictionary และ schema ที่รับรองสำหรับ Step 2
 
+**Step FIX R01-B (ยังไม่ apply):** [V17 schema delta](pavarit-r01-b-schema-delta.md) เพิ่ม archived ใน Table/Package/Soup แยกจาก active ตาม contract ที่เจ้าของรับรอง. ข้อตกลงทีม เมธัสV16 ปวริศช์V17 ศิระพัทธ์V18. เอกสาร Step2 baseline ด้านล่างยังเก็บเป็นประวัติ ไม่ใช่การรับรองว่า V17 เข้า Supabase แล้ว
+
 ขอบเขตเอกสาร canonical นี้คือ baseline Step 2 ที่ตรวจ schema จาก Supabase และ Flyway V1–V12 เมื่อ 6 ตุลาคม 2026 และปวริศช์รับรอง extensions ตามแผนปิด Step 2; ไม่ใช่รายการสถานะล่าสุดของ migration ทุก version เอกสาร design เดิมเก็บเป็นประวัติ การเปลี่ยน schema ที่ apply แล้วต้องใช้ forward migration
 
 **สถานะ migration ฐานกลาง ณ 8 ต.ค. 2026:** read-only inspection ที่ reviewer รายงานพบ V13, V14 และ V15 ใน `flyway_schema_history` ด้วย `success=true`; sanitized history และ schema readback อยู่ใน [auth-stock-schema-delta.md](auth-stock-schema-delta.md). V15 ใช้ forward migration และ schema readback ตรงกับคอลัมน์ใน migration แต่ข้อมูลตรวจ history ไม่ใช่หลักฐานอนุมัติ V15 และไม่ใช่ผล Flyway `validate`/checksum comparison กับไฟล์ของ commit ปัจจุบัน รายละเอียดและหลักฐานที่ยังรอแยกในเอกสาร delta; ห้ามตีความว่า V15 ยังไม่ apply หรือ apply ซ้ำเพื่อแก้เอกสาร

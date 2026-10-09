@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 public interface RestaurantTableRepository extends JpaRepository<RestaurantTable, Long> {
 
     List<RestaurantTable> findByStatus(TableStatus status);
+    List<RestaurantTable> findByArchived(boolean archived);
 
     Optional<RestaurantTable> findByTableNumber(String tableNumber);
 

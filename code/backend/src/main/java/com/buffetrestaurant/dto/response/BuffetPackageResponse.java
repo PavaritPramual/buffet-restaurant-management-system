@@ -7,6 +7,7 @@ public record BuffetPackageResponse(
         String name,
         BigDecimal price,
         String description,
-        boolean active
+        boolean active,
+        boolean archived
 ) {
 }

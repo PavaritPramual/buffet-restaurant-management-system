@@ -16,7 +16,7 @@ public class TableMapper {
                 table.getId(),
                 table.getTableNumber(),
                 table.getCapacity(),
-                table.getStatus()
+                table.getStatus(), table.isArchived()
         );
     }
 
