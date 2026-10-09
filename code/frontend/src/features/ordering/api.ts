@@ -11,6 +11,18 @@ export interface Order { orderId: number; sessionId: number; tableNumber: string
 export interface PageResult<T> { content: T[]; page: number; size: number; totalElements: number; totalPages: number }
 
 export { getApiError }
+const customerMessages: Record<string, string> = {
+  'Customer session is missing': 'กรุณาสแกน QR ของโต๊ะก่อนเริ่มสั่งอาหาร',
+  'Customer session is invalid': 'สิทธิ์สั่งอาหารนี้ใช้ไม่ได้แล้ว กรุณาขอ QR ใหม่จากพนักงาน',
+  'Customer session has expired': 'สิทธิ์สั่งอาหารหมดอายุแล้ว กรุณาขอ QR ใหม่จากพนักงาน',
+  'Active QR code not found': 'QR นี้ใช้ไม่ได้แล้ว กรุณาขอ QR ใหม่จากพนักงาน',
+  'Active dining session not found': 'รอบกินนี้ปิดแล้วหรือใช้ไม่ได้ กรุณาติดต่อพนักงาน',
+  'This session has requested its bill and no longer accepts orders': 'ขอคิดบิลแล้ว ไม่สามารถสั่งอาหารเพิ่มได้',
+}
+export function getCustomerApiError(error: unknown) {
+  const message = getApiError(error)
+  return customerMessages[message] ?? message
+}
 interface QrScan { token: string; promise: Promise<SessionContext>; settled: boolean; failed: boolean }
 // Coordination is limited to this tab. The customer cookie is shared across tabs;
 // use one ordering tab per browser (see doc/testing/test-plan.md for recovery).

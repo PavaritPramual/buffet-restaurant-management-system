@@ -7,13 +7,13 @@ Manager จัดการข้อมูลร้านและสต็อก
 
 ## สถานะปัจจุบัน
 
-**สไลด์ฉบับล่วงหน้า ยังไม่รับรอง:** [Canva ทีม v02b](https://www.canva.com/d/yWw6P3disBOSfHS) แก้ข้อเท็จจริงตามรีวิว PR #24 เฉพาะ4หน้า คง76หน้า ลำดับและผู้พูดเดิมไว้ก่อน เป้าพรีเซนต์12นาทีและ runbook ยังเป็นร่าง รอให้โค้ดทุกส่วนเสร็จแล้วทบทวนเนื้อหา/การเรียง/ช่วงพูด ดู [guide/version](doc/slide/README.md), [coverage](doc/slide/course-diagram-coverage.md) และ [notes](doc/slide/team-final-canva-v02-content.md) ใช้Canvaเป็นต้นฉบับและเก็บทั้งPPTXกับPDFที่exportจากCanvaตามเวอร์ชัน ยังไม่มีไฟล์exportของร่างนี้
+**สถานะสไลด์:** [Canva ทีม v02b](https://www.canva.com/d/yWw6P3disBOSfHS) ยังเป็นฉบับร่าง ไม่ใช่ชุดส่งที่รับรอง. เนื้อหาและ speaker notes ใน repo เป็น source สำหรับ sync; ยังต้องตรวจภาพ/notes ใน Canva, export ทั้ง PPTX และ PDF, ให้เจ้าของยืนยัน และซ้อมตาม [slide guide](doc/slide/README.md), [diagram coverage](doc/slide/course-diagram-coverage.md) และ [runbook](doc/slide/team-final-12-minute-runbook.md)
 
-Code baseline `develop 472fba4` ณ 7 ตุลาคม2026: Step2ปิดแล้วและPR#22รวมlocalregression/AdminShell/testpreparation
-เอกสารและสไลด์ปวริศช์ชุดนี้รอreview **ยังไม่ใช่ Final ที่พร้อมส่ง** Public deployment, Stock target/active, Profileละเอียด, SOLID gaps, Gitเกณฑ์รายคน และreleaseยังต้องปิด
-ดู [Requirement Matrix](doc/planning/step3-requirement-matrix.md), [Step3 plan](doc/planning/step3-final-plan.md) และ [Notionสด](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6)
+**Code baseline ล่าสุด:** `develop` อยู่ที่ [`d4633d5`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/d4633d52f7ece4bc1645594f85fc1a8548f458df) หลัง PR #36 และ #38 merge. CI ของ PR #38 merged revision [run 37900705251](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37900705251) ผ่าน; PR #38 ปรับ production `/` ให้ redirect ไป `/admin` ส่วน local development ยังเปิด Design System. PR #36 merge ที่ `a6da906`; CI ของ merge [run 37883005451](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37883005451) และ CI ของ PR #36 head `b2928f5` ก่อน merge [run 37878436100](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37878436100) เป็นหลักฐานคนละ revision ไม่ใช่ผลยืนยัน deployment; public regression report อยู่ที่ [commit permalink](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/b2928f564b796b0e7a5e7260e0f3f567ca40a386/doc/testing/sirapat-public-regression-2026-10-09.md). QR recovery fix เข้า `develop` แล้ว แต่ยังไม่มีหลักฐานว่า runtime สาธารณะ deploy commit นี้แล้ว. รายละเอียด PR/review และข้อจำกัดดู [PR #36](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/36) และ [PR #38](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/38).
 
-**เกณฑ์Gitที่อาจารย์ปรับ:** ขั้นต่ำ5meaningfulcommitsต่อคนตามการแจ้งวันที่7ตุลาคม2026 ดู [criteria update](doc/planning/course-criteria-updates.md) และ [Git audit](doc/planning/step3-git-audit.md)
+**ยังไม่ใช่ Final/release acceptance:** Render URL และ owner-reported Live revision `2f8bc4b` มีหลักฐานใน [deployment status](doc/deployment/step3-owner-status.md) และ [runbook](doc/deployment/production-runbook.md); public regression มีผลตาม scope/ข้อจำกัดในรายงาน #36. อย่างไรก็ดี live SHA/runtime/schema ยังต้อง attest โดยอิสระ, V15 central-schema approval/validation, runtime TTL/redeploy checks, reviewed release ไป `main`, Canva export/owner approval และ team rehearsal ยัง pending. Git inventory refresh ถึง `develop d4633d5` อยู่ใน branch audit นี้; ยังไม่ใช่สมาชิกทั้งห้ายืนยัน meaningfulness/identity/ownership/time distribution. สถานะรายข้ออยู่ใน [Requirement Matrix](doc/planning/step3-requirement-matrix.md), [Git audit](doc/planning/step3-git-audit.md), [dated Git evidence](test/evidence/sarun-git-audit-2026-10-09/README.md), [Step 3 plan](doc/planning/step3-final-plan.md) และ [Notion task](https://app.notion.com/p/Final-README-diagrams-slides-and-Git-audit-3ddcb2e9d47a81c89956ed8d2664bb40?pvs=21)
+
+**เกณฑ์ Git ปัจจุบัน:** ขั้นต่ำ 15 meaningful commits ต่อคน; การแจ้ง 5 commits วันที่ 7 ต.ค. ถูกยกเลิกวันที่ 8 ต.ค. ดู [criteria update](doc/planning/course-criteria-updates.md) และ [Git audit](doc/planning/step3-git-audit.md)
 
 ## สมาชิกและหน้าที่
 
@@ -45,7 +45,7 @@ Orderingอ่านสิทธิ์ผ่านSessionContextProvider Billing
 
 ## ERD และ Data Dictionary
 
-[ERD source](doc/diagrams/er-diagram.puml) · [canonical Data Dictionary V1–V14](doc/database/step2-schema-approved.md) · [Diagram index](doc/diagrams/README.md)
+[ERD source](doc/diagrams/er-diagram.puml) · [Data Dictionary V1–V14 (Step 2 baseline)](doc/database/step2-schema-approved.md) · [V15 delta](doc/database/auth-stock-schema-delta.md) · [Diagram index](doc/diagrams/README.md)
 มีTables/Packages/Soups/Sessions/Grants/Menu/Orders/Payments/Users/Profile/Stockและtransactions
 Session snapshotราคาเมื่อเปิด billrequestหยุดOrderใหม่ PAIDยังต้องStaffcloseแยก ดู [Bill/Payment sequence](doc/diagrams/sequence-billing-payment.puml)
 
@@ -77,11 +77,11 @@ Frontendค่าlocal `VITE_API_BASE_URL=http://localhost:8080/api/v1` แล�
 
 Flywayเป็นผู้จัดการschema JPAใช้ `ddl-auto: validate` และ `open-in-view: false`
 Locations `db/migration/common` + `h2` หรือ `postgresql` ตามenvironment **ห้ามแก้migrationที่applyแล้ว**
-V1baselineเปล่า V2tables V3packages/soups V4menu/order V5fulfillmentsnapshot V6sessions/grants V7ordersFK V8pricesnapshot V9payments V10auth V11stock V12paymentprivileges V13tableprivileges V14billrequest
+V1baselineเปล่า V2tables V3packages/soups V4menu/order V5fulfillmentsnapshot V6sessions/grants V7ordersFK V8pricesnapshot V9payments V10auth V11stock V12paymentprivileges V13tableprivileges V14billrequest V15stocktarget/activeและprofile first/last/phone
 ตรวจคำอธิบายไฟล์จริงจาก [migrations](code/backend/src/main/resources/db/migration) ไม่เดาจากinstalled_rank
 
-ตรวจ Supabase กลางแบบอ่านอย่างเดียววันที่ 7 ตุลาคม 2026 พบ Flyway V1–V14 success=true รวม V13/V14 ที่ลงวันที่ 6 ตุลาคม และ checksum ตรงไฟล์ใน repo ดู [หลักฐาน SELECT/checksum/schema/grants](doc/testing/pr24-review-fixes-report.md#หลักฐาน-supabase-v13v14) V9 ลงหลัง V10/V11 ตาม installed_rank
-ผลนี้เป็น metadata readback ผ่าน connector ไม่ใช่การรันแอป/JPA validate ใหม่หรือการตรวจ public deployment และไม่มีการ apply/repair migration ใน PR นี้ Final Stock/Profile ต้อง forward migration เลขว่างจริง review และขออนุมัติฐานกลางใหม่
+เอกสาร migration V13–V15 และ read-only central schema evidence อยู่ใน [schema delta](doc/database/auth-stock-schema-delta.md) และ [canonical dictionary](doc/database/step2-schema-approved.md). PR #28 เพิ่ม forward migration V15 สำหรับ stock target/active และ profile fields พร้อม migration/integration tests
+การ readback เป็น metadata/schema evidence ไม่ใช่การยืนยัน public app runtime หรือการอนุมัติย้อนหลัง; formal V15 approval, Flyway validate/checksum comparison และ release database verification ยังเป็น gates แยก ห้าม apply ซ้ำหรือ repair history เพื่อให้ผ่านเฉยๆ
 Startup defaultFlywayenabledอาจapplypendingmigrations อย่าเริ่มimageใหม่ชี้ฐานกลางก่อนรับรอง pendingfiles ไม่repairhistoryให้ผ่านเฉยๆ
 
 ProvisionManagerแรกบนระบบจริงใช้ `BOOTSTRAP_ADMIN_ENABLED`, `BOOTSTRAP_ADMIN_USERNAME`, `BOOTSTRAP_ADMIN_PASSWORD` และoptionaldisplay/email ตามตัวอย่าง
@@ -109,7 +109,7 @@ cd code/backend
 ./mvnw spring-boot:run
 ```
 
-Windowsใช้ `mvnw.cmd` จากcode/backend และenv/providersข้างต้น Frontendอีกterminal:
+บน Windows PowerShell ใช้ `.\mvnw.cmd spring-boot:run` จาก `code/backend` พร้อม env/providers ข้างต้น. Frontend อีก terminal:
 
 ```bash
 cd code/frontend
@@ -143,7 +143,8 @@ Demoใช้H2memory+common/H2migrations+seed; restartแล้วข้อม�
 - [Shared Contracts](doc/contracts/shared-contracts.md), [Ordering contract](doc/contracts/ordering-contract.md), [API conventions](doc/contracts/api-conventions.md)
 - [QR exchange sequence](doc/diagrams/sequence-qr-exchange.puml), [Billing/Payment integration](doc/diagrams/sequence-billing-payment.puml)
 - Staffใช้login session Customerใช้HttpOnlygrant cookie QRtokenอยู่fragmentแล้วส่งในPOSTbody ไม่มีGET tokenในURL
-- CustomerSessionResponseไม่มีQRtoken/ราคาsnapshot ErrorResponse/enumsใช้formatกลาง URLpublicSwaggerยังpending
+- CustomerSessionResponseไม่มีQRtoken/ราคาsnapshot ErrorResponse/enumsใช้formatกลาง
+- Public [Swagger UI](https://buffet-restaurant-management-system.onrender.com/swagger-ui.html) และ [OpenAPI JSON](https://buffet-restaurant-management-system.onrender.com/v3/api-docs) ตอบผ่านบน Render; public docs/smoke ไม่ได้แทนการรับรอง API flow หรือ release
 
 ## How to Run Tests
 
@@ -153,6 +154,8 @@ BackendH2 / unit / integration:
 cd code/backend
 ./mvnw test
 ```
+
+บน Windows PowerShell ใช้ `.\mvnw.cmd test` จาก `code/backend`.
 
 PostgreSQLmigration/security/concurrencyมีguardและต้องใช้ **DBทิ้งได้เท่านั้น** รันH2เฉยๆอาจskipPostgreSQL suites จึงห้ามอ้างว่า303ผ่านจากคำสั่งนี้เพียงอย่างเดียว
 ดู [CI workflow](.github/workflows/ci.yml) ที่เตรียมmarked databases/user/roleด้วย `disposable-postgres-ci.sql` และ [PostgreSQL verification](doc/billing/pr19-review-verification.md)
@@ -169,16 +172,17 @@ npm run lint
 npm run build
 ```
 
-[CIของdevelop472fba4](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37503690105): backend+PostgreSQL303/303 frontend116/116 URLguards6/6 lint0errors/4existingwarnings buildผ่าน
-[PR#22 report](doc/testing/sirapat-step3-premerge-report.md) แยกlocalH2 realHTTP/cookies14PASS ก่อนmerge/hashตรงhead617d742 ออกจากhistoricalUIfixtures และpublicที่ยังไม่ตรวจ
-งานdocsนี้ใช้CIbaseline ไม่อ้างว่ารันbackend/frontendใหม่ ดู [docs verification](doc/testing/pavarit-step3-docs-report.md)
+[CI ของ merged `develop d4633d5`](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37900705251) ผ่าน Backend/PostgreSQL และ Frontend tests/lint/build/URL guards. PR #36 merge CI `37883005451` ทดสอบ `a6da906`; PR #36 head `b2928f5` pre-merge CI `37878436100` ผ่าน Backend/PostgreSQL 352/352, Frontend 125/125, URL guards 6/6, lint และ build. CI `37868211120` เป็น historical check ของ `d84f071`.
+[Public report ของ PR #36](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/b2928f564b796b0e7a5e7260e0f3f567ca40a386/doc/testing/sirapat-public-regression-2026-10-09.md) แยกผล public API/browser (12 scenario groups ต่อชุด), deployed revision ที่ owner รายงาน และข้อจำกัดออกจาก local tests/CI. PR #32 report (8 ต.ค.) เป็นหลักฐานประวัติของรอบก่อนหน้า; `adc5798` และ run 37738400052 เป็น baseline เก่า.
+ผลเหล่านี้มาจาก CI/รายงานที่ระบุ ไม่ได้อ้างว่าการแก้ README นี้รัน backend/frontend ใหม่ รายละเอียดเอกสารเดิมอยู่ใน [Pavarit module docs report](doc/testing/pavarit-module-docs-report-2026-10-08.md)
 
 ## Deployment URL
 
-**ยังไม่มีpublic URLที่รับรองในbaselineนี้** แผนธีรเมธคือRenderFreeWebService URLเดียว HTTPS SpringBootเสิร์ฟReactproductionและAPI `/api/v1`
-ต้องรองรับSPArefreshโดยไม่เปลี่ยนAPI404เป็นเว็บ Securecustomer/staffcookies allowedOriginจริง portจากRenderและprovidersจริง
-SupabaseSessionPooler+SSL ข้อมูลคงอยู่หลังredeploy StaffHTTPsessionในmemoryต้องloginใหม่หลังrestart CustomergrantpersistในDBแต่อายุ/สถานะยังต้องตรวจ
-PublicCoreFlow/TTL/coldstart/redeploy/rollback/deployedSHAต้องผ่านก่อนใส่URLจริง ไม่มีการdeployจากPRเอกสารนี้
+Public application: [https://buffet-restaurant-management-system.onrender.com/](https://buffet-restaurant-management-system.onrender.com/) · [Staff login](https://buffet-restaurant-management-system.onrender.com/admin) · [Swagger UI](https://buffet-restaurant-management-system.onrender.com/swagger-ui.html) · [OpenAPI JSON](https://buffet-restaurant-management-system.onrender.com/v3/api-docs)
+
+Deployment uses one Render Web Service: React static assets and Spring Boot `/api/v1` are served from the same HTTPS origin. The owner-reported Live SHA is `2f8bc4b`; see [deployment owner status](doc/deployment/step3-owner-status.md) and [production setup/redeploy/rollback runbook](doc/deployment/production-runbook.md). Public endpoint smoke checks and regression results are recorded there and in the [9 Oct public report](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/b2928f564b796b0e7a5e7260e0f3f567ca40a386/doc/testing/sirapat-public-regression-2026-10-09.md).
+
+The Live SHA is not independently attested by the running service. PR #36 and its Thai QR recovery fix are merged into `develop` at `a6da906`, but that does not prove the public runtime deployed the merge. Treat public flow results as evidence for the reported test run, not as a guarantee of current runtime identity. PR #38's production root redirect is merged at `d4633d5`; this CI result also does not independently establish deployed runtime identity. V15 central-schema approval/validation, live cookie/runtime/schema checks, TTL and post-redeploy persistence, reviewed release on `main`, and final owner/reviewer sign-off remain open. Never put production credentials, QR tokens, or cookie values in this README or evidence.
 
 ## Project Structure
 
@@ -204,6 +208,6 @@ docker-compose.yml
 ## Git workflow และชุดนำเสนอ
 
 Personalbranch →reviewedPR→develop →reviewedreleasePR→main ทุกคนใช้บัญชีตน Commitเป็นงานที่มีความหมาย ไม่เติมจำนวน
-[Git audit snapshot ก่อนแก้ PR #24](doc/planning/step3-git-audit.md) แสดงทั้งห้าบัญชี branches/PRreviews/candidatecommitcounts และข้อขาดจริง
+[Git audit](doc/planning/step3-git-audit.md) แสดง PR/reviewer history; inventory CSV บันทึก current `develop d4633d5` (143 non-merge commits) และเก็บ snapshots `a6da906`/`d84f071` เป็น historical. สมาชิกยังต้องยืนยัน meaningfulness/account/ownership/เวลา; refresh refs อีกครั้งก่อน release.
 [สไลด์ทีมปัจจุบัน](doc/slide/README.md) / [Diagram coverage](doc/slide/course-diagram-coverage.md) / [runbook12นาที](doc/slide/team-final-12-minute-runbook.md)
 ร่างPPTX/PDFรายคนเดิมเป็นประวัติ รุ่นส่งใช้Canvaพร้อมไฟล์PPTX/PDFที่exportจากCanvaและownerรับรองตามreleaseจริง

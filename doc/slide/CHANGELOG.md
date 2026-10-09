@@ -1,5 +1,12 @@
 # Slide version history
 
+## Sirapat QA content — 9 October 2026
+
+- Prepared three current QA content blocks with complete Thai speaker notes, public Core Flow/Stock/Profile results and precise local/CI/API/browser boundaries.
+- Source baseline d84f071, submitted QR wording11edeb0; live2f8bc4b is owner-reported, not independently attested. PR #36 CI ata43a558 passed backend352/frontend125 and guards6.
+- User deferred Canva and requested separate files. Delivered sirapat-qa-2026-10-09/sirapat-qa-v01.pptx and PDF, three complete notes and source links; all slides/PDF pages visually inspected, native Tahoma font/package/geometry/import checks passed. PDF exported with PowerPoint; it is not a Canva export.
+- Added real public volume evidence: 30 available foods/5categories, QR order3 with6menus/8pieces visible in Kitchen and after customer reload; bill499/session4 closed. Shared Canva/order/team approval remain separate pending gates.
+
 ## Contract and State review — 7 October 2026
 
 - Updated working speaker-note source for Order State context/classes, real session role checks, rejected-transition evidence, Order/OrderItem cascade/fetch rationale, and UTC/date/number serialization.
@@ -32,7 +39,7 @@
 - ระบุช่วงพูด12นาทีเป็น20หน้าหลัก อีก56หน้าเป็นภาคผนวกอ้างอิง ไม่เพิ่มเวลาพูดเป็น76หน้า
 - 23ภาพรายละเอียดและ5ภาพย่อพร้อมPlantUML/SVG 35หน้าcode 76notes SARABUN/JetBrainsMono navy/cream/terracotta/gold
 - อัปเดตUseCaseDescriptions Auth/MenuOrderClasses Orderingsequence Stock/CustomerActivities StatepermissionsและDeploymentdesignที่เคยขาด/ล้าสมัย
-- ปรับเกณฑ์Gitเป็น5meaningfulcommitsต่อคนตามการแจ้งของปวริศช์ เก็บworksheet15ไว้เป็นต้นฉบับ
+- บันทึกในเวลานั้นว่าปรับเกณฑ์ Git เป็น 5 meaningful commits ต่อคนตามการแจ้งของปวริศช์; การแจ้งนี้ถูกยกเลิกวันที่ 8 ต.ค. และเกณฑ์ปัจจุบันกลับเป็น 15 ตาม [บันทึกเกณฑ์](../planning/course-criteria-updates.md)
 - [Canva v02](https://www.canva.com/d/wORhypcIcwvGuFK) `DAHXSWQA-Vs` นำเข้า76หน้า อ่านกลับครบ 704ข้อความแก้ได้/28diagramimages ไม่มีelementออกนอกcanvas ตรวจภาพlocalครบ ไม่อ้างCanvaallpagevisualQA/PDF/owner/releaseว่าผ่านแล้ว
 - v01คงไว้เป็นประวัติ ไม่แก้/ลบdesignเดิม ไม่สร้างPPTX ไม่แก้runtime ไม่mergePR24
 

@@ -1,0 +1,213 @@
+{
+  "startedAt": "2026-10-09T02:58:32.227Z",
+  "webUrl": "https://buffet-restaurant-management-system.onrender.com",
+  "httpMocks": false,
+  "createdAvailableMenus": 30,
+  "createdUnavailableMenus": 2,
+  "categories": [
+    {
+      "id": 3,
+      "name": "QA261009 อาหาร หมู"
+    },
+    {
+      "id": 4,
+      "name": "QA261009 อาหาร เนื้อ"
+    },
+    {
+      "id": 5,
+      "name": "QA261009 อาหาร ทะเล"
+    },
+    {
+      "id": 6,
+      "name": "QA261009 อาหาร ผัก"
+    },
+    {
+      "id": 7,
+      "name": "QA261009 อาหาร ทานเล่น"
+    }
+  ],
+  "menus": [
+    {
+      "id": 3,
+      "name": "หมูสไลซ์",
+      "categoryId": 3
+    },
+    {
+      "id": 4,
+      "name": "สันคอหมู",
+      "categoryId": 3
+    },
+    {
+      "id": 5,
+      "name": "หมูสามชั้น",
+      "categoryId": 3
+    },
+    {
+      "id": 6,
+      "name": "หมูหมักงา",
+      "categoryId": 3
+    },
+    {
+      "id": 7,
+      "name": "หมูพริกไทยดำ",
+      "categoryId": 3
+    },
+    {
+      "id": 8,
+      "name": "หมูเด้ง",
+      "categoryId": 3
+    },
+    {
+      "id": 9,
+      "name": "เนื้อสไลซ์",
+      "categoryId": 4
+    },
+    {
+      "id": 10,
+      "name": "เนื้อใบพาย",
+      "categoryId": 4
+    },
+    {
+      "id": 11,
+      "name": "เนื้อริบอาย",
+      "categoryId": 4
+    },
+    {
+      "id": 12,
+      "name": "เนื้อหมักงา",
+      "categoryId": 4
+    },
+    {
+      "id": 13,
+      "name": "เนื้อพริกไทยดำ",
+      "categoryId": 4
+    },
+    {
+      "id": 14,
+      "name": "ลิ้นวัว",
+      "categoryId": 4
+    },
+    {
+      "id": 15,
+      "name": "กุ้งสด",
+      "categoryId": 5
+    },
+    {
+      "id": 16,
+      "name": "ปลาหมึกสด",
+      "categoryId": 5
+    },
+    {
+      "id": 17,
+      "name": "ปลาดอลลี่",
+      "categoryId": 5
+    },
+    {
+      "id": 18,
+      "name": "หอยแมลงภู่",
+      "categoryId": 5
+    },
+    {
+      "id": 19,
+      "name": "ปูอัด",
+      "categoryId": 5
+    },
+    {
+      "id": 20,
+      "name": "ลูกชิ้นปลา",
+      "categoryId": 5
+    },
+    {
+      "id": 21,
+      "name": "ผักบุ้ง",
+      "categoryId": 6
+    },
+    {
+      "id": 22,
+      "name": "ผักกาดขาว",
+      "categoryId": 6
+    },
+    {
+      "id": 23,
+      "name": "กะหล่ำปลี",
+      "categoryId": 6
+    },
+    {
+      "id": 24,
+      "name": "เห็ดเข็มทอง",
+      "categoryId": 6
+    },
+    {
+      "id": 25,
+      "name": "เห็ดออรินจิ",
+      "categoryId": 6
+    },
+    {
+      "id": 26,
+      "name": "ข้าวโพด",
+      "categoryId": 6
+    },
+    {
+      "id": 27,
+      "name": "เกี๊ยวปลา",
+      "categoryId": 7
+    },
+    {
+      "id": 28,
+      "name": "เต้าหู้ไข่",
+      "categoryId": 7
+    },
+    {
+      "id": 29,
+      "name": "เต้าหู้ปลา",
+      "categoryId": 7
+    },
+    {
+      "id": 30,
+      "name": "ฟองเต้าหู้",
+      "categoryId": 7
+    },
+    {
+      "id": 31,
+      "name": "วุ้นเส้น",
+      "categoryId": 7
+    },
+    {
+      "id": 32,
+      "name": "บะหมี่หยก",
+      "categoryId": 7
+    }
+  ],
+  "unavailableMenuIds": [
+    33,
+    34
+  ],
+  "catalogTotal": 34,
+  "pagination": {
+    "size": 10,
+    "pagesChecked": 3,
+    "uniqueRows": 30
+  },
+  "customerMenuCount": 32,
+  "all30AvailableVisible": true,
+  "unavailableExcluded": true,
+  "unavailableOrderStatus": 400,
+  "orderCountAfterRejectedRequest": 0,
+  "sessionId": 4,
+  "browserOrderVerifiedAtKitchen": {
+    "orderId": 3,
+    "sessionId": 4,
+    "lines": 6,
+    "totalQuantity": 8,
+    "statusAtVerification": "RECEIVED",
+    "finalStatus": "SERVED"
+  },
+  "paymentBeforeBillRequestStatus": 409,
+  "finishedAt": "2026-10-09T03:02:10.603Z",
+  "cleanup": {
+    "paymentAmount": 499,
+    "explicitClose": true,
+    "table": "AVAILABLE",
+    "testMenusRetained": true
+  }
+}

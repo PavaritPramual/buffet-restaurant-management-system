@@ -2,12 +2,22 @@
 
 ตัวอย่าง refactor ด้านล่างอ้างโค้ด `de7b5d546a05ad3ccef8c641ee5c53d638a8e039` วันที่ 7 ตุลาคม 2026 ต่อจาก PR #24; เก็บ commit นี้เพื่อให้ลิงก์ไฟล์/บรรทัดเดิมตรวจย้อนกลับได้ [เอกสารก่อน refactor](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/0dbbe1b7deae5db4189aa803f04a5246ccee8746/doc/solid-analysis.md) เป็นประวัติ G01–G05 ก่อนแก้
 
-**สถานะปัจจุบัน 8 ตุลาคม 2026:** [PR #25](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/25) ผ่านรีวิวและ merge แล้วที่ `cb612d9`; ไม่ได้รอ review ของ refactor เดิมอีก การตรวจเอกสารโมดูลปวริศช์รอบใหม่อ้าง develop `6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6` และยังรอ peer review ของ PR เอกสารนี้ ไม่ใช่รับรอง Final/public deployment ทั้งระบบ
+**สถานะตรวจ 9 ตุลาคม 2026:** [PR #25](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/25) ผ่านรีวิวและ merge แล้วที่ `cb612d9`; ไม่ได้รอ review ของ refactor เดิมอีก. Fulfillment delta ด้านล่างตรวจ source/tests ที่ merged `develop d84f071`; การทบทวนเอกสารรอบนี้ยังรอ peer review และไม่ใช่รับรอง Final/public deployment ทั้งระบบ.
 
 ## เอกสารตามเจ้าของโมดูล
 
 - [ปวริศช์ — Table/Package/Soup, DiningSession/QR และ shared providers](architecture/pavarit-table-session-solid-jpa.md): SOLID, JPA/SQL lifecycle, snapshot/เวลา, transaction/lock และข้อจำกัดพร้อม source/tests ของ baseline `6d83eac`
 - [ศิระพัทธ์ — Menu/Ordering](architecture/sirapat-menu-ordering-solid-jpa.md): หลักฐานตาม scope ของเจ้าของ; การยืนยันรุ่น Final และโมดูลที่เหลือยังเป็น gate แยก
+- [ธีรเมธ — Billing/Payment](architecture/teeramet-billing-payment-solid-jpa.md): Strategy, price snapshot, rounding, payment transaction/JPA และ tests ที่ revision `bdd3bd7`; public release gate ยังแยก
+- [ศรัณย์ — Order Fulfillment](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/d84f071ee03b738d6a6dd2a899c5f6e6cc230d3f/code/backend/src/main/java/com/buffetrestaurant/service/impl/OrderFulfillmentServiceImpl.java): role checks stay in the access provider; the service asks the current State for its only legal next state before persisting.
+
+### Fulfillment delta — checked against merged `develop d84f071`
+
+- **SRP:** `SessionOrderFulfillmentAccessProvider` owns kitchen/service-role checks; `RegistryOrderStateResolver` owns complete/unique State registration and resolution; `OrderFulfillmentServiceImpl` coordinates board reads and the requested transition; `CustomerOrder` persists the selected status but does not reimplement transition policy.
+- **OCP / State:** the service depends on `OrderStateResolver`, obtains `current.next()`, and compares that one next status with the requested status. The registry is immutable after construction and fails on missing/duplicate states. This limits resolution branching, but a new business status still requires updating the enum, adjacent transitions, API/UI, and authorization contract.
+- **DIP / ISP:** the fulfillment service receives the narrow `OrderFulfillmentAccessProvider` and `OrderStateResolver` interfaces through its constructor rather than depending on authentication internals or concrete state classes.
+- **Evidence:** `OrderStateResolverTest` covers registry completeness, duplicate/missing registration and replacement policy; `OrderStateTest` covers terminal behavior; `OrderFulfillmentServiceTest` covers service rules; `OrderFulfillmentIntegrationTest` exercises the persisted full lifecycle, skipped/reversed transitions, wrong-role denials and unchanged state. The tests do not substitute for the separate public report or deployed-SHA attestation.
+- **Review boundary:** source and focused tests are in merged PR #26 and were checked again against `d84f071`; this delta has not yet received the requested new Architecture/consistency review.
 
 ## S — Single Responsibility
 
@@ -27,6 +37,7 @@
 | State registration | [OrderStateResolver.java:7](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateResolver.java#L7) กับ [RegistryOrderStateResolver.java:34](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/main/java/com/buffetrestaurant/service/state/RegistryOrderStateResolver.java#L34) ไม่มี switch ของชนิด State; Config ลงทะเบียน singleton เดิมสี่ตัว |
 | Pricing/discount | [BillCalculator.java:7](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/main/java/com/buffetrestaurant/service/billing/BillCalculator.java#L7) และ BillingEngine รับ pricing/discount interfaces เปลี่ยน policy ใน composition root ได้ |
 | Stock workflow | [StockTransactionTemplate.java:27](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/main/java/com/buffetrestaurant/service/StockTransactionTemplate.java#L27) คง workflow final; subclasses เปลี่ยน delta/type ผ่าน hooks |
+| Fulfillment access / State | [OrderFulfillmentAccessProvider](../code/backend/src/main/java/com/buffetrestaurant/service/OrderFulfillmentAccessProvider.java), [OrderStateResolver](../code/backend/src/main/java/com/buffetrestaurant/service/state/OrderStateResolver.java) isolate role checks and state lookup from the orchestration service |
 
 [OrderStateResolverTest.java:12](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/test/java/com/buffetrestaurant/service/state/OrderStateResolverTest.java#L12) ตรวจ policy ทดแทนโดยไม่แก้ resolver. การเพิ่มสถานะธุรกิจใหม่ยังต้องแก้ enum, transitions ที่เกี่ยวข้อง และตรวจ API/UI/สิทธิ์ร่วมกัน; ไม่อ้างว่าเพิ่ม workflow ใดก็ได้โดยไม่มีผลต่อ contract
 

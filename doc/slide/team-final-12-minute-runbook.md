@@ -43,6 +43,6 @@
 - [ ] เติมdeployedSHA/publicURL/ผลreleaseล่าสุดหลังมีหลักฐานจริง
 - [ ] ตรวจภาพใน Canva ที่นำเข้าอีกครั้ง แล้ว export PDF จาก Canva เก็บตามเวอร์ชัน
 - [ ] Export PPTX จาก Canva เก็บตามเวอร์ชัน และเปิดตรวจฟอนต์ โค้ด ภาพ diagram และตำแหน่งข้อความ
-- [ ] ตรวจข้อขาดFinalและGitขั้นต่ำ5meaningfulcommitsตาม [เกณฑ์ที่อาจารย์ปรับ](../planning/course-criteria-updates.md)
+- [ ] ตรวจข้อขาดFinalและGitขั้นต่ำ15meaningfulcommitsตาม [เกณฑ์ปัจจุบัน](../planning/course-criteria-updates.md)
 
 การมีสไลด์ครบไม่ได้รับรองว่าการdeploy/Finalgateผ่านแล้ว

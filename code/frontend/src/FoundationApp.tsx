@@ -17,7 +17,7 @@ import StaffShell from './features/auth/StaffShell'
 export default function FoundationApp() {
 
   return <Routes>
-    <Route path="/" element={<DesignSystemPage />} />
+    <Route path="/" element={import.meta.env.PROD ? <Navigate to="/admin" replace /> : <DesignSystemPage />} />
     <Route path="/customer/qr" element={<CustomerOrderingPage />} />
     <Route element={<StaffShell />}>
       <Route path="/staff/tables" element={<StaffTablesPage />} />

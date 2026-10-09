@@ -1,5 +1,9 @@
 # สไลด์ทีมปัจจุบัน — Canva v02b ฉบับล่วงหน้า
 
+QA ของศิระพัทธ์อัปเดต 9 ต.ค.: ผู้ใช้ให้ข้าม Canva และทำไฟล์แยกเพื่อใส่เอง ได้ [PPTX แก้ไขได้ 3 หน้า](sirapat-qa-2026-10-09/sirapat-qa-v01.pptx), [PDF](sirapat-qa-2026-10-09/sirapat-qa-v01.pdf) และ [speaker notes เต็ม](sirapat-public-quality-2026-10-09.md). รวมผล public, CI352/125 และการเพิ่ม30อาหาร/QRสั่ง6เมนู8ชิ้นถึงครัว ตรวจภาพครบทุกหน้าแล้ว ดู [หลักฐาน](../../test/evidence/sirapat-public-2026-10-09/slide-validation.json). ไฟล์แยกนี้สร้างตามคำสั่งล่าสุด ไม่ใช่ไฟล์ส่งออกจาก Canva หรือการรับรองชุดทีม; ตัวเลขเก่าในร่างทีมต้องปรับเมื่อ owner รวมเนื้อหา.
+
+เนื้อหาที่ธีรเมธเตรียมให้ผู้รวม Canva สำหรับ runtime/network และ release checks: [teeramet-runtime-networking-notes.md](teeramet-runtime-networking-notes.md). ยังไม่ใช่หน้าสไลด์หรือ PDF ฉบับรับรอง.
+
 > **ฉบับล่วงหน้า ยังไม่ได้รับการรับรองจากปวริศช์** เก็บเนื้อหาและลำดับเดิมไว้ก่อน รอให้โค้ดทุกส่วนเสร็จแล้วจึงทบทวนเนื้อหา ลำดับ และช่วงผู้พูดใหม่ เวลา 12 นาทีและ runbook ด้านล่างเป็นร่างที่ยังไม่รับรอง ดู [ข้อสังเกตและสถานะการเก็บ PPTX](team-final-v02-draft-status.md)
 
 [เปิด Canva v02b](https://www.canva.com/d/yWw6P3disBOSfHS) · design `DAHXS8ESvRQ` · [เนื้อหาและ speaker notes](team-final-canva-v02-content.md)
@@ -18,7 +22,7 @@
 - UseCaseรวมทั้ง5actorsพร้อมDescription Domain/Classพร้อมตำแหน่งPatterns Sequence4scenarios Activity ERD Component Deployment และState ดู [coverageพร้อมเลขหน้า](course-diagram-coverage.md)
 - มี35หน้าที่แสดงcodeจากdevelop `472fba4` พร้อมไฟล์/บรรทัดในnotes ครอบคลุมSOLID Enterprise/BehavioralPatterns API/transaction/DTO/security และtestcases
 - ใช้SarabunมีหัวกับJetBrainsMonoสำหรับcode พื้นครีม/navy/terracotta/gold มีsyntaxhighlightและภาพแทนข้อความยาว ลดcolon/ลูกศรในproseโดยคงsyntaxของcode/UML
-- Gitขั้นต่ำปัจจุบันคือ5meaningfulcommitsต่อคนตามที่ปวริศช์แจ้งว่าอาจารย์ปรับ ดู [บันทึกเกณฑ์](../planning/course-criteria-updates.md) ไม่แก้ใบงานต้นฉบับที่ยังเขียน15
+- Git ขั้นต่ำปัจจุบันคือ 15 meaningful commits ต่อคนตามการยืนยันวันที่ 8 ต.ค.; การแจ้ง 5 วันที่ 7 ต.ค. ถูกยกเลิก ดู [บันทึกเกณฑ์](../planning/course-criteria-updates.md) ใบงานต้นฉบับยังคงเดิม
 
 ## ผลตรวจและข้อที่ยังรอ
 

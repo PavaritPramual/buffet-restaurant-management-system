@@ -5,7 +5,7 @@ skinparam classAttributeIconSize 0
 skinparam backgroundColor #FFFDF9
 skinparam defaultFontName Tahoma
 
-title Domain Model - Buffet Restaurant Management System (baseline 6d83eac)
+title Domain Model - Buffet Restaurant Management System (develop d84f071)
 
 skinparam classAttributeIconSize 0
 skinparam shadowing false
@@ -16,6 +16,17 @@ class UserAccount {
     role
     active
 }
+
+class UserProfile {
+    userId
+    displayName
+    email
+    firstName
+    lastName
+    phoneNumber
+}
+
+UserAccount "1" -- "0..1" UserProfile : profile >
 
 class RestaurantTable {
     id
@@ -134,6 +145,7 @@ StockItem "1" -- "0..*" StockTransaction : tracked by >
 UserAccount "1" -- "0..*" StockTransaction : recorded by >
 
 note bottom of StockItem
- openingTargetStock / active implemented by Flyway V15; shortfall is derived from target - quantity.
+ openingTargetStock / active implemented in Flyway V15.
+ shortfall is derived from target - quantity and is not persisted.
 end note
 @enduml

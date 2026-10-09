@@ -35,7 +35,7 @@ public class CustomerSessionController {
 
     public CustomerSessionController(CustomerSessionAccessService accessService,
                                      CustomerOriginGuard originGuard,
-                                     @Value("${CUSTOMER_COOKIE_SECURE:false}") boolean cookieSecure,
+                                     @Value("${app.customer-cookie.secure:${CUSTOMER_COOKIE_SECURE:false}}") boolean cookieSecure,
                                      @Value("${CUSTOMER_COOKIE_SAME_SITE:Lax}") String cookieSameSite) {
         this.accessService = accessService;
         this.originGuard = originGuard;

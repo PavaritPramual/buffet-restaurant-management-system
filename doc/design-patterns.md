@@ -1,6 +1,6 @@
-# Design Patterns — โค้ดหลัง Architecture refactor
+# Design Patterns — implemented patterns and review status
 
-อ้าง code `de7b5d546a05ad3ccef8c641ee5c53d638a8e039` วันที่ 7 ตุลาคม 2026. Runtime changes รอ peer review; ภาพ public deployment ยังคงเป็น design และสไลด์ฉบับล่วงหน้ายังไม่รับรอง
+แกน pattern examples เดิมอ้าง source หลัง Architecture refactor `de7b5d546a05ad3ccef8c641ee5c53d638a8e039`. Fulfillment State source/tests ตรวจซ้ำกับ merged `develop d84f071` วันที่ 9 ตุลาคม; PR #25/#26 และ Stock/Profile PR #28 merge แล้ว. การตรวจนี้ไม่ใช่ approval ของเอกสาร delta รอบใหม่หรือ Final release.
 
 ## Enterprise / Architectural Patterns
 
@@ -23,11 +23,13 @@
 
 ### State
 
-[RegistryOrderStateResolver.java:16](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/main/java/com/buffetrestaurant/service/state/RegistryOrderStateResolver.java#L16) รับ List<OrderState>, ตรวจซ้ำ/ขาด/null แล้วสร้าง immutable registry. [OrderStateConfig.java:13](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/main/java/com/buffetrestaurant/config/OrderStateConfig.java#L13) ประกาศ singleton beans สี่ตัว. Service รับ resolver interface และใช้ state.next() เดิม. SERVED ส่ง BusinessRuleException ตาม contract. Registry ไม่ยกเลิกการตรวจ permission หรือสร้างสถานะใหม่
+[RegistryOrderStateResolver.java](../code/backend/src/main/java/com/buffetrestaurant/service/state/RegistryOrderStateResolver.java) รับ `List<OrderState>`, ตรวจซ้ำ/ขาด/null แล้วสร้าง immutable registry. [OrderStateConfig.java](../code/backend/src/main/java/com/buffetrestaurant/config/OrderStateConfig.java) ประกาศ singleton beans สี่ตัว. [OrderFulfillmentServiceImpl](../code/backend/src/main/java/com/buffetrestaurant/service/impl/OrderFulfillmentServiceImpl.java) รับ resolver interface และใช้ `state.next()` เพื่อเทียบกับ transition ที่ร้องขอก่อน persist. SERVED ส่ง BusinessRuleException ตาม contract. Registry ไม่ยกเลิกการตรวจ permission หรือสร้างสถานะใหม่.
 
-[OrderStateResolverTest.java:12](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/test/java/com/buffetrestaurant/service/state/OrderStateResolverTest.java#L12) ตรวจ registration, startup failure และ replacement policy; [OrderStateTest.java:10](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/test/java/com/buffetrestaurant/service/state/OrderStateTest.java#L10) กับ [OrderFulfillmentServiceTest.java:29](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/test/java/com/buffetrestaurant/service/OrderFulfillmentServiceTest.java#L29) ตรวจ transition. เพิ่ม workflow ต้อง review enum/adjacent transitions/API/UI ไม่อ้าง OCP ครบทุกมิติจาก registry อย่างเดียว
+[OrderStateResolverTest](../code/backend/src/test/java/com/buffetrestaurant/service/state/OrderStateResolverTest.java) ตรวจ registration, startup failure และ replacement policy; [OrderStateTest](../code/backend/src/test/java/com/buffetrestaurant/service/state/OrderStateTest.java) กับ [OrderFulfillmentServiceTest](../code/backend/src/test/java/com/buffetrestaurant/service/OrderFulfillmentServiceTest.java) ตรวจ transition; [OrderFulfillmentIntegrationTest](../code/backend/src/test/java/com/buffetrestaurant/integration/OrderFulfillmentIntegrationTest.java) ตรวจ persisted lifecycle, denied roles และ invalid transitions. เพิ่ม workflow ต้อง review enum/adjacent transitions/API/UI ไม่อ้าง OCP ครบทุกมิติจาก registry อย่างเดียว.
 
 ### Strategy
+
+รายละเอียดที่เจ้าของ Billing/Payment ตรวจจาก source revision `bdd3bd7` อยู่ใน [Billing/Payment Strategy, SOLID และ JPA notes](architecture/teeramet-billing-payment-solid-jpa.md). เอกสารนี้ไม่ใช้ผล CI แทนการตรวจ public payment flow.
 
 [BillingEngine.java:21](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/de7b5d546a05ad3ccef8c641ee5c53d638a8e039/code/backend/src/main/java/com/buffetrestaurant/service/billing/BillingEngine.java#L21) implements BillCalculator และ compose pricing/discount interfaces. invalid pricing ถูกปฏิเสธก่อน discount. คำนวณ precise BigDecimal แล้ว HALF_UP payable totalสองตำแหน่ง; DTO ใช้ BillSummaryและPayment ใช้ยอดบันทึกจริง. BillingContext มาจาก session snapshot ผ่าน DiningSessionBillingReader; null discountContext หมายถึงไม่มี promotion
 

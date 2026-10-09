@@ -1,0 +1,46 @@
+{
+  "at": "2026-10-09T03:01:03.027Z",
+  "environment": "public Render HTTPS; real manual CUA browser; no mocks",
+  "sessionId": 4,
+  "orderId": 3,
+  "availableCards": 32,
+  "fragmentRemoved": true,
+  "filters": [
+    {
+      "category": "หมู",
+      "cards": 6
+    },
+    {
+      "category": "เนื้อ",
+      "cards": 6
+    },
+    {
+      "category": "ทะเล",
+      "cards": 6
+    },
+    {
+      "category": "ผัก",
+      "cards": 6
+    },
+    {
+      "category": "ทานเล่น",
+      "cards": 6
+    }
+  ],
+  "cart": {
+    "distinctMenus": 6,
+    "totalQuantity": 8,
+    "preservedAcrossCategories": true
+  },
+  "orderAfterReload": "RECEIVED",
+  "kitchenObserved": true,
+  "independentBrowserContexts": false,
+  "physicalDevices": false,
+  "billRequestedInBrowser": true,
+  "customerRevokedAfterClose": true,
+  "imagesInspected": [
+    "customer-confirm-360.jpg",
+    "customer-received-360.jpg",
+    "kitchen-six-lines-768.jpg"
+  ]
+}

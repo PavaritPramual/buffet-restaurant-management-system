@@ -1,5 +1,7 @@
 # Step 3 Final — plan snapshot
 
+**สถานะจริงล่าสุด 9 ตุลาคม 2026:** merged `develop d4633d5` รวม PR #34–#36 และ #38; PR #36 merge เวลา 11:15 ICT พร้อม Thai QR recovery fix/public regression evidence, PR #38 merge เวลา 14:43 ICT และเปลี่ยน production home route ไป `/admin`. CI ของ PR #38 merge commit [37900705251](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37900705251) ผ่าน. PR #36 CI head `b2928f5` [37878436100](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37878436100) และ merge CI `a6da906` [37883005451](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37883005451) เป็นหลักฐานคนละ revision. การ merge ไม่ได้ยืนยันว่า QR fix deploy แล้ว; Live SHA `2f8bc4b` ยังเป็น owner-reported ไม่ได้ independent attestation. Requirement Matrix และ Git audit refreshed บน branch ของศรัณย์; snapshots d84f071/a6da906 เป็น historical และ current inventory d4633d5 มี 143 non-merge commits. PR #37 sync กับ `d4633d5` แล้วและ CI [37902490154](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37902490154) ผ่านบน head `475584c`; re-review/approval และการปิด Activity review thread ยัง pending. PR description ยังต้องแก้จาก README-only ให้ตรง 24 files. Reviewer/member confirmations, V15 validation, release-to-main/deployed SHA, canonical Canva sync/export/owner approval และ rehearsal ยังไม่ครบ. ใช้ [Matrix ปัจจุบัน](step3-requirement-matrix.md) และ [Git audit ปัจจุบัน](step3-git-audit.md) เป็นสถานะรายข้อ; task snapshots ด้านล่างเก็บไว้เป็นประวัติตามวันของแต่ละรายการ.
+
 **อัปเดตแนวทางสไลด์7ตุลาคม2026:** ใช้ [Canva ทีม 40 หน้า](https://www.canva.com/d/D0dhcGCjuTTS7pV) เป็นต้นฉบับและเครื่องมือพรีเซนต์ของทั้ง5คน ผู้ใช้อนุมัตินำเข้าแล้ว อ่านกลับข้อความและnotesครบ รอตรวจภาพทุกหน้า/owner review/PDF export/ผลrelease/ซ้อม เก็บPDFที่exportจากCanvaเป็นเวอร์ชัน พร้อมlink/changelogใน [doc/slide](../slide/README.md) ไม่ใช้PPTXเป็นชุดส่งหรือขอreview ร่างรายคนและข้อความPPTXในsnapshotด้านล่างเป็นประวัติ ไม่ติ๊กเกณฑ์สไลด์Finalจากร่างเนื้อหา
 
 Snapshot Notion 7 ตุลาคม 2026 ก่อน PRเอกสารปวริศช์ สถานะสดดู [Step3](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6)
@@ -28,7 +30,7 @@ Snapshot Notion 7 ตุลาคม 2026 ก่อน PRเอกสารป�
 - [ ] รวม [solid-analysis.md](../solid-analysis.md) ครบ S/O/L/I/D พร้อมไฟล์ บรรทัด และเหตุผล อ้าง commit รุ่นส่ง
 - [ ] รวม [design-patterns.md](../design-patterns.md) ให้มี Pattern \| ปัญหาที่แก้ \| ไฟล์/คลาส \| Class Diagram ครบ Enterprise Patterns และ State/Strategy/Template Method
 - [ ] ปรับ README ครบชื่อ/คำอธิบาย สมาชิกและหน้าที่ Stack Architecture ERD Setup/Run API Tests Deployment URL และ Project Structure
-- [ ] ตรวจ Git ทั้ง 5 คน: branch ถูกชื่อ บัญชีผู้เขียน meaningful commits ≥5 ต่อคน การกระจายเวลา PR/reviewer และสิทธิ์ให้อาจารย์เข้าถึง; บันทึกข้อขาดจริง ไม่สร้าง commits เติมยอดหรือ push แทนกัน
+- [ ] ตรวจ Git ทั้ง 5 คน: branch ถูกชื่อ บัญชีผู้เขียน meaningful commits ≥15 ต่อคน การกระจายเวลา PR/reviewer และสิทธิ์ให้อาจารย์เข้าถึง; บันทึกข้อขาดจริง ไม่สร้าง commits เติมยอดหรือ push แทนกัน
 - [ ] รวม slides ต้นฉบับและ PDF ใน doc/slide/ พร้อมลิงก์ภาพ/diagram ที่ใช้
 - [ ] ประสาน release PR develop → main หลัง Final gates ผ่าน review แล้ว บันทึก merge commit/tag และ deployed commit ให้ตรงรุ่นส่ง
 ### เกณฑ์ผ่าน
@@ -80,19 +82,22 @@ Snapshot Notion 7 ตุลาคม 2026 ก่อน PRเอกสารป�
 **เป้าส่งต่อ:** เริ่มทันที ส่ง PR/ร่าง docs เมื่อพร้อมภายใน 24 ชั่วโมงแรก; review/deploy/evidence ทำคู่ขนาน; ยืนยัน release/ซ้อม/ชุดส่งภายใน 48 ชั่วโมง ไม่รอวัน Due
 **หลักฐาน:** ยังไม่มีผล Final — แนบ PR / commit / tests / report / URL เมื่อทำจริง
 ## 4. ธีรเมธ — Production Deployment และ Billing/Payment
+
+สถานะตรวจล่าสุดสำหรับ owner scope (แยก source/CI ออกจาก public release): [step3-owner-status.md](../deployment/step3-owner-status.md). Checklist ด้านล่างยังเป็นเกณฑ์รับงาน; รายการที่มีเพียงโค้ดหรือเอกสารแต่ขาด public verification คงไม่ติ๊กผ่านทั้งข้อ.
+
 ### ก่อนเริ่ม
-- [ ] sync branch teeramet_673380273-9_02; ตรวจ Dockerfile/Compose/provider settings ปัจจุบัน
+- [x] sync branch teeramet_673380273-9_02; ตรวจ Dockerfile/Compose/provider settings ปัจจุบัน — merge `develop` ถึง `e6172b2` ที่ `2ea71ed`; ผลตรวจอยู่ใน [owner status](../deployment/step3-owner-status.md)
 - [ ] อ่าน deployment decision URL เดียวด้านล่าง; frontend Dockerfile เดิมเป็น Vite dev server ยังไม่ใช่ production
 - [ ] เตรียม Render access และ env ส่วนตัว; ไม่ใส่ passwords/cookies/token ใน Tasks, Git หรือภาพหลักฐาน
 **อ้างอิง:** [Notion page](https://app.notion.com/p/3ddcb2e9d47a8035a1b7ced6608331fa) · [Compose](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/develop/docker-compose.yml) · [Billing/Payment evidence](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/develop/doc/billing/pr19-review-verification.md) · [Shared Contract](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/develop/doc/contracts/shared-contracts.md) · [Render Web Services](https://render.com/docs/web-services) · [Free limitations](https://render.com/docs/free) · [Supabase connection](https://supabase.com/docs/guides/database/connecting-to-postgres)
 ### งานที่ต้องทำ
-- [ ] ทำ production multi-stage Docker build: build React แล้ว package static assets กับ Spring Boot ให้เว็บ/API/Swagger อยู่ Render Web Service URL เดียว; local Compose ยังแยกได้
-- [ ] ใช้ VITE_API_BASE_URL=/api/v1 ใน production; React deep links refresh ได้ โดย API/Swagger/assets ไม่ถูก fallback เป็น HTML
+- [x] ทำ production multi-stage Docker build: build React แล้ว package static assets กับ Spring Boot ให้เว็บ/API/Swagger อยู่ Render Web Service URL เดียว; local Compose ยังแยกได้ — Render Live `2f8bc4b`, public `/`/Swagger/API/health ผ่านตาม [owner status](../deployment/step3-owner-status.md)
+- [x] ใช้ VITE_API_BASE_URL=/api/v1 ใน production; React deep links refresh ได้ โดย API/Swagger/assets ไม่ถูก fallback เป็น HTML — public route variants 200 HTML, unknown API/asset 404 JSON, bundle ไม่มี localhost; authenticated browser flow ยังเป็น gate แยก
 - [ ] ผูก SERVER_PORT กับ PORT ของ Render; ตั้ง HTTPS/forwarded headers, Staff session cookie และ Customer HttpOnly cookie เป็น Secure, SameSite=Lax พร้อม allowed Origin ตรง public URL
 - [ ] ตั้ง production providers: DiningSession/Fulfillment/MasterData/MenuAdmin=session, Ordering/BillingContext/PaymentStatus=database; runtime ไม่ใช้ fixture
 - [ ] เก็บ secrets ใน Render environment ไม่ bake ลง image; ปิด bootstrap admin หลังเตรียมบัญชีและตรวจ logs/screenshots ไม่มี credentials
 - [ ] เชื่อม Supabase Session Pooler 5432 SSL และตรวจ Flyway/JPA startup; deploy code ที่ต้องมี migration ใหม่หลังฐานกลางได้รับอนุมัติและ apply แล้วเท่านั้น
-- [ ] ทำ Deployment Diagram และคู่มือ deploy/redeploy/rollback; rollback code ต้องเข้ากับ schema ใหม่ ห้ามย้อน migration ที่ apply แล้ว
+- [x] ทำ Deployment Diagram และคู่มือ deploy/redeploy/rollback; rollback code ต้องเข้ากับ schema ใหม่ ห้ามย้อน migration ที่ apply แล้ว — [diagram](../diagrams/deployment-production-runtime.md) / [runbook](../deployment/production-runbook.md), รอ peer review
 - [ ] ตรวจ session หลัง restart: Staff login session ในหน่วยความจำอาจต้อง login ใหม่; ยืนยันพฤติกรรม Customer grant/ข้อมูลถาวรจริง ไม่อ้างว่าทุก session คงอยู่
 - [ ] ตรวจ public Billing/Payment: snapshot price/backend amount ปิดก่อนจ่ายไม่ได้ จ่ายซ้ำไม่ได้ refresh พบ payment เดิม PAID ไม่ close อัตโนมัติ
 - [ ] เขียน Strategy Pattern, Payment cascade/fetch/SOLID notes และ slides networking/runtime
@@ -173,7 +178,7 @@ Snapshot Notion 7 ตุลาคม 2026 ก่อน PRเอกสารป�
 - [ ] Diagramครบ UseCase+Description,Domain,Class+patterns,Sequenceอย่างน้อย3,Activity,ERD+Dictionary,Component,Deployment,State มีsourceและpreviewอ่านได้
 - [ ] SOLIDทั้ง5, EnterprisePatternsและ Behavioral State/Strategy/TemplateMethodมีcode/file/line/เหตุผล/classdiagram
 - [ ] READMEครบหัวข้อวิชา TestReportและcode/test/doc/img/doc-slideพร้อม ทุกลิงก์สำคัญเปิดได้
-- [ ] Git5คน branch/account/meaningfulcommits≥5/เวลา/PR/reviewerตรวจจริง ไม่ยืนยันcountล่วงหน้า
+- [ ] Git5คน branch/account/meaningfulcommits≥15/เวลา/PR/reviewerตรวจจริง ไม่ยืนยันcountล่วงหน้า
 - [ ] ทั้ง5คนซ้อมอธิบายโค้ดส่วนตนและdemoด้วยบัญชีจริง ไม่แก้DBด้วยมือระหว่างflow
 - [ ] Release PRผ่านreviewและmerge main deployedcommitตรงรุ่นส่ง มีrelease record/tag
 - [ ] PublicURL/Swaggerตรวจอีกครั้งก่อนส่ง พร้อมdemoscript/coldstartinstructions/คลิปหรือComposeสำรอง
