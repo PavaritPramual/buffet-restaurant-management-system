@@ -20,4 +20,6 @@ public interface RestaurantTableService {
     TableResponse updateTableStatus(Long id, UpdateTableStatusRequest request);
 
     void deleteTable(Long id);
+    List<TableResponse> getArchivedTables();
+    TableResponse restoreTable(Long id);
 }

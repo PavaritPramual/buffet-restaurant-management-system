@@ -14,11 +14,11 @@ public class CatalogMapper {
                 buffetPackage.getName(),
                 buffetPackage.getPrice(),
                 buffetPackage.getDescription(),
-                buffetPackage.isActive()
+                buffetPackage.isActive(), buffetPackage.isArchived()
         );
     }
 
     public SoupResponse toResponse(Soup soup) {
-        return new SoupResponse(soup.getId(), soup.getName(), soup.isActive());
+        return new SoupResponse(soup.getId(), soup.getName(), soup.isActive(), soup.isArchived());
     }
 }

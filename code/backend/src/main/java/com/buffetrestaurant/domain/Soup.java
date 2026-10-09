@@ -20,6 +20,13 @@ public class Soup {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(nullable = false)
+    private boolean archived;
+
+    public boolean isArchived() { return archived; }
+    public void archive() { active = false; archived = true; }
+    public void restore() { if (archived) { archived = false; active = false; } }
+
     protected Soup() {
     }
 

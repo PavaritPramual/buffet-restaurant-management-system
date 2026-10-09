@@ -64,7 +64,15 @@ public class BuffetPackageController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.disablePackage(id);
+        service.removePackage(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/archived")
+    @Operation(summary = "Manager: list archived packages")
+    public List<BuffetPackageResponse> archived() { return service.getArchivedPackages(); }
+
+    @PostMapping("/{id}/restore")
+    @Operation(summary = "Manager: restore an archived package as inactive; retries preserve current state")
+    public BuffetPackageResponse restore(@PathVariable Long id) { return service.restorePackage(id); }
 }

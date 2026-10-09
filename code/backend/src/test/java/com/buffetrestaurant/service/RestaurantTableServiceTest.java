@@ -34,13 +34,14 @@ class RestaurantTableServiceTest {
     private RestaurantTableRepository tableRepository;
 
     @Mock private com.buffetrestaurant.repository.DiningSessionRepository sessions;
+    @Mock private MasterDataRemovalAccessProvider removalAccess;
     private TableMapper tableMapper;
     private RestaurantTableService tableService;
 
     @BeforeEach
     void setUp() {
         tableMapper = new TableMapper();
-        tableService = new RestaurantTableServiceImpl(tableRepository, tableMapper, sessions);
+        tableService = new RestaurantTableServiceImpl(tableRepository, tableMapper, sessions, removalAccess);
     }
 
     @Test
@@ -261,14 +262,14 @@ class RestaurantTableServiceTest {
     }
 
     @Test
-    void deleteTable_whenTableIsOccupied_throwsIllegalStateException() {
+    void deleteTable_whenTableIsOccupied_throwsConflict() {
         // Given
         RestaurantTable table = new RestaurantTable(1L, "T01", 4, TableStatus.OCCUPIED);
         when(tableRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(table));
 
         // When & Then
         assertThatThrownBy(() -> tableService.deleteTable(1L))
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(DuplicateResourceException.class)
                 .hasMessageContaining("ไม่สามารถลบโต๊ะได้ เนื่องจากโต๊ะยังไม่ว่าง");
         verify(tableRepository, never()).delete(any(RestaurantTable.class));
     }

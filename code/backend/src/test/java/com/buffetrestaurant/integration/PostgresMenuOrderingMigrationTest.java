@@ -26,7 +26,7 @@ class PostgresMenuOrderingMigrationTest {
                 .locations("classpath:db/migration/common", "classpath:db/migration/postgresql").load();
         latest.migrate(); latest.validate();
         assertThat(latest.info().applied()).extracting(m -> m.getVersion().getVersion())
-                .containsExactly("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15");
+                .containsExactly("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "17");
         try (var connection = DriverManager.getConnection(url, user, password); var sql = connection.createStatement()) {
             MenuOrderingMigrationTest.assertMenuOrderingSchema(connection);
             MenuOrderingMigrationTest.assertMenuOrderingConstraints(connection);

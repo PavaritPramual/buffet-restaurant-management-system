@@ -63,7 +63,15 @@ public class SoupController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.disableSoup(id);
+        service.removeSoup(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/archived")
+    @Operation(summary = "Manager: list archived soups")
+    public List<SoupResponse> archived() { return service.getArchivedSoups(); }
+
+    @PostMapping("/{id}/restore")
+    @Operation(summary = "Manager: restore an archived soup as inactive; retries preserve current state")
+    public SoupResponse restore(@PathVariable Long id) { return service.restoreSoup(id); }
 }

@@ -23,8 +23,11 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
 
     private final RestaurantTableRepository tableRepository;
     private final TableMapper tableMapper;
+    private final com.buffetrestaurant.service.MasterDataRemovalAccessProvider removalAccess;
 
-    public RestaurantTableServiceImpl(RestaurantTableRepository tableRepository, TableMapper tableMapper, com.buffetrestaurant.repository.DiningSessionRepository sessions) {
+    public RestaurantTableServiceImpl(RestaurantTableRepository tableRepository, TableMapper tableMapper, com.buffetrestaurant.repository.DiningSessionRepository sessions,
+            com.buffetrestaurant.service.MasterDataRemovalAccessProvider removalAccess) {
+        this.removalAccess = removalAccess;
         this.sessions = sessions;
         this.tableRepository = tableRepository;
         this.tableMapper = tableMapper;
@@ -34,6 +37,7 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
 
     private RestaurantTable lockForMaintenance(Long id) {
         RestaurantTable table = tableRepository.findByIdForUpdate(id).orElseThrow(() -> new ResourceNotFoundException("Restaurant table not found with id: " + id));
+        if (table.isArchived()) throw new DuplicateResourceException("โต๊ะอยู่ในรายการเก็บออก กรุณาคืนรายการก่อนใช้งาน");
         if (sessions.existsByRestaurantTableIdAndStatus(id, com.buffetrestaurant.domain.enums.DiningSessionStatus.ACTIVE)) {
             throw new DuplicateResourceException(UserFacingMessages.TABLE_HAS_ACTIVE_SESSION);
         }
@@ -46,6 +50,7 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
                 ? tableRepository.findByStatus(status)
                 : tableRepository.findAll();
         return tables.stream()
+                .filter(table -> !table.isArchived())
                 .map(tableMapper::toResponse)
                 .toList();
     }
@@ -53,6 +58,7 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     @Override
     public TableResponse getTableById(Long id) {
         RestaurantTable table = findTableOrThrow(id);
+        if (table.isArchived()) throw new ResourceNotFoundException("Restaurant table is archived");
         return tableMapper.toResponse(table);
     }
 
@@ -105,14 +111,38 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     @Override
     @Transactional
     public void deleteTable(Long id) {
-        RestaurantTable table = lockForMaintenance(id);
-        if (sessions.existsByRestaurantTableId(id)) {
-            throw new DuplicateResourceException(UserFacingMessages.TABLE_HAS_DINING_HISTORY);
-        }
+        removalAccess.requireManagerAccess();
+        RestaurantTable table = tableRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant table not found with id: " + id));
+        if (table.isArchived()) return;
+        if (sessions.existsByRestaurantTableIdAndStatus(id, com.buffetrestaurant.domain.enums.DiningSessionStatus.ACTIVE))
+            throw new DuplicateResourceException(UserFacingMessages.TABLE_HAS_ACTIVE_SESSION);
         if (TableStatus.OCCUPIED.equals(table.getStatus())) {
-            throw new IllegalStateException(UserFacingMessages.TABLE_OCCUPIED_CANNOT_DELETE);
+            throw new DuplicateResourceException(UserFacingMessages.TABLE_OCCUPIED_CANNOT_DELETE);
         }
-        tableRepository.delete(table);
+        if (sessions.existsByRestaurantTableId(id)) table.archive();
+        else tableRepository.delete(table);
+        tableRepository.flush();
+    }
+
+    @Override
+    public List<TableResponse> getArchivedTables() {
+        removalAccess.requireManagerAccess();
+        return tableRepository.findByArchived(true).stream().map(tableMapper::toResponse).toList();
+    }
+
+    @Override
+    @Transactional
+    public TableResponse restoreTable(Long id) {
+        removalAccess.requireManagerAccess();
+        RestaurantTable table = tableRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant table not found with id: " + id));
+        if (table.isArchived()) {
+            if (sessions.existsByRestaurantTableIdAndStatus(id, com.buffetrestaurant.domain.enums.DiningSessionStatus.ACTIVE))
+                throw new DuplicateResourceException(UserFacingMessages.TABLE_HAS_ACTIVE_SESSION);
+            table.restore();
+        }
+        return tableMapper.toResponse(table);
     }
 
     private RestaurantTable findTableOrThrow(Long id) {
