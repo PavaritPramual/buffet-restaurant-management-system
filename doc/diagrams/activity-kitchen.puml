@@ -17,6 +17,7 @@ if (role = KITCHEN_STAFF?) then (อนุญาต)
     :แสดง RECEIVED / PREPARING;
 else (ปฏิเสธ)
     :ปฏิเสธการอ่าน (403);
+    stop
 endif
 
 |Kitchen Staff|
@@ -27,6 +28,7 @@ if (role ถูกต้องและเป็น next state?) then (อนุ
     :บันทึก PREPARING;
 else (ปฏิเสธ)
     :ปฏิเสธคำขอ; state เดิมไม่เปลี่ยน;
+    stop
 endif
 
 |Kitchen Staff|
@@ -40,6 +42,7 @@ if (role ถูกต้องและเป็น next state?) then (อนุ
     :บันทึก READY;
 else (ปฏิเสธ)
     :ปฏิเสธคำขอ; state เดิมไม่เปลี่ยน;
+    stop
 endif
 
 |Service Staff|
@@ -50,6 +53,7 @@ if (role = SERVICE_STAFF?) then (อนุญาต)
     :แสดง READY Orders;
 else (ปฏิเสธ)
     :ปฏิเสธการอ่าน (403);
+    stop
 endif
 
 |Service Staff|
@@ -62,6 +66,7 @@ if (role ถูกต้องและเป็น next state?) then (อนุ
     :บันทึก SERVED;
 else (ปฏิเสธ)
     :ปฏิเสธคำขอ; state เดิมไม่เปลี่ยน;
+    stop
 endif
 
 stop

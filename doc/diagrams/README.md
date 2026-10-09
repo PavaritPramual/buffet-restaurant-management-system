@@ -10,10 +10,10 @@
 
 | ภาพที่ตรวจ | Delta ที่ตรงกับ code | Source / preview |
 |---|---|---|
-| Activity Kitchen/Serving | role-specific board access; only `RECEIVED → PREPARING → READY → SERVED`; denied role/invalid next state leaves persisted status unchanged | [source](activity-kitchen.puml) / [SVG](previews/activity-kitchen.svg) |
+| Activity Kitchen/Serving | role-specific board access; only `RECEIVED → PREPARING → READY → SERVED`; each denied board read or transition ends that request, and denied transitions leave persisted status unchanged | [source](activity-kitchen.puml) / [SVG](previews/activity-kitchen.svg) |
 | Domain Model | add `UserProfile` one-to-one conceptual relation; include V15 `openingTargetStock` and `active`, derived shortfall note | [source](domain-model.puml) / [SVG](previews/domain-model.svg) |
 | Manager / Supervisor Use Case | reflect Manager contact-profile update fields and limited account-edit scope | [source](use-case-management.puml) / [SVG](previews/use-case-management.svg) |
-| All actors Use Case | update baseline revision and include Manager contact-profile update | [source](use-case.puml) / [SVG](previews/use-case.svg) |
+| All actors Use Case | update baseline revision and include Manager contact-profile update; clarify account edit/delete is unavailable while contact updates are limited to name and phone | [source](use-case.puml) / [SVG](previews/use-case.svg) |
 
 เป็น source/documentation review ของ merged baseline ไม่ใช่ peer approval หรือ Final release sign-off. Public flow/denial evidence แยกอยู่ใน [PR #36 report](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/b2928f564b796b0e7a5e7260e0f3f567ca40a386/doc/testing/sirapat-public-regression-2026-10-09.md); deployed revision ยัง owner-reported.
 

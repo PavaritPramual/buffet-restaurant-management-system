@@ -63,7 +63,7 @@ Supervisor --> Read
 Supervisor --> Move
 note bottom of Supervisor
 No Kitchen / Serving / Payment privilege.
-User edit/delete and detailed profile management are not implemented.
+Account edit/delete is not implemented; contact-profile updates are limited to first name, last name, and phone.
 end note
 note bottom
 Employees login before protected use cases.
