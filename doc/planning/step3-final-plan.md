@@ -1,5 +1,7 @@
 # Step 3 Final — plan snapshot
 
+**สถานะจริงล่าสุด 9 ตุลาคม 2026:** merged `develop d84f071` รวม PR #34/#35; PR #36 ยังเปิดรอ review บน head `b2928f5`. มี public regression evidence สำหรับ Kitchen/Serving, roles, Stock/Profile และ public URL/Swagger แต่ Live SHA `2f8bc4b` ยังเป็น owner-reported ไม่ได้ independent attestation. Requirement Matrix และ Git audit refresh อยู่ใน branch ของศรัณย์; reviewer/member confirmations, V15 validation, release-to-main/deployed SHA, canonical Canva sync/export/owner approval และ rehearsal ยังไม่ครบ. ใช้ [Matrix ปัจจุบัน](step3-requirement-matrix.md) และ [Git audit ปัจจุบัน](step3-git-audit.md) เป็นสถานะรายข้อ; ข้อความและ task snapshots ด้านล่างเก็บไว้เป็นประวัติตามวันของแต่ละรายการ.
+
 **อัปเดตแนวทางสไลด์7ตุลาคม2026:** ใช้ [Canva ทีม 40 หน้า](https://www.canva.com/d/D0dhcGCjuTTS7pV) เป็นต้นฉบับและเครื่องมือพรีเซนต์ของทั้ง5คน ผู้ใช้อนุมัตินำเข้าแล้ว อ่านกลับข้อความและnotesครบ รอตรวจภาพทุกหน้า/owner review/PDF export/ผลrelease/ซ้อม เก็บPDFที่exportจากCanvaเป็นเวอร์ชัน พร้อมlink/changelogใน [doc/slide](../slide/README.md) ไม่ใช้PPTXเป็นชุดส่งหรือขอreview ร่างรายคนและข้อความPPTXในsnapshotด้านล่างเป็นประวัติ ไม่ติ๊กเกณฑ์สไลด์Finalจากร่างเนื้อหา
 
 Snapshot Notion 7 ตุลาคม 2026 ก่อน PRเอกสารปวริศช์ สถานะสดดู [Step3](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6)
