@@ -34,6 +34,9 @@ public class UserAccount {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @Column(name = "archived_at")
+    private Instant archivedAt;
+
     protected UserAccount() {
     }
 
@@ -45,6 +48,20 @@ public class UserAccount {
         this.createdAt = Instant.now();
     }
 
+    public void changeActive(boolean active) { this.active = active; }
+
+    /** Closes the account: it can no longer log in, but the row stays for history references. */
+    public void archive() {
+        if (archivedAt != null) return;
+        this.active = false;
+        this.archivedAt = Instant.now();
+    }
+
+    /** Restoring never re-enables login; a Manager must activate the account explicitly. */
+    public void restore() { this.archivedAt = null; }
+
+    public boolean isArchived() { return archivedAt != null; }
+    public Instant getArchivedAt() { return archivedAt; }
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getUsername() { return username; }

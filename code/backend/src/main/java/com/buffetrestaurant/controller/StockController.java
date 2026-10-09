@@ -82,6 +82,47 @@ public class StockController {
         return stockService.setActive(id, body.active());
     }
 
+    @GetMapping("/items/archived")
+    @Operation(summary = "List archived stock items; their history is kept")
+    @ApiResponse(responseCode = "200", description = "Archived stock item list")
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "MANAGER role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    public List<StockItemResponse> archivedItems(HttpServletRequest request) {
+        users.requireAnyRole(request, UserRole.MANAGER);
+        return stockService.archivedItems();
+    }
+
+    @org.springframework.web.bind.annotation.DeleteMapping("/items/{id}")
+    @Operation(summary = "Delete a never-used stock item, or archive it when it has history or stock")
+    @ApiResponse(responseCode = "204", description = "Item deleted or archived; repeating an archive is a no-op")
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "MANAGER role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "404", description = "Stock item not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    public ResponseEntity<Void> removeItem(@PathVariable Long id, HttpServletRequest request) {
+        users.requireAnyRole(request, UserRole.MANAGER);
+        stockService.removeItem(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/items/{id}/restore")
+    @Operation(summary = "Restore an archived stock item; it stays inactive until re-enabled")
+    @ApiResponse(responseCode = "200", description = "Stock item restored")
+    @ApiResponse(responseCode = "401", description = "Staff login required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "MANAGER role required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "404", description = "Stock item not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    public StockItemResponse restoreItem(@PathVariable Long id, HttpServletRequest request) {
+        users.requireAnyRole(request, UserRole.MANAGER);
+        return stockService.restoreItem(id);
+    }
+
     @GetMapping
     @Operation(summary = "List stock items and current quantities")
     @ApiResponse(responseCode = "200", description = "Stock item list")

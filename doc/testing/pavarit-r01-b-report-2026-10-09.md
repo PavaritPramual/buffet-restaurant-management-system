@@ -124,3 +124,16 @@ Regression backend ใช้ MockMvc กับ Spring context, Controller/Servic
 | `MasterDataArchiveMigrationTest,PostgresMasterDataArchiveMigrationTest` หลังปรับ assertion current-version และเพิ่ม SQLSTATE | **2 passed, 0 failures/errors/skipped**; เป็น rerun ไม่บวกเป็น tests ใหม่ |
 
 รวม24กรณีไม่ซ้ำ รัน26ครั้งเพราะ rerun2. PostgreSQL18 มี warning เดิมว่า Flywayรุ่นนี้รับรองถึง17 จึงบันทึกแยกจาก PostgreSQL16 ที่ใช้ตรวจ CHECK; testsผ่านจริง. ไม่รันfrontendซ้ำเพราะแก้เฉพาะtests/docs ไม่มีruntime/API/DTO/UI/schema changes. ผลfrontend157และCIของ93309baเป็น baseline; รอCIheadใหม่และเมธัสตรวจหลักฐาน ไม่รับรองfullV1–V18/publicจากชุดนี้
+
+## รวม develop และแก้ conflict หลัง PR #45
+
+รวม develop `60f6905` ซึ่งมี V16 ของเมธัสและ U03 follow-up แล้ว บนฐาน PR `f098b8713df9ffea538c0fd1badd4e550d899c8b`. Conflict มีเฉพาะ MenuOrderingMigrationTest และ PostgresMenuOrderingMigrationTest: คง containsSubsequence/validate/pendingว่างจาก PR นี้ และเพิ่ม V16 จาก develop จึงตรวจทั้ง V16 → V17 และรองรับ V18 ที่จะเพิ่ม ไม่แก้ SQL migration ใดหรือปรับ runtime เพิ่มจากการแก้ conflict
+
+ผลหลังรวม 9 ตุลาคม 2026 Java21/Docker Desktop ปิด `.env` import:
+
+- Backend `mvn --batch-mode --no-transfer-progress -Dspring.config.import= clean verify`: **395 passed, 0 failures/errors/skipped** รวม PostgreSQL marked databases ใหม่, Testcontainers, migration V16 → V17 และ concurrency
+- Frontend `npm test`: **163 passed / 18 files**; lint/build exit0 มี **5 warnings** จากโค้ดที่รวม (set-state-in-effect4 และ StockPage exhaustive-deps1) ไม่อ้างว่า warningsยังมีแค่4
+- Browser runtime URL guard `node --test test/browser/step3-runtime-config.test.cjs`: **6 passed**
+- `git diff --check` และ index conflict ตรวจผ่าน ไม่มีไฟล์ unmerged; รักษา doc/learning ที่ไม่tracked
+
+ยังไม่มี V18 ใน branch จึงไม่รับรองfullV1–V18 ยังไม่applySupabase/deploy/publicหรือmergePRนี้เอง ผลฐานทิ้งได้ไม่แทน gateฐานกลาง รอGitHubประเมินmergeabilityและCIของmergecommitที่push

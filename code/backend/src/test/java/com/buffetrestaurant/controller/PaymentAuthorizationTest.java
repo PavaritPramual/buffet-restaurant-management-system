@@ -52,6 +52,26 @@ class PaymentAuthorizationTest {
     @MockitoBean
     private jakarta.persistence.EntityManager entityManager;
 
+    @MockitoBean
+    private com.buffetrestaurant.service.AuthenticationService accounts;
+
+    @org.junit.jupiter.api.BeforeEach
+    void accountsAreUsable() {
+        org.mockito.Mockito.when(accounts.isLoginAllowed(org.mockito.ArgumentMatchers.anyLong())).thenReturn(true);
+    }
+
+    @Test
+    void rejectsStaleSessionOfInactiveAccount() throws Exception {
+        org.mockito.Mockito.when(accounts.isLoginAllowed(1L)).thenReturn(false);
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(UserSessionKeys.USER_CONTEXT_SESSION_KEY,
+                new UserContext(1L, "test-user", "Test User", UserRole.SERVICE_STAFF));
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .get("/api/v1/payments/sessions/12").session(session))
+                .andExpect(status().isUnauthorized());
+        verifyNoInteractions(contextProvider, paymentRepository, sessions, entityManager);
+    }
+
     @Test
     void rejectsRequestsWithoutLogin() throws Exception {
         mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders

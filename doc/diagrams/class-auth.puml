@@ -13,9 +13,12 @@ skinparam usecaseBackgroundColor #F2E6D4
 skinparam usecaseBorderColor #A54A2E
 title User and server-session authentication - actual classes
 class UserAccount {
+id : Long
+username : String
 passwordHash : String
 role : UserRole
 active : boolean
+createdAt : Instant
 }
 class UserProfile {
 userId : Long
@@ -30,11 +33,13 @@ class AuthService {
 +authenticate(username, password) : UserContext
 +createUser(request) : UserResponse
 +updateProfile(id, request) : UserResponse
++listUsers() : List<UserResponse>
 }
 interface UserAccountRepository <<Repository>>
 interface UserProfileRepository <<Repository>>
 class AuthController {
 +login(request)
++me()
 +logout()
 }
 class SessionUserContextProvider {
@@ -46,7 +51,11 @@ interface AuthenticationService
 interface UserAdministrationService
 interface UserContextProvider
 class UserSessionKeys <<common>>
-class AdminUserController
+class AdminUserController {
++list()
++create(request)
++updateProfile(id, request)
+}
 AuthenticationService <|.. AuthService
 UserAdministrationService <|.. AuthService
 UserContextProvider <|.. SessionUserContextProvider
@@ -64,7 +73,8 @@ note bottom of AuthService
 Authentication and user administration have separate contracts.
 Profile is optional in the database (0..1).
 createUser creates both; authenticate requires a profile.
-Only list/create/updateProfile are implemented; V15 profile names/phone are nullable for legacy rows.
+Manager-only list/create/updateProfile; first/last name are required by the API for new accounts and updates,
+but V15 columns stay nullable for legacy rows. phoneNumber is optional (max 20).
 Incomplete session identities return 401; disallowed roles return 403.
 end note
 @enduml

@@ -2,6 +2,7 @@ package com.buffetrestaurant.dto.response;
 
 import com.buffetrestaurant.domain.enums.UserRole;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.Instant;
 
 public record UserResponse(
         @Schema(example = "8") Long id,
@@ -12,6 +13,9 @@ public record UserResponse(
         @Schema(example = "SERVICE_STAFF") UserRole role,
         @Schema(example = "Somchai", nullable = true) String firstName,
         @Schema(example = "Jaidee", nullable = true) String lastName,
-        @Schema(example = "0812345678", nullable = true) String phoneNumber
+        @Schema(example = "0812345678", nullable = true) String phoneNumber,
+        @Schema(description = "Whether the account may log in", example = "true") boolean active,
+        @Schema(description = "Set when the account was closed but kept for history; null otherwise",
+                example = "2026-10-09T08:09:10Z", nullable = true) Instant archivedAt
 ) {
 }
