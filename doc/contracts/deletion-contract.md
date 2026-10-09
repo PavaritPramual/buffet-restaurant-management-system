@@ -3,6 +3,10 @@
 **Status:** Proposed shared contract for owner review; not yet implemented or accepted by module owners.
 **Scope:** U03 user-facing errors and R01 removal/archive semantics. This contract does not authorize a schema migration or production-data operation.
 
+**R01-B owner attestation, 9 October 2026:** Pavarit accepts Table/Package/Soup semantics in this merged contract and records [exact design/FK delta](../architecture/pavarit-r01-b-design-delta.md). His implementation uses V17; Methus owns V16 and Sirapat V18 per the team's confirmed reservation. This attestation does not accept other owners' implementation, authorize shared migration, or certify public runtime. [Schema/DTO delta](../database/pavarit-r01-b-schema-delta.md) adds only archived flags to these three resources; operational details reject archived resources until restore, while existing session history remains readable.
+
+**Scoped HTTP status migration in R01-B:** the legacy occupied-table DELETE rejection changes from `400` to the shared R01 target `409`. ACTIVE-session rejection is already `409`. The DTO/error JSON shape stays unchanged. This change is submitted for API review in this PR; the category-child compatibility exception remains owned by R01-A. Existing tests are updated for the table rule rather than implying that every resource's status migration is complete.
+
 ## Rules
 
 1. A Manager may hard-delete a resource only when it has never been used and no foreign key references it. Never cascade-delete business history to make deletion succeed.

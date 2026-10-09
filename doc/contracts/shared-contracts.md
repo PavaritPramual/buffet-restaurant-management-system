@@ -4,6 +4,8 @@
 
 ## Conventions
 
+R01-B Table/Package/Soup add `archived: boolean` (non-null, default false). See [removal contract](deletion-contract.md) and [V17 field/restore semantics](../database/pavarit-r01-b-schema-delta.md). These master-data fields are not added to Customer DTOs or BillingContext. Team forward migration reservation: Methus V16, Pavarit V17, Sirapat V18; no shared apply is authorized here.
+
 - Base API: `/api/v1`
 - ID ใช้ JSON number และ Java `Long`
 - จำนวนเงินใช้ JSON number และ Java `BigDecimal`
