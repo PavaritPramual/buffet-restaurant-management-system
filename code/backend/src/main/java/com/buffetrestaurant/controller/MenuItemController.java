@@ -5,6 +5,7 @@ import com.buffetrestaurant.dto.request.MenuItemRequest;
 import com.buffetrestaurant.dto.response.MenuItemResponse;
 import com.buffetrestaurant.dto.response.PageResponse;
 import com.buffetrestaurant.service.MenuCatalogService;
+import com.buffetrestaurant.service.MenuAdminAccessProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,7 +26,23 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Menu Item Management")
 public class MenuItemController {
     private final MenuCatalogService service;
-    public MenuItemController(MenuCatalogService service) { this.service = service; }
+    private final MenuAdminAccessProvider access;
+    public MenuItemController(MenuCatalogService service, MenuAdminAccessProvider access) { this.service = service; this.access = access; }
+
+    @GetMapping("/archived")
+    @Operation(summary = "Manager-only archived menu items")
+    public PageResponse<MenuItemResponse> archived(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id,asc") String sort) {
+        access.requireMenuWriteAccess();
+        return service.getArchivedMenuItems(page, size, sort);
+    }
+
+    @PostMapping("/{id}/restore")
+    @Operation(summary = "Manager restores an archived menu item as unavailable; retries preserve current state")
+    public MenuItemResponse restore(@PathVariable Long id) {
+        access.requireMenuWriteAccess();
+        return service.restoreMenuItem(id);
+    }
 
     @GetMapping
     @Operation(summary = "List menu items with pagination and sorting")
@@ -41,17 +58,20 @@ public class MenuItemController {
 
     @PostMapping
     public ResponseEntity<MenuItemResponse> create(@Valid @RequestBody MenuItemRequest request) {
+        access.requireMenuWriteAccess();
         MenuItemResponse created = service.createMenuItem(request);
         return ResponseEntity.created(URI.create(ApiPaths.API_V1 + "/menu-items/" + created.id())).body(created);
     }
 
     @PutMapping("/{id}")
     public MenuItemResponse update(@PathVariable Long id, @Valid @RequestBody MenuItemRequest request) {
+        access.requireMenuWriteAccess();
         return service.updateMenuItem(id, request);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+        access.requireMenuWriteAccess();
         service.deleteMenuItem(id);
         return ResponseEntity.noContent().build();
     }

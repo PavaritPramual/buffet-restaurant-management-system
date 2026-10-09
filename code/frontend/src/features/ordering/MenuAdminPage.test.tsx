@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import MenuAdminPage from './MenuAdminPage'
 import * as api from './api'
+import type { MenuRemovalGateway } from './MenuArchivePanel'
 
 vi.mock('./api', async () => {
   const actual = await vi.importActual<typeof import('./api')>('./api')
@@ -16,6 +17,76 @@ vi.mock('./api', async () => {
     deleteCategory: vi.fn(),
     deleteMenuItem: vi.fn(),
   }
+})
+
+describe('MenuAdminPage proposed R01-A gateway', () => {
+  function proposedGateway(): MenuRemovalGateway {
+    return {
+      listItems: vi.fn().mockResolvedValue({ content: [], page: 0, size: 10, totalElements: 0, totalPages: 0 }),
+      listCategories: vi.fn().mockResolvedValue([]),
+      removeItem: vi.fn().mockResolvedValue(undefined), removeCategory: vi.fn().mockResolvedValue(undefined),
+      restoreItem: vi.fn().mockResolvedValue(menuItem), restoreCategory: vi.fn().mockResolvedValue(category),
+    }
+  }
+  function initialCatalog() {
+    mockCatalog()
+    vi.mocked(api.getMenuItems).mockResolvedValue({ content: [menuItem], page: 0, size: 10, totalElements: 1, totalPages: 1 })
+  }
+
+  it('keeps archive controls absent from production callers without an adapter', async () => {
+    initialCatalog()
+    render(<MenuAdminPage />)
+    const row = (await screen.findByText('ไก่ทอด')).closest('tr')!
+    expect(screen.queryByRole('button', { name: 'รายการเก็บออก' })).toBeNull()
+    fireEvent.click(within(row).getByRole('button', { name: 'ลบ' }))
+    expect(screen.getByRole('heading', { name: 'ยืนยันการลบ' })).toBeTruthy()
+    expect(screen.queryByText(/หากมีประวัติระบบจะเก็บรายการไว้/)).toBeNull()
+  })
+
+  it('explains removal and history retention before using the proposed operation', async () => {
+    initialCatalog()
+    const source = proposedGateway()
+    render(<MenuAdminPage removalGateway={source} />)
+    const row = (await screen.findByText('ไก่ทอด')).closest('tr')!
+    fireEvent.click(within(row).getByRole('button', { name: 'ลบ' }))
+    expect(within(screen.getByRole('dialog')).getByText(/รายการที่ไม่เคยใช้และไม่มีข้อมูลอ้างอิงจะถูกลบถาวร/)).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))
+    await screen.findByText(/นำรายการออกจากรายการใช้งานแล้ว หากมีประวัติ/)
+    expect(source.removeItem).toHaveBeenCalledExactlyOnceWith(10)
+    expect(api.deleteMenuItem).not.toHaveBeenCalled()
+  })
+
+  it('retains a category conflict and form draft without claiming it was removed', async () => {
+    initialCatalog()
+    const source = proposedGateway()
+    vi.mocked(source.removeCategory).mockRejectedValue({ response: { status: 409, data: { message: 'หมวดหมู่นี้ยังมีเมนูใช้งานอยู่' } } })
+    render(<MenuAdminPage removalGateway={source} />)
+    const row = (await screen.findByText('ของทอด', { selector: 'span' })).closest('li')!
+    fireEvent.click(within(row).getByRole('button', { name: 'แก้ไข' }))
+    fireEvent.click(within(row).getByRole('button', { name: 'ลบ' }))
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))
+    expect((await screen.findByRole('alert')).textContent).toBe('หมวดหมู่นี้ยังมีเมนูใช้งานอยู่')
+    expect(screen.getByRole('dialog')).toBeTruthy()
+    expect((screen.getByLabelText('ชื่อหมวดหมู่') as HTMLInputElement).value).toBe('ของทอด')
+    expect(screen.queryByText(/นำรายการออกจากรายการใช้งานแล้ว/)).toBeNull()
+    expect(api.deleteCategory).not.toHaveBeenCalled()
+  })
+
+  it('separates archived view from editing and refreshes working data when returning', async () => {
+    initialCatalog()
+    const source = proposedGateway()
+    render(<MenuAdminPage removalGateway={source} />)
+    await screen.findByText('ไก่ทอด')
+    fireEvent.click(screen.getByRole('button', { name: 'รายการเก็บออก' }))
+    await screen.findByText('ไม่มีเมนูที่เก็บออก')
+    expect(screen.queryByLabelText('ชื่อเมนู')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'ลบ' })).toBeNull()
+    const calls = vi.mocked(api.getMenuItems).mock.calls.length
+    fireEvent.click(screen.getByRole('button', { name: 'รายการใช้งาน' }))
+    await screen.findByText('ไก่ทอด')
+    expect(screen.getByLabelText('ชื่อเมนู')).toBeTruthy()
+    expect(api.getMenuItems).toHaveBeenCalledTimes(calls + 1)
+  })
 })
 
 const category = { id: 3, name: 'ของทอด' }

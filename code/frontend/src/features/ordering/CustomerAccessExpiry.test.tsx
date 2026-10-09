@@ -90,13 +90,16 @@ it.each([undefined, 503])('keeps a transient %s failure recoverable and pauses w
 })
 it('accepts a new QR in the same tab and ignores an older order acknowledgement after expiry', async () => {
   const oldOrder = deferred<api.Order>()
+  const expiryPoll = deferred<api.CustomerBillStatus>()
+  // Control the first background poll; a captured interval can skip while it is still running.
+  vi.mocked(api.getBillStatus).mockResolvedValueOnce(bill).mockReturnValueOnce(expiryPoll.promise)
   vi.mocked(api.placeOrder).mockReturnValue(oldOrder.promise)
   await ready()
   fireEvent.click(screen.getByRole('button', { name: 'เพิ่ม ไก่ทอด' }))
   fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสั่ง' }))
   fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))
-  vi.mocked(api.getBillStatus).mockRejectedValueOnce({ response: { status: 401 } })
-  await act(async () => poll()); assertExpired()
+  expect(api.placeOrder).toHaveBeenCalledTimes(1)
+  await act(async () => expiryPoll.reject({ response: { status: 401 } })); assertExpired()
   vi.mocked(api.redeemQr).mockResolvedValue({ ...context, sessionId: 2, tableNumber: 'T02' })
   fireEvent.click(screen.getByRole('button', { name: 'QR ใหม่' }))
   await screen.findByText('โต๊ะ T02 · Standard')

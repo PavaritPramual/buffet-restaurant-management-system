@@ -26,6 +26,32 @@ Set `MENU_TEST_PG_URL` / `DINING_TEST_PG_URL` to `jdbc:postgresql://127.0.0.1:<l
 
 See [test conventions](../doc/testing/test-conventions.md) and the [acceptance criteria template](../doc/testing/acceptance-criteria-template.md).
 
+## R01-A shared database metadata audit (reviewer-run)
+
+`test/tools/MenuArchiveSharedAudit.java` is a manual read-only helper for Methus/the schema reviewer, separate from automated tests. It reads the reviewer's private `code/backend/.env` and connects to the configured Supabase **session pooler on port 5432** with TLS. Use the same role as the backend to be deployed; do not commit or print the configuration. The helper only SELECTs catalog/Flyway metadata in a read-only transaction and rolls back; it does not migrate, repair, apply V18 or write business data.
+
+As of the PR47 review follow-up, no successful shared audit result has been attached to the PR. The existence of this helper or a file under ignored `test/reports/` is not a successful audit. Local H2 and disposable PostgreSQL CI are separate evidence.
+
+From the repository root, with Java 17+ and the backend dependencies available, prepare the JDBC classpath without starting the application, then let the reviewer run the helper:
+
+```powershell
+$auditRepo = (Resolve-Path .).Path
+New-Item -ItemType Directory -Force test/reports | Out-Null
+Push-Location code/backend
+try {
+    .\mvnw.cmd dependency:build-classpath "-Dmdep.outputFile=../../test/reports/r01-a-audit-classpath.txt"
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot prepare audit classpath' }
+} finally { Pop-Location }
+$auditClasspath = (Get-Content test/reports/r01-a-audit-classpath.txt -Raw).Trim()
+java -cp $auditClasspath test/tools/MenuArchiveSharedAudit.java $auditRepo > test/reports/r01-a-shared-audit.json
+```
+
+Check the command exit status and parse the output as JSON before attaching it. Connection errors or incomplete output are not attestation; redact error diagnostics before sharing. Never attach `.env`, the classpath file, credentials or connection details.
+
+The reviewer checks `readOnly=on`, successful ordered Flyway history (at least V15), menu FK definitions, absent menu `archiveColumns`/V18 before candidate V18 apply, enabled RLS, `clientGrants=0`, and `backendUpdate.allowed=true` for **both** menu tables. `clientGrants` counts direct ACL entries for PUBLIC/anon/authenticated, including PUBLIC grants omitted by `role_table_grants`; also check effective client privileges if roles inherit permissions. Effective UPDATE permission is necessary for archive; verify applicable RLS policies for the actual backend role against V5/V13. Record the observed timestamp and environment, attach the sanitized JSON to PR47, and state the schema approval separately. If V18/columns are already present, stop: reconcile with the DB owner instead of editing an applied checksum or using repair/outOfOrder.
+
+After approval, the team follows the [ordered V16 → V17 → V18 maintenance runbook](../doc/database/r01-a-menu-archive-proposal.md#shared-apply-runbook-หลังผู้รีวิวรับรอง). The audit command does not authorize or perform shared apply/deploy.
+
 ## Public HTTPS API regression
 
 `node test/api/step3-public-regression.cjs` uses native HTTP requests, not browser automation. It creates uniquely labelled QA accounts/master data and performs order/payment/stock/profile operations through the application's API. Use only an approved test-data scope; it does not delete records or run shared database migrations.

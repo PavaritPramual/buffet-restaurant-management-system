@@ -1,0 +1,199 @@
+{
+  "environment": "fresh isolated H2; real HTTP; actual V18; separate run from browser screenshots",
+  "publicAcceptance": false,
+  "menuCount": 30,
+  "order": {
+    "orderId": 2,
+    "sessionId": 2,
+    "tableNumber": "R01-QA",
+    "items": [
+      {
+        "menuItemId": 1,
+        "name": "R01 เมนูมีประวัติ",
+        "quantity": 2
+      }
+    ],
+    "status": "RECEIVED",
+    "createdAt": "2026-10-09T13:11:03.4763267Z"
+  },
+  "bill": {
+    "sessionId": 2,
+    "subtotalAmount": 598,
+    "discountAmount": 0,
+    "totalAmount": 598
+  },
+  "payment": {
+    "paymentId": 2,
+    "sessionId": 2,
+    "amount": 598,
+    "paymentMethod": "CASH",
+    "paymentStatus": "PAID",
+    "paidAt": "2026-10-09T13:11:03.853954Z"
+  },
+  "closed": {
+    "sessionId": 2,
+    "sessionStatus": "COMPLETED"
+  },
+  "events": [
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/dining-sessions/qr-exchange",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/dining-sessions/2/menu",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/dining-sessions/2/orders",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/dining-sessions/2/orders",
+      "status": 200
+    },
+    {
+      "method": "DELETE",
+      "path": "/menu-items/1",
+      "status": 204
+    },
+    {
+      "method": "DELETE",
+      "path": "/menu-items/1",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/menu-items",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/dining-sessions/2/menu",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/dining-sessions/2/orders",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/dining-sessions/2/orders",
+      "status": 200
+    },
+    {
+      "method": "DELETE",
+      "path": "/menu-categories/2",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/menu-categories/archived",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/menu-items/1/restore",
+      "status": 409
+    },
+    {
+      "method": "POST",
+      "path": "/menu-categories/2/restore",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/menu-items/archived",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/menu-items/1/restore",
+      "status": 200
+    },
+    {
+      "method": "PUT",
+      "path": "/menu-items/1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/menu-items/1/restore",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/dining-sessions/2/orders",
+      "status": 200
+    },
+    {
+      "method": "DELETE",
+      "path": "/menu-items/1",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "path": "/billing/preview",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/dining-sessions/2/bill-request",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/payments",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/payments/sessions/2",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/menu-items/1/restore",
+      "status": 200
+    },
+    {
+      "method": "DELETE",
+      "path": "/menu-items/1",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/payments/sessions/2",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/dining-sessions/2/close",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/payments/sessions/2",
+      "status": 200
+    }
+  ],
+  "assertions": [
+    "archive removes item from main/customer lists",
+    "stale cart 409 with unchanged orders",
+    "archived category blocks item restore",
+    "category restore leaves child archived",
+    "item restore unavailable; later activation survives retry",
+    "Order snapshot unchanged",
+    "Bill total 598 and recorded Payment unchanged across archive/restore",
+    "paid session closes normally"
+  ]
+}

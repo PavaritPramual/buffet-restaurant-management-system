@@ -1,6 +1,7 @@
 import { apiClient, customerApiClient } from '../../api/client'
 import { getApiError } from '../../api/errors'
 import type { OrderStatus } from '../../contracts/shared'
+import type { MenuRemovalGateway } from './MenuArchivePanel'
 
 export interface MenuItem { id: number; categoryId: number; categoryName: string; name: string; description: string | null; available: boolean; packageIds: number[]; imageUrl: string | null }
 export interface Category { id: number; name: string }
@@ -78,5 +79,13 @@ export async function deleteCategory(id: number) { await apiClient.delete(`/menu
 export async function getMenuItems(page = 0, size = 10, sort = 'id,asc') { return (await apiClient.get<PageResult<MenuItem>>('/menu-items', { params: { page, size, sort } })).data }
 export async function saveMenuItem(id: number | null, input: MenuItemInput) { return (id === null ? await apiClient.post<MenuItem>('/menu-items', input) : await apiClient.put<MenuItem>(`/menu-items/${id}`, input)).data }
 export async function deleteMenuItem(id: number) { await apiClient.delete(`/menu-items/${id}`) }
+export const menuRemovalGateway: MenuRemovalGateway = {
+  listItems: async (page, size, sort) => (await apiClient.get<PageResult<MenuItem>>('/menu-items/archived', { params: { page, size, sort } })).data,
+  listCategories: async () => (await apiClient.get<Category[]>('/menu-categories/archived')).data,
+  removeItem: deleteMenuItem,
+  removeCategory: deleteCategory,
+  restoreItem: async id => (await apiClient.post<MenuItem>(`/menu-items/${id}/restore`)).data,
+  restoreCategory: async id => (await apiClient.post<Category>(`/menu-categories/${id}/restore`)).data,
+}
 export async function getOrders(sessionId: number) { return (await customerApiClient.get<Order[]>(`/dining-sessions/${sessionId}/orders`)).data }
 export async function placeOrder(sessionId: number, items: { menuItemId: number; quantity: number }[]) { return (await customerApiClient.post<Order>(`/dining-sessions/${sessionId}/orders`, { items })).data }

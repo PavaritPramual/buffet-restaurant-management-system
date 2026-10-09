@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "menu_items")
@@ -33,6 +34,9 @@ public class MenuItem {
 
     @Column(nullable = false)
     private boolean available;
+
+    @Column(name = "archived_at")
+    private OffsetDateTime archivedAt;
 
     @Column(name = "image_url", length = 500)
     private String imageUrl;
@@ -67,6 +71,14 @@ public class MenuItem {
     public void setDescription(String description) { this.description = description; }
     public boolean isAvailable() { return available; }
     public void setAvailable(boolean available) { this.available = available; }
+    public OffsetDateTime getArchivedAt() { return archivedAt; }
+    public boolean isArchived() { return archivedAt != null; }
+    public void archive() {
+        if (!isArchived()) { archivedAt = OffsetDateTime.now(java.time.ZoneOffset.UTC); available = false; }
+    }
+    public void restore() {
+        if (isArchived()) { archivedAt = null; available = false; }
+    }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public Set<Long> getPackageIds() { return packageIds; }

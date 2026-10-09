@@ -34,7 +34,7 @@ class MenuOrderingMigrationTest {
         latest.migrate();
         latest.validate();
         assertThat(latest.info().applied()).extracting(m -> m.getVersion().getVersion())
-                .containsSubsequence("1", "2", "3", "4", "6", "7", "8", "9", "10", "14", "15", "16", "17");
+                .containsSubsequence("1", "2", "3", "4", "6", "7", "8", "9", "10", "14", "15", "16", "17", "18");
         assertThat(latest.info().pending()).isEmpty();
         try (Connection connection = DriverManager.getConnection(url, "sa", "")) {
             assertMenuOrderingSchema(connection);
@@ -45,11 +45,13 @@ class MenuOrderingMigrationTest {
     static void assertMenuOrderingSchema(Connection connection) throws Exception {
         DatabaseMetaData metadata = connection.getMetaData();
         assertColumn(metadata, "menu_categories", "name", false, 100);
+        assertColumn(metadata, "menu_categories", "archived_at", true, null);
         assertColumn(metadata, "menu_items", "category_id", false, null);
         assertColumn(metadata, "menu_items", "name", false, 100);
         assertColumn(metadata, "menu_items", "description", true, null);
         assertColumn(metadata, "menu_items", "image_url", true, 500);
         assertColumn(metadata, "menu_items", "available", false, null);
+        assertColumn(metadata, "menu_items", "archived_at", true, null);
         assertColumn(metadata, "orders", "session_id", false, null);
         assertColumn(metadata, "orders", "table_number", false, 20);
         assertColumn(metadata, "orders", "status", false, 20);

@@ -26,11 +26,26 @@ class PostgresMenuOrderingMigrationTest {
                 .locations("classpath:db/migration/common", "classpath:db/migration/postgresql").load();
         latest.migrate(); latest.validate();
         assertThat(latest.info().applied()).extracting(m -> m.getVersion().getVersion())
-                .containsSubsequence("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17");
+                .containsSubsequence("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18");
         assertThat(latest.info().pending()).isEmpty();
         try (var connection = DriverManager.getConnection(url, user, password); var sql = connection.createStatement()) {
             MenuOrderingMigrationTest.assertMenuOrderingSchema(connection);
             MenuOrderingMigrationTest.assertMenuOrderingConstraints(connection);
+            for (String table : new String[]{"menu_items", "menu_categories"}) {
+                try (var indexes = sql.executeQuery("SELECT indexdef FROM pg_indexes WHERE schemaname='public' AND tablename='" + table + "' AND indexname LIKE 'idx_%archived'")) {
+                    assertThat(indexes.next()).as(table + " archive partial index").isTrue();
+                    assertThat(indexes.getString(1)).contains("WHERE (archived_at IS NOT NULL)");
+                }
+                try (var indexes = sql.executeQuery("SELECT count(*) FROM pg_indexes WHERE schemaname='public' AND tablename='" + table + "' AND indexname='idx_" + table + "_working'")) {
+                    indexes.next();
+                    assertThat(indexes.getInt(1)).as(table + " has no redundant working index").isZero();
+                }
+                // Inspect PUBLIC ACLs too; role_table_grants omits PUBLIC grants.
+                try (var grants = sql.executeQuery("SELECT count(*) FROM pg_class c CROSS JOIN LATERAL aclexplode(COALESCE(c.relacl,acldefault('r',c.relowner))) a LEFT JOIN pg_roles r ON r.oid=a.grantee WHERE c.oid='public." + table + "'::regclass AND (a.grantee=0 OR r.rolname IN ('anon','authenticated'))")) {
+                    grants.next();
+                    assertThat(grants.getInt(1)).as(table + " has no direct client or PUBLIC grants").isZero();
+                }
+            }
             for (String table : new String[]{"menu_categories", "menu_items", "package_menu_items", "orders", "order_items"}) {
                 try (var row = sql.executeQuery("SELECT relrowsecurity FROM pg_class WHERE oid='public." + table + "'::regclass")) {
                     row.next(); assertThat(row.getBoolean(1)).as(table + " RLS").isTrue();
