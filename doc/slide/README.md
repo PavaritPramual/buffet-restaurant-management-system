@@ -18,7 +18,7 @@
 - UseCaseรวมทั้ง5actorsพร้อมDescription Domain/Classพร้อมตำแหน่งPatterns Sequence4scenarios Activity ERD Component Deployment และState ดู [coverageพร้อมเลขหน้า](course-diagram-coverage.md)
 - มี35หน้าที่แสดงcodeจากdevelop `472fba4` พร้อมไฟล์/บรรทัดในnotes ครอบคลุมSOLID Enterprise/BehavioralPatterns API/transaction/DTO/security และtestcases
 - ใช้SarabunมีหัวกับJetBrainsMonoสำหรับcode พื้นครีม/navy/terracotta/gold มีsyntaxhighlightและภาพแทนข้อความยาว ลดcolon/ลูกศรในproseโดยคงsyntaxของcode/UML
-- Gitขั้นต่ำปัจจุบันคือ5meaningfulcommitsต่อคนตามที่ปวริศช์แจ้งว่าอาจารย์ปรับ ดู [บันทึกเกณฑ์](../planning/course-criteria-updates.md) ไม่แก้ใบงานต้นฉบับที่ยังเขียน15
+- Git ขั้นต่ำปัจจุบันคือ 15 meaningful commits ต่อคนตามการยืนยันวันที่ 8 ต.ค.; การแจ้ง 5 วันที่ 7 ต.ค. ถูกยกเลิก ดู [บันทึกเกณฑ์](../planning/course-criteria-updates.md) ใบงานต้นฉบับยังคงเดิม
 
 ## ผลตรวจและข้อที่ยังรอ
 

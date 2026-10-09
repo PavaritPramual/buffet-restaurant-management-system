@@ -1,28 +1,36 @@
 # Git audit — Step 3
 
-## เกณฑ์ปัจจุบัน — ขั้นต่ำ 5 meaningful commits ต่อคน
+## เกณฑ์ปัจจุบัน — ขั้นต่ำ 15 meaningful commits ต่อคน
 
-ปวริศช์แจ้งวันที่ 7 ตุลาคม 2026 ว่าอาจารย์ปรับขั้นต่ำจาก 15 เป็น 5 commits ต่อคน ใช้เกณฑ์ใหม่ในการตรวจรับ โดยเก็บใบงานต้นฉบับที่ยังเขียน 15 เป็นหลักฐาน ไม่แก้ไฟล์ต้นฉบับให้เหมือนอาจารย์เขียนใหม่ ดู [บันทึกเกณฑ์ที่เปลี่ยน](course-criteria-updates.md)
+ปวริศช์ยืนยันวันที่ 8 ตุลาคม 2026 ว่าอาจารย์ยังใช้เกณฑ์ 15 ตามใบงาน และยกเลิกการแจ้งลดเหลือ 5 วันที่ 7 ตุลาคม ใช้เกณฑ์ปัจจุบันตาม [บันทึกเกณฑ์](course-criteria-updates.md); ไม่แก้ใบงานต้นฉบับย้อนหลัง
 
-ผลอ่าน remote หลัง fetch วันที่ 7 ตุลาคม 2026 **ก่อน commit แก้รีวิว PR #24** head ของปวริศช์ `bf32e11` และ develop `472fba4` ไม่รวม commit แก้รีวิวที่กำลังจัดทำ ไม่นับ merge/ไฟล์ไม่เปลี่ยน Counts ยังเป็น candidates ให้สมาชิกยืนยันความหมาย/บัญชี/การกระจายเวลา
+### Latest remote snapshot — 8 ตุลาคม 2026, 22:46 ICT
 
-| บัญชี | branch | snapshot head | candidate commits | ขาดจากขั้นต่ำ 5 |
-|---|---|---|---:|---:|
-| PavaritPramual | `pavarit_673380278-9_01` | `bf32e11` | 53 | 0 |
-| sirapatw-sys | `sirapat_673380293-3_01` | `617d742` | 22 | 0 |
-| sarunph-ctrl | `sarun_673380515-1_02` | `b3a2818` | 3 | 2 |
-| kojidesu01 | `teeramet_673380273-9_02` | `f387082` | 8 | 0 |
-| methus-bit | `methus_673380300-2_01` | `8ac7978` | 5 | 0 |
+Fetch remote refs วันที่ 8 ต.ค. 2026 เวลา 22:46 ICT. `origin/develop` อยู่ที่ [`e6172b2`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/e6172b20096f7fb5487418ce278928a82b3f59ee) หลัง PR #33 merge; มี 123 non-merge commits. รายการ SHA/author/changed paths ของ snapshot ล่าสุดอยู่ใน [inventory e6172b2](../../test/evidence/sarun-git-audit-2026-10-08/develop-non-merge-commits-e6172b2.csv) และ personal refs/divergence ใน [branch heads e6172b2](../../test/evidence/sarun-git-audit-2026-10-08/personal-branch-heads-e6172b2.csv). หลักฐานเดิมของ `adc5798`/121 commits ยังคงเก็บแยกในไฟล์ `develop-non-merge-commits.csv` และ `personal-branch-heads.csv`; ห้ามเขียนทับ snapshot ย้อนหลัง.
 
-[หลักฐาน snapshot นี้](../../test/evidence/pavarit-step3-docs-2026-10-07/git-minimum-five-update.json) head `8d4ca99` และเกณฑ์ 15 ด้านล่างเป็นประวัติ ไม่ใช่ head ของ snapshot ปัจจุบัน ต้องตรวจซ้ำหลังทุกงานรวมก่อนรับรอง release
+| สมาชิก / GitHub account | Personal branch HEAD ณ snapshot | Author candidates: branch history | Author candidates: merged `develop` | Author candidates on branch-only commits | Ahead/behind `develop` | ช่องว่างเชิงจำนวนจาก 15 ใน merged history* |
+|---|---|---:|---:|---:|---:|---:|
+| ปวริศช์ / PavaritPramual | [`5145870`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/5145870bffcc5f8f8e4e5d993da5552d0ff672c1) | 67 | 67 | 0 | 0 / 1 | 0 |
+| ศิระพัทธ์ / sirapatw-sys | [`600013a`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/600013a56f267f474d5c787fab84ce80f08f4a50) | 25 | 30 | 0 | 0 / 31 | 0 |
+| ศรัณย์ / sarunph-ctrl | [`345cf44`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/345cf4444d05da465c02ccc9382c19b121768229) | 9 | 6 | 3 | 3 / 3 | 9 |
+| ธีรเมธ / kojidesu01 | [`304dc07`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/304dc07fd51b0c8f7afc511efc392fedb353f288) | 14 | 9 | 5 | 5 / 3 | 6 |
+| เมธัส / methus-bit | [`adc5798`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/adc5798b05279840dc6178f4291278467c929791) | 11 | 11 | 0 | 0 / 3 | 4 |
 
-## ประวัติ audit เดิม
+ตัวเลขคือ author candidates ที่มี changed paths ไม่ใช่การรับรอง meaningfulness/account/ownership. Branch-only author candidates นับเฉพาะ non-merge commits ของเจ้าของที่ personal branch มีและ `develop` ยังไม่มี; graph ahead/behind แยกกันเพื่อไม่ตีความทุก commit บน branch ว่าเป็นงานของเจ้าของ. ช่องว่างจาก 15 เป็นผลคำนวณจาก merged `develop` เท่านั้นและเป็นเพียงตัวชี้เชิงจำนวน; meaningfulness, author identity, ownership, เวลา/การกระจายงาน และ PR/reviewer history ต้องยืนยันแยกโดยสมาชิก. แบบฟอร์ม [member-confirmations.csv](../../test/evidence/sarun-git-audit-2026-10-08/member-confirmations.csv) นับเฉพาะ meaningful commits ที่ merge เข้า `develop`; คงทุกคนเป็น `PENDING` จนได้รับการยืนยันจากเจ้าตัว. ห้ามนับ branch-only/open-PR commits เพื่อผ่านช่องยืนยันนี้.
 
-ตรวจ 7 ตุลาคม 2026 ก่อน commits เอกสารชุดนี้ Baseline develop `472fba4f25a27fa2e3cd1e1213151ce971646f3a`; repository เป็น public และ default branch เป็น main ตาม GitHub API ไม่ได้ยืนยันสิทธิ์เข้าถึงของบัญชีอาจารย์แต่ละคน
+ใน merged `develop e6172b2` มี Pavarit candidates 67, Sirapat 30, Sarun 6, Teeramet 9 และ Methus 11. Sarun commits `e0a1d73`, `a823ddb`, `345cf44` อยู่บน personal branch แต่ยังไม่ merge; ไม่ได้นับในยอด merged 6.
 
-## วิธีนับ
+PR/review/CI ล่าสุด: [PR #33](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/33) merge เข้า `develop` วันที่ 8 ต.ค. [PR #34](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/34) ยัง open; ปวริศช์/ศิระพัทธ์ขอ changes บน revisions เก่า, แก้แล้วใน `345cf44` และส่ง re-request review. CI run `37798888914` ผ่านทั้ง Backend/PostgreSQL และ Frontend jobs บน `345cf44`; formal re-review/approval ยังรอ. [CI run 37738400052](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37738400052) อ้าง `adc5798`, ไม่ใช่ CI ของ `e6172b2`. ไม่มีหลักฐาน public deployment หรือ Final release จาก audit/CI เหล่านี้.
 
-อ่าน GitHub branches/PR/reviews และ `git rev-list --no-merges` บน develop กับ personal branches ทั้งห้า นับผู้เขียนตาม author name ที่จับคู่กับบัญชี GitHub ใน merged history ไม่นับ merge commits และ commit ที่ไม่มี changed paths อ่านวันที่/ข้อความ/ไฟล์ใน CSV เพื่อประเมินความหมาย ไม่ใช้จำนวนเป็นใบรับรอง meaningful ≥15 โดยอัตโนมัติ ไม่เปิดเผย email
+ตาราง/จำนวน audit ก่อนหน้าในหัวข้อด้านล่างเป็น **historical snapshots** เท่านั้น ไม่ใช่สถานะปัจจุบัน
+
+### Historical audit snapshot — 7 ตุลาคม (ข้อมูลประวัติ ไม่ใช่ refs ล่าสุด)
+
+ตารางและยอดด้านล่างเป็น snapshot ก่อน PR #24/#25; เก็บไว้เพื่อประวัติเท่านั้น ไม่ใช่ refs ล่าสุดหรือผลตัดสินตามเกณฑ์ปัจจุบัน. Repository เป็น public และ default branch เป็น main ตาม GitHub API แต่ไม่ได้ยืนยันสิทธิ์เข้าถึงของบัญชีอาจารย์แต่ละคน
+
+#### Historical method
+
+Snapshot เดิมตรวจ GitHub branches/PR/reviews และ non-merge history ของ develop/personal branches; counts เป็น candidates ไม่ยืนยัน meaningfulness/owner identity/branch-exclusive work/การกระจายเวลา. เก็บวิธี/จำนวนเดิมไว้เป็นประวัติ ไม่ใช้แทนผลปัจจุบัน
 
 | สมาชิก / GitHub | Personal branch / head ก่อนงานนี้ | Candidates ใน develop | Candidates ของตนที่ reachable จาก personal branch | รวม unique ของตนจาก develop + ทั้งห้า branches | ช่วง author dates | ผลต่อเกณฑ์15 |
 |---|---|---:|---:|---:|---|---|
@@ -35,6 +43,26 @@
 ทุก branch ตามชื่อที่กำหนดมีอยู่จริง ทั้งนี้ reachable หมายถึงประวัติที่ branch รับเข้ามาด้วย ไม่ใช่ทุก commit บน branch เป็นผลงานเจ้าของ branch และช่วงวันที่ไม่พิสูจน์การกระจายเวลา ต้องอ่าน CSV รายการต่อรายการ
 
 ## PR และ reviewer history
+
+### PR/review/merge ที่ตรวจล่าสุด — 8 ตุลาคม 2026
+
+| PR | เจ้าของ/branch | สถานะล่าสุด | Review ที่ตรวจได้ | หลักฐาน/หมายเหตุ |
+|---|---|---|---|---|
+| [#24](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/24) | ปวริศช์ / `pavarit_673380278-9_01` | Merged | PR closed as merged | เข้า `develop`; architecture/docs follow-up ถูกแยกใน PR #25 |
+| [#25](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/25) | ปวริศช์ / `pavarit_673380278-9_01` | Merged | ศิระพัทธ์, ศรัณย์, ธีรเมธ, เมธัส: APPROVED | Auth/Stock/Billing contracts, injection, state registry; CI ของ head ผ่าน |
+| [#26](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/26) | ศรัณย์ / `sarun_673380515-1_02` | Merged | Review thread ระบุข้อแก้ก่อน merge | API/State docs/tests; current evidence supplemented by #32 |
+| [#27](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/27) | ธีรเมธ / `teeramet_673380273-9_02` | Merged | Review requested from ศิระพัทธ์/ปวริศช์; merged | Thai unpaid-close response; don't infer formal APPROVED absent review record |
+| [#28](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/28) | เมธัส / `methus_673380300-2_01` | Merged | ปวริศช์, ศรัณย์, ศิระพัทธ์: APPROVED | Stock/Profile V15; candidate tests and migration evidence; public/release gates remain |
+| [#29](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/29) | ศิระพัทธ์ / `sirapat_673380293-3_01` | Merged | PR merged; follow-up recorded in #32 | API/State regression evidence |
+| [#30](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/30) | Copilot / CI fix | Closed, not merged | N/A | Do not cite as implemented; subsequent V15 test expectation is in merged feature/test history |
+| [#31](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/31) | ปวริศช์ / `pavarit_673380278-9_01` | Merged | ศิระพัทธ์ requested changes then APPROVED; ศรัณย์ APPROVED at final head | HTTP-status/diagram correction verified before merge |
+| [#32](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/32) | ศิระพัทธ์ / `codex/sirapat-step3-followup` | Merged | ปวริศช์ and ศรัณย์: APPROVED | Develop regression, candidate separation, artifacts; CI run 37735263342 passed |
+| [#33](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/33) | ปวริศช์ / `pavarit_673380278-9_01` | Open | ศิระพัทธ์ and ศรัณย์: APPROVED at `5145870`; PR remains open | Integrated JPA/docs/regression evidence; CI run 37777850248 passed on synthetic merge with `adc5798`; approval scope excludes public/release |
+| [#34](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/34) | ศรัณย์ / `sarun_673380515-1_02` | Open; changes requested | ปวริศช์ขอแก้ที่ `e0a1d73`; ศิระพัทธ์ขอแก้ที่ `a823ddb` | CI run 37797237975 passed both jobs on `a823ddb`; address review threads and request re-review |
+
+PR states/reviews verified from GitHub on 8 October 2026, 22:05 ICT. A merge without a visible APPROVED review is recorded as merged, not upgraded to reviewer approval. Approvals/requests for changes are scoped to the reviewed diff/head and do not certify deployment/release.
+
+### Historical PR/reviewer history (#1–#22)
 
 | PR | ผู้เปิด | สถานะ | Head branch | Reviews ที่บันทึก |
 |---|---|---|---|---|
@@ -65,10 +93,13 @@ PR ปิดโดยไม่ merge เช่น #11/#20 เป็นประ�
 
 ## สิ่งที่สมาชิกต้องยืนยัน
 
-- [ ] ทุกคนตรวจบัญชี GitHub/author identity ของตนจาก CSV และ PR
-- [ ] ทุกคนอธิบายโค้ดจริงและ commit ที่ถือว่ามีความหมาย ไม่ใช้การนับล้วน
-- [ ] สมาชิกที่ยังต่ำกว่า5 ตามผลล่าสุดรายงานข้อขาดจริงและทำงาน Final ที่รับผิดชอบเป็นกลุ่มงานตามธรรมชาติ ไม่แก้ประวัติหรือสร้าง commit ย่อยเพื่อเติมจำนวน
-- [ ] ตรวจ audit ใหม่หลัง Stock/Profile/deploy/docs merge ก่อน release
+- [ ] ปวริศช์ยืนยัน GitHub author/account, งานที่เป็นเจ้าของ, อย่างน้อย 15 meaningful commits, ช่วงเวลา/การกระจายงาน และการเข้าถึง repo/evidence
+- [ ] ศิระพัทธ์ยืนยัน GitHub author/account, งานที่เป็นเจ้าของ, อย่างน้อย 15 meaningful commits, ช่วงเวลา/การกระจายงาน และการเข้าถึง repo/evidence
+- [ ] ศรัณย์ยืนยัน GitHub author/account, งานที่เป็นเจ้าของ, อย่างน้อย 15 meaningful commits, ช่วงเวลา/การกระจายงาน และการเข้าถึง repo/evidence
+- [ ] ธีรเมธยืนยัน GitHub author/account, งานที่เป็นเจ้าของ, อย่างน้อย 15 meaningful commits, ช่วงเวลา/การกระจายงาน และการเข้าถึง repo/evidence
+- [ ] เมธัสยืนยัน GitHub author/account, งานที่เป็นเจ้าของ, อย่างน้อย 15 meaningful commits, ช่วงเวลา/การกระจายงาน และการเข้าถึง repo/evidence
+- [ ] reviewer ปวริศช์ตรวจ Architecture/ความถูกต้อง และศิระพัทธ์ตรวจความครบถ้วน/evidence ของ PR #34; แก้จนมี formal approval
+- [ ] หลัง PR/doc merge และก่อน release ให้ตรวจ audit ซ้ำ; Stock/Profile PR #28 merge แล้ว แต่ V15/public/release gates ยังเปิด
 - [ ] ยืนยันบัญชีอาจารย์เปิด repository/public URLs ได้ และ release PR มี review
 
-หลักฐาน sanitized: [commit inventory](../../test/evidence/pavarit-step3-docs-2026-10-07/git-commits.csv) บันทึก SHA ผู้เขียน วันที่ ข้อความ และ changed paths โดยไม่เก็บ secrets; head ของ branch ปวริศช์ในตารางเป็น remote ก่อน sync งานนี้ ไม่รวม commits เอกสารที่กำลังทำ
+แบบฟอร์มสถานะเริ่มต้นของคำยืนยัน: [member-confirmations.csv](../../test/evidence/sarun-git-audit-2026-10-08/member-confirmations.csv). ทุกคนยัง `PENDING` ใน snapshot นี้; ห้ามทำเครื่องหมายผ่านจาก GitHub account/PR author metadata แทนคำยืนยันของเจ้าตัว. หลักฐาน sanitized ใน [commit inventory 7 ต.ค.](../../test/evidence/pavarit-step3-docs-2026-10-07/git-commits.csv) เป็น historical snapshot ไม่ใช้แทน inventory ปัจจุบัน: [develop commits](../../test/evidence/sarun-git-audit-2026-10-08/develop-non-merge-commits.csv), [branch refs](../../test/evidence/sarun-git-audit-2026-10-08/personal-branch-heads.csv), [method/limits](../../test/evidence/sarun-git-audit-2026-10-08/README.md).
