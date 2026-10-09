@@ -4,11 +4,15 @@ import { Button, Card, ConfirmDialog, EmptyState, ErrorAlert, LoadingState, Page
 import { getApiError } from '../../api/errors'
 
 type Kind = 'tables' | 'buffet-packages' | 'soups' | 'stock'
-type Row = { id: number; tableNumber?: string; capacity?: number; status?: string; name?: string; price?: number; description?: string; active?: boolean; sku?: string; unit?: string; quantity?: number; lowStockThreshold?: number; openingTargetStock?: number; shortfall?: number }
+type Row = { id: number; archived?: boolean; tableNumber?: string; capacity?: number; status?: string; name?: string; price?: number; description?: string; active?: boolean; sku?: string; unit?: string; quantity?: number; lowStockThreshold?: number; openingTargetStock?: number; shortfall?: number }
 const titles: Record<Kind, string> = { tables: 'จัดการโต๊ะ', 'buffet-packages': 'จัดการแพ็กเกจ', soups: 'จัดการน้ำซุป', stock: 'จัดการรายการสต็อก' }
 const blanks = { tableNumber: '', capacity: '4', name: '', price: '', description: '', sku: '', unit: '', lowStockThreshold: '0', openingTargetStock: '0' }
 
 export default function MasterDataPage({ kind }: { kind: Kind }) {
+  return <MasterDataEditor key={kind} kind={kind} />
+}
+
+function MasterDataEditor({ kind }: { kind: Kind }) {
   const [rows, setRows] = useState<Row[]>([])
   const [form, setForm] = useState(blanks)
   const [editing, setEditing] = useState<number | null>(null)
@@ -17,15 +21,18 @@ export default function MasterDataPage({ kind }: { kind: Kind }) {
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [pending, setPending] = useState<Row | null>(null)
+  const [pendingAction, setPendingAction] = useState<'toggle' | 'remove' | 'restore'>('toggle')
+  const [archivedView, setArchivedView] = useState(false)
   const inflight = useRef(false)
   const endpoint = kind === 'stock' ? '/stock/items' : `/${kind}`
-  async function load() { setRows((await apiClient.get<Row[]>(`/${kind}`)).data) }
+  const listEndpoint = `${endpoint}${archivedView && kind !== 'stock' ? '/archived' : ''}`
+  async function load() { setRows((await apiClient.get<Row[]>(listEndpoint)).data) }
   useEffect(() => {
     let current = true
-    apiClient.get<Row[]>(`/${kind}`).then(r => { if (current) setRows(r.data) })
+    apiClient.get<Row[]>(listEndpoint).then(r => { if (current) setRows(r.data) })
       .catch(e => { if (current) setError(getApiError(e)) }).finally(() => { if (current) setLoading(false) })
     return () => { current = false }
-  }, [kind])
+  }, [listEndpoint])
   async function refresh() {
     if (inflight.current) return
     inflight.current = true; setLoading(true); setError('')
@@ -50,10 +57,14 @@ export default function MasterDataPage({ kind }: { kind: Kind }) {
     if (!pending || inflight.current) return
     inflight.current = true; setBusy(true); setError(''); setNotice('')
     try {
-      if (kind === 'tables') await apiClient.delete(`${endpoint}/${pending.id}`)
+      if (pendingAction === 'restore') await apiClient.post(`${endpoint}/${pending.id}/restore`)
+      else if (pendingAction === 'remove') await apiClient.delete(`${endpoint}/${pending.id}`)
       else if (kind === 'stock') await apiClient.put(`${endpoint}/${pending.id}/active`, { active: !pending.active })
       else await apiClient.patch(`${endpoint}/${pending.id}/active`, { active: !pending.active })
-      setPending(null); setNotice('อัปเดตข้อมูลแล้ว'); await load()
+      setPending(null); setNotice(pendingAction === 'remove'
+        ? 'นำรายการออกจากรายการใช้งานแล้ว หากมีประวัติยังคงอยู่ในรายการเก็บออก'
+        : pendingAction === 'restore' ? kind === 'tables' ? 'คืนโต๊ะเป็นโต๊ะว่างแล้ว' : 'คืนรายการแล้ว กรุณาเปิดใช้งานเมื่อต้องการใช้'
+        : 'อัปเดตข้อมูลแล้ว'); await load()
     } catch (cause) { setError(getApiError(cause)) }
     finally { inflight.current = false; setBusy(false) }
   }
@@ -62,10 +73,16 @@ export default function MasterDataPage({ kind }: { kind: Kind }) {
     setForm({ tableNumber: row.tableNumber ?? '', capacity: String(row.capacity ?? 4), name: row.name ?? '', price: String(row.price ?? ''), description: row.description ?? '', sku: row.sku ?? '', unit: row.unit ?? '', lowStockThreshold: String(row.lowStockThreshold ?? 0), openingTargetStock: String(row.openingTargetStock ?? 0) })
   }
   const field = (key: keyof typeof blanks, label: string, extra = {}) => <TextField label={label} value={form[key]} onChange={e => setForm({ ...form, [key]: e.target.value })} disabled={busy} required {...extra} />
+  function chooseView(archived: boolean) {
+    if (busy || loading || inflight.current) return
+    setArchivedView(archived); setEditing(null); setForm(blanks); setRows([]); setLoading(true); setError(''); setNotice(''); setPending(null)
+  }
+  function requestAction(row: Row, action: 'toggle' | 'remove' | 'restore') { setPending(row); setPendingAction(action) }
   return <div className="ordering-page">
     <PageHeader eyebrow="ผู้จัดการ" title={titles[kind]} action={<Button variant="secondary" className="ui-icon-button" aria-label="อัปเดตรายการ" disabled={busy || loading} onClick={() => void refresh()}><RefreshIcon /></Button>} />
     {error && <ErrorAlert message={error} />}{notice && <p role="status">{notice}</p>}
-    <Card><h2>{editing === null ? 'เพิ่มรายการ' : 'แก้ไขรายการ'}</h2>
+    {kind !== 'stock' && <div aria-label="เลือกชุดรายการ"><Button variant={archivedView ? 'secondary' : 'primary'} disabled={busy || loading || !archivedView} onClick={() => chooseView(false)}>รายการใช้งาน</Button><Button variant={archivedView ? 'primary' : 'secondary'} disabled={busy || loading || archivedView} onClick={() => chooseView(true)}>รายการเก็บออก</Button></div>}
+    {!archivedView && <Card><h2>{editing === null ? 'เพิ่มรายการ' : 'แก้ไขรายการ'}</h2>
       <form className="admin-form" onSubmit={e => void save(e)}>
         {kind === 'tables' ? <>{field('tableNumber', 'หมายเลขโต๊ะ', { maxLength: 20 })}{field('capacity', 'ความจุ', { type: 'number', min: 1, step: 1 })}</> : <>
           {kind === 'stock' && field('sku', 'รหัสสต็อก', { maxLength: 40 })}
@@ -75,15 +92,18 @@ export default function MasterDataPage({ kind }: { kind: Kind }) {
         </>}
         <div><Button type="submit" disabled={loading} loading={busy}>บันทึก</Button>{editing !== null && <Button type="button" variant="ghost" disabled={busy} onClick={() => { setEditing(null); setForm(blanks) }}>ยกเลิกแก้ไข</Button>}</div>
       </form>
-    </Card>
+    </Card>}
     {loading ? <LoadingState /> : rows.length === 0 ? <EmptyState title="ยังไม่มีรายการ" /> : <section className="order-list" aria-label={titles[kind]}>
       {rows.map(row => <Card key={row.id}><h3>{row.tableNumber ?? row.name}</h3>
         <p>{kind === 'tables' ? `รองรับ ${row.capacity} คน` : kind === 'stock' ? `${row.sku} · ${row.quantity} ${row.unit} · แจ้งเตือนต่ำ ${row.lowStockThreshold} · เป้าหมาย ${row.openingTargetStock ?? 0} · ขาด ${row.shortfall ?? 0}` : kind === 'buffet-packages' ? `฿${row.price}` : ''}</p>
         <StatusBadge tone={kind === 'tables' ? row.status === 'AVAILABLE' ? 'success' : 'info' : row.active ? 'success' : 'neutral'}>{kind === 'tables' ? row.status === 'AVAILABLE' ? 'ว่าง' : 'กำลังใช้งาน' : row.active ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}</StatusBadge>
-        <Button variant="secondary" disabled={busy || (kind === 'tables' && row.status === 'OCCUPIED')} onClick={() => edit(row)}>แก้ไข</Button>
-        <Button variant={kind === 'tables' || row.active ? 'danger' : 'secondary'} disabled={busy || (kind === 'tables' && row.status === 'OCCUPIED')} onClick={() => setPending(row)}>{kind === 'tables' ? 'ลบโต๊ะ' : row.active ? 'ปิดใช้งาน' : 'เปิดใช้งาน'}</Button>
+        {archivedView ? <><StatusBadge tone="neutral">เก็บออกแล้ว</StatusBadge><Button variant="secondary" disabled={busy} onClick={() => requestAction(row, 'restore')}>คืนรายการ</Button></> : <>
+          <Button variant="secondary" disabled={busy || (kind === 'tables' && row.status === 'OCCUPIED')} onClick={() => edit(row)}>แก้ไข</Button>
+          {kind !== 'tables' && <Button variant={row.active ? 'danger' : 'secondary'} disabled={busy} onClick={() => requestAction(row, 'toggle')}>{row.active ? 'ปิดใช้งาน' : 'เปิดใช้งาน'}</Button>}
+          {kind !== 'stock' && <Button variant="danger" disabled={busy || (kind === 'tables' && row.status === 'OCCUPIED')} onClick={() => requestAction(row, 'remove')}>{kind === 'tables' ? 'ลบโต๊ะ' : 'ลบรายการ'}</Button>}
+        </>}
       </Card>)}
     </section>}
-    <ConfirmDialog open={!!pending} title={kind === 'tables' ? 'ยืนยันลบโต๊ะ' : pending?.active ? 'ยืนยันปิดใช้งาน' : 'ยืนยันเปิดใช้งาน'} description={kind === 'tables' ? 'ลบได้เฉพาะโต๊ะที่ไม่มีประวัติรอบกิน' : kind === 'stock' ? 'รายการที่ปิดใช้งานยังดูประวัติได้ แต่รับเข้าและปรับยอดไม่ได้จนกว่าจะเปิดใช้งานอีกครั้ง' : 'การเปลี่ยนนี้ไม่ลบประวัติรอบกินเดิม'} busy={busy} onCancel={() => setPending(null)} onConfirm={() => void confirmAction()} />
+    <ConfirmDialog open={!!pending} title={pendingAction === 'remove' ? kind === 'tables' ? 'ยืนยันลบโต๊ะ' : 'ยืนยันนำรายการออก' : pendingAction === 'restore' ? 'ยืนยันคืนรายการ' : pending?.active ? 'ยืนยันปิดใช้งาน' : 'ยืนยันเปิดใช้งาน'} description={pendingAction === 'remove' ? 'รายการที่ไม่เคยใช้จะถูกลบถาวร หากมีประวัติจะเก็บออกโดยรักษาประวัติไว้ โต๊ะที่กำลังใช้งานนำออกไม่ได้' : pendingAction === 'restore' ? kind === 'tables' ? 'คืนโต๊ะเป็นโต๊ะว่าง โดยไม่ลบประวัติเดิม' : 'คืนรายการเป็นสถานะปิดใช้งาน คุณสามารถเปิดใช้งานแยกภายหลัง' : kind === 'stock' ? 'รายการที่ปิดใช้งานยังดูประวัติได้ แต่รับเข้าและปรับยอดไม่ได้จนกว่าจะเปิดใช้งานอีกครั้ง' : 'การเปลี่ยนนี้ไม่ลบประวัติรอบกินเดิม'} busy={busy} onCancel={() => setPending(null)} onConfirm={() => void confirmAction()} />
   </div>
 }
