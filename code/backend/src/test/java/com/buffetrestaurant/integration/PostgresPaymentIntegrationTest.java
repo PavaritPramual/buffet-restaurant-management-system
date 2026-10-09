@@ -14,8 +14,10 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.concurrent.*;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -63,7 +65,9 @@ class PostgresPaymentIntegrationTest extends PaymentIntegrationTest {
                     assertThatThrownBy(() -> statement.executeUpdate(
                             "INSERT INTO payments(session_id,amount,payment_method,payment_status,paid_at) VALUES (" + values + ")"))
                             .isInstanceOf(java.sql.SQLException.class);
-                } finally { connection.rollback(savepoint); }
+                } finally {
+                    connection.rollback(savepoint);
+                }
             }
             return null;
         });
@@ -93,7 +97,10 @@ class PostgresPaymentIntegrationTest extends PaymentIntegrationTest {
                     .containsExactlyInAnyOrder(201, 409);
             assertThat(jdbc.queryForObject("SELECT count(*) FROM payments WHERE session_id=918001", Integer.class)).isEqualTo(1);
             assertThat(jdbc.queryForObject("SELECT amount FROM payments WHERE session_id=918001", java.math.BigDecimal.class)).isEqualByComparingTo("997.50");
-        } finally { pool.shutdownNow(); pool.awaitTermination(10, TimeUnit.SECONDS); }
+        } finally {
+            pool.shutdownNow();
+            pool.awaitTermination(10, TimeUnit.SECONDS);
+        }
     }
 
     @AfterEach
@@ -102,6 +109,7 @@ class PostgresPaymentIntegrationTest extends PaymentIntegrationTest {
         DisposablePostgresDatabase.requireReady("PAYMENT_TEST");
         jdbc.execute("DELETE FROM payments WHERE session_id=918001");
         jdbc.execute("DELETE FROM dining_sessions WHERE id=918001");
+        jdbc.execute("DELETE FROM app_users WHERE id IN (918101, 918102)");
         jdbc.execute("DELETE FROM restaurant_tables WHERE id=918001");
         jdbc.execute("DELETE FROM buffet_packages WHERE id=918001");
         jdbc.execute("DELETE FROM soups WHERE id=918001");
