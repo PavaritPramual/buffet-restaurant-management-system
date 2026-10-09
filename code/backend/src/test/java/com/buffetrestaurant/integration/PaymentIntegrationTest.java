@@ -89,11 +89,13 @@ class PaymentIntegrationTest {
                      2, 1, 'billing-integration-token', 'ACTIVE', 399.00)
                 """);
 
+        jdbc.update("INSERT INTO app_users (id, username, password_hash, role) VALUES "
+                + "(918101, 'staff-test', 'x', 'SERVICE_STAFF'), (918102, 'other', 'x', 'MANAGER')");
         staffSession = new MockHttpSession();
         jdbc.update("UPDATE dining_sessions SET bill_requested_at=CURRENT_TIMESTAMP WHERE id=?", SESSION_ID);
         staffSession.setAttribute(
                 UserSessionKeys.USER_CONTEXT_SESSION_KEY,
-                new UserContext(1L, "staff-test", "Test Staff",
+                new UserContext(918101L, "staff-test", "Test Staff",
                         UserRole.SERVICE_STAFF)
         );
     }
@@ -135,7 +137,7 @@ class PaymentIntegrationTest {
         for (UserRole role : new UserRole[]{UserRole.KITCHEN_STAFF, UserRole.SUPERVISOR, UserRole.MANAGER}) {
             MockHttpSession other = new MockHttpSession();
             other.setAttribute(UserSessionKeys.USER_CONTEXT_SESSION_KEY,
-                    new UserContext(2L, "other", "Other", role));
+                    new UserContext(918102L, "other", "Other", role));
             mvc.perform(post("/api/v1/dining-sessions/" + SESSION_ID + "/close").session(other))
                     .andExpect(status().isForbidden());
         }

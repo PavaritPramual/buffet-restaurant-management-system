@@ -84,6 +84,9 @@ export const stockApi = {
   async restore(id: number) {
     return (await apiClient.post<StockItem>(`/stock/items/${id}/restore`)).data
   },
+  async setActive(id: number, active: boolean) {
+    return (await apiClient.put<StockItem>(`/stock/items/${id}/active`, { active })).data
+  },
   async history(itemId?: number) {
     return (await apiClient.get<StockTransaction[]>('/stock/transactions', {
       params: itemId ? { itemId } : undefined,

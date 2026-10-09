@@ -11,7 +11,7 @@ vi.mock('./api', async () => {
   const actual = await vi.importActual<typeof import('./api')>('./api')
   return {
     ...actual,
-    stockApi: { overview: vi.fn(), history: vi.fn(), stockIn: vi.fn(), adjust: vi.fn(), archived: vi.fn(), remove: vi.fn(), restore: vi.fn() },
+    stockApi: { overview: vi.fn(), history: vi.fn(), stockIn: vi.fn(), adjust: vi.fn(), archived: vi.fn(), remove: vi.fn(), restore: vi.fn(), setActive: vi.fn() },
     usersApi: { list: vi.fn(), create: vi.fn(), updateProfile: vi.fn(), archived: vi.fn(), remove: vi.fn(), restore: vi.fn(), setActive: vi.fn() },
   }
 })

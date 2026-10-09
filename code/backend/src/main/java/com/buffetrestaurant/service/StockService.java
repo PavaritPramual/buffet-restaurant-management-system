@@ -24,10 +24,13 @@ public class StockService {
     private final StockTransactionRepository transactions;
     private final StockTransactionProcessor stockInProcessor;
     private final StockTransactionProcessor adjustmentProcessor;
+    private final UserContextProvider access;
 
     public StockService(StockItemRepository items, StockTransactionRepository transactions,
             @Qualifier("stockInProcessor") StockTransactionProcessor stockInProcessor,
-            @Qualifier("stockAdjustmentProcessor") StockTransactionProcessor adjustmentProcessor) {
+            @Qualifier("stockAdjustmentProcessor") StockTransactionProcessor adjustmentProcessor,
+            UserContextProvider access) {
+        this.access = access;
         this.items = items;
         this.transactions = transactions;
         this.stockInProcessor = stockInProcessor;
@@ -71,6 +74,7 @@ public class StockService {
      */
     @Transactional
     public void removeItem(Long id) {
+        requireManager();
         StockItem item = findItem(id);
         if (item.isArchived()) return;
         if (!transactions.existsByStockItemId(id) && item.getQuantity().signum() == 0) {
@@ -84,17 +88,23 @@ public class StockService {
 
     @Transactional(readOnly = true)
     public List<StockItemResponse> archivedItems() {
+        requireManager();
         return items.findAllByArchivedAtIsNotNullOrderByNameAsc().stream().map(StockItemResponse::from).toList();
     }
 
     @Transactional
     public StockItemResponse restoreItem(Long id) {
+        requireManager();
         StockItem item = findItem(id);
         if (item.isArchived()) {
             item.restore();
             items.saveAndFlush(item);
         }
         return StockItemResponse.from(item);
+    }
+
+    private void requireManager() {
+        access.requireCurrentRequestRole(com.buffetrestaurant.domain.enums.UserRole.MANAGER);
     }
 
     private static void rejectArchived(StockItem item) {

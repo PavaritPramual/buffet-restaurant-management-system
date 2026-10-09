@@ -26,13 +26,16 @@ public class UserLifecycleService {
     private final UserProfileRepository profiles;
     private final StockTransactionRepository stockTransactions;
     private final StaffSessionRegistry sessions;
+    private final UserContextProvider access;
 
     public UserLifecycleService(UserAccountRepository users, UserProfileRepository profiles,
-            StockTransactionRepository stockTransactions, StaffSessionRegistry sessions) {
+            StockTransactionRepository stockTransactions, StaffSessionRegistry sessions,
+            UserContextProvider access) {
         this.users = users;
         this.profiles = profiles;
         this.stockTransactions = stockTransactions;
         this.sessions = sessions;
+        this.access = access;
     }
 
     /**
@@ -40,7 +43,8 @@ public class UserLifecycleService {
      * actor name on stock history stays readable. Either way every session it holds is revoked.
      */
     @Transactional
-    public void remove(Long id, UserContext actor) {
+    public void remove(Long id) {
+        UserContext actor = access.requireCurrentRequestRole(UserRole.MANAGER);
         rejectSelf(id, actor);
         List<UserAccount> activeManagers = users.lockActiveManagers();
         UserAccount target = lockUser(id);
@@ -59,6 +63,7 @@ public class UserLifecycleService {
 
     @Transactional(readOnly = true)
     public List<UserResponse> listArchived() {
+        access.requireCurrentRequestRole(UserRole.MANAGER);
         return users.findAllByArchivedAtIsNotNullOrderByUsernameAsc().stream()
                 .map(user -> AuthService.toResponse(user, profiles.findByUserId(user.getId()).orElse(null)))
                 .toList();
@@ -66,6 +71,7 @@ public class UserLifecycleService {
 
     @Transactional
     public UserResponse restore(Long id) {
+        access.requireCurrentRequestRole(UserRole.MANAGER);
         UserAccount target = lockUser(id);
         if (target.isArchived()) {
             target.restore();
@@ -75,7 +81,8 @@ public class UserLifecycleService {
     }
 
     @Transactional
-    public UserResponse setActive(Long id, boolean active, UserContext actor) {
+    public UserResponse setActive(Long id, boolean active) {
+        UserContext actor = access.requireCurrentRequestRole(UserRole.MANAGER);
         if (!active) rejectSelf(id, actor);
         List<UserAccount> activeManagers = users.lockActiveManagers();
         UserAccount target = lockUser(id);

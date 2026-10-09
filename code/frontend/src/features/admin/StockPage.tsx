@@ -82,6 +82,17 @@ export default function StockPage() {
     }
   }
 
+  async function activateItem(item: StockItem) {
+    setError('')
+    setNotice('')
+    try {
+      await stockApi.setActive(item.id, true)
+      await loadData()
+    } catch (requestError) {
+      setError(getErrorMessage(requestError))
+    }
+  }
+
   async function submitChange(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!selected || !selected.active || inFlight.current) return
@@ -144,7 +155,7 @@ export default function StockPage() {
           <td>{quantity(item.openingTargetStock)} {item.unit}</td>
           <td className={item.shortfall > 0 ? 'stock-low' : ''}>{quantity(item.shortfall)} {item.unit}</td>
           <td>{dateTime(item.updatedAt)}</td>
-          {canMoveStock && <td><div className="stock-actions"><button disabled={!item.active} title={item.active ? `รับเข้า ${item.name}` : 'รายการปิดใช้งาน'} onClick={() => { setSelected(item); setMode('IN'); setAmount(''); setReason('') }}>รับเข้า</button><button disabled={!item.active} title={item.active ? `ปรับยอด ${item.name}` : 'รายการปิดใช้งาน'} onClick={() => { setSelected(item); setMode('ADJUSTMENT'); setAmount(''); setReason('') }}>ปรับยอด</button>{isManager && <button className="admin-danger-button" title={`ลบ/เก็บออก ${item.name}`} onClick={() => { setNotice(''); setRemoving(item) }}>ลบ/เก็บออก</button>}</div></td>}
+          {canMoveStock && <td><div className="stock-actions"><button disabled={!item.active} title={item.active ? `รับเข้า ${item.name}` : 'รายการปิดใช้งาน'} onClick={() => { setSelected(item); setMode('IN'); setAmount(''); setReason('') }}>รับเข้า</button><button disabled={!item.active} title={item.active ? `ปรับยอด ${item.name}` : 'รายการปิดใช้งาน'} onClick={() => { setSelected(item); setMode('ADJUSTMENT'); setAmount(''); setReason('') }}>ปรับยอด</button>{isManager && !item.active && <button title={`เปิดใช้งาน ${item.name}`} onClick={() => void activateItem(item)}>เปิดใช้งาน</button>}{isManager && <button className="admin-danger-button" title={`ลบ/เก็บออก ${item.name}`} onClick={() => { setNotice(''); setRemoving(item) }}>ลบ/เก็บออก</button>}</div></td>}
         </tr>)}
           {!loading && items.length === 0 && <tr><td colSpan={canMoveStock ? 8 : 7} className="admin-empty">ยังไม่มีรายการสต็อก</td></tr>}
         </tbody>

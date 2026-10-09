@@ -11,7 +11,7 @@ vi.mock('./api', async () => {
   const actual = await vi.importActual<typeof import('./api')>('./api')
   return {
     ...actual,
-    stockApi: { overview: vi.fn(), history: vi.fn(), stockIn: vi.fn(), adjust: vi.fn(), archived: vi.fn(), remove: vi.fn(), restore: vi.fn() },
+    stockApi: { overview: vi.fn(), history: vi.fn(), stockIn: vi.fn(), adjust: vi.fn(), archived: vi.fn(), remove: vi.fn(), restore: vi.fn(), setActive: vi.fn() },
     usersApi: { list: vi.fn(), create: vi.fn(), updateProfile: vi.fn(), archived: vi.fn(), remove: vi.fn(), restore: vi.fn(), setActive: vi.fn() },
   }
 })
@@ -58,6 +58,45 @@ describe('Stock archive UI', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'กู้คืน' }))
     await waitFor(() => expect(stockApi.restore).toHaveBeenCalledWith(9))
+  })
+
+  it('lets a manager archive, restore, activate and then stock in an item', async () => {
+    let current: StockItem[] = [item]
+    let archivedList: StockItem[] = []
+    vi.mocked(stockApi.overview).mockImplementation(async () => current)
+    vi.mocked(stockApi.archived).mockImplementation(async () => archivedList)
+    vi.mocked(stockApi.remove).mockImplementation(async () => {
+      archivedList = [{ ...item, active: false, archivedAt: '2026-10-01T10:00:00Z' }]
+      current = []
+    })
+    vi.mocked(stockApi.restore).mockImplementation(async () => {
+      archivedList = []
+      current = [{ ...item, active: false }]
+      return current[0]
+    })
+    vi.mocked(stockApi.setActive).mockImplementation(async () => {
+      current = [{ ...item, active: true }]
+      return current[0]
+    })
+    vi.mocked(stockApi.stockIn).mockResolvedValue({} as never)
+    renderInShell(<StockPage />, manager)
+
+    fireEvent.click(await screen.findByRole('button', { name: 'ลบ/เก็บออก' }))
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'กู้คืน' }))
+
+    const activate = await screen.findByRole('button', { name: 'เปิดใช้งาน' })
+    expect((screen.getByRole('button', { name: 'รับเข้า' }) as HTMLButtonElement).disabled).toBe(true)
+    fireEvent.click(activate)
+    await waitFor(() => expect(stockApi.setActive).toHaveBeenCalledWith(4, true))
+
+    await waitFor(() => expect((screen.getByRole('button', { name: 'รับเข้า' }) as HTMLButtonElement).disabled).toBe(false))
+    expect(screen.queryByRole('button', { name: 'เปิดใช้งาน' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'รับเข้า' }))
+    fireEvent.change(screen.getByLabelText(/จำนวน/), { target: { value: '2' } })
+    fireEvent.change(screen.getByLabelText(/เหตุผล|หมายเหตุ/), { target: { value: 'รับของ' } })
+    fireEvent.submit(screen.getByLabelText(/จำนวน/).closest('form')!)
+    await waitFor(() => expect(stockApi.stockIn).toHaveBeenCalledWith(4, 2, 'รับของ'))
   })
 
   it('hides remove and archived list from supervisors', async () => {

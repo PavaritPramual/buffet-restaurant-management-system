@@ -17,7 +17,10 @@ import com.buffetrestaurant.repository.StockTransactionRepository;
 import com.buffetrestaurant.repository.UserAccountRepository;
 import com.buffetrestaurant.repository.UserProfileRepository;
 import com.buffetrestaurant.dto.response.UserContext;
+import com.buffetrestaurant.exception.AuthenticationRequiredException;
 import com.buffetrestaurant.exception.ResourceConflictException;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import com.buffetrestaurant.service.AuthService;
 import com.buffetrestaurant.service.UserLifecycleService;
 import java.math.BigDecimal;
@@ -236,14 +239,45 @@ class StockUserArchiveIntegrationTest {
         mockMvc.perform(delete("/api/v1/admin/users/" + manager2Id).session(manager)).andExpect(status().isNoContent());
         assertThat(manager2.isInvalid()).isTrue();
 
-        // an actor id that is not the target, so only the last-Manager rule can stop it
-        UserContext otherActor = new UserContext(-1L, "ghost", "Ghost", null);
-        assertThatThrownBy(() -> lifecycle.remove(managerId, otherActor)).isInstanceOf(ResourceConflictException.class);
-        assertThatThrownBy(() -> lifecycle.setActive(managerId, false, otherActor))
-                .isInstanceOf(ResourceConflictException.class);
+        // Actor is a different, still-enabled account whose session context claims MANAGER, so only the
+        // last-Manager rule can stop the call.
+        Long supervisorId = users.findByUsername("supervisor").orElseThrow().getId();
+        asCurrentRequest(new UserContext(supervisorId, "supervisor", "Supervisor", UserRole.MANAGER));
+        try {
+            assertThatThrownBy(() -> lifecycle.remove(managerId)).isInstanceOf(ResourceConflictException.class);
+            assertThatThrownBy(() -> lifecycle.setActive(managerId, false))
+                    .isInstanceOf(ResourceConflictException.class);
+        } finally {
+            RequestContextHolder.resetRequestAttributes();
+        }
+        assertThatThrownBy(() -> lifecycle.remove(managerId)).isInstanceOf(AuthenticationRequiredException.class);
         assertThat(users.findById(managerId).orElseThrow().isActive()).isTrue();
         assertThat(users.findById(managerId).orElseThrow().isArchived()).isFalse();
         mockMvc.perform(get("/api/v1/auth/me").session(manager)).andExpect(status().isOk());
+    }
+
+    @Test
+    void staleSessionOfDisabledArchivedOrDeletedAccountIsRejectedEvenIfNotRevoked() throws Exception {
+        for (String name : new String[] {"staff", "kitchen", "supervisor"}) {
+            MockHttpSession session = login(name);
+            Long id = users.findByUsername(name).orElseThrow().getId();
+            mockMvc.perform(get("/api/v1/auth/me").session(session)).andExpect(status().isOk());
+            switch (name) {
+                case "staff" -> jdbc.update("update app_users set active = false where id = ?", id);
+                case "kitchen" -> jdbc.update("update app_users set archived_at = now() where id = ?", id);
+                default -> {
+                    profiles.findByUserId(id).ifPresent(profiles::delete);
+                    users.deleteById(id);
+                }
+            }
+            mockMvc.perform(get("/api/v1/auth/me").session(session)).andExpect(status().isUnauthorized());
+        }
+    }
+
+    private static void asCurrentRequest(UserContext context) {
+        var request = new org.springframework.mock.web.MockHttpServletRequest();
+        request.getSession().setAttribute(com.buffetrestaurant.common.UserSessionKeys.USER_CONTEXT_SESSION_KEY, context);
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     }
     private void createUser(String username, UserRole role) {
         authService.createUser(new CreateUserRequest(username, "password123", username, null, role, "First", "Last", null));

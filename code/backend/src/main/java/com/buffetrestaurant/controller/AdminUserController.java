@@ -66,8 +66,8 @@ public class AdminUserController {
     @ApiResponse(responseCode = "409", description = "Self removal or last active MANAGER",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<Void> remove(@PathVariable Long id, HttpServletRequest request) {
-        UserContext actor = users.requireAnyRole(request, UserRole.MANAGER);
-        lifecycle.remove(id, actor);
+        users.requireAnyRole(request, UserRole.MANAGER);
+        lifecycle.remove(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -84,8 +84,8 @@ public class AdminUserController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public UserResponse setActive(@PathVariable Long id, @Valid @RequestBody UserActiveRequest body,
             HttpServletRequest request) {
-        UserContext actor = users.requireAnyRole(request, UserRole.MANAGER);
-        return lifecycle.setActive(id, body.active(), actor);
+        users.requireAnyRole(request, UserRole.MANAGER);
+        return lifecycle.setActive(id, body.active());
     }
 
     @GetMapping
