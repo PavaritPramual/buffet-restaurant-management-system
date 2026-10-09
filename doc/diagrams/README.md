@@ -4,6 +4,19 @@
 
 ชุดเดิมหลัง architecture refactor `de7b5d546a05ad3ccef8c641ee5c53d638a8e039` มี **23 diagram รายละเอียด และ5ภาพย่อสำหรับนำเสนอ**; PR #24/#25 ผ่าน review/merge แล้ว และ PR #26 ปรับ State resolver sources/previews เพิ่ม ทุกภาพมี PlantUML source/SVG ภาพ public deployment เป็น design เท่านั้น ไม่ใช้จำนวนไฟล์รับรอง public หรือ Final
 
+## Delta ตรวจล่าสุด — develop `d84f071`, 9 ตุลาคม 2026
+
+ตรวจ source กับ State service/role provider, V15 Profile/Stock entities, integration tests และ use-case descriptions. อัปเดต Activity Kitchen ให้เห็น explicit role/next-state guards; Domain Model ให้สะท้อน UserProfile และ V15 stock fields; Manager/combined Use Case ให้แสดง contact-profile update. SVG preview ถูก render ใหม่จาก PlantUML sources.
+
+| ภาพที่ตรวจ | Delta ที่ตรงกับ code | Source / preview |
+|---|---|---|
+| Activity Kitchen/Serving | role-specific board access; only `RECEIVED → PREPARING → READY → SERVED`; each denied board read or transition ends that request, and denied transitions leave persisted status unchanged | [source](activity-kitchen.puml) / [SVG](previews/activity-kitchen.svg) |
+| Domain Model | add `UserProfile` one-to-one conceptual relation; include V15 `openingTargetStock` and `active`, derived shortfall note | [source](domain-model.puml) / [SVG](previews/domain-model.svg) |
+| Manager / Supervisor Use Case | reflect Manager contact-profile update fields and limited account-edit scope | [source](use-case-management.puml) / [SVG](previews/use-case-management.svg) |
+| All actors Use Case | update baseline revision and include Manager contact-profile update; clarify account edit/delete is unavailable while contact updates are limited to name and phone | [source](use-case.puml) / [SVG](previews/use-case.svg) |
+
+เป็น source/documentation review ของ merged baseline ไม่ใช่ peer approval หรือ Final release sign-off. Public flow/denial evidence แยกอยู่ใน [PR #36 report](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/b2928f564b796b0e7a5e7260e0f3f567ca40a386/doc/testing/sirapat-public-regression-2026-10-09.md); deployed revision ยัง owner-reported.
+
 **ประวัติตรวจโมดูลปวริศช์ใน PR #31:** code baseline `6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6`; scope ตารางต่อไปนี้ผ่านศรัณย์/ศิระพัทธ์ review ที่ head5939ecd และ merge แล้ว ภาพอื่นคง revision และการตรวจของเจ้าของเดิม
 
 ## ตรวจหลังรวม Stock/Profile — develop adc5798

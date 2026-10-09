@@ -11,7 +11,7 @@ skinparam classBorderColor #173A45
 skinparam actorBorderColor #173A45
 skinparam usecaseBackgroundColor #F2E6D4
 skinparam usecaseBorderColor #A54A2E
-title All actors and implemented use cases - develop 472fba4
+title All actors and implemented use cases - develop d84f071
 left to right direction
 actor Customer
 actor "SERVICE_STAFF" as Staff
@@ -43,6 +43,7 @@ actor "SUPERVISOR" as Supervisor
 rectangle "Administration module" {
  usecase "Login / logout" as Login
  usecase "List / create users\nBasic profile at creation" as Users
+ usecase "Update contact profile\nfirst / last name and phone" as Profile
  usecase "Manage tables / packages / soups" as Catalog
  usecase "Manage menu categories / items" as AdminMenu
  usecase "Manage stock master data" as Master
@@ -52,6 +53,7 @@ rectangle "Administration module" {
 Manager --> Login
 Supervisor --> Login
 Manager --> Users
+Manager --> Profile
 Manager --> Catalog
 Manager --> AdminMenu
 Manager --> Master
@@ -61,7 +63,7 @@ Supervisor --> Read
 Supervisor --> Move
 note bottom of Supervisor
 No Kitchen / Serving / Payment privilege.
-User edit/delete and detailed profile management are not implemented.
+Account edit/delete is not implemented; contact-profile updates are limited to first name, last name, and phone.
 end note
 note bottom
 Employees login before protected use cases.
