@@ -1,6 +1,6 @@
 # Menu/Ordering — SOLID and JPA contribution
 
-Owner: ศิระพัทธ์. Source baseline: 54e3538, integrated develop, 6 October 2026. ปวริศช์ can integrate these notes into final docs. Recheck against release commit; this module does not implement all course patterns itself.
+Owner: ศิระพัทธ์. Rechecked against integrated developd84f071, 9 October 2026; MenuItem category/package mapping, CustomerOrder aggregate cascade, OrderItem parent link and repository EntityGraph still match the rationale below. Original54e3538 notes are historical. [Current public/CI evidence](../testing/sirapat-public-regression-2026-10-09.md) and [QA speaker notes](../slide/sirapat-public-quality-2026-10-09.md) are ready for ปวริศช์ to integrate. Release mapping/schema approval still belongs to the relevant owners; this module does not implement all course patterns itself.
 
 ## SOLID examples
 

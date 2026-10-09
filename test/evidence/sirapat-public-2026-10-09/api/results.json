@@ -1,0 +1,260 @@
+{
+  "startedAt": "2026-10-09T02:15:41.465Z",
+  "finishedAt": "2026-10-09T02:16:19.318Z",
+  "sourceCommit": "d84f071ee03b738d6a6dd2a899c5f6e6cc230d3f",
+  "runnerSha256": "eb2a474092bd7a21c7542966fa93e560cecd38de7a6d4d8e1151830d9f51a0b3",
+  "environment": "public HTTPS API",
+  "webUrl": "https://buffet-restaurant-management-system.onrender.com",
+  "apiUrl": "https://buffet-restaurant-management-system.onrender.com/api/v1",
+  "deployedCommit": "2f8bc4b",
+  "deployedCommitSource": "owner evidence in repository; not independently attested by API",
+  "httpMocks": false,
+  "browser": false,
+  "run": "QA261009Sirapat",
+  "resources": {
+    "supervisorUserId": 3,
+    "staffUserId": 4,
+    "kitchenUserId": 5,
+    "packageId": 1,
+    "soupId": 1,
+    "tableId": 1,
+    "categoryId": 1,
+    "menuItemId": 1,
+    "sessionId": 1,
+    "orderId": 1,
+    "stockItemId": 1
+  },
+  "counts": {
+    "passed": 12,
+    "failed": 0
+  },
+  "pending": [
+    "Browser evidence collected separately",
+    "Timed TTL (customer lifetime 8 hours)",
+    "Runtime startup/schema and release SHA attestation",
+    "Persistence after redeploy and cold start"
+  ],
+  "results": [
+    {
+      "name": "Manager login and public Staff cookie attributes",
+      "result": "PASS",
+      "detail": {
+        "role": "MANAGER",
+        "cookie": {
+          "client": "manager",
+          "name": "JSESSIONID",
+          "path": "/",
+          "secure": true,
+          "httpOnly": true,
+          "sameSite": "Lax",
+          "maxAge": null
+        }
+      }
+    },
+    {
+      "name": "Create isolated test accounts and authenticate all roles",
+      "result": "PASS",
+      "detail": {
+        "userIds": {
+          "supervisorUserId": 3,
+          "staffUserId": 4,
+          "kitchenUserId": 5
+        },
+        "roles": 3,
+        "credentials": "ignored local access file only"
+      }
+    },
+    {
+      "name": "Invalid credentials, anonymous and spoofed-role denials",
+      "result": "PASS",
+      "detail": {
+        "denialsWithSpoofedHeader": 15,
+        "invalidLogin": 401
+      }
+    },
+    {
+      "name": "Unique test master data and Menu pagination",
+      "result": "PASS",
+      "detail": {
+        "supervisorUserId": 3,
+        "staffUserId": 4,
+        "kitchenUserId": 5,
+        "packageId": 1,
+        "soupId": 1,
+        "tableId": 1,
+        "categoryId": 1,
+        "menuItemId": 1,
+        "pagination": true,
+        "invalidSort": 400
+      }
+    },
+    {
+      "name": "Open session, unpaid close guard and snapshot pricing",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "snapshotPrice": 399,
+        "newPackagePrice": 499,
+        "totalAmount": 997.5,
+        "unpaidClose": 400
+      }
+    },
+    {
+      "name": "One-use QR, independent customer cookies and credential-free responses",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "independentClients": 2,
+        "qrReuse": 404,
+        "cookies": [
+          {
+            "client": "phoneA",
+            "name": "customer_session",
+            "path": "/api/v1/dining-sessions",
+            "secure": true,
+            "httpOnly": true,
+            "sameSite": "Lax",
+            "maxAge": 28800
+          },
+          {
+            "client": "phoneB",
+            "name": "customer_session",
+            "path": "/api/v1/dining-sessions",
+            "secure": true,
+            "httpOnly": true,
+            "sameSite": "Lax",
+            "maxAge": 28800
+          }
+        ],
+        "responseContainsCredential": false
+      }
+    },
+    {
+      "name": "Ordering validation, role and State transition guards",
+      "result": "PASS",
+      "detail": {
+        "orderId": 1,
+        "state": "SERVED",
+        "denials": [
+          {
+            "role": "anonymous",
+            "status": "PREPARING",
+            "http": 401,
+            "stored": "RECEIVED"
+          },
+          {
+            "role": "manager",
+            "status": "PREPARING",
+            "http": 403,
+            "stored": "RECEIVED"
+          },
+          {
+            "role": "supervisor",
+            "status": "PREPARING",
+            "http": 403,
+            "stored": "RECEIVED"
+          },
+          {
+            "role": "staff",
+            "status": "PREPARING",
+            "http": 403,
+            "stored": "RECEIVED"
+          },
+          {
+            "role": "kitchen",
+            "status": "READY",
+            "http": 400,
+            "stored": "RECEIVED"
+          },
+          {
+            "role": "kitchen",
+            "status": "unknown",
+            "http": 400,
+            "stored": "RECEIVED"
+          },
+          {
+            "role": "kitchen",
+            "status": "RECEIVED",
+            "http": 400,
+            "stored": "PREPARING"
+          },
+          {
+            "role": "kitchen",
+            "status": "SERVED",
+            "http": 403,
+            "stored": "READY"
+          },
+          {
+            "role": "kitchen",
+            "status": "PREPARING",
+            "http": 400,
+            "stored": "READY"
+          },
+          {
+            "role": "staff",
+            "status": "SERVED",
+            "http": 400,
+            "stored": "SERVED"
+          },
+          {
+            "role": "kitchen",
+            "status": "READY",
+            "http": 400,
+            "stored": "SERVED"
+          }
+        ],
+        "unknownOrder": 404
+      }
+    },
+    {
+      "name": "Bill request blocks both customer contexts",
+      "result": "PASS",
+      "detail": {
+        "contexts": 2,
+        "rejectedOrderStatus": 409
+      }
+    },
+    {
+      "name": "Payment, duplicate rejection, explicit close and customer revocation",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "totalAmount": 997.5,
+        "duplicate": 409,
+        "closed": true,
+        "tableStatus": "AVAILABLE",
+        "revokedContexts": 2
+      }
+    },
+    {
+      "name": "Stock targets, inactive guards, role denials and preserved history",
+      "result": "PASS",
+      "detail": {
+        "stockItemId": 1,
+        "quantity": 3.125,
+        "shortfall": 2,
+        "inactive": true,
+        "historyEntries": 2,
+        "unchangedAfterDenial": true
+      }
+    },
+    {
+      "name": "Profile update, validation and permission guards",
+      "result": "PASS",
+      "detail": {
+        "userId": 4,
+        "firstNameLimit": 100,
+        "unchangedAfterDenials": true
+      }
+    },
+    {
+      "name": "Logout invalidates each Staff role",
+      "result": "PASS",
+      "detail": {
+        "roles": 4,
+        "protectedStatus": 401,
+        "timedTTL": false
+      }
+    }
+  ]
+}

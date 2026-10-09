@@ -1,0 +1,11 @@
+{
+  "environment": "local HTTP; isolated H2; real API; CUA manual browser",
+  "sourceCommit": "11edeb0d39afd1519d047e625f4884ccf63f6405",
+  "httpMocks": false,
+  "case": "missing QR shows Thai guidance and retry",
+  "result": "PASS",
+  "scrollWidth": 360,
+  "width": 360,
+  "publicDeployed": false,
+  "at": "2026-10-09T02:37:54.357Z"
+}

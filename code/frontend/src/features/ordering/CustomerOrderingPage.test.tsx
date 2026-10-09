@@ -46,6 +46,30 @@ function mockSessionDetails() {
 }
 
 describe('CustomerOrderingPage', () => {
+  it.each([
+    ['Customer session is missing', 'กรุณาสแกน QR ของโต๊ะก่อนเริ่มสั่งอาหาร'],
+    ['Customer session has expired', 'สิทธิ์สั่งอาหารหมดอายุแล้ว กรุณาขอ QR ใหม่จากพนักงาน'],
+    ['Active dining session not found', 'รอบกินนี้ปิดแล้วหรือใช้ไม่ได้ กรุณาติดต่อพนักงาน'],
+  ])('gives Thai recovery guidance for %s without showing ordering controls', async (message, expected) => {
+    vi.mocked(api.getCustomerContext).mockRejectedValue({ response: { status: 401, data: { message } } })
+    renderPage('/customer/qr')
+    expect(await screen.findByRole('alert')).toHaveProperty('textContent', expected)
+    expect(screen.getByRole('button', { name: 'ลองอีกครั้ง' })).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'ยืนยันการสั่ง' })).toBeNull()
+  })
+
+  it('explains a used QR in Thai and retries the scan only on the recovery action', async () => {
+    vi.mocked(api.redeemQr).mockRejectedValueOnce({ response: { status: 404, data: { message: 'Active QR code not found' } } }).mockResolvedValue(sessionA)
+    mockSessionDetails()
+    renderPage()
+    expect(await screen.findByRole('alert')).toHaveProperty('textContent', 'QR นี้ใช้ไม่ได้แล้ว กรุณาขอ QR ใหม่จากพนักงาน')
+    expect(api.redeemQr).toHaveBeenCalledTimes(1)
+    expect(api.getCustomerContext).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'ลองอีกครั้ง' }))
+    expect(await screen.findByText('โต๊ะ T01 · Standard')).toBeTruthy()
+    expect(api.redeemQr).toHaveBeenCalledTimes(2)
+  })
+
   it('shows loading while session verification is pending', async () => {
     const lookup = deferred<SessionContext>()
     vi.mocked(api.redeemQr).mockReturnValue(lookup.promise)

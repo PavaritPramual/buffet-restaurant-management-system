@@ -1,0 +1,258 @@
+[
+  {
+    "file": "customer-bill-confirm-360.jpg",
+    "pixels": [
+      344,
+      1650
+    ],
+    "sha256": "30a83d53fb8a21a01d49a76b89cadfe2cb75966802c8eeffc0891d44ebe1b5b4"
+  },
+  {
+    "file": "customer-bill-requested-360.jpg",
+    "pixels": [
+      344,
+      1626
+    ],
+    "sha256": "7d2c6c51b69eba9ed046345f28ed1c1ddd828973d0c55f34e9d1d117548738e6"
+  },
+  {
+    "file": "customer-menu-360.jpg",
+    "pixels": [
+      344,
+      1561
+    ],
+    "sha256": "e81b7bf17cdee61034aecf9d190433eac2967855d00ebc1a8dc21d7ed7224fe6"
+  },
+  {
+    "file": "customer-no-qr-error-360.jpg",
+    "pixels": [
+      360,
+      1000
+    ],
+    "sha256": "c8ce1e7fc746c95b1632260d3a90f5d4b84d6d09b0e16f27929c6d5b3a07c58c"
+  },
+  {
+    "file": "customer-order-confirm-360.jpg",
+    "pixels": [
+      344,
+      1546
+    ],
+    "sha256": "c5c0dbc071e549465f3b39a3e8ea7062c817afdefcb9ea04a31aaa9d967b9548"
+  },
+  {
+    "file": "customer-paid-360.jpg",
+    "pixels": [
+      344,
+      1681
+    ],
+    "sha256": "6d49fd0f68da93c94948ddba1ac4a1c4e864207830b50e487ee1d33674af3060"
+  },
+  {
+    "file": "customer-received-360.jpg",
+    "pixels": [
+      344,
+      1650
+    ],
+    "sha256": "f016a2936a188c32287131d994cbc0eb7424e5f00332ee1b3b67210a5cdf1bae"
+  },
+  {
+    "file": "customer-rescan-restored-360.jpg",
+    "pixels": [
+      344,
+      1561
+    ],
+    "sha256": "e81b7bf17cdee61034aecf9d190433eac2967855d00ebc1a8dc21d7ed7224fe6"
+  },
+  {
+    "file": "customer-revoked-360.jpg",
+    "pixels": [
+      360,
+      1000
+    ],
+    "sha256": "1ed955c638e3f66b0392430c579a668f9b5a531016143c03826a855f3c1eb2ca"
+  },
+  {
+    "file": "customer-served-360.jpg",
+    "pixels": [
+      344,
+      1665
+    ],
+    "sha256": "96dc1bf9940f910673d4d51344578e91085b13fe43fba060c2a76dc4f94d975e"
+  },
+  {
+    "file": "invalid-login-1280.jpg",
+    "pixels": [
+      1280,
+      1000
+    ],
+    "sha256": "ec9665a5917f630ef11d4d29a41c5bd42c6e607746bafdb87f3ef3e3dff81d6f"
+  },
+  {
+    "file": "kitchen-empty-768.jpg",
+    "pixels": [
+      768,
+      1000
+    ],
+    "sha256": "17f31cd1052a9366166692362e32867bf83890d3ee80499c10b194a345f962f8"
+  },
+  {
+    "file": "kitchen-preparing-768.jpg",
+    "pixels": [
+      768,
+      1000
+    ],
+    "sha256": "bb44f3d770067ec617868611e0ad4877cfaa6fddfda350393266ea10dd7cb013"
+  },
+  {
+    "file": "kitchen-received-768.jpg",
+    "pixels": [
+      768,
+      1000
+    ],
+    "sha256": "2b0bd3dc795d3d354fd53f0ab34334b6e81775e674e68e94b252f8cb375d3831"
+  },
+  {
+    "file": "manager-menu-1280.jpg",
+    "pixels": [
+      1264,
+      1331
+    ],
+    "sha256": "50d12ecb7d152317cc4ca172c05fbf79c4b201208db9d3d3751432bd11b904b1"
+  },
+  {
+    "file": "manager-menu-delete-confirm-1280.jpg",
+    "pixels": [
+      1264,
+      1331
+    ],
+    "sha256": "ff2ccb88db0ea5cc143f81b886c0f45ca9e76514d86b9fa6e63f608a8c56e160"
+  },
+  {
+    "file": "manager-stock-reactivate-confirm-1280.jpg",
+    "pixels": [
+      1264,
+      1035
+    ],
+    "sha256": "af91e2aedc811d3004f4709ea314d89abbbebac33e7b1e7342cf55dfb4dc3759"
+  },
+  {
+    "file": "profile-editor-1280.jpg",
+    "pixels": [
+      963,
+      158
+    ],
+    "sha256": "cbaf8c59cfb1a2f31067a0cf6ae3f65d4d138345651e4caaa269ef6f3b897dad"
+  },
+  {
+    "file": "profile-editor-360.jpg",
+    "pixels": [
+      311,
+      366
+    ],
+    "sha256": "5795e8532b96a6f8a968fb1cca2f3dc428e8879d42ace270b5f6a96104938778"
+  },
+  {
+    "file": "profile-editor-768.jpg",
+    "pixels": [
+      719,
+      158
+    ],
+    "sha256": "bde47b0c1c0d660927834c4316f4c8757cd3db4ebcf9a2e3abc98f32d03fd187"
+  },
+  {
+    "file": "staff-bill-768.jpg",
+    "pixels": [
+      752,
+      1207
+    ],
+    "sha256": "7b85cd7ab4b649d0544b2f88ee93ae06dc5ad573acea594077bfb3042e45e017"
+  },
+  {
+    "file": "staff-closed-available-768.jpg",
+    "pixels": [
+      768,
+      1000
+    ],
+    "sha256": "4eccf9109b902af53fcff7cf942b838c4fb1d5b8be5dbda3ea95c82beef633e5"
+  },
+  {
+    "file": "staff-paid-after-refresh-768.jpg",
+    "pixels": [
+      752,
+      1306
+    ],
+    "sha256": "f58dc2360316dbe0307e276eba3160a825c329eda7aab0a37ee5b09e76480c47"
+  },
+  {
+    "file": "staff-payment-confirm-768.jpg",
+    "pixels": [
+      752,
+      1207
+    ],
+    "sha256": "5c2c352f1e77eb03ade0be2f84222e08772be6f38323ab20b91dbf9abf7c8184"
+  },
+  {
+    "file": "staff-ready-768.jpg",
+    "pixels": [
+      768,
+      1000
+    ],
+    "sha256": "1b16ed9e0fa9f42c49ff5045c4c794e1ed3933bb8f160b56ea2e29ae029bfc3a"
+  },
+  {
+    "file": "staff-tables-768.jpg",
+    "pixels": [
+      768,
+      1000
+    ],
+    "sha256": "4eccf9109b902af53fcff7cf942b838c4fb1d5b8be5dbda3ea95c82beef633e5"
+  },
+  {
+    "file": "supervisor-adjust-confirm-1280.jpg",
+    "pixels": [
+      1264,
+      1068
+    ],
+    "sha256": "658f8171f53a09f0bc884f177121ee89afcd1a9363e716f76d7cc4f955e22a40"
+  },
+  {
+    "file": "supervisor-inactive-stock-1280.jpg",
+    "pixels": [
+      1280,
+      1000
+    ],
+    "sha256": "667fd1d454c936a7fc7e64243fa2ee494faa56faa5500fc587c912ec7a15239b"
+  },
+  {
+    "file": "supervisor-inactive-stock-360.jpg",
+    "pixels": [
+      360,
+      1000
+    ],
+    "sha256": "423005d6290daf8beefca11b62e065c5b38329d23b054bfbe7b48ee76aa42a27"
+  },
+  {
+    "file": "supervisor-inactive-stock-768.jpg",
+    "pixels": [
+      768,
+      1000
+    ],
+    "sha256": "f11bf7b14a7a34063fc55538c3d5e39ca98d25f6da90bd5efc17aaa1f162bfab"
+  },
+  {
+    "file": "supervisor-logout-1280.jpg",
+    "pixels": [
+      1280,
+      1000
+    ],
+    "sha256": "df46575eddbc88a468731bde61a3808d5059fcea9548d3566098de4bc695b7e3"
+  },
+  {
+    "file": "supervisor-stock-after-movements-1280.jpg",
+    "pixels": [
+      1280,
+      1000
+    ],
+    "sha256": "b226888fc65bd496b7771e0315ee92d4650d8e17d26db52b7e7b6fc41fa8ed08"
+  }
+]
