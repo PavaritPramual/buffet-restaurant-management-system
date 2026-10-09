@@ -11,6 +11,7 @@ import com.buffetrestaurant.dto.request.OpenDiningSessionRequest;
 import com.buffetrestaurant.dto.response.DiningSessionResponse;
 import com.buffetrestaurant.exception.ResourceNotFoundException;
 import com.buffetrestaurant.exception.ServiceUnavailableException;
+import com.buffetrestaurant.exception.UserFacingMessages;
 import com.buffetrestaurant.integration.payment.PaymentStatusLookup;
 import com.buffetrestaurant.mapper.DiningSessionMapper;
 import com.buffetrestaurant.repository.BuffetPackageRepository;
@@ -92,7 +93,7 @@ public class DiningSessionServiceImpl implements DiningSessionService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Restaurant table not found with id: " + request.tableId()));
         if (!TableStatus.AVAILABLE.equals(table.getStatus())) {
-            throw new IllegalStateException("Restaurant table is not available");
+            throw new IllegalStateException(UserFacingMessages.TABLE_NOT_AVAILABLE);
         }
 
         int guestCount = request.adultCount() + request.childCount();
@@ -100,7 +101,7 @@ public class DiningSessionServiceImpl implements DiningSessionService {
             throw new IllegalStateException("At least one guest is required");
         }
         if (guestCount > table.getCapacity()) {
-            throw new IllegalStateException("Guest count exceeds restaurant table capacity");
+            throw new IllegalStateException(UserFacingMessages.guestCountExceedsCapacity(table.getCapacity()));
         }
 
         BuffetPackage buffetPackage = packageRepository.findById(request.packageId())

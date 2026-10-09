@@ -8,6 +8,7 @@ import com.buffetrestaurant.dto.request.UpdateTableStatusRequest;
 import com.buffetrestaurant.dto.response.TableResponse;
 import com.buffetrestaurant.exception.DuplicateResourceException;
 import com.buffetrestaurant.exception.ResourceNotFoundException;
+import com.buffetrestaurant.exception.UserFacingMessages;
 import com.buffetrestaurant.mapper.TableMapper;
 import com.buffetrestaurant.repository.RestaurantTableRepository;
 import com.buffetrestaurant.service.RestaurantTableService;
@@ -34,7 +35,7 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     private RestaurantTable lockForMaintenance(Long id) {
         RestaurantTable table = tableRepository.findByIdForUpdate(id).orElseThrow(() -> new ResourceNotFoundException("Restaurant table not found with id: " + id));
         if (sessions.existsByRestaurantTableIdAndStatus(id, com.buffetrestaurant.domain.enums.DiningSessionStatus.ACTIVE)) {
-            throw new com.buffetrestaurant.exception.DuplicateResourceException("Cannot change a table with an active dining session");
+            throw new DuplicateResourceException(UserFacingMessages.TABLE_HAS_ACTIVE_SESSION);
         }
         return table;
     }
@@ -105,9 +106,11 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     @Transactional
     public void deleteTable(Long id) {
         RestaurantTable table = lockForMaintenance(id);
-        if (sessions.existsByRestaurantTableId(id)) throw new com.buffetrestaurant.exception.DuplicateResourceException("Cannot delete a table with dining history");
+        if (sessions.existsByRestaurantTableId(id)) {
+            throw new DuplicateResourceException(UserFacingMessages.TABLE_HAS_DINING_HISTORY);
+        }
         if (TableStatus.OCCUPIED.equals(table.getStatus())) {
-            throw new IllegalStateException("Cannot delete table while it is occupied");
+            throw new IllegalStateException(UserFacingMessages.TABLE_OCCUPIED_CANNOT_DELETE);
         }
         tableRepository.delete(table);
     }

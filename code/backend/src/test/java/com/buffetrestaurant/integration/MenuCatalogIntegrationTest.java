@@ -84,6 +84,41 @@ class MenuCatalogIntegrationTest {
     }
 
     @Test
+    void deletingCategoryWithAvailableMenuItemsReturnsThaiErrorAndPreservesBothRecords() throws Exception {
+        MockHttpSession manager = login(UserRole.MANAGER);
+
+        mvc.perform(delete("/api/v1/menu-categories/" + category.getId()).session(manager))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value(
+                        "หมวดหมู่นี้ยังมีเมนูอยู่ กรุณาย้ายเมนูไปหมวดอื่นก่อนลบหมวดหมู่นี้"));
+
+        entities.flush();
+        entities.clear();
+        assertThat(categories.findById(category.getId())).isPresent();
+        assertThat(items.findById(item.getId())).isPresent();
+    }
+
+    @Test
+    void deletingCategoryWithOnlyUnavailableMenuItemsReturnsThaiErrorAndPreservesBothRecords() throws Exception {
+        item.setAvailable(false);
+        items.saveAndFlush(item);
+        MockHttpSession manager = login(UserRole.MANAGER);
+
+        mvc.perform(delete("/api/v1/menu-categories/" + category.getId()).session(manager))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value(
+                        "หมวดหมู่นี้ยังมีเมนูอยู่ กรุณาย้ายเมนูไปหมวดอื่นก่อนลบหมวดหมู่นี้"));
+
+        entities.flush();
+        entities.clear();
+        assertThat(categories.findById(category.getId())).isPresent();
+        assertThat(items.findById(item.getId())).isPresent();
+        assertThat(items.findById(item.getId()).orElseThrow().isAvailable()).isFalse();
+    }
+
+    @Test
     void managerCanCreateReadUpdateAndDeleteItemIncludingPackageLinksAndOptionalFields() throws Exception {
         MockHttpSession manager = login(UserRole.MANAGER);
         String body = mvc.perform(post("/api/v1/menu-items").session(manager)

@@ -10,6 +10,7 @@ import com.buffetrestaurant.dto.response.PageResponse;
 import com.buffetrestaurant.exception.BusinessRuleException;
 import com.buffetrestaurant.exception.DuplicateResourceException;
 import com.buffetrestaurant.exception.ResourceNotFoundException;
+import com.buffetrestaurant.exception.UserFacingMessages;
 import com.buffetrestaurant.mapper.OrderingMapper;
 import com.buffetrestaurant.repository.BuffetPackageRepository;
 import com.buffetrestaurant.repository.MenuCategoryRepository;
@@ -77,7 +78,9 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
     public void deleteCategory(Long id) {
         adminAccessProvider.requireMenuWriteAccess();
         MenuCategory category = requireCategory(id);
-        if (itemRepository.existsByCategoryId(id)) throw new BusinessRuleException("Cannot delete a category that still contains menu items");
+        if (itemRepository.existsByCategoryId(id)) {
+            throw new BusinessRuleException(UserFacingMessages.CATEGORY_HAS_ITEMS);
+        }
         categoryRepository.delete(category);
     }
 
@@ -133,7 +136,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
         adminAccessProvider.requireMenuWriteAccess();
         MenuItem item = requireItem(id);
         if (orderItemRepository.existsByMenuItemId(id)) {
-            throw new BusinessRuleException("Cannot delete a menu item with order history; mark it unavailable instead");
+            throw new BusinessRuleException(UserFacingMessages.MENU_ITEM_HAS_ORDER_HISTORY);
         }
         itemRepository.delete(item);
     }
