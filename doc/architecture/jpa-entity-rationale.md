@@ -1,7 +1,7 @@
 # JPA Entity Rationale
 
 สถานะ: เอกสารอธิบาย mapping ที่ **implemented อยู่แล้ว** (ตรวจกับ `code/backend/.../domain/*.java` และ migration V1–V15) ไม่มีการเปลี่ยน mapping เพื่อให้เอกสารดูดีขึ้น
-การยืนยันเหตุผลเชิงออกแบบจากเจ้าของแต่ละ Entity: Auth/Stock/Profile = เมธัส/ปวริศช์ (ในเอกสารนี้); Menu/Ordering = [sirapat-menu-ordering-solid-jpa.md](sirapat-menu-ordering-solid-jpa.md); Table/Package/Soup/Session/Customer grants = ปวริศช์ รับรอง mapping ของ develop `adc5798` วันที่ 8 ตุลาคม 2026 ตามหัวข้อด้านล่าง; Order/Payment ที่ยังระบุ "รอเจ้าของยืนยัน" คงรอเจ้าของโมดูลนั้น
+เอกสารนี้รวมเฉพาะ **คำรับรองที่เจ้าของ Entity ให้ไว้แล้ว** พร้อมแหล่งอ้างอิง; รายการที่เจ้าของยังไม่รับรองระบุว่า "ค้าง" และไม่ได้รับรองแทนเจ้าของ (สรุปในหัวข้อ "สถานะคำรับรองรวม")
 association ส่วนใหญ่ใช้ `LAZY` ยกเว้น `UserProfile.user` ที่ประกาศ `@OneToOne` โดยไม่กำหนด fetch จึงเป็น **EAGER (ค่าเริ่มต้นของ JPA สำหรับ `@OneToOne`)**; ทุก FK มี index ที่ใช้ใน query หลัก
 
 | Entity → table | ความสัมพันธ์/cardinality | Owner side, FK, ON DELETE | Cascade / fetch | ผลต่อ query และประวัติ |
@@ -17,9 +17,22 @@ association ส่วนใหญ่ใช้ `LAZY` ยกเว้น `UserPro
 | `MenuItem` → `menu_items` | N : 1 กับ category (LAZY); M:N กับ package ผ่าน `@ElementCollection` (LAZY) | Owner = menu_item; FK category RESTRICT, `idx_menu_items_category`; `package_menu_items` FK ON DELETE CASCADE, `idx_package_menu_items_menu` | collection อยู่ใต้ lifecycle ของ item | order item เก็บ `item_name` snapshot จึงเปลี่ยนชื่อเมนูไม่กระทบออเดอร์เก่า |
 | `DiningSession` → `dining_sessions` | JPA N : 1 table/package/soup; Domain 1 : 0..* grants/orders และ 1 : 0..1 payment; ไม่มี inverse collections ใน Session Entity | session ถือ table_id/package_id/soup_id ทั้งหมด NOT NULL/RESTRICT พร้อม idx_dining_sessions_table/package/soup; session_token UNIQUE, idx_dining_sessions_status | @ManyToOne LAZY, optional=false ทั้งสาม; ไม่มี JPA cascade | ปวริศช์ยืนยัน: snapshot DECIMAL(10,2) เก็บราคาเปิดรอบ; RESTRICT รักษาประวัติ; close ตรวจ PAID ของ ID เดียวกันและลบ grants ผ่าน repository ใน transaction ไม่ใช่ Entity cascade |
 | `CustomerSessionGrant` → `customer_session_grants` | JPA N : 1 session; optional=false; ไม่มี collection ฝั่ง session | grant ถือ session_id NOT NULL, SQL ON DELETE CASCADE; token_hash UNIQUE, idx_customer_grants_session | @ManyToOne LAZY; ไม่มี JPA cascade | ปวริศช์ยืนยัน: hash เท่านั้นและตรวจ expiresAt ทุกคำขอ; close ลบ grants ชัดเจน; SQL CASCADE ทำงานเมื่อ parent ถูกลบที่ DB ไม่ใช่ JPA cascade และไม่ใช้แทน close rule |
-| `CustomerOrder` → `orders` | N : 1 กับ session โดย `session_id` เป็นคอลัมน์ `Long` (ไม่ใช่ `@ManyToOne`); 1 : N กับ `OrderItem` | FK ที่ DB (V7) RESTRICT, `idx_orders_session`, `idx_orders_status`; ฝั่ง JPA `@OneToMany(mappedBy="order")` | `cascade=ALL`, `orphanRemoval=true`, LAZY | บันทึกออเดอร์พร้อมรายการใน transaction เดียว; ไม่ผูก entity session จึงลด join ต่อ query แต่ต้อง join ด้วยมือ; รอเจ้าของยืนยัน |
+| `CustomerOrder` → `orders` | N : 1 กับ session โดย `session_id` เป็นคอลัมน์ `Long` (ไม่ใช่ `@ManyToOne`); 1 : N กับ `OrderItem` | FK ที่ DB (V7) RESTRICT, `idx_orders_session`, `idx_orders_status`; ฝั่ง JPA `@OneToMany(mappedBy="order")` | `cascade=ALL`, `orphanRemoval=true`, LAZY | บันทึกออเดอร์พร้อมรายการใน transaction เดียว; ไม่ผูก entity session จึงลด join ต่อ query แต่ต้อง join ด้วยมือ; ดูสถานะคำรับรองด้านล่าง |
 | `OrderItem` → `order_items` | N : 1 กับ order (LAZY); `menu_item_id` เป็น `Long` | Owner = item; FK order ON DELETE CASCADE, `idx_order_items_order`; FK menu_item RESTRICT; quantity > 0 | ตาม order | snapshot `item_name` รักษาประวัติใบสั่ง |
-| `Payment` → `payments` | 1 : 1 กับ session โดย `session_id` เป็น `Long` UNIQUE | FK RESTRICT; amount ≥ 0; method CHECK CASH/QR/CARD; status CHECK PENDING/PAID/FAILED | ไม่ cascade | UNIQUE บังคับ 1 session ต่อ 1 payment; ไม่ลบ session ที่มี payment; รอเจ้าของยืนยัน |
+| `Payment` → `payments` | 1 : 0..1 กับ session ใน domain โดย `session_id` เป็น plain `Long` UNIQUE ใน Entity | FK RESTRICT; amount ≥ 0; method CHECK CASH/QR/CARD; status CHECK PENDING/PAID/FAILED | ไม่มี JPA association จึงไม่มี cascade หรือ fetch mode | UNIQUE บังคับ 1 session ต่อ 1 payment; ไม่ลบ session ที่มี payment; ดู [Payment notes](teeramet-billing-payment-solid-jpa.md) |
+
+## สถานะคำรับรองรวม
+
+ตรวจเมื่อ 9 ตุลาคม 2026 กับ develop `a6da906` (รวม PR #33, #35, #36). "รับรองแล้ว" = เจ้าของ Entity เขียนคำรับรองไว้เองและอ้างอิงได้; ไม่มีหลักฐานดังกล่าว = "ค้าง"
+
+| Entity | เจ้าของ | สถานะ | แหล่งคำรับรอง / หมายเหตุ |
+| --- | --- | --- | --- |
+| `RestaurantTable`, `BuffetPackage`, `Soup`, `DiningSession`, `CustomerSessionGrant` | ปวริศช์ | รับรองแล้ว | PR #33 (merged 8 ต.ค. 2026), revision `adc5798` — ดูหัวข้อ "คำรับรองโมดูลปวริศช์" ด้านล่าง |
+| `Payment` | ธีรเมธ | รับรองแล้ว | PR #35 (merged 9 ต.ค. 2026): [Payment notes](teeramet-billing-payment-solid-jpa.md) revision `bdd3bd7` ระบุ `sessionId` เป็น plain `Long`, ไม่มี cascade/fetch, FK/UNIQUE ที่ V9 |
+| `CustomerOrder`, `OrderItem` | ศิระพัทธ์ | รับรองแล้วโดยเอกสารเจ้าของ (ไม่ใช่ release approval) | [sirapat-menu-ordering-solid-jpa.md](sirapat-menu-ordering-solid-jpa.md) ตรวจซ้ำที่ develop `d84f071` วันที่ 9 ต.ค. 2026 ว่า CustomerOrder cascade และ OrderItem parent link ตรงเหตุผล; ตรวจกับโค้ด `a6da906` ตรงกัน (`cascade=ALL`, `orphanRemoval`, LAZY; `OrderItem.order` LAZY/optional=false; `sessionId`/`menuItemId` เป็น `Long`). ตัวเอกสารเจ้าของระบุว่า release mapping/schema approval ยังเป็นของเจ้าของที่เกี่ยวข้อง และไม่ได้ทดสอบ query count; State ของ Order เป็นของศรัณย์ ไม่ครอบคลุมในนี้ |
+| `MenuItem` | ศิระพัทธ์ | รับรองแล้วโดยเอกสารเจ้าของ | เอกสารเดียวกัน (category/package mapping, EntityGraph) ตรวจซ้ำที่ `d84f071` |
+| `MenuCategory` | ศิระพัทธ์ | **ค้าง** | เอกสารเจ้าของกล่าวถึงเฉพาะความสัมพันธ์ `MenuItem → MenuCategory`; ไม่มีคำรับรอง mapping ของ `MenuCategory` เอง จึงไม่ขอรับรองแทน |
+| `UserAccount`, `UserProfile`, `StockItem`, `StockTransaction` | เมธัส | **ค้าง** (มีร่างให้ตรวจ) | ไม่พบคำรับรอง JPA จากเมธัสใน repo; มี [ร่างคำรับรอง](#ร่างคำรับรอง-jpa-โมดูล-authstockprofile-เมธัส) ที่เขียนจากโค้ดเพื่อให้เมธัสตรวจ — **ยังไม่นับเป็นรับรองแล้ว** จนกว่าเมธัสยืนยัน |
 
 ## หมายเหตุสำคัญ
 - `orders.session_id`, `order_items.menu_item_id`, `payments.session_id` เป็น plain `Long` ใน JPA แต่มี FK จริงใน DB — เป็นการเลือกของเจ้าของ module ไม่ได้แก้ในงานนี้

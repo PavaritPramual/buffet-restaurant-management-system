@@ -20,6 +20,18 @@
 
 คำรับรอง JPA อยู่ใน [ตารางกลาง](../architecture/jpa-entity-rationale.md) และผลรอบใหม่อยู่ใน [รายงานระบบรวม](../testing/pavarit-integrated-validation-2026-10-08.md). ตารางด้านล่างเป็นประวัติ delta ของ PR #31
 
+### ตรวจ Auth / Stock / Activity / ERD เทียบ V15 (9 ตุลาคม 2026)
+
+render ใหม่เฉพาะภาพที่ source เปลี่ยนจริง ภาพอื่นไม่แตะ
+
+| ภาพ | สิ่งที่แก้ | Source / preview |
+|---|---|---|
+| ERD | title เป็น Flyway V1–V15 (เดิมเขียน V1–V14 แต่มีคอลัมน์ V15 แล้ว) | [source](er-diagram.puml) / [SVG](previews/er-diagram.svg) |
+| Class Auth | เพิ่ม id/username/createdAt, `listUsers`, `/me`, methods ของ AdminUserController และ note Manager-only/ชื่อบังคับที่ API แต่ DB nullable | [source](class-auth.puml) / [SVG](previews/class-auth.svg) |
+| Class Stock Template | เพิ่ม `createItem/updateItem/setActive/overview/history`, `updateDetails/updateOpeningTarget/changeActive`, แก้ `StockTransaction` เป็น `quantityDelta/transactionType/createdAt` | [source](class-stock-template.puml) / [SVG](previews/class-stock-template.svg) |
+| Activity Stock | เพิ่มวงจร item (create/edit/active), inactive → 409 ก่อนคำนวณ และ balance ติดลบ → 400 | [source](activity-stock.puml) / [SVG](previews/activity-stock.svg) |
+| Domain Model | `StockItem` เพิ่ม openingTargetStock/active; `StockTransaction` ใช้ชื่อฟิลด์ตรง entity; ลบ note ว่า "planned for Final" | [source](domain-model.puml) / [SVG](previews/domain-model.svg) |
+
 | ภาพที่ตรวจ | ผลเทียบโค้ด | Source / preview |
 |---|---|---|
 | Component | แก้ baseline และจำกัดข้ออ้าง constructor/interfaces ตามขอบเขต services ที่ตรวจ | [source](component.puml) / [SVG](previews/component.svg) |

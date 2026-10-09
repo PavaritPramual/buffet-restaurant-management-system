@@ -16,8 +16,13 @@ interface StockTransactionProcessor {
 class StockInProcessor
 class StockAdjustmentProcessor
 class StockService {
+ +createItem(request) : StockItemResponse
+ +updateItem(id, request) : StockItemResponse
+ +setActive(id, active) : StockItemResponse
+ +overview()
  +stockIn(id, request, actor)
  +adjust(id, request, actor)
+ +history(itemId)
 }
 class StockItem {
  sku : String
@@ -27,13 +32,18 @@ class StockItem {
  lowStockThreshold : BigDecimal
  openingTargetStock : BigDecimal (V15)
  active : boolean (V15)
+ +updateDetails(sku, name, unit, threshold) : void
+ +updateOpeningTarget(target) : void
+ +changeActive(active) : void
  +getShortfall() : BigDecimal
  +applyDelta(delta) : void
 }
 class StockTransaction {
- quantity : BigDecimal
+ transactionType : StockTransactionType
+ quantityDelta : BigDecimal
  balanceAfter : BigDecimal
  reason : String
+ createdAt : Instant
 }
 interface StockItemRepository
 interface StockTransactionRepository
@@ -52,6 +62,8 @@ note bottom of StockTransactionTemplate
  -> apply/save -> audit actor/reason/balance.
  Transaction belongs to StockService, not the template.
  Types: IN / ADJUSTMENT. Adjustment uses signed delta.
- openingTargetStock/active implemented by V15; shortfall is derived, not persisted.
+ openingTargetStock/active implemented by V15; shortfall = max(target - quantity, 0), derived, not persisted.
+ Manager-only item create/update/active; inactive item rejects stock-in/adjust with 409.
+ SKU and unit are locked once transactions exist.
 end note
 @enduml
