@@ -1,6 +1,20 @@
 # Final requirement to test traceability
 
-Owner: ศิระพัทธ์. [Test plan](test-plan.md). Latest integrated baseline: develop6d83eac, 8 October 2026. [Current follow-up](sirapat-step3-followup-2026-10-08.md) separates develop regression from unmerged Stock/Profile candidatecc72fa0. PR #26/#27/#29 merged; cb612d9/54e3538 and older reports are historical. Test names identify coverage, not proof of release execution. Public acceptance is pending.
+Owner: ศิระพัทธ์. [Test plan](test-plan.md). Latest integrated baseline: developd84f071, 9 October 2026. [Current public report](sirapat-public-regression-2026-10-09.md): real API12 groups and browser12 groups passed, Stock/Profile integrated, public Secure-cookie/logout/close verified. Independent customers are API cookie jars; the browser uses one shared context. Submitted production11edeb0 passes frontend125/125 with Thai QR recovery; not deployed. Live SHA/runtime/schema, timed TTL and reviewed release acceptance remain pending. Candidatecc72fa0 and [8 October follow-up](sirapat-step3-followup-2026-10-08.md) are historical. The following coverage inventory retains historical test names; current execution/gates take precedence below.
+
+## Current execution mapping — 9 October
+
+| Requirement | Current evidence | Remaining limit |
+|---|---|---|
+| Catalog / pagination / roles | Public Manager create/edit/reload/sort and delete confirmation/cancel; API role matrix and invalid sort; baseline CI | No permanent public deletion; image behavior remains automated coverage |
+| QR / Order / State / Bill / Close | API two independent cookie jars, one-use/revocation/validation/12 State denials; browser cart/rescan/status/payment/close | One browser context; no physical-device or timed-delay claim |
+| AUTH / Secure cookie | Real HTTPS attributes, invalid login401, four-role login/logout protected401 | Elapsed customer8h/staffTTL not executed |
+| STOCK / PROFILE | Public active/inactive/targets/history/role/validation API; browser confirmation/movements/profile update persisted after reload | Final feature-owner and migration/release attestation remain |
+| Responsive / feedback | Public32 images,360/768/1280 in report; local Thai QR screenshot; changed frontend125 tests | Loading/remount/race fixtures are component/historical evidence, not fresh public outage simulation |
+| QR Thai recovery | CustomerOrderingPage.test.tsx missing/expired/inactive/used-QR retry; local real API missing-session browser | Review/merge/redeploy and changed public rerun |
+| Migrations / PG contention | d84f071 CI backend352/352,0 skips; local322 passed/28 skipped | Local Docker unavailable; CI and public schema attestation are separate |
+
+## Coverage inventory and historical gates
 
 | ID / requirement | Executable coverage / evidence | Final gate / owner |
 |---|---|---|

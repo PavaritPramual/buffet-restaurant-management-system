@@ -1,5 +1,7 @@
 # Testing guide
 
+Current owner result: [9 October public regression](../doc/testing/sirapat-public-regression-2026-10-09.md), with local/CI/API/browser/release boundaries.
+
 Each feature owner writes and maintains tests for their own backend, frontend, and business rules. The shared fixtures in `test/fixtures/` are contract examples, not a shared live database.
 
 - Backend: from `code/backend`, run `./mvnw test` (`.\mvnw.cmd test` on Windows).
@@ -23,6 +25,14 @@ Set `MENU_TEST_PG_URL` / `DINING_TEST_PG_URL` to `jdbc:postgresql://127.0.0.1:<l
 [GitHub CI](../.github/workflows/ci.yml) runs frontend tests/lint/build and backend verification on pull requests into `develop` and pushes to `develop`. Its PostgreSQL databases and roles are created in a fresh job service; Stock security tests use their own Testcontainers database. Surefire reports are retained as workflow artifacts, outside the source diff. Browser smoke/concurrency scripts and screenshot inspection remain local evidence; workflow success is a separate result and must be checked on the current PR revision.
 
 See [test conventions](../doc/testing/test-conventions.md) and the [acceptance criteria template](../doc/testing/acceptance-criteria-template.md).
+
+## Public HTTPS API regression
+
+`node test/api/step3-public-regression.cjs` uses native HTTP requests, not browser automation. It creates uniquely labelled QA accounts/master data and performs order/payment/stock/profile operations through the application's API. Use only an approved test-data scope; it does not delete records or run shared database migrations.
+
+Required environment: `FINAL_WEB_URL`, `FINAL_API_URL` (HTTPS, same origin, API ending `/api/v1`), `FINAL_ALLOW_TEST_DATA=true`, `FINAL_MANAGER_USERNAME`, `FINAL_MANAGER_PASSWORD`. Use a new `FINAL_RUN_LABEL` per approved run; set `FINAL_EVIDENCE_DIR` for sanitized output and `FINAL_LOCAL_ACCESS_FILE` under ignored `test/reports/` for generated role credentials. Never commit the access file or log environment credentials. `FINAL_DEPLOYED_COMMIT` is an owner-supplied label, not live attestation.
+
+API cookie jars are separate from browser contexts. Save real manual browser evidence separately. This runner does not test elapsed TTL, mobile devices or all UI states; see the [current execution report](../doc/testing/sirapat-public-regression-2026-10-09.md).
 
 ## Step 3 browser regression
 

@@ -1,0 +1,49 @@
+{
+  "verifiedAt": "2026-10-09T02:43:10.843Z",
+  "apiGroups": 12,
+  "browserGroups": 12,
+  "publicScreenshots": 32,
+  "localLinksVerified": 19,
+  "canonicalFilesPerManifest": 352,
+  "runner": {
+    "testedSource": "11edeb0",
+    "testedSha256": "eb2a474092bd7a21c7542966fa93e560cecd38de7a6d4d8e1151830d9f51a0b3",
+    "currentWorkingSha256": "066cb7f192b155a4fb5df27fc739e48f5c4f4cd9f99c916442c69ad85b4815ad",
+    "change": "role-count metadata only"
+  },
+  "localBackend": {
+    "discovered": 350,
+    "passed": 322,
+    "skipped": 28,
+    "failed": 0,
+    "errors": 0
+  },
+  "localChangedFrontend": {
+    "passed": 125,
+    "files": 14,
+    "lintErrors": 0,
+    "existingLintWarnings": 4,
+    "build": "PASS"
+  },
+  "logs": {
+    "sirapat-final-2026-10-09-backend.log": {
+      "sha256": "60ed28aa9905b1931165960ab554d197802df8ab67a8a41337e1f23f1de83f95",
+      "storage": "ignored local test/reports"
+    },
+    "sirapat-public-final-frontend-test.log": {
+      "sha256": "f8e9d6f21cbcbdc03e072fc3b55671a92716ca1ef97aafff28713e5401de51a1",
+      "storage": "ignored local test/reports"
+    },
+    "sirapat-public-final-frontend-lint.log": {
+      "sha256": "5df2b97b344938b944c67bcbbf9b8b757e147b3104235ed8dbe262ee170ba584",
+      "storage": "ignored local test/reports"
+    },
+    "sirapat-public-final-frontend-build.log": {
+      "sha256": "355745f6f9efdf8ceab25082df6f4da68f3180d75e38b814613715bc1ea9d3f0",
+      "storage": "ignored local test/reports"
+    }
+  },
+  "credentialFileIgnored": true,
+  "liveRevisionAttested": false,
+  "timedTTLExecuted": false
+}

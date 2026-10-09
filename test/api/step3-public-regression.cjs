@@ -74,7 +74,7 @@ async function main() {
   for(const [role,incoming,ready,stock] of [['manager',403,403,200],['supervisor',403,403,200],['staff',403,200,403],['kitchen',200,403,403],['anonymous',401,401,401]]) {
     for(const [endpoint,status] of [['/orders/incoming',incoming],['/orders/ready',ready],['/stock',stock]]) await clients[role].request('GET',endpoint,undefined,status,{'X-User-Role':'MANAGER'})
   }
-  pass({denialsWithSpoofedHeader:15,invalidLogin:401})
+  pass({requestsWithSpoofedHeader:15,deniedRequests:11,allowedRequests:4,invalidLogin:401})
   scenario='Unique test master data and Menu pagination'
   const pack=await m.request('POST','/buffet-packages',{name:`[TEST DATA] ${run}`,price:399,description:'Public regression data',active:true},201)
   const soup=await m.request('POST','/soups',{name:`[TEST DATA] ${run}`,active:true},201)

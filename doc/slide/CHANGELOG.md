@@ -1,5 +1,11 @@
 # Slide version history
 
+## Sirapat QA content — 9 October 2026
+
+- Prepared three current QA content blocks with complete Thai speaker notes, public Core Flow/Stock/Profile results and precise local/CI/API/browser boundaries.
+- Source baseline d84f071, submitted QR wording11edeb0; live2f8bc4b is owner-reported, not independently attested. Changed frontend125 is local evidence until current PR CI confirms it.
+- Canva v02b, shared order, PDF/PPTX exports and team approval remain unchanged/pending; this is a content-source delivery for the team merger.
+
 ## Contract and State review — 7 October 2026
 
 - Updated working speaker-note source for Order State context/classes, real session role checks, rejected-transition evidence, Order/OrderItem cascade/fetch rationale, and UTC/date/number serialization.

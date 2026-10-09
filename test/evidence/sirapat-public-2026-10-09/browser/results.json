@@ -1,0 +1,246 @@
+{
+  "startedAt": "2026-10-09T02:17:29.611Z",
+  "finishedAt": "2026-10-09T02:29:47.035Z",
+  "environment": "public Render HTTPS; manual browser via CUA",
+  "webUrl": "https://buffet-restaurant-management-system.onrender.com",
+  "deployedCommit": "2f8bc4b",
+  "deployedCommitSource": "owner repository evidence, not independently attested",
+  "httpMocks": false,
+  "sharedBrowserContext": true,
+  "independentCustomerContexts": "API suite only; browser used one customer tab",
+  "realMobileDevices": false,
+  "sourcePatchDeployed": false,
+  "sessionId": 2,
+  "counts": {
+    "passed": 12,
+    "failed": 0
+  },
+  "results": [
+    {
+      "name": "Manager category/menu create, edit, persisted reload, sort and cancel deletion",
+      "result": "PASS",
+      "deletionExecuted": false
+    },
+    {
+      "name": "Staff login, UI opening and Thai unpaid-close rejection",
+      "result": "PASS",
+      "sessionId": 2
+    },
+    {
+      "name": "Customer QR redemption, fresh QR cart reset, cookie refresh and fragment removal",
+      "result": "PASS"
+    },
+    {
+      "name": "Category filter, quantity controls, confirmation and one RECEIVED order",
+      "result": "PASS",
+      "orderId": 2
+    },
+    {
+      "name": "Kitchen and Staff transitions reflected in customer status",
+      "result": "PASS",
+      "orderId": 2,
+      "status": "SERVED"
+    },
+    {
+      "name": "Bill confirmation stops ordering; payment confirmation and refresh/read persist paid state",
+      "result": "PASS",
+      "amount": 1247.5
+    },
+    {
+      "name": "Explicit close releases table and revokes customer browser context",
+      "result": "PASS",
+      "sessionId": 2
+    },
+    {
+      "name": "Supervisor role routing and inactive stock controls/history at 360/768/1280",
+      "result": "PASS"
+    },
+    {
+      "name": "Manager reactivates test stock with confirmation and persisted refresh",
+      "result": "PASS",
+      "stockItemId": 1
+    },
+    {
+      "name": "Manager edits test Profile, refresh and responsive editor with required/maxLength attributes",
+      "result": "PASS",
+      "userId": 4,
+      "maxLength": 100
+    },
+    {
+      "name": "Supervisor stock-in and confirmed adjustment persist after reload",
+      "result": "PASS",
+      "stockItemId": 1
+    },
+    {
+      "name": "Invalid login and explicit logout/login for all four Staff roles",
+      "result": "PASS",
+      "roles": 4,
+      "timedTTL": false
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "manager-menu-1280.jpg",
+      "scrollWidth": 1265,
+      "width": 1280
+    },
+    {
+      "file": "manager-menu-delete-confirm-1280.jpg",
+      "scrollWidth": 1265,
+      "width": 1280
+    },
+    {
+      "file": "invalid-login-1280.jpg",
+      "scrollWidth": 1280,
+      "width": 1280
+    },
+    {
+      "file": "staff-tables-768.jpg",
+      "scrollWidth": 768,
+      "width": 768
+    },
+    {
+      "file": "customer-no-qr-error-360.jpg",
+      "scrollWidth": 360,
+      "width": 360
+    },
+    {
+      "file": "customer-menu-360.jpg",
+      "scrollWidth": 345,
+      "width": 360
+    },
+    {
+      "file": "customer-rescan-restored-360.jpg",
+      "scrollWidth": 345,
+      "width": 360
+    },
+    {
+      "file": "customer-order-confirm-360.jpg",
+      "scrollWidth": 345,
+      "width": 360
+    },
+    {
+      "file": "customer-received-360.jpg",
+      "scrollWidth": 345,
+      "width": 360
+    },
+    {
+      "file": "kitchen-received-768.jpg",
+      "scrollWidth": 768,
+      "width": 768
+    },
+    {
+      "file": "kitchen-preparing-768.jpg",
+      "scrollWidth": 768,
+      "width": 768
+    },
+    {
+      "file": "kitchen-empty-768.jpg",
+      "scrollWidth": 768,
+      "width": 768
+    },
+    {
+      "file": "staff-ready-768.jpg",
+      "scrollWidth": 768,
+      "width": 768
+    },
+    {
+      "file": "customer-served-360.jpg",
+      "scrollWidth": 345,
+      "width": 360
+    },
+    {
+      "file": "customer-bill-confirm-360.jpg",
+      "scrollWidth": 345,
+      "width": 360
+    },
+    {
+      "file": "customer-bill-requested-360.jpg",
+      "scrollWidth": 345,
+      "width": 360
+    },
+    {
+      "file": "staff-bill-768.jpg",
+      "scrollWidth": 753,
+      "width": 768
+    },
+    {
+      "file": "staff-payment-confirm-768.jpg",
+      "scrollWidth": 753,
+      "width": 768
+    },
+    {
+      "file": "staff-paid-after-refresh-768.jpg",
+      "scrollWidth": 753,
+      "width": 768
+    },
+    {
+      "file": "customer-paid-360.jpg",
+      "scrollWidth": 345,
+      "width": 360
+    },
+    {
+      "file": "staff-closed-available-768.jpg",
+      "scrollWidth": 768,
+      "width": 768
+    },
+    {
+      "file": "customer-revoked-360.jpg",
+      "scrollWidth": 360,
+      "width": 360
+    },
+    {
+      "file": "supervisor-inactive-stock-768.jpg",
+      "scrollWidth": 768,
+      "width": 768
+    },
+    {
+      "file": "supervisor-inactive-stock-360.jpg",
+      "scrollWidth": 360,
+      "width": 360
+    },
+    {
+      "file": "supervisor-inactive-stock-1280.jpg",
+      "scrollWidth": 1280,
+      "width": 1280
+    },
+    {
+      "file": "manager-stock-reactivate-confirm-1280.jpg",
+      "scrollWidth": 1265,
+      "width": 1280
+    },
+    {
+      "file": "profile-editor-360.jpg",
+      "scrollWidth": 345,
+      "width": 360,
+      "croppedTo": "test account profile editor"
+    },
+    {
+      "file": "profile-editor-768.jpg",
+      "scrollWidth": 753,
+      "width": 768,
+      "croppedTo": "test account profile editor"
+    },
+    {
+      "file": "profile-editor-1280.jpg",
+      "scrollWidth": 1265,
+      "width": 1280,
+      "croppedTo": "test account profile editor"
+    },
+    {
+      "file": "supervisor-adjust-confirm-1280.jpg",
+      "scrollWidth": 1265,
+      "width": 1280
+    },
+    {
+      "file": "supervisor-stock-after-movements-1280.jpg",
+      "scrollWidth": 1280,
+      "width": 1280
+    },
+    {
+      "file": "supervisor-logout-1280.jpg",
+      "scrollWidth": 1280,
+      "width": 1280
+    }
+  ]
+}

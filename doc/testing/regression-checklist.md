@@ -1,5 +1,19 @@
 # Regression checklist
 
+## Current independent verification — 9 October 2026
+
+See [public report](sirapat-public-regression-2026-10-09.md). These checks record executed owner evidence; overall Final remains in progress.
+
+- [x] Clean sync to developd84f071; integrated CI backend352/352, frontend121/121, URL guards6/6, no backend skips.
+- [x] Local backend322 passed/28 skipped of350; changed frontend125/125, lint0 errors/4 existing warnings, build passed.
+- [x] Real public HTTPS API12 groups and browser12 groups; four roles, QR, State denials, bill/payment/close and Stock/Profile persistence.
+- [x] Two independent customer cookie jars in API; one customer browser context; limitations explicitly recorded.
+- [x] Public32 screenshots and local Thai-fix screenshot inspected; canonical Git source hashes and current traceability saved.
+- [x] Own SOLID/JPA rationale rechecked; three QA slide content blocks and complete speaker notes prepared for Canva merger.
+- [ ] Review/merge/redeploy Thai QR recovery and recheck the changed public UI.
+- [ ] Elapsed8-hour customer expiry / staffTTL, live deployed SHA/runtime/schema and release approval.
+- [ ] Canonical Canva owner review, content/order merge, actual Canva export and team rehearsal.
+
 ## Current independent verification — 8 October 2026
 
 See [current report](sirapat-step3-followup-2026-10-08.md). These checks record local/candidate evidence, not team release approval.
