@@ -7,8 +7,8 @@ public final class UserFacingMessages {
     public static final String TABLE_HAS_DINING_HISTORY = "โต๊ะนี้มีประวัติการใช้งาน จึงลบถาวรไม่ได้";
     public static final String MENU_ITEM_HAS_ORDER_HISTORY =
             "เมนูนี้มีประวัติการสั่งซื้อ จึงลบถาวรไม่ได้";
-    public static final String CATEGORY_HAS_AVAILABLE_ITEMS =
-            "หมวดหมู่นี้ยังมีเมนูอยู่ กรุณาย้ายหรือเก็บเมนูออกก่อน";
+    public static final String CATEGORY_HAS_ITEMS =
+            "หมวดหมู่นี้ยังมีเมนูอยู่ กรุณาย้ายเมนูไปหมวดอื่นก่อนลบหมวดหมู่นี้";
 
     private UserFacingMessages() {}
 

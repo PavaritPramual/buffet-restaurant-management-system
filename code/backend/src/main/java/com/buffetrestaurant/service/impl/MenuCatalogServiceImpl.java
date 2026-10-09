@@ -79,7 +79,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
         adminAccessProvider.requireMenuWriteAccess();
         MenuCategory category = requireCategory(id);
         if (itemRepository.existsByCategoryId(id)) {
-            throw new BusinessRuleException(UserFacingMessages.CATEGORY_HAS_AVAILABLE_ITEMS);
+            throw new BusinessRuleException(UserFacingMessages.CATEGORY_HAS_ITEMS);
         }
         categoryRepository.delete(category);
     }
