@@ -1,0 +1,16 @@
+{
+  "run": "QA261009Sirapat",
+  "resources": {
+    "supervisorUserId": 3,
+    "staffUserId": 4,
+    "kitchenUserId": 5,
+    "packageId": 1,
+    "soupId": 1,
+    "tableId": 1,
+    "categoryId": 1,
+    "menuItemId": 1,
+    "sessionId": 1,
+    "orderId": 1,
+    "stockItemId": 1
+  }
+}

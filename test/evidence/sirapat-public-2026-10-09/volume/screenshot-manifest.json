@@ -1,0 +1,23 @@
+[
+  {
+    "file": "customer-confirm-360.jpg",
+    "width": 345,
+    "height": 958,
+    "sha256": "2fa4dcf7b63de19a893726b31f4f57a4124eb7187312758de1bd95096e79cb20",
+    "visualInspection": "full-size individual image inspected; no overlap/overflow observed"
+  },
+  {
+    "file": "customer-received-360.jpg",
+    "width": 345,
+    "height": 958,
+    "sha256": "853c6d00f575c98ff900d33223c3c47cf8c33bad028983776c7138923875e920",
+    "visualInspection": "full-size individual image inspected; no overlap/overflow observed"
+  },
+  {
+    "file": "kitchen-six-lines-768.jpg",
+    "width": 768,
+    "height": 1000,
+    "sha256": "36a018b29c9c1e9b30b9a6f57ad84c7aec0170c567c3509b06f0c542479f5f68",
+    "visualInspection": "full-size individual image inspected; no overlap/overflow observed"
+  }
+]

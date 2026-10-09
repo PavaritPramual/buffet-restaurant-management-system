@@ -1,12 +1,14 @@
 # Final test plan — Buffet Restaurant Management System
 
-Owner: ศิระพัทธ์. Updated 8 October 2026 from [Notion Step 3](https://app.notion.com/p/a9e90b8ff9648363a6ab81b48fd70816). Each feature owner tests their module; ปวริศช์ reviews E2E/traceability and ศรัณย์ reviews API/State. Final acceptance requires the reviewed release commit to be deployed and checked.
+Owner: ศิระพัทธ์. Updated 9 October 2026 from the current [Notion Step 3](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6) and [public regression task](https://app.notion.com/p/Final-Regression-Public-Core-Flow-role-3f1cb2e9d47a8118923ce11532cd3936). Each feature owner tests their module; ปวริศช์ reviews E2E/traceability and ศรัณย์ reviews API/State. Final acceptance requires the reviewed release commit to be deployed and checked.
 
 ## Scope and baseline
 
-Latest integrated regression baseline: develop **6d83eac**, after PR #26/#27/#29 merged. The [8 October follow-up report](sirapat-step3-followup-2026-10-08.md) records local/CI/browser results separately from unmerged Stock/Profile candidate PR #28 **cc72fa0**, which can be tested before merge. The [7 October report](sirapat-step3-api-state-regression-report.md), initial baseline54e3538, Step2 closure and older counts are historical. Table/Session, cookie authentication, Menu/Ordering, Kitchen/Serving, request bill, Payment, close and Manager master-data screens are implemented.
+Latest integrated regression baseline: develop **d84f071**, 9 October 2026, including Stock/Profile and #34/#35. The [current public report](sirapat-public-regression-2026-10-09.md) separates local322 passed/28 skipped, integrated CI352/352 backend and121/121 frontend, changed frontend125/125, real HTTPS API12 groups and manual public browser12 groups. Public2f8bc4b is owner-reported; live SHA/runtime/schema and elapsed TTL remain gates. Submitted production source11edeb0 adds Thai customer QR recovery and is not deployed. The [8 October follow-up](sirapat-step3-followup-2026-10-08.md), candidatecc72fa0, [7 October report](sirapat-step3-api-state-regression-report.md), initial54e3538 and Step2 counts are historical. Table/Session, cookie authentication, Menu/Ordering, Kitchen/Serving, request bill, Payment, close and Manager master-data screens are implemented.
 
 Final adds Stock opening target/active lifecycle and separate Profile names/phone (เมธัส), production deployment (ธีรเมธ), release integration (ปวริศช์) and API audit (ศรัณย์). ศิระพัทธ์ owns Customer/shared UI fixes, regression, responsive review and evidence. Feature UI defects go to that feature's owner with reproduction steps. No new gateway, WebSocket, analytics or automatic stock purchasing.
+
+Additional user-requested volume check, 9 October: created30 available foods/5labelled categories plus2 unavailable. Real customer QR UI produced order3 with6menu lines/8pieces, Kitchen received it and customer reload persisted it; bill499/session4 explicitly closed. This supplements the main12/12 groups. Separate3-slide editable PPTX/PDF with complete notes and page inspection is delivered under doc/slide per the user's instruction to defer Canva.
 
 ## Layers and evidence
 
@@ -28,7 +30,7 @@ Record source revision/tree or diff identity, commands, environment, start/end t
 - Environment-driven PostgreSQL tests require ALLOW_DESTRUCTIVE_DB_TESTS=true, explicit loopback JDBC port, buffet_test_ database name without options and database comment buffet-disposable-test-only. Payment uses a non-superuser backend role. See [testing guide](../../test/README.md).
 - Never run destructive tests/demo seeding on team Supabase. Shared forward migrations require owner review; do not edit V1–V14, repair checksums or reserve another owner's migration number.
 - Local browser uses isolated runtime and real session/database providers. H2 demo must override its Menu/Ordering/Fulfillment fixture defaults; disable .env import for that process.
-- Public browser uses owner-supplied HTTPS URL, four test accounts and approved test tenant/data scope. No demo login or seed creation on public. Deployed revision is supplied by runtime owner; a page title cannot prove it.
+- Public browser uses owner-supplied HTTPS URL, four test accounts and approved test data scope. The user explicitly authorized creating test role accounts and requested many foods; create only labelled QA data through the real application's API/UI. Do not enable application demo/fixture providers or run database seed scripts. Deployed revision is supplied by runtime owner; a page title cannot prove it.
 - Exclude passwords, cookies, QR credentials and storage state. Mask the entire Staff QR card in images; never save QR URLs, request bodies or authorization headers.
 
 ## Regression cases

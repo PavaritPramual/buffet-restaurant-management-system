@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Card, ConfirmDialog, EmptyState, ErrorAlert, LoadingState, PageHeader, RefreshIcon, StatusBadge } from '../../components/common'
-import { getBillStatus, requestBill, getApiError, getCustomerPackage, getCustomerContext, getMenu, getOrders, placeOrder, redeemQr } from './api'
+import { getBillStatus, requestBill, getCustomerApiError, getCustomerPackage, getCustomerContext, getMenu, getOrders, placeOrder, redeemQr } from './api'
 import type { CustomerBillStatus, MenuItem, Order, SessionContext } from './api'
 import type { OrderStatus } from '../../contracts/shared'
 import type { StatusBadgeTone } from '../../components/common'
@@ -88,7 +88,7 @@ export default function CustomerOrderingPage() {
           setBill(initialBill); setSession(context); setPackageName(buffetPackage.name); setMenu(nextMenu); setOrders(nextOrders); setError('')
         }
       })
-      .catch((cause) => { if (isCurrent()) setError(getApiError(cause)) })
+      .catch((cause) => { if (isCurrent()) setError(getCustomerApiError(cause)) })
       .finally(() => { if (isCurrent()) setLoading(false) })
     return () => { active = false }
   }, [scan, reloadAttempt])
@@ -108,7 +108,7 @@ export default function CustomerOrderingPage() {
           if (result.status !== 'NOT_REQUESTED') { setCart({}); setConfirming(false) }
         }
       } catch (cause) {
-        if (active && epoch === scanEpoch.current && revision === billRevision.current) { setBill(null); setBillError(getApiError(cause)) }
+        if (active && epoch === scanEpoch.current && revision === billRevision.current) { setBill(null); setBillError(getCustomerApiError(cause)) }
       } finally { running = false }
     }
     void poll()
@@ -123,7 +123,7 @@ export default function CustomerOrderingPage() {
     try {
       const result = await requestBill(session.sessionId)
       if (epoch === scanEpoch.current) { setBill(result); setCart({}); setConfirming(false); setBillConfirming(false) }
-    } catch (cause) { if (epoch === scanEpoch.current) setBillError(getApiError(cause)) }
+    } catch (cause) { if (epoch === scanEpoch.current) setBillError(getCustomerApiError(cause)) }
     finally { if (epoch === scanEpoch.current) { billInflight.current = false; setBillBusy(false); ++billRevision.current } }
   }
 
@@ -153,7 +153,7 @@ export default function CustomerOrderingPage() {
         historyRef.current?.focus()
       }
     } catch (cause) {
-      if (scanEpoch.current === epoch) { setOrderError(getApiError(cause)); setConfirming(false) }
+      if (scanEpoch.current === epoch) { setOrderError(getCustomerApiError(cause)); setConfirming(false) }
     } finally { if (scanEpoch.current === epoch) { submittingEpoch.current = null; setSubmitting(false) } }
   }
 
@@ -166,7 +166,7 @@ export default function CustomerOrderingPage() {
     try {
       const refreshed = await getOrders(session.sessionId)
       if (scanEpoch.current === epoch && ordersRevision.current === revision) { setOrders(refreshed); setHistoryError('') }
-    } catch (cause) { if (scanEpoch.current === epoch && ordersRevision.current === revision) setHistoryError(getApiError(cause)) }
+    } catch (cause) { if (scanEpoch.current === epoch && ordersRevision.current === revision) setHistoryError(getCustomerApiError(cause)) }
     finally { if (scanEpoch.current === epoch) { refreshingEpoch.current = null; setRefreshing(false) } }
   }
 

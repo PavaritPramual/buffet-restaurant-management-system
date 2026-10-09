@@ -1,0 +1,33 @@
+{
+  "reviewedAt": "2026-10-09",
+  "slides": 3,
+  "speakerNoteParts": 3,
+  "nativeTextRunsPerSlide": [
+    12,
+    12,
+    13
+  ],
+  "pptxSha256": "9bf4de62071ca40f4accfe6cc847b4f2ad760c436deae191abc6352c7657c38e",
+  "pdfSha256": "bf6711daf6ff7c284eb247a40c114d973dacc7cb472ac272c528d48fafd14165",
+  "font": "Tahoma",
+  "fontPolicyPassed": true,
+  "packageIntegrity": "pass",
+  "geometryFindings": 0,
+  "firstPartyImport": "pass",
+  "visualInspection": {
+    "artifactToolSlidePNGs": [
+      1,
+      2,
+      3
+    ],
+    "powerPointPDFPages": [
+      1,
+      2,
+      3
+    ],
+    "method": "Each image inspected individually at full size; no unintended overlap, clipping or missing Thai glyphs observed."
+  },
+  "pdfExport": "Microsoft PowerPoint for Microsoft365; 3 pages; 960x540pt",
+  "source": "User-requested separate QA deck, not a Canva export; immutable CI a43a558 and main/volume public evidence; production source11edeb0 unchanged",
+  "limit": "Page inspection and successful PowerPoint PDF export do not attest team Canva merge, rehearsal or release approval."
+}

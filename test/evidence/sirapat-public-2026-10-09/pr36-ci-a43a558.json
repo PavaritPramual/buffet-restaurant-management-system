@@ -1,0 +1,35 @@
+{
+  "prNumber": 36,
+  "head": "a43a5581f49f8dede714d1e39ba971c59198165d",
+  "runId": 37876412024,
+  "url": "https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37876412024",
+  "conclusion": "success",
+  "backend": {
+    "jobId": 113645947960,
+    "passed": 352,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "frontend": {
+    "jobId": 113645948088,
+    "passed": 125,
+    "files": 14,
+    "guards": 6,
+    "lintErrors": 0,
+    "existingWarnings": 4,
+    "build": "PASS"
+  },
+  "excerpts": {
+    "backend": [
+      "2026-10-09T02:51:27.7415894Z [INFO] Tests run: 352, Failures: 0, Errors: 0, Skipped: 0",
+      "2026-10-09T02:51:29.4962593Z [INFO] BUILD SUCCESS"
+    ],
+    "frontend": [
+      "2026-10-09T02:50:08.5219714Z \u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m14 passed\u001b[39m\u001b[22m\u001b[90m (14)\u001b[39m",
+      "2026-10-09T02:50:09.0765870Z Found 4 warnings and 0 errors.",
+      "2026-10-09T02:50:12.8939347Z \u001b[32m✓ built in 223ms\u001b[39m"
+    ]
+  },
+  "limit": "Immutable passing CI for a43a558; final documentation/evidence head must also pass its own CI. CI is not public deployment evidence."
+}

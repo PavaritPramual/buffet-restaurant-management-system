@@ -1,5 +1,12 @@
 # Slide version history
 
+## Sirapat QA content — 9 October 2026
+
+- Prepared three current QA content blocks with complete Thai speaker notes, public Core Flow/Stock/Profile results and precise local/CI/API/browser boundaries.
+- Source baseline d84f071, submitted QR wording11edeb0; live2f8bc4b is owner-reported, not independently attested. PR #36 CI ata43a558 passed backend352/frontend125 and guards6.
+- User deferred Canva and requested separate files. Delivered sirapat-qa-2026-10-09/sirapat-qa-v01.pptx and PDF, three complete notes and source links; all slides/PDF pages visually inspected, native Tahoma font/package/geometry/import checks passed. PDF exported with PowerPoint; it is not a Canva export.
+- Added real public volume evidence: 30 available foods/5categories, QR order3 with6menus/8pieces visible in Kitchen and after customer reload; bill499/session4 closed. Shared Canva/order/team approval remain separate pending gates.
+
 ## Contract and State review — 7 October 2026
 
 - Updated working speaker-note source for Order State context/classes, real session role checks, rejected-transition evidence, Order/OrderItem cascade/fetch rationale, and UTC/date/number serialization.
