@@ -1,5 +1,7 @@
 # สไลด์ทีมปัจจุบัน — Canva v02b ฉบับล่วงหน้า
 
+เนื้อหาที่ธีรเมธเตรียมให้ผู้รวม Canva สำหรับ runtime/network และ release checks: [teeramet-runtime-networking-notes.md](teeramet-runtime-networking-notes.md). ยังไม่ใช่หน้าสไลด์หรือ PDF ฉบับรับรอง.
+
 > **ฉบับล่วงหน้า ยังไม่ได้รับการรับรองจากปวริศช์** เก็บเนื้อหาและลำดับเดิมไว้ก่อน รอให้โค้ดทุกส่วนเสร็จแล้วจึงทบทวนเนื้อหา ลำดับ และช่วงผู้พูดใหม่ เวลา 12 นาทีและ runbook ด้านล่างเป็นร่างที่ยังไม่รับรอง ดู [ข้อสังเกตและสถานะการเก็บ PPTX](team-final-v02-draft-status.md)
 
 [เปิด Canva v02b](https://www.canva.com/d/yWw6P3disBOSfHS) · design `DAHXS8ESvRQ` · [เนื้อหาและ speaker notes](team-final-canva-v02-content.md)

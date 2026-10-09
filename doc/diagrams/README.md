@@ -1,5 +1,7 @@
 # Diagram index — ครบตามใบงานข้อ 9.1
 
+สำหรับ production topology ที่แยกผล public HTTP จริงออกจาก configuration และระบุข้อจำกัดของ deployed SHA ดู [Deployment runtime diagram (Mermaid)](deployment-production-runtime.md). ภาพ PlantUML `deployment-production-design.puml` ด้านล่างยังเป็น design เดิม ไม่ใช่ใบรับรอง release.
+
 ชุดเดิมหลัง architecture refactor `de7b5d546a05ad3ccef8c641ee5c53d638a8e039` มี **23 diagram รายละเอียด และ5ภาพย่อสำหรับนำเสนอ**; PR #24/#25 ผ่าน review/merge แล้ว และ PR #26 ปรับ State resolver sources/previews เพิ่ม ทุกภาพมี PlantUML source/SVG ภาพ public deployment เป็น design เท่านั้น ไม่ใช้จำนวนไฟล์รับรอง public หรือ Final
 
 **ประวัติตรวจโมดูลปวริศช์ใน PR #31:** code baseline `6d83eace6bbd4d20f4d3cb3a25eb2d5ddb81fcc6`; scope ตารางต่อไปนี้ผ่านศรัณย์/ศิระพัทธ์ review ที่ head5939ecd และ merge แล้ว ภาพอื่นคง revision และการตรวจของเจ้าของเดิม
