@@ -25,7 +25,7 @@ function MasterDataEditor({ kind }: { kind: Kind }) {
   const [archivedView, setArchivedView] = useState(false)
   const inflight = useRef(false)
   const endpoint = kind === 'stock' ? '/stock/items' : `/${kind}`
-  const listEndpoint = `${endpoint}${archivedView && kind !== 'stock' ? '/archived' : ''}`
+  const listEndpoint = kind === 'stock' ? '/stock' : `${endpoint}${archivedView ? '/archived' : ''}`
   async function load() { setRows((await apiClient.get<Row[]>(listEndpoint)).data) }
   useEffect(() => {
     let current = true

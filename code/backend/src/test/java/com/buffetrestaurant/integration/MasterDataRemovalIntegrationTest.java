@@ -66,6 +66,28 @@ class MasterDataRemovalIntegrationTest {
         assertThat(jdbc.queryForObject("SELECT archived FROM soups WHERE id=960001", Boolean.class)).isFalse();
     }
 
+    @Test void stockListUsesGetStockWhileMetadataMutationsKeepItemsRoutes() throws Exception {
+        String body = "{\"sku\":\"R01-STOCK\",\"name\":\"Pork stock\",\"unit\":\"kg\",\"lowStockThreshold\":1,\"openingTargetStock\":5}";
+        var created = mvc.perform(post("/api/v1/stock/items").session(manager).contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.quantity").value(0))
+                .andReturn().getResponse().getContentAsString();
+        long id = new com.fasterxml.jackson.databind.ObjectMapper().readTree(created).get("id").asLong();
+        mvc.perform(get("/api/v1/stock").session(manager)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].sku").value(org.hamcrest.Matchers.hasItem("R01-STOCK")));
+        mvc.perform(get("/v3/api-docs").session(manager)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.paths['/api/v1/stock'].get").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/stock/items'].get").doesNotExist())
+                .andExpect(jsonPath("$.paths['/api/v1/stock/items'].post").exists());
+        mvc.perform(put("/api/v1/stock/items/" + id).session(manager).contentType(MediaType.APPLICATION_JSON)
+                .content(body.replace("Pork stock", "Updated pork stock")))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.quantity").value(0));
+        mvc.perform(put("/api/v1/stock/items/" + id + "/active").session(manager).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"active\":false}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.active").value(false));
+        mvc.perform(get("/api/v1/stock").session(manager)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].name").value(org.hamcrest.Matchers.hasItem("Updated pork stock")));
+    }
+
     @Test void removalListsAndRestoreRequireManagerEvenWithForgedHeader() throws Exception {
         for (String resource : new String[]{"tables", "buffet-packages", "soups"}) {
             mvc.perform(delete("/api/v1/"+resource+"/960001")).andExpect(status().isUnauthorized());

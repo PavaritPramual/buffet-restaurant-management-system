@@ -85,3 +85,22 @@ Diagram delta เป็น Mermaid ที่มี source ฝังใน Markdo
 รวม **31 tests หลังแก้**. Regression ใหม่เปิดรอบผ่าน POSTจริง → Manager archive → Catalog mainซ่อน/operational detail409 → QR exchangeผ่านHTTP → cookieของรอบนี้อ่านpackage200/no-store/menuและbill747.50 → order201 → billrequest747.50 → payment747.50 → closeCOMPLETED. ตรวจ cookieขาด/ปลอม401, cookieผิดsession404, หลังclose401 และราคาsnapshot299ยังอยู่; โต๊ะอีกตัวว่างแต่เปิดรอบด้วยpackagearchivedได้400ตามกฎเดิม
 
 ผล full PostgreSQL367, upgrade1, frontend157 และภาพข้างต้นเป็นหลักฐานรอบก่อนแก้ ไม่อ้างว่ารันซ้ำรอบนี้. ไม่มี frontend/schema/locking changes ใน fix; รอ CI full suite ของ head ใหม่และธีรเมธตรวจซ้ำ รวม public acceptance แยก
+
+## แก้รีวิวศิระพัทธ์ — เส้นทางโหลดรายการสต็อก
+
+รีวิวบน `d4a93dee4992777ea7b07f02af758c08730b04c6` พบว่า MasterDataPage เรียก GET `/stock/items` แต่ StockController รองรับ GET `/stock`. ข้อความ baseline ที่อ้างว่า guard `/stock/items` ป้องกัน regression หมายถึง tests แบบ mock ในรอบนั้น ซึ่งคาดหวังเส้นทางผิดและไม่ได้พิสูจน์การโหลดสต็อกจาก Controller จริง ภาพ browser baseline ด้านบนไม่ได้ตรวจหน้ารายการสต็อก
+
+แก้เฉพาะ listEndpoint เป็น `/stock` ทั้งตอนเข้าหน้า สลับหน้า รีเฟรช และโหลดใหม่หลังบันทึก/เปิดปิดรายการ ส่วน POST `/stock/items`, PUT `/stock/items/{id}` และ PUT `/stock/items/{id}/active` คงเดิม ไม่มีการเปลี่ยน backend production, API contract, migration, สิทธิ์ หรือ software design
+
+รัน 9 ตุลาคม 2026 บน Java21/H2 แยก ปิด `.env` import:
+
+| การตรวจหลังแก้ | ผลจริง |
+|---|---|
+| `mvn --batch-mode --no-transfer-progress -Dspring.config.import= -Dtest=MasterDataRemovalIntegrationTest,Step2CompletionIntegrationTest package` | **14 passed, 0 failures/errors/skipped** (Removal7 + Step2Completion7); package ผ่าน |
+| `npm test` | **157 passed / 17 files** |
+| `npm run lint` | exit 0, 4 warnings เดิม ไม่มี warning ใหม่ |
+| `npm run build` | exit 0 |
+
+Regression backend ใช้ MockMvc กับ Spring context, Controller/Service/Repository และ session login จริง: Manager สร้างสต็อกยอดศูนย์ผ่าน POST `/stock/items` → GET `/stock` เห็นรายการ → PUT metadata → PUT active=false → GET `/stock` ยังอ่านรายการเดิมได้ ตรวจ OpenAPI ที่สร้างจาก runtime ว่ามี GET `/stock`, POST `/stock/items` และไม่มี GET `/stock/items`. Frontend tests ตรวจ URL list และ reload หลัง create/active พร้อมรักษา mutation URLs
+
+การตรวจนี้ไม่ใช่ browser/public acceptance หรือการทวน full PostgreSQL suite รอบใหม่ ผลรอบเดิมยังเป็นประวัติ รอ CI บน head ที่ push และศิระพัทธ์ตรวจซ้ำ ไม่ apply V17 บน Supabase และไม่ merge เอง

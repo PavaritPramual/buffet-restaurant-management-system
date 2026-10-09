@@ -5,7 +5,7 @@ import { apiClient } from '../../api/client'
 import MasterDataPage from './MasterDataPage'
 afterEach(() => { cleanup(); vi.restoreAllMocks() })
 it('creates zero-balance stock metadata without sending a quantity', async () => {
-  vi.spyOn(apiClient, 'get').mockResolvedValue({ data: [] })
+  const get = vi.spyOn(apiClient, 'get').mockResolvedValue({ data: [] })
   const post = vi.spyOn(apiClient, 'post').mockResolvedValue({ data: { id: 1 } })
   render(<MasterDataPage kind="stock" />)
   await screen.findByText('ยังไม่มีรายการ')
@@ -13,15 +13,19 @@ it('creates zero-balance stock metadata without sending a quantity', async () =>
   fireEvent.click(screen.getByRole('button', { name: 'บันทึก' }))
     await waitFor(() => expect(post).toHaveBeenCalledWith('/stock/items', { sku: 'S01', name: 'เนื้อ', unit: 'kg', lowStockThreshold: 2.5, openingTargetStock: 10 }))
   expect(screen.queryByLabelText('ยอดคงเหลือ')).toBeNull()
+  await waitFor(() => expect(get).toHaveBeenCalledTimes(2))
+  expect(get).toHaveBeenLastCalledWith('/stock')
 })
 it('lets the manager deactivate a stock item through the stock active endpoint', async () => {
-  vi.spyOn(apiClient, 'get').mockResolvedValue({ data: [{ id: 7, sku: 'S07', name: 'หมู', unit: 'kg', quantity: 1, lowStockThreshold: 1, openingTargetStock: 5, shortfall: 4, active: true }] })
+  const get = vi.spyOn(apiClient, 'get').mockResolvedValue({ data: [{ id: 7, sku: 'S07', name: 'หมู', unit: 'kg', quantity: 1, lowStockThreshold: 1, openingTargetStock: 5, shortfall: 4, active: true }] })
   const put = vi.spyOn(apiClient, 'put').mockResolvedValue({ data: {} })
   render(<MasterDataPage kind="stock" />)
   await screen.findByText('หมู')
   fireEvent.click(screen.getByRole('button', { name: 'ปิดใช้งาน' }))
   fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))
   await waitFor(() => expect(put).toHaveBeenCalledWith('/stock/items/7/active', { active: false }))
+  await waitFor(() => expect(get).toHaveBeenCalledTimes(2))
+  expect(get).toHaveBeenLastCalledWith('/stock')
 })
 it('sends package prices as JSON numbers', async () => {
   vi.spyOn(apiClient, 'get').mockResolvedValue({ data: [] })
@@ -77,11 +81,11 @@ it('removes a package only after confirmation and prevents duplicate delete requ
   expect(get).toHaveBeenLastCalledWith('/buffet-packages')
 })
 
-it('keeps the stock item endpoint and excludes removal/archive controls', async () => {
+it('reads the stock list from /stock and excludes removal/archive controls', async () => {
   const get = vi.spyOn(apiClient, 'get').mockResolvedValue({ data: [] })
   render(<MasterDataPage kind="stock" />)
   await screen.findByText('ยังไม่มีรายการ')
-  expect(get).toHaveBeenCalledWith('/stock/items')
+  expect(get).toHaveBeenCalledWith('/stock')
   expect(screen.queryByRole('button', { name: 'รายการเก็บออก' })).toBeNull()
   expect(screen.queryByRole('button', { name: 'ลบรายการ' })).toBeNull()
 })
@@ -95,7 +99,7 @@ it('resets archive view and the form when navigation changes master-data kind', 
   expect(screen.queryByRole('button', { name: 'บันทึก' })).toBeNull()
   rerender(<MasterDataPage kind="stock" />)
   await screen.findByText('ยังไม่มีรายการ')
-  expect(get).toHaveBeenLastCalledWith('/stock/items')
+  expect(get).toHaveBeenLastCalledWith('/stock')
   expect(screen.getByRole('button', { name: 'บันทึก' })).toBeDefined()
   expect(screen.getByLabelText('รหัสสต็อก')).toHaveProperty('value', '')
 })
