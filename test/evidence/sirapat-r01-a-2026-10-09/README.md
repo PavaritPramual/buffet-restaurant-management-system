@@ -13,4 +13,5 @@ Base `69fb7af` plus R01 working-tree source captured in `source-manifest.json`. 
 
 Screenshots were visually inspected. Outer iframe harness remains visible to identify the 360px test method.
 Archive restore UI states use component tests; live browser restore acceptance remains pending.
+These files do not include a successful shared database audit. `test/tools/MenuArchiveSharedAudit.java` is a separate reviewer-run read-only helper using private `code/backend/.env`; see the [audit instructions](../../README.md#r01-a-shared-database-metadata-audit-reviewer-run). A local output or CI result is not shared attestation.
 See [full report](../../../doc/testing/sirapat-r01-a-2026-10-09.md) for counts, limitations and review/deployment gates.

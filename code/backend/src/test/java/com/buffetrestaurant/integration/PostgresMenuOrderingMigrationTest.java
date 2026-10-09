@@ -36,6 +36,10 @@ class PostgresMenuOrderingMigrationTest {
                     assertThat(indexes.next()).as(table + " archive partial index").isTrue();
                     assertThat(indexes.getString(1)).contains("WHERE (archived_at IS NOT NULL)");
                 }
+                try (var indexes = sql.executeQuery("SELECT count(*) FROM pg_indexes WHERE schemaname='public' AND tablename='" + table + "' AND indexname='idx_" + table + "_working'")) {
+                    indexes.next();
+                    assertThat(indexes.getInt(1)).as(table + " has no redundant working index").isZero();
+                }
             }
             for (String table : new String[]{"menu_categories", "menu_items", "package_menu_items", "orders", "order_items"}) {
                 try (var row = sql.executeQuery("SELECT relrowsecurity FROM pg_class WHERE oid='public." + table + "'::regclass")) {

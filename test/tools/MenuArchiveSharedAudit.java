@@ -6,6 +6,7 @@ import java.util.*;
 /** Read-only catalog/Flyway metadata. No migrate, repair, data writes or credentials in output. */
 public class MenuArchiveSharedAudit {
     public static void main(String[] args) throws Exception {
+        if(args.length!=1)throw new IllegalArgumentException("Usage: MenuArchiveSharedAudit <repository-root>");
         Path root=Path.of(args[0]).toAbsolutePath();
         Map<String,String> env=new HashMap<>();
         for(String line:Files.readAllLines(root.resolve("code/backend/.env"),StandardCharsets.UTF_8)) {
@@ -26,6 +27,7 @@ public class MenuArchiveSharedAudit {
                   'foreignKeys',(SELECT jsonb_agg(jsonb_build_object('name',c.conname,'child',c.conrelid::regclass::text,'parent',c.confrelid::regclass::text,'definition',pg_get_constraintdef(c.oid)) ORDER BY c.conname) FROM pg_constraint c WHERE c.contype='f' AND c.confrelid IN ('public.menu_items'::regclass,'public.menu_categories'::regclass)),
                   'archiveColumns',(SELECT jsonb_agg(jsonb_build_object('table',table_name,'type',data_type,'nullable',is_nullable)) FROM information_schema.columns WHERE table_schema='public' AND table_name IN ('menu_items','menu_categories') AND column_name='archived_at'),
                   'rls',(SELECT jsonb_agg(jsonb_build_object('table',relname,'enabled',relrowsecurity)) FROM pg_class WHERE oid IN ('public.menu_items'::regclass,'public.menu_categories'::regclass)),
+                  'backendUpdate',(SELECT jsonb_agg(jsonb_build_object('table',relname,'allowed',has_table_privilege(current_user,oid,'UPDATE')) ORDER BY relname) FROM pg_class WHERE oid IN ('public.menu_items'::regclass,'public.menu_categories'::regclass)),
                   'clientGrants',(SELECT count(*) FROM information_schema.role_table_grants WHERE table_schema='public' AND table_name IN ('menu_items','menu_categories') AND grantee IN ('PUBLIC','anon','authenticated'))
                 )
                 """;

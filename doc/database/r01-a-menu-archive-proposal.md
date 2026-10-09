@@ -16,7 +16,7 @@ PR41 head 634bfa1 merge เป็น 69fb7af แล้ว รวมกฎ catego
 ผู้ใช้ให้ทำ implementation ต่อระหว่างรอเลข แล้วพบ [PR46/schema delta ของปวริศช์](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/46)
 ระบุเลขทีม **เมธัส V16 / ปวริศช์ V17 / ศิระพัทธ์ V18** จึงใช้ V18 ตามประกาศนี้
 ไม่มี placeholder V16/V17 และไม่มีการ apply/repair ฐานกลาง; ก่อน deploy ต้องรวมและทวน chain V1–V18 ตามลำดับ
-การอ่าน FK ฐานกลางรอบนี้ยังทำไม่ได้เพราะไม่มีไฟล์ connection configuration ใน checkout จึงส่ง inventory จาก immutable migrations ให้เมธัส/ปวริศช์เทียบฐานจริงก่อนอนุมัติ shared apply
+มีเครื่องมืออ่าน metadata `test/tools/MenuArchiveSharedAudit.java` สำหรับให้เมธัส/ผู้รีวิวรันเอง โดยอ่าน configuration ส่วนตัวจาก `code/backend/.env` และต่อ Supabase session pooler แบบ read-only ตาม [คู่มือ audit](../../test/README.md#r01-a-shared-database-metadata-audit-reviewer-run) ยังไม่มีผล audit ฐานกลางที่รับรองและแนบใน PR47 ณ รอบตรวจรีวิวนี้; inventory จาก immutable migrations จึงยังต้องเทียบฐานจริงก่อนอนุมัติ shared apply
 
 ## Menu-specific decisions implemented for review
 
@@ -56,13 +56,23 @@ DELETE ข้อความยืนยันระบุทั้งลบถ�
 
 | Table | Column/type/default | Query index |
 |---|---|---|
-| menu_items | archived_at TIMESTAMP WITH TIME ZONE NULL, default NULL | PG partial indexes สำหรับ main/archive; H2 supporting index ที่ archived_at |
-| menu_categories | archived_at TIMESTAMP WITH TIME ZONE NULL, default NULL | PG partial indexes สำหรับ main/archive; H2 supporting index ที่ archived_at |
+| menu_items | archived_at TIMESTAMP WITH TIME ZONE NULL, ไม่มี DEFAULT | PG `idx_menu_items_archived` เฉพาะ `archived_at IS NOT NULL`; H2 supporting index ที่ archived_at |
+| menu_categories | archived_at TIMESTAMP WITH TIME ZONE NULL, ไม่มี DEFAULT | PG `idx_menu_categories_archived` เฉพาะ `archived_at IS NOT NULL`; H2 supporting index ที่ archived_at |
 
 ไม่มี backfill/ล้างข้อมูลเดิม ไม่มี rename/drop history/FK/RLS; ไม่ใช้ boolean available เป็น archive state
 ใช้ `V18__archive_menu_catalog.sql` แยก H2/PostgreSQL ตาม vendor location โดยมี version เดียวในแต่ละ environment
 ไม่เพิ่มไฟล์ `V16`/`V17` เอง ไม่คัดลอก migration จาก PR39 และลบ schema fixture ชั่วคราวออกแล้ว
 H2 ทดสอบ upgrade จาก V15 ที่มี Order history พร้อม Flyway validate; PostgreSQL migration/metadata/RLS และ row-lock races ให้ CI ตรวจบน disposable DB
+
+ตัด PostgreSQL `idx_menu_items_working` และ `idx_menu_categories_working` ตามรีวิวเมธัส: partial index บน ID ของรายการใช้งานไม่รองรับการเรียง name/available ที่ใช้อยู่ จึงเก็บเฉพาะ archive indexes และใช้ PK เดิมสำหรับ ID lookups การปรับนี้อยู่ใน candidate V18 ของ PR47 ก่อน shared apply; ห้ามแก้ checksum migration ที่ apply แล้ว หากพบ V18 ในฐานจริงให้หยุดและให้ผู้ดูแลจัด forward migration ตามเลขทีม
+
+## Shared apply runbook (หลังผู้รีวิวรับรอง)
+
+1. ให้เมธัสรัน read-only audit และแนบผลที่ตรวจแล้วใน PR47: FK ตรง inventory, Flyway อย่างน้อย V15 และทุกแถว `success=true`, ยังไม่มี V18/`archived_at` ของ menu tables, RLS เปิดอยู่ และไม่มี grants ให้ PUBLIC/anon/authenticated
+2. ยืนยันว่า configuration ที่ใช้ audit เป็น role เดียวกับ backend ที่จะ deploy และ `backendUpdate.allowed=true` ทั้ง `menu_items` และ `menu_categories`; ตรวจ policies/สิทธิ์จริงตาม V5/V13 เพราะ archive ใช้ UPDATE ห้ามขยายสิทธิ์ client เพื่อแก้ปัญหา backend
+3. รวม V16/V17 แล้วทวน V1–V18 บน H2 และ disposable PostgreSQL ของ revision ปัจจุบันให้ผ่าน ก่อนให้ทีม apply ตามลำดับ **V16 → V17 → V18** และ validate ฐานเป้าหมาย ห้าม `outOfOrder` หรือ repair เพื่อข้ามลำดับ/checksum
+4. จัดช่วงหยุดรับออเดอร์และไม่มีการเขียน catalog/order ระหว่าง apply: `ALTER TABLE` และ `CREATE INDEX` ปกติอาจรอ/ถือ lock ที่บล็อกการเขียน จึงไม่ใช้ขณะลูกค้ากำลังสั่ง แม้ตารางเล็กและคาดว่าใช้เวลาสั้น
+5. ผู้ดูแลตรวจ Flyway validation/history หลัง apply แล้วทีม deploy และทดสอบ Render บน deployed SHA ผล CI/H2/local และ read-only audit ก่อน apply ไม่ใช่ public acceptance หรือผลยืนยันว่า apply สำเร็จ
 
 ## Transaction/race implementation
 
