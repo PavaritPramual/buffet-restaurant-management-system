@@ -22,14 +22,15 @@ Prepared for the canonical [Canva v02b draft](https://www.canva.com/d/yWw6P3disB
 - QR → RECEIVED → PREPARING → READY → SERVED
 - ขอคิดบิล → ชำระ → ปิดโต๊ะ → ยกเลิกสิทธิ์ลูกค้า
 - Public API 12 กลุ่ม / Browser 12 กลุ่ม ผ่าน
-- CI baseline: Backend 352 / Frontend 121
-- Frontend หลังแก้ QR: 125 tests ผ่านในเครื่อง
+- CI PR #36: Backend352 / Frontend125 ผ่าน
 
 **Speaker notes — ประมาณ 50 วินาที**
 
-“รอบวันที่ 9 ตุลาคม เราตรวจ API จริงผ่าน 12 กลุ่ม และใช้งานหน้าเว็บจริงอีก 12 กลุ่มค่ะ ลูกค้าเพิ่มจำนวนและยืนยันออเดอร์ ครัวเริ่มเตรียมจนพร้อมเสิร์ฟ พนักงานเสิร์ฟ และสถานะกลับมาที่ลูกค้าได้ หลังขอคิดบิล ระบบไม่รับออเดอร์เพิ่ม เราทดลองชำระและปิดโต๊ะ แล้วตรวจว่าสิทธิ์ลูกค้าถูกยกเลิกด้วย อีกส่วนตรวจ Stock และ Profile ว่าบันทึกแล้วโหลดกลับได้ CI ของ develop ผ่าน backend 352 กับ frontend 121 tests ส่วนการแก้ข้อความ QR ภาษาไทยเพิ่ม 4 tests รวมเป็น 125 ที่ผ่านในเครื่อง ตัวเลข 12 เป็นกลุ่มสถานการณ์ ไม่ใช่จำนวน JUnit cases ค่ะ”
+“รอบวันที่ 9 ตุลาคม เราตรวจ API จริงผ่าน 12 กลุ่ม และใช้งานหน้าเว็บจริงอีก 12 กลุ่มค่ะ ลูกค้าเพิ่มจำนวนและยืนยันออเดอร์ ครัวเริ่มเตรียมจนพร้อมเสิร์ฟ พนักงานเสิร์ฟ และสถานะกลับมาที่ลูกค้าได้ หลังขอคิดบิล ระบบไม่รับออเดอร์เพิ่ม เราทดลองชำระและปิดโต๊ะ แล้วตรวจว่าสิทธิ์ลูกค้าถูกยกเลิกด้วย อีกส่วนตรวจ Stock และ Profile ว่าบันทึกแล้วโหลดกลับได้ การแก้ข้อความ QR ภาษาไทยเพิ่ม 4 tests รวมเป็น 125 ที่ผ่านทั้งในเครื่องและ CI ของ PR #36 ส่วน backend ใน CI ผ่าน 352 tests ไม่มีการข้าม PostgreSQL ตัวเลข 12 เป็นกลุ่มสถานการณ์ ไม่ใช่จำนวน JUnit cases และ CI ยังไม่ใช่หลักฐานการ deploy ค่ะ”
 
 **Sources:** current report executed-results table; API payment997.50; browser payment1247.50/session2; screenshots customer-paid-360 and staff-closed-available-768. Avoid adding these layer counts together.
+
+**CI source:** [PR #36 run37876116678](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37876116678) at9b9eddf passed352 backend/125 frontend. Canva browser requires login before content can be merged.
 
 ## Page C — ข้อจำกัดและงานก่อน Final
 

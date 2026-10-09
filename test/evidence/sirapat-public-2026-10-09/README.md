@@ -7,6 +7,7 @@ See [full report](../../../doc/testing/sirapat-public-regression-2026-10-09.md).
 - Local changed UI: 1 missing-QR case, Thai guidance, isolated H2; 1 screenshot.
 - Source manifests: d84f071 baseline and 11edeb0 submitted production tree, 352 canonical Git blobs each.
 - Integrated CI: run 37868211120, backend 352/352 (0 skipped), frontend121/121, guards6/6.
+- PR #36 CI at9b9eddf: [run37876116678](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37876116678) passed Backend/PostgreSQL352/352, changed Frontend125/125, guards6/6, lint/build; [summary](pr36-ci.json). Subsequent documentation-only evidence update records this result; it does not replace latest-head CI.
 - Local backend: 322 passed + 28 skipped = 350 discovered. Changed frontend125/125; lint0 errors/4 existing warnings; build passed.
 - Public revision 2f8bc4b is owner-reported, not live-attested. Thai source fix was not deployed during this run.
 - No elapsed TTL test, physical mobile test, second browser profile test or public permanent-delete test.

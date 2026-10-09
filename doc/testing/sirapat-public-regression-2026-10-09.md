@@ -6,6 +6,8 @@ Owner: Sirapat Wongwiwatseree. Scope read from the current [responsibilities](ht
 
 Public HTTPS Core Flow, four roles, Stock/Profile and persisted browser operations passed. Customer missing/revoked QR errors exposed English backend messages; this branch adds Thai recovery guidance with component regressions. The public site still runs the old wording.
 
+[PR #36](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/36) is open for ปวริศช์/ศรัณย์ review. CI at head9b9eddf passed Backend/PostgreSQL352/352 and changed Frontend125/125, URLguards6/6, lint0 errors/4 existing warnings and build; [run37876116678](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37876116678), [saved job-log excerpts](../../test/evidence/sirapat-public-2026-10-09/pr36-ci.json). This additional evidence commit changes documentation only; reviewed release and deploy remain separate. Canva browser access is at the login page, so direct QA content merge/export cannot currently be performed.
+
 | Evidence | Revision / identity | Result and limit |
 |---|---|---|
 | Integrated source | develop d84f071ee03b738d6a6dd2a899c5f6e6cc230d3f; PR #28/#31/#32/#33/#34/#35 integrated | Clean fast-forward before work; historical candidate counts are not reused as current |
