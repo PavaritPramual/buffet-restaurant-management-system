@@ -68,3 +68,20 @@ API/runtime flow ใช้โค้ด backend เดียวกับ commit `
 - Menu/Category/Stock/User removal เป็นของเจ้าของพื้นที่ ไม่รับรองแทนจาก PR นี้
 
 Diagram delta เป็น Mermaid ที่มี source ฝังใน Markdown ไม่อ้างว่า render PlantUML/SVG baseline ใหม่. baseline diagrams เก็บเป็นประวัติ; การรับรองทั้งระบบยังรอทุก owner
+
+## แก้รีวิวธีรเมธ — Customer package หลัง archive
+
+รีวิวบน head `ba54602c7421c44eabc7098394e93a397125294d` พบว่า CustomerSessionPackageController เรียก CatalogService.getPackage ซึ่งปฏิเสธ archived409 ทำให้ Promise.all ของหน้า Customer โหลดไม่สำเร็จ แม้ bill/payment tests เดิมผ่าน. ชุดแรกไม่ได้ทดสอบการโหลดแพ็กเกจและเมนูหลัง archive จึงตรวจ defect นี้ไม่พบ
+
+แก้ด้วย CustomerSessionPackageService ใช้ CustomerSessionVerifier ตรวจ cookie/session ก่อนอ่านแพ็กเกจที่ผูกกับ ACTIVE session ใน read-only transaction. Catalog ทั่วไปยังปฏิเสธ archived; การเปิดรอบใหม่ยังปฏิเสธแพ็กเกจนี้. ไม่เปลี่ยน migration V17, FK, DTO, routes, cookie flow, ราคา snapshot หรือ transaction/locks ของ Order/Payment/close
+
+รัน 9 ตุลาคม 2026 บน Java21/H2 แยก ปิด `.env` import:
+
+| คำสั่งหลังแก้ | ผล |
+|---|---|
+| `mvn --batch-mode --no-transfer-progress -Dspring.config.import= -Dtest=MasterDataRemovalIntegrationTest,DiningSessionIntegrationTest test` | **18 passed, 0 failures/errors/skipped** (Removal6 + DiningSession12) |
+| `mvn --batch-mode --no-transfer-progress -Dspring.config.import= -Dtest=CustomerBillingContractTest,SessionContextProviderContractTest,Step2CompletionIntegrationTest test` | **13 passed, 0 failures/errors/skipped** |
+
+รวม **31 tests หลังแก้**. Regression ใหม่เปิดรอบผ่าน POSTจริง → Manager archive → Catalog mainซ่อน/operational detail409 → QR exchangeผ่านHTTP → cookieของรอบนี้อ่านpackage200/no-store/menuและbill747.50 → order201 → billrequest747.50 → payment747.50 → closeCOMPLETED. ตรวจ cookieขาด/ปลอม401, cookieผิดsession404, หลังclose401 และราคาsnapshot299ยังอยู่; โต๊ะอีกตัวว่างแต่เปิดรอบด้วยpackagearchivedได้400ตามกฎเดิม
+
+ผล full PostgreSQL367, upgrade1, frontend157 และภาพข้างต้นเป็นหลักฐานรอบก่อนแก้ ไม่อ้างว่ารันซ้ำรอบนี้. ไม่มี frontend/schema/locking changes ใน fix; รอ CI full suite ของ head ใหม่และธีรเมธตรวจซ้ำ รวม public acceptance แยก

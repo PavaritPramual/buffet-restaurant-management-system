@@ -34,4 +34,6 @@ Owner ปวริศช์ · baseline `69fb7afae06cf4230c814c0e58c4e8e13700ac3
 
 ## Gates
 
+**แก้รีวิวธีรเมธ PR #46:** CustomerSessionPackageController เดิมเรียก operational CatalogService.getPackage จึงได้409หลัง archive และทำให้หน้า Customer โหลดไม่ครบ. แยก CustomerSessionPackageService ที่ตรวจ CustomerSessionVerifier แล้วอ่านเฉพาะ packageId ของ ACTIVE session นั้นผ่าน repository/mapper ใน read-only transaction. ไม่เปิด Catalogทั่วไปให้ archived และไม่ให้เปิดรอบใหม่ด้วยแพ็กเกจนี้. ไม่เปลี่ยน schema/API/DTO/สถานะ/locks; Billing ยังใช้ราคา snapshot. Regression ใช้ HTTP open → archive → QR exchange → package/menu/order/bill → payment → close พร้อม401/404และการปฏิเสธแพ็กเกจสำหรับรอบใหม่
+
 DB tests บน H2/PostgreSQL ทิ้งได้; รอ reviewer ศรัณย์(contract/API), ศิระพัทธ์(UI), ธีรเมธ(Billing/history), เมธัส(migration/FK). ยังไม่ถือว่าฐานกลางหรือ public deployment ผ่าน
