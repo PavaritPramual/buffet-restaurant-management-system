@@ -134,8 +134,13 @@ class Step2CompletionIntegrationTest {
         var manager=login("MANAGER");
         mvc.perform(put("/api/v1/tables/940001").session(manager).contentType(MediaType.APPLICATION_JSON).content("{\"tableNumber\":\"CHANGED\",\"capacity\":1}")).andExpect(status().isConflict());
         mvc.perform(patch("/api/v1/tables/940001/status").session(manager).contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"AVAILABLE\"}")).andExpect(status().isConflict());
-        mvc.perform(delete("/api/v1/tables/940001").session(manager)).andExpect(status().isConflict());
+        mvc.perform(delete("/api/v1/tables/940001").session(manager))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(
+                        "ไม่สามารถแก้ไขหรือลบโต๊ะได้ ขณะยังมีรอบใช้งานอยู่"));
         jdbc.update("UPDATE dining_sessions SET status='COMPLETED' WHERE id=940001"); jdbc.update("UPDATE restaurant_tables SET status='AVAILABLE' WHERE id=940001"); entityManager.clear();
-        mvc.perform(delete("/api/v1/tables/940001").session(manager)).andExpect(status().isConflict());
+        mvc.perform(delete("/api/v1/tables/940001").session(manager))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("โต๊ะนี้มีประวัติการใช้งาน จึงลบถาวรไม่ได้"));
     }
 }

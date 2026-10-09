@@ -143,6 +143,9 @@ class DiningSessionIntegrationTest {
                 .andExpect(jsonPath("$.sessionToken").isString())
                 .andExpect(jsonPath("$.sessionToken").value(org.hamcrest.Matchers.hasLength(43)))
                 .andExpect(jsonPath("$.packageId").value(buffetPackage.getId()))
+                .andExpect(jsonPath("$.packageName").value("Standard"))
+                .andExpect(jsonPath("$.soupId").value(soup.getId()))
+                .andExpect(jsonPath("$.soupName").value("Tom Yum"))
                 .andExpect(jsonPath("$.tableId").value(table.getId()))
                 .andExpect(jsonPath("$.tableNumber").value("T01"))
                 .andExpect(jsonPath("$.sessionStatus").value("ACTIVE"))
@@ -155,6 +158,43 @@ class DiningSessionIntegrationTest {
     }
 
     @Test
+    void staffReadsCurrentNamesForInactiveCatalogAndClosedSessionWithoutChangingPriceSnapshot() throws Exception {
+        openThroughApiAndReadToken();
+        long sessionId = sessionRepository.findAll().get(0).getId();
+        buffetPackage.update("Premium renamed", new BigDecimal("399.00"), null);
+        buffetPackage.setActive(false);
+        packageRepository.saveAndFlush(buffetPackage);
+        soup.setName("Clear soup renamed");
+        soup.setActive(false);
+        soupRepository.saveAndFlush(soup);
+
+        mockMvc.perform(get("/api/v1/dining-sessions/" + sessionId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.packageName").value("Premium renamed"))
+                .andExpect(jsonPath("$.soupName").value("Clear soup renamed"))
+                .andExpect(jsonPath("$.packageId").value(buffetPackage.getId()))
+                .andExpect(jsonPath("$.soupId").value(soup.getId()))
+                .andExpect(jsonPath("$.sessionStatus").value("ACTIVE"));
+        assertThat(billingReader.requireBySessionId(sessionId).packagePriceAtOpen())
+                .isEqualByComparingTo("299.00");
+
+        when(paymentStatusLookup.findPaymentForSession(sessionId)).thenReturn(
+                new PaymentStatusLookup.PaymentVerification(sessionId, PaymentStatus.PAID));
+        mockMvc.perform(post("/api/v1/dining-sessions/" + sessionId + "/close"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.packageName").value("Premium renamed"))
+                .andExpect(jsonPath("$.soupName").value("Clear soup renamed"))
+                .andExpect(jsonPath("$.sessionStatus").value("COMPLETED"));
+        mockMvc.perform(get("/api/v1/dining-sessions/" + sessionId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.packageName").value("Premium renamed"))
+                .andExpect(jsonPath("$.soupName").value("Clear soup renamed"))
+                .andExpect(jsonPath("$.sessionStatus").value("COMPLETED"));
+        assertThat(billingReader.requireBySessionId(sessionId).packagePriceAtOpen())
+                .isEqualByComparingTo("299.00");
+    }
+
+    @Test
     void rejectsOccupiedTableAndInvalidGuestCountsWithErrorResponse() throws Exception {
         table.occupy();
         tableRepository.saveAndFlush(table);
@@ -162,6 +202,7 @@ class DiningSessionIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON).content(openRequest(1, 0)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("โต๊ะไม่ว่าง กรุณาเลือกโต๊ะที่พร้อมใช้งาน"))
                 .andExpect(jsonPath("$.path").value("/api/v1/dining-sessions"));
 
         table.makeAvailable();
@@ -169,7 +210,9 @@ class DiningSessionIntegrationTest {
         mockMvc.perform(post("/api/v1/dining-sessions")
                         .contentType(MediaType.APPLICATION_JSON).content(openRequest(4, 1)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Bad Request"));
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message")
+                        .value("จำนวนผู้ใช้บริการเกินความจุของโต๊ะ (สูงสุด 4 คน)"));
         mockMvc.perform(post("/api/v1/dining-sessions")
                         .contentType(MediaType.APPLICATION_JSON).content(openRequest(0, 0)))
                 .andExpect(status().isBadRequest());
@@ -274,6 +317,10 @@ class DiningSessionIntegrationTest {
         JsonNode paths = objectMapper.readTree(spec).path("paths");
         assertThat(paths.has("/api/v1/dining-sessions/token/{token}")).isFalse();
         assertThat(paths.path("/api/v1/dining-sessions/qr-exchange").has("post")).isTrue();
+        JsonNode staffSchema = objectMapper.readTree(spec).path("components").path("schemas")
+                .path("DiningSessionResponse").path("properties");
+        assertThat(staffSchema.has("packageName")).isTrue();
+        assertThat(staffSchema.has("soupName")).isTrue();
     }
 
     @Test

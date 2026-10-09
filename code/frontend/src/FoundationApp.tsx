@@ -17,7 +17,8 @@ import StaffShell from './features/auth/StaffShell'
 export default function FoundationApp() {
 
   return <Routes>
-    <Route path="/" element={import.meta.env.PROD ? <Navigate to="/admin" replace /> : <DesignSystemPage />} />
+    <Route path="/" element={<Navigate to="/admin" replace />} />
+    {import.meta.env.DEV && <Route path="/dev/ui" element={<DesignSystemPage />} />}
     <Route path="/customer/qr" element={<CustomerOrderingPage />} />
     <Route element={<StaffShell />}>
       <Route path="/staff/tables" element={<StaffTablesPage />} />
@@ -39,7 +40,7 @@ export default function FoundationApp() {
         <Route path="menu" element={<MenuAdminPage />} />
       </Route>
     </Route>
-    <Route path="*" element={<DesignSystemPage />} />
+    <Route path="*" element={<Navigate to="/admin" replace />} />
   </Routes>
 
 }

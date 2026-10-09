@@ -10,6 +10,7 @@
 - วันเวลาที่ API ส่งออกใช้ ISO-8601 UTC พร้อม timezone เช่น `2026-10-07T08:09:10Z`
 - Enum ส่งผ่าน JSON เป็น uppercase string และไม่รับ lowercase
 - Field ที่ไม่ระบุว่า nullable ต้องมีค่า
+- Draft for review: [Resource Removal and History Contract](deletion-contract.md) proposes shared delete/archive/restore behavior; it is not approved for owner implementation yet. `active=false` remains distinct from archived.
 
 ## SessionContext
 
@@ -29,6 +30,17 @@ Owner: ปวริศช์ — Table & Dining Session
 ลูกค้าเปิด `/customer/qr#token={sessionToken}`; หน้าเว็บล้าง fragment แล้วส่ง token ใน body ของ `POST /api/v1/dining-sessions/qr-exchange` พร้อม `Origin` ที่อนุญาต Backend หมุน QR token และออก `customer_session` แบบสุ่มใน `HttpOnly` cookie อายุสูงสุด 8 ชั่วโมง เก็บเฉพาะ SHA-256 hash ของ credential ใน `customer_session_grants` ลูกค้าหลายเครื่องแลก QR รุ่นถัดไปได้คนละ credential
 
 Customer response มีเพียง `sessionId`, `packageId`, `tableNumber`, `sessionStatus`; ไม่ส่ง `sessionToken`, ราคา snapshot หรือข้อมูล Billing คำขอเมนู/ออเดอร์ต้องมี cookie ของ session เดียวกันที่ยัง `ACTIVE` และคำขอเขียนต้องผ่าน Origin check การปิดรอบเพิกถอน credentials ทั้งหมด
+
+### Staff DiningSessionResponse — U02
+
+Staff endpoints `POST /dining-sessions`, `GET /dining-sessions/{id}`, `GET /dining-sessions/active` และ `POST /dining-sessions/{id}/close` เพิ่มสอง field ต่อไปนี้ โดยรักษา field เดิมทุกตัว
+
+| Field | JSON type | Nullable | Notes |
+|---|---|---|---|
+| `packageName` | string | No | ชื่อปัจจุบันของแพ็กเกจผ่าน JPA relationship รวมรายการ inactive และรอบที่ปิดแล้ว |
+| `soupName` | string | No | ชื่อปัจจุบันของน้ำซุปผ่าน JPA relationship รวมรายการ inactive และรอบที่ปิดแล้ว |
+
+Mapper อ่านชื่อภายใน transaction ของ DiningSession service เดิม หน้า Staff ไม่เรียก Catalog API เพิ่มเพื่อประกอบชื่อ ชื่อไม่ใช่ snapshot: การเปลี่ยนชื่อข้อมูลหลักเปลี่ยนชื่อที่แสดงในรอบเก่าด้วย แต่ราคา Billing ยังคงอ่าน `packagePriceAtOpen` ผ่าน reader เดิม ไม่เพิ่มชื่อให้ Customer DTO หรือ SessionContext ของ Ordering ไม่เปลี่ยน ERD, migration, สิทธิ์, QR/cookie หรือกฎ Payment/close
 
 ## OrderFulfillmentContext
 

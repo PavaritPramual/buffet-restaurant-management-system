@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-09",
+  "scope": [
+    "U01",
+    "U04"
+  ],
+  "excluded": "PR39 CLOSED/unmerged; force close and menu deletion delegated by user",
+  "frontend": {
+    "tests": 148,
+    "passed": 148,
+    "files": 16
+  },
+  "backend": {
+    "command": "mvn clean verify",
+    "tests": 350,
+    "passed": 322,
+    "skipped": 28,
+    "failures": 0,
+    "errors": 0,
+    "postgres": "not executed locally; CI required"
+  },
+  "runtimeGuards": {
+    "passed": 6,
+    "total": 6
+  },
+  "lint": {
+    "errors": 0,
+    "existingWarnings": 4
+  },
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "browser": {
+    "environment": "fresh isolated H2; real database/session providers; production frontend; CUA; no HTTP mocks",
+    "foods": 30,
+    "roles": 4,
+    "qrOrders": [
+      1,
+      2
+    ],
+    "desktopCloseObservedWithoutReload": true,
+    "newQrSameTab": true,
+    "customer360": "real 360x800 iframe viewport; physical-device acceptance not claimed",
+    "manager1280": true
+  },
+  "sharedDatabaseTouched": false,
+  "renderDeployment": "pending reviewed merge and SHA attestation"
+}

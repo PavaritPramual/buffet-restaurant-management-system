@@ -259,14 +259,14 @@ class RestaurantTableControllerTest {
 
     @Test
     void deleteTable_whenTableOccupied_returns400AndErrorResponse() throws Exception {
-        doThrow(new IllegalStateException("Cannot delete table while it is occupied"))
+        doThrow(new IllegalStateException("ไม่สามารถลบโต๊ะได้ เนื่องจากโต๊ะยังไม่ว่าง"))
                 .when(tableService).deleteTable(1L);
 
         mockMvc.perform(delete("/api/v1/tables/1"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.error").value("Bad Request"))
-                .andExpect(jsonPath("$.message").value("Cannot delete table while it is occupied"))
+                .andExpect(jsonPath("$.message").value("ไม่สามารถลบโต๊ะได้ เนื่องจากโต๊ะยังไม่ว่าง"))
                 .andExpect(jsonPath("$.path").value("/api/v1/tables/1"));
     }
 
