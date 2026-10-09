@@ -120,8 +120,9 @@ class StockItem {
 
 class StockTransaction {
     id
-    type
-    quantity
+    transactionType
+    quantityDelta
+    balanceAfter
     reason
     createdAt
 }
@@ -144,7 +145,7 @@ StockItem "1" -- "0..*" StockTransaction : tracked by >
 UserAccount "1" -- "0..*" StockTransaction : recorded by >
 
 note bottom of StockItem
- openingTargetStock / active implemented in V15.
- shortfall is derived and is not persisted.
+ openingTargetStock / active implemented in Flyway V15.
+ shortfall is derived from target - quantity and is not persisted.
 end note
 @enduml

@@ -4,6 +4,8 @@ import com.buffetrestaurant.dto.request.LoginRequest;
 import com.buffetrestaurant.dto.response.ErrorResponse;
 import com.buffetrestaurant.dto.response.UserContext;
 import com.buffetrestaurant.service.AuthenticationService;
+import com.buffetrestaurant.service.StaffSessionRegistry;
+import com.buffetrestaurant.exception.InvalidCredentialsException;
 import com.buffetrestaurant.service.UserContextProvider;
 import com.buffetrestaurant.common.UserSessionKeys;
 import com.buffetrestaurant.exception.AuthenticationRequiredException;
@@ -30,10 +32,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthenticationService authService;
     private final UserContextProvider users;
+    private final StaffSessionRegistry sessions;
 
-    public AuthController(AuthenticationService authService, UserContextProvider users) {
+    public AuthController(AuthenticationService authService, UserContextProvider users,
+            StaffSessionRegistry sessions) {
         this.authService = authService;
         this.users = users;
+        this.sessions = sessions;
     }
 
     @PostMapping("/login")
@@ -48,6 +53,12 @@ public class AuthController {
         HttpSession session = servletRequest.getSession(true);
         session.setAttribute(UserSessionKeys.USER_CONTEXT_SESSION_KEY, context);
         servletRequest.changeSessionId();
+        sessions.register(context.userId(), session);
+        if (!authService.isLoginAllowed(context.userId())) {
+            // The account was closed between the credential check and session registration.
+            session.invalidate();
+            throw new InvalidCredentialsException();
+        }
         return ResponseEntity.ok(context);
     }
 

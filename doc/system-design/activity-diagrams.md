@@ -12,5 +12,5 @@
 รวมหน้าที่ Cashier เข้าเป็น **Service Staff** ตามโครงสร้างทีม และแสดงขั้นตอนการคำนวณบิล การชำระเงิน และการปิด Session คืนโต๊ะ
 [PlantUML: activity-payment-close](../diagrams/activity-payment-close.puml)
 ## 4. Activity Diagram — Stock Management
-แสดงการจัดการวัตถุดิบและของใช้คงคลังแบบ Simple Stock (Stock In และ Stock Adjustment)
+แสดงการจัดการวัตถุดิบและของใช้คงคลัง (Manager สร้าง/แก้/เปิด-ปิดใช้งาน item; Manager/Supervisor Stock In และ Stock Adjustment) item ที่ inactive ปฏิเสธ stock-in/adjust ด้วย 409 ตาม V15
 [PlantUML: activity-stock](../diagrams/activity-stock.puml)

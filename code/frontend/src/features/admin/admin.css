@@ -43,7 +43,10 @@
 .table-code { color: var(--color-muted) !important; font-family: Consolas, monospace; }
 .stock-quantity { color: var(--color-success); font-weight: 700; }
 .stock-low { color: var(--color-danger); }
-.stock-actions { display: flex; gap: 6px; }
+.stock-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.stock-actions button.admin-danger-button { color: var(--color-danger); border-color: var(--color-danger); }
+.stock-actions button.admin-danger-button:hover { background: var(--color-danger-bg); }
+.admin-notice { margin: 12px 0; padding: 10px 12px; border-left: 3px solid var(--color-primary); color: var(--color-primary); background: var(--color-background); font-size: 12px; }
 .stock-actions button, .admin-secondary-button { min-height: 44px; padding: 7px 10px; border: 1px solid var(--color-border); border-radius: 5px; color: var(--color-primary); background: var(--color-surface); font-size: 12px; font-weight: 600; }
 .stock-actions button:hover, .admin-secondary-button:hover { border-color: var(--color-primary); background: var(--color-background); }
 .admin-secondary-button { padding-inline: 13px; }

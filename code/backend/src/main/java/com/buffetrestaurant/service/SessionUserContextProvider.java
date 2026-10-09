@@ -14,6 +14,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Component
 public class SessionUserContextProvider implements UserContextProvider {
+    private final AuthenticationService accounts;
+
+    public SessionUserContextProvider(AuthenticationService accounts) {
+        this.accounts = accounts;
+    }
 
     public UserContext requireAuthenticated(HttpServletRequest request) {
         if (request == null) throw new AuthenticationRequiredException();
@@ -22,8 +27,21 @@ public class SessionUserContextProvider implements UserContextProvider {
         if (context instanceof UserContext userContext
                 && userContext.userId() != null && userContext.userId() > 0
                 && userContext.username() != null && !userContext.username().isBlank()
-                && userContext.role() != null) return userContext;
+                && userContext.role() != null) {
+            // Fallback when session revocation raced or failed: the stored account must still be usable.
+            if (accounts.isLoginAllowed(userContext.userId())) return userContext;
+            discard(session);
+        }
         throw new AuthenticationRequiredException();
+    }
+
+    private static void discard(HttpSession session) {
+        try {
+            session.removeAttribute(UserSessionKeys.USER_CONTEXT_SESSION_KEY);
+            session.invalidate();
+        } catch (IllegalStateException alreadyInvalid) {
+            // already gone
+        }
     }
 
     public UserContext requireAnyRole(HttpServletRequest request, UserRole... roles) {

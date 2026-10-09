@@ -1,6 +1,8 @@
 # JPA Entity Rationale
 
 สถานะ: เอกสารอธิบาย mapping ที่ **implemented อยู่แล้ว** (ตรวจกับ `code/backend/.../domain/*.java` และ migration V1–V15) ไม่มีการเปลี่ยน mapping เพื่อให้เอกสารดูดีขึ้น
+เอกสารนี้รวมเฉพาะ **คำรับรองที่เจ้าของ Entity ให้ไว้แล้ว** พร้อมแหล่งอ้างอิง; รายการที่เจ้าของยังไม่รับรองระบุว่า "ค้าง" และไม่ได้รับรองแทนเจ้าของ (สรุปในหัวข้อ "สถานะคำรับรองรวม")
+
 การยืนยันเหตุผลเชิงออกแบบจากเจ้าของแต่ละ Entity: Auth/Stock/Profile = เมธัส/ปวริศช์ (ในเอกสารนี้); Menu/Ordering = [sirapat-menu-ordering-solid-jpa.md](sirapat-menu-ordering-solid-jpa.md); Table/Package/Soup/Session/Customer grants = ปวริศช์รับรอง mapping ของ develop `adc5798` วันที่ 8 ตุลาคม 2026 ตามหัวข้อด้านล่าง; Payment = [ธีรเมธอธิบาย mapping/Strategy/transaction ที่ revision `bdd3bd7`](teeramet-billing-payment-solid-jpa.md); Order/OrderItem rationale ส่งใน PR #26 และ source/test ตรวจซ้ำกับ `d84f071` วันที่ 9 ต.ค.; การรับรอง Final/public จาก owner/reviewer ยังเป็น gate แยก
 association ส่วนใหญ่ใช้ `LAZY` ยกเว้น `UserProfile.user` ที่ประกาศ `@OneToOne` โดยไม่กำหนด fetch จึงเป็น **EAGER (ค่าเริ่มต้นของ JPA สำหรับ `@OneToOne`)**; ทุก FK มี index ที่ใช้ใน query หลัก
 
@@ -20,6 +22,19 @@ association ส่วนใหญ่ใช้ `LAZY` ยกเว้น `UserPro
 | `CustomerOrder` → `orders` | N : 1 กับ session โดย `session_id` เป็นคอลัมน์ `Long` (ไม่ใช่ `@ManyToOne`); 1 : N กับ `OrderItem` | FK ที่ DB (V7) RESTRICT, `idx_orders_session`, `idx_orders_status`; ฝั่ง JPA `@OneToMany(mappedBy="order")` | `cascade=ALL`, `orphanRemoval=true`, LAZY | บันทึกออเดอร์พร้อมรายการใน transaction เดียว; ไม่ผูก entity session จึงต้อง join ด้วยมือเมื่ออ่านข้อมูล session. Rationale ใน [PR #26](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/26); [entity](../../code/backend/src/main/java/com/buffetrestaurant/domain/CustomerOrder.java) และ [fulfillment integration test](../../code/backend/src/test/java/com/buffetrestaurant/integration/OrderFulfillmentIntegrationTest.java) ยืนยัน mapping/line response; ไม่ใช่ query-count benchmark |
 | `OrderItem` → `order_items` | N : 1 กับ order (LAZY, optional=false); `menu_item_id` เป็น `Long` | Owner = item; FK order ON DELETE CASCADE, `idx_order_items_order`; FK menu_item RESTRICT; quantity > 0 | Item ไม่มี cascade กลับไป Order; lifecycle อยู่ใต้ collection ของ order | snapshot `item_name` รักษาประวัติใบสั่ง; rationale ใน [PR #26](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/26), [entity](../../code/backend/src/main/java/com/buffetrestaurant/domain/OrderItem.java) และ [integration test](../../code/backend/src/test/java/com/buffetrestaurant/integration/OrderFulfillmentIntegrationTest.java); source checked at `d84f071` |
 | `Payment` → `payments` | 1 : 0..1 กับ session ใน domain โดย `session_id` เป็น plain `Long` UNIQUE ใน Entity | FK RESTRICT; amount ≥ 0; method CHECK CASH/QR/CARD; status CHECK PENDING/PAID/FAILED | ไม่มี JPA association จึงไม่มี cascade หรือ fetch mode | UNIQUE บังคับ 1 session ต่อ 1 payment; ไม่ลบ session ที่มี payment; เจ้าของยืนยันที่ [Payment notes](teeramet-billing-payment-solid-jpa.md) revision `bdd3bd7` |
+
+## สถานะคำรับรองรวม
+
+ตรวจเมื่อ 9 ตุลาคม 2026 กับ develop `a6da906` (รวม PR #33, #35, #36). "รับรองแล้ว" = เจ้าของ Entity เขียนคำรับรองไว้เองและอ้างอิงได้; ไม่มีหลักฐานดังกล่าว = "ค้าง"
+
+| Entity | เจ้าของ | สถานะ | แหล่งคำรับรอง / หมายเหตุ |
+| --- | --- | --- | --- |
+| `RestaurantTable`, `BuffetPackage`, `Soup`, `DiningSession`, `CustomerSessionGrant` | ปวริศช์ | รับรองแล้ว | PR #33 (merged 8 ต.ค. 2026), revision `adc5798` — ดูหัวข้อ "คำรับรองโมดูลปวริศช์" ด้านล่าง |
+| `Payment` | ธีรเมธ | รับรองแล้ว | PR #35 (merged 9 ต.ค. 2026): [Payment notes](teeramet-billing-payment-solid-jpa.md) revision `bdd3bd7` ระบุ `sessionId` เป็น plain `Long`, ไม่มี cascade/fetch, FK/UNIQUE ที่ V9 |
+| `CustomerOrder`, `OrderItem` | ศิระพัทธ์ | รับรองแล้วโดยเอกสารเจ้าของ (ไม่ใช่ release approval) | [sirapat-menu-ordering-solid-jpa.md](sirapat-menu-ordering-solid-jpa.md) ตรวจซ้ำที่ develop `d84f071` วันที่ 9 ต.ค. 2026 ว่า CustomerOrder cascade และ OrderItem parent link ตรงเหตุผล; ตรวจกับโค้ด `a6da906` ตรงกัน (`cascade=ALL`, `orphanRemoval`, LAZY; `OrderItem.order` LAZY/optional=false; `sessionId`/`menuItemId` เป็น `Long`). ตัวเอกสารเจ้าของระบุว่า release mapping/schema approval ยังเป็นของเจ้าของที่เกี่ยวข้อง และไม่ได้ทดสอบ query count; State ของ Order เป็นของศรัณย์ ไม่ครอบคลุมในนี้ |
+| `MenuItem` | ศิระพัทธ์ | รับรองแล้วโดยเอกสารเจ้าของ | เอกสารเดียวกัน (category/package mapping, EntityGraph) ตรวจซ้ำที่ `d84f071` |
+| `MenuCategory` | ศิระพัทธ์ | **ค้าง** | เอกสารเจ้าของกล่าวถึงเฉพาะความสัมพันธ์ `MenuItem → MenuCategory`; ไม่มีคำรับรอง mapping ของ `MenuCategory` เอง จึงไม่ขอรับรองแทน |
+| `UserAccount`, `UserProfile`, `StockItem`, `StockTransaction` | เมธัส | **ค้าง** (มีร่างให้ตรวจ) | ไม่พบคำรับรอง JPA จากเมธัสใน repo; มี [ร่างคำรับรอง](#ร่างคำรับรอง-jpa-โมดูล-authstockprofile-เมธัส) ที่เขียนจากโค้ดเพื่อให้เมธัสตรวจ — **ยังไม่นับเป็นรับรองแล้ว** จนกว่าเมธัสยืนยัน |
 
 ## หมายเหตุสำคัญ
 - `orders.session_id`, `order_items.menu_item_id`, `payments.session_id` เป็น plain `Long` ใน JPA แต่มี FK จริงใน DB — เป็นการเลือกของเจ้าของ module ไม่ได้แก้ในงานนี้

@@ -37,7 +37,7 @@ Stock-in/adjustment/history และ User/login ทดสอบผ่าน UI 
 - **ฐานกลาง — apply ที่ตรวจพบ:** จาก read-only inspection ของ reviewer วันที่ 8 ต.ค. 2026 พบ V13–V15 ใน Flyway history ด้วย `success=true` พร้อม checksum/script ตามตาราง sanitized ด้านล่าง และ schema readback ตรงกับคอลัมน์ V15
 - **หลักฐานที่ยังขาด:** ยังไม่มีหลักฐานอนุมัติ V15 แยกจาก V13/V14 และไม่มีผล Flyway `validate`/checksum comparison ที่ตรวจ migration file ของ commit นี้ สถานะจึงเป็น **V13–V15 apply แล้วตาม history ที่ reviewer ตรวจพบ; V15 approval และการยืนยัน checksum/validate ยังรอหลักฐาน** การตรวจ history นี้ไม่ใช่การรัน validate และไม่ใช่การอนุมัติย้อนหลัง
 - ห้าม apply ซ้ำ, แก้ history หรือใช้ `repair` เพื่อปรับเอกสาร สถานะ canonical Step 2/ข้อจำกัดการอนุมัติแยกใน [step2-schema-approved.md](step2-schema-approved.md)
-- Notion ยังไม่ได้ sync จากเอกสารนี้
+- Notion: [ER Diagram](https://app.notion.com/p/ER-diagram-3d8cb2e9d47a80488aa4dacb4ef5a008?source=copy_link), [Data Dictionary & Migration](https://app.notion.com/p/Data-Dictionary-Migration-3d8cb2e9d47a81d9aa4cdcec37b26c9d?source=copy_link) Sync ให้ตรง V15 แล้ว (9 ต.ค. 2026)
 
 ### Sanitized read-only history/schema readback (reviewer ตรวจ 8 ต.ค. 2026)
 

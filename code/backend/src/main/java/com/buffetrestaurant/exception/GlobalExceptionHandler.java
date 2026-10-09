@@ -113,9 +113,9 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.FORBIDDEN, exception.getMessage(), request.getRequestURI());
     }
 
-    @ExceptionHandler(DuplicateResourceException.class)
+    @ExceptionHandler({DuplicateResourceException.class, ResourceConflictException.class})
     public ResponseEntity<ErrorResponse> handleDuplicateResource(
-            DuplicateResourceException exception,
+            RuntimeException exception,
             HttpServletRequest request
     ) {
         return build(HttpStatus.CONFLICT, exception.getMessage(), request.getRequestURI());

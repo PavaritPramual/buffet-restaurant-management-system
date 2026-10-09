@@ -43,6 +43,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PaymentIntegrationTest {
 
     private static final long SESSION_ID = 918001L;
+    private static final long STAFF_USER_ID = 918101L;
+    private static final long OTHER_USER_ID = 918102L;
 
     @Autowired
     private MockMvc mvc;
@@ -63,6 +65,8 @@ class PaymentIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        cleanupSeedData();
+
         jdbc.update("""
                 INSERT INTO restaurant_tables
                     (id, table_number, capacity, status)
@@ -89,18 +93,32 @@ class PaymentIntegrationTest {
                      2, 1, 'billing-integration-token', 'ACTIVE', 399.00)
                 """);
 
+        jdbc.update("""
+                INSERT INTO app_users (id, username, password_hash, role)
+                VALUES (?, 'staff-test', 'x', 'SERVICE_STAFF'),
+                       (?, 'other', 'x', 'MANAGER')
+                """, STAFF_USER_ID, OTHER_USER_ID);
+
         staffSession = new MockHttpSession();
-        jdbc.update("UPDATE dining_sessions SET bill_requested_at=CURRENT_TIMESTAMP WHERE id=?", SESSION_ID);
+        jdbc.update("UPDATE dining_sessions SET bill_requested_at = CURRENT_TIMESTAMP WHERE id = ?", SESSION_ID);
         staffSession.setAttribute(
                 UserSessionKeys.USER_CONTEXT_SESSION_KEY,
-                new UserContext(1L, "staff-test", "Test Staff",
-                        UserRole.SERVICE_STAFF)
+                new UserContext(STAFF_USER_ID, "staff-test", "Test Staff", UserRole.SERVICE_STAFF)
         );
+    }
+
+    private void cleanupSeedData() {
+        jdbc.execute("DELETE FROM payments WHERE session_id = 918001");
+        jdbc.execute("DELETE FROM dining_sessions WHERE id = 918001");
+        jdbc.execute("DELETE FROM app_users WHERE id IN (918101, 918102)");
+        jdbc.execute("DELETE FROM restaurant_tables WHERE id = 918001");
+        jdbc.execute("DELETE FROM buffet_packages WHERE id = 918001");
+        jdbc.execute("DELETE FROM soups WHERE id = 918001");
     }
 
     @Test
     void rejectsPaymentBeforeBillRequest() throws Exception {
-        jdbc.update("UPDATE dining_sessions SET bill_requested_at=NULL WHERE id=?", SESSION_ID);
+        jdbc.update("UPDATE dining_sessions SET bill_requested_at = NULL WHERE id = ?", SESSION_ID);
         mvc.perform(post("/api/v1/payments").session(staffSession)
                 .contentType(MediaType.APPLICATION_JSON).content(paymentRequest(PaymentMethod.CASH)))
                 .andExpect(status().isConflict())
@@ -135,7 +153,7 @@ class PaymentIntegrationTest {
         for (UserRole role : new UserRole[]{UserRole.KITCHEN_STAFF, UserRole.SUPERVISOR, UserRole.MANAGER}) {
             MockHttpSession other = new MockHttpSession();
             other.setAttribute(UserSessionKeys.USER_CONTEXT_SESSION_KEY,
-                    new UserContext(2L, "other", "Other", role));
+                    new UserContext(OTHER_USER_ID, "other", "Other", role));
             mvc.perform(post("/api/v1/dining-sessions/" + SESSION_ID + "/close").session(other))
                     .andExpect(status().isForbidden());
         }

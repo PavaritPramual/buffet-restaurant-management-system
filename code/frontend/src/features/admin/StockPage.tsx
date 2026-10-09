@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ConfirmDialog } from '../../components/common'
 import type { FormEvent } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { getErrorMessage, stockApi } from './api'
+import { getErrorMessage, removedMessage, stockApi } from './api'
 import type { StockItem, StockTransaction, UserContext } from './api'
 
 type ActionMode = 'IN' | 'ADJUSTMENT'
@@ -28,14 +28,21 @@ export default function StockPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [confirming, setConfirming] = useState(false)
+  const [archived, setArchived] = useState<StockItem[]>([])
+  const [removing, setRemoving] = useState<StockItem | null>(null)
+  const [notice, setNotice] = useState('')
   const inFlight = useRef(false)
+  const isManager = user.role === 'MANAGER'
 
   async function loadData() {
     setLoading(true)
     try {
-      const [stock, transactions] = await Promise.all([stockApi.overview(), stockApi.history()])
+      const [stock, transactions, archivedItems] = await Promise.all([
+        stockApi.overview(), stockApi.history(), isManager ? stockApi.archived() : Promise.resolve([] as StockItem[]),
+      ])
       setItems(stock)
       setHistory(transactions)
+      setArchived(archivedItems)
     } catch (requestError) {
       setError(getErrorMessage(requestError))
     } finally {
@@ -44,6 +51,47 @@ export default function StockPage() {
   }
 
   useEffect(() => { void loadData() }, [])
+
+  async function confirmRemove() {
+    if (!removing || inFlight.current) return
+    inFlight.current = true
+    setSaving(true)
+    setError('')
+    try {
+      await stockApi.remove(removing.id)
+      if (selected?.id === removing.id) setSelected(null)
+      setNotice(removedMessage)
+      await loadData()
+    } catch (requestError) {
+      setError(getErrorMessage(requestError))
+    } finally {
+      inFlight.current = false
+      setRemoving(null)
+      setSaving(false)
+    }
+  }
+
+  async function restoreItem(item: StockItem) {
+    setError('')
+    setNotice('')
+    try {
+      await stockApi.restore(item.id)
+      await loadData()
+    } catch (requestError) {
+      setError(getErrorMessage(requestError))
+    }
+  }
+
+  async function activateItem(item: StockItem) {
+    setError('')
+    setNotice('')
+    try {
+      await stockApi.setActive(item.id, true)
+      await loadData()
+    } catch (requestError) {
+      setError(getErrorMessage(requestError))
+    }
+  }
 
   async function submitChange(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -92,6 +140,8 @@ export default function StockPage() {
       <div className={lowCount > 0 ? 'metric-warning' : ''}><span>ถึงหรือต่ำกว่าจุดเตือน</span><strong>{lowCount}</strong></div>
     </div>
     {error && <p className="admin-error" role="alert">{error}</p>}
+    {notice && <p className="admin-notice" role="status">{notice}</p>}
+    <ConfirmDialog open={removing !== null} title="ลบ/เก็บออกรายการสต็อก" description={`ต้องการนำ ${removing?.name ?? ''} ออกจากรายการใช้งานหรือไม่ รายการที่ไม่เคยมีประวัติและไม่มียอดคงเหลือจะถูกลบจริง ส่วนรายการอื่นจะถูกเก็บออกโดยประวัติยังอยู่`} busy={saving} onCancel={() => setRemoving(null)} onConfirm={() => void confirmRemove()} />
     <ConfirmDialog open={confirming} title="ยืนยันปรับยอดสต็อก" description={`ปรับ ${selected?.name ?? ''} จำนวน ${amount} ${selected?.unit ?? ''} เหตุผล: ${reason}`} busy={saving} onCancel={() => setConfirming(false)} onConfirm={() => void saveChange()} />
     <section className="admin-section">
       <div className="admin-section-heading"><h2>วัตถุดิบคงเหลือ</h2><span>{loading ? 'กำลังโหลด...' : `${items.length} รายการ`}</span></div>
@@ -105,7 +155,7 @@ export default function StockPage() {
           <td>{quantity(item.openingTargetStock)} {item.unit}</td>
           <td className={item.shortfall > 0 ? 'stock-low' : ''}>{quantity(item.shortfall)} {item.unit}</td>
           <td>{dateTime(item.updatedAt)}</td>
-          {canMoveStock && <td><div className="stock-actions"><button disabled={!item.active} title={item.active ? `รับเข้า ${item.name}` : 'รายการปิดใช้งาน'} onClick={() => { setSelected(item); setMode('IN'); setAmount(''); setReason('') }}>รับเข้า</button><button disabled={!item.active} title={item.active ? `ปรับยอด ${item.name}` : 'รายการปิดใช้งาน'} onClick={() => { setSelected(item); setMode('ADJUSTMENT'); setAmount(''); setReason('') }}>ปรับยอด</button></div></td>}
+          {canMoveStock && <td><div className="stock-actions"><button disabled={!item.active} title={item.active ? `รับเข้า ${item.name}` : 'รายการปิดใช้งาน'} onClick={() => { setSelected(item); setMode('IN'); setAmount(''); setReason('') }}>รับเข้า</button><button disabled={!item.active} title={item.active ? `ปรับยอด ${item.name}` : 'รายการปิดใช้งาน'} onClick={() => { setSelected(item); setMode('ADJUSTMENT'); setAmount(''); setReason('') }}>ปรับยอด</button>{isManager && !item.active && <button title={`เปิดใช้งาน ${item.name}`} onClick={() => void activateItem(item)}>เปิดใช้งาน</button>}{isManager && <button className="admin-danger-button" title={`ลบ/เก็บออก ${item.name}`} onClick={() => { setNotice(''); setRemoving(item) }}>ลบ/เก็บออก</button>}</div></td>}
         </tr>)}
           {!loading && items.length === 0 && <tr><td colSpan={canMoveStock ? 8 : 7} className="admin-empty">ยังไม่มีรายการสต็อก</td></tr>}
         </tbody>
@@ -122,6 +172,21 @@ export default function StockPage() {
         <label>เหตุผล<input maxLength={255} required value={reason} onChange={(event) => setReason(event.target.value)} placeholder={mode === 'IN' ? 'รับสินค้าจากผู้ขาย' : 'ปรับยอดตรวจนับหรือของเสีย'} /></label>
         <button className="admin-primary-button" disabled={saving}>{saving ? 'กำลังบันทึก...' : 'บันทึกรายการ'}</button>
       </form>
+    </section>}
+    {isManager && <section className="admin-section">
+      <div className="admin-section-heading"><h2>รายการที่เก็บออก</h2><span>{archived.length} รายการ</span></div>
+      <div className="admin-table-wrap"><table className="admin-table">
+        <thead><tr><th>วัตถุดิบ</th><th>รหัส</th><th>คงเหลือ</th><th>เก็บออกเมื่อ</th><th>รายการ</th></tr></thead>
+        <tbody>{archived.map((item) => <tr key={item.id}>
+          <td><strong>{item.name}</strong><span className="table-secondary">{item.unit}</span></td>
+          <td className="table-code">{item.sku}</td>
+          <td>{quantity(item.quantity)} {item.unit}</td>
+          <td>{item.archivedAt ? dateTime(item.archivedAt) : '—'}</td>
+          <td><button onClick={() => void restoreItem(item)}>กู้คืน</button></td>
+        </tr>)}
+          {!loading && archived.length === 0 && <tr><td colSpan={5} className="admin-empty">ไม่มีรายการที่เก็บออก</td></tr>}
+        </tbody>
+      </table></div>
     </section>}
     <section className="admin-section">
       <div className="admin-section-heading"><h2>ประวัติการเคลื่อนไหว</h2><span>รายการล่าสุดก่อน</span></div>
