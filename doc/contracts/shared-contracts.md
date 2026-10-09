@@ -10,7 +10,7 @@
 - วันเวลาที่ API ส่งออกใช้ ISO-8601 UTC พร้อม timezone เช่น `2026-10-07T08:09:10Z`
 - Enum ส่งผ่าน JSON เป็น uppercase string และไม่รับ lowercase
 - Field ที่ไม่ระบุว่า nullable ต้องมีค่า
-- Draft for review: [Resource Removal and History Contract](deletion-contract.md) proposes shared delete/archive/restore behavior; it is not approved for owner implementation yet. `active=false` remains distinct from archived.
+- Reviewed baseline: [Resource Removal and History Contract](deletion-contract.md) defines shared delete/archive/restore behavior and was approved in PR #41. Resource-specific implementation, schema/FK, migration, and public-acceptance gates remain separate. `active=false` remains distinct from archived.
 
 ## SessionContext
 
