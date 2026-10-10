@@ -1,19 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Button, Card, ConfirmDialog, DataTable, EmptyState, ErrorAlert, LoadingState, PageHeader, SelectField, TextField } from '../../components/common'
-import { deleteCategory, deleteMenuItem, getApiError, getBuffetPackages, getCategories, getMenuItems, saveCategory, saveMenuItem } from './api'
-import type { BuffetPackage, Category, MenuItem, MenuItemInput } from './api'
+import { deleteCategory, deleteMenuItem, getApiError, getBuffetPackages, getCategories, getMenuItems, getMenuStockUsage, getRecipeStocks, saveCategory, saveMenuItem } from './api'
+import type { BuffetPackage, Category, MenuItem, MenuItemInput, RecipeStockOption, StockUsageInput } from './api'
+import MenuStockUsageFields from './MenuStockUsageFields'
 import { MenuArchivePanel } from './MenuArchivePanel'
 import type { MenuRemovalGateway } from './MenuArchivePanel'
 import './ordering.css'
 
-interface ItemDraft { categoryId: number; name: string; description: string; available: boolean; packageIds: number[]; imageUrl: string }
-const emptyItem: ItemDraft = { categoryId: 0, name: '', description: '', available: true, packageIds: [], imageUrl: '' }
+interface ItemDraft { categoryId: number; name: string; description: string; available: boolean; packageIds: number[]; imageUrl: string; automaticStockDeduction: boolean; stockUsage: StockUsageInput[] }
+const emptyItem: ItemDraft = { categoryId: 0, name: '', description: '', available: true, packageIds: [], imageUrl: '', automaticStockDeduction: false, stockUsage: [] }
 
 export default function MenuAdminPage({ removalGateway }: { removalGateway?: MenuRemovalGateway }) {
   const [catalogView, setCatalogView] = useState<'working' | 'archived'>('working')
   const [categories, setCategories] = useState<Category[]>([]); const [items, setItems] = useState<MenuItem[]>([])
   const [packages, setPackages] = useState<BuffetPackage[]>([])
+  const [recipeStocks, setRecipeStocks] = useState<RecipeStockOption[]>([])
   const [page, setPage] = useState(0); const [totalPages, setTotalPages] = useState(0); const [total, setTotal] = useState(0)
   const [sort, setSort] = useState('id,asc')
   const [categoryName, setCategoryName] = useState(''); const [editingCategory, setEditingCategory] = useState<number | null>(null)
@@ -30,9 +32,10 @@ export default function MenuAdminPage({ removalGateway }: { removalGateway?: Men
     setLoading(true)
     setLoadError('')
     try {
-      const [nextCategories, nextPackages, nextItems] = await Promise.all([getCategories(), getBuffetPackages(true), getMenuItems(currentPage, 10, sort)])
+      const [nextCategories, nextPackages, nextItems, stocks] = await Promise.all([getCategories(), getBuffetPackages(true), getMenuItems(currentPage, 10, sort), getRecipeStocks()])
       if (request !== catalogRequest.current) return
       setCategories(nextCategories); setPackages(nextPackages); setItems(nextItems.content); setTotal(nextItems.totalElements); setTotalPages(nextItems.totalPages)
+      setRecipeStocks(stocks)
       setItemDraft((current) => nextCategories.some((category) => category.id === current.categoryId)
         ? current
         : { ...current, categoryId: nextCategories[0]?.id ?? 0 })
@@ -54,10 +57,21 @@ export default function MenuAdminPage({ removalGateway }: { removalGateway?: Men
   function submitItem(event: FormEvent) {
     event.preventDefault()
     if (!itemDraft.packageIds.length) { setMutationError('กรุณาเลือกแพ็กเกจอย่างน้อย 1 รายการ'); return }
+    if (itemDraft.automaticStockDeduction && (!itemDraft.stockUsage.length || itemDraft.stockUsage.some(entry => !recipeStocks.some(stock => stock.id === entry.stockItemId && stock.active) || entry.quantityPerServing <= 0))) {
+      setMutationError('กรุณาเลือกวัตถุดิบที่ใช้งานได้และปริมาณต่อเสิร์ฟอย่างน้อย 1 รายการ'); return
+    }
     const input: MenuItemInput = { categoryId: itemDraft.categoryId, name: itemDraft.name.trim(), description: itemDraft.description.trim() || null, available: itemDraft.available, packageIds: itemDraft.packageIds, imageUrl: itemDraft.imageUrl.trim() || null }
+    input.automaticStockDeduction = itemDraft.automaticStockDeduction
+    input.stockUsage = itemDraft.automaticStockDeduction ? itemDraft.stockUsage : []
     void run(async () => { await saveMenuItem(editingItem, input); await load(page); setEditingItem(null); setItemDraft({ ...emptyItem, categoryId: categories[0]?.id ?? 0 }); setNotice('บันทึกเมนูแล้ว') })
   }
-  function editItem(item: MenuItem) { setEditingItem(item.id); setItemDraft({ categoryId: item.categoryId, name: item.name, description: item.description ?? '', available: item.available, packageIds: item.packageIds, imageUrl: item.imageUrl ?? '' }); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  function editItem(item: MenuItem) { void run(async () => {
+    const recipe = await getMenuStockUsage(item.id)
+    setRecipeStocks(current => [...current, ...recipe.stockUsage.filter(entry => !current.some(stock => stock.id === entry.stockItemId)).map(entry => ({ id: entry.stockItemId, name: entry.stockItemName, unit: entry.unit, active: entry.active }))])
+    setEditingItem(item.id)
+    setItemDraft({ categoryId: item.categoryId, name: item.name, description: item.description ?? '', available: item.available, packageIds: item.packageIds, imageUrl: item.imageUrl ?? '', automaticStockDeduction: recipe.automaticStockDeduction, stockUsage: recipe.stockUsage.map(({ stockItemId, quantityPerServing }) => ({ stockItemId, quantityPerServing })) })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }) }
   function togglePackage(packageId: number) { setItemDraft((current) => ({ ...current, packageIds: current.packageIds.includes(packageId) ? current.packageIds.filter((id) => id !== packageId) : [...current.packageIds, packageId] })) }
   async function confirmDelete() { if (!deleteTarget) return; await run(async () => {
     const target = deleteTarget
@@ -81,7 +95,7 @@ export default function MenuAdminPage({ removalGateway }: { removalGateway?: Men
     {mutationError && <ErrorAlert message={mutationError} />}{notice && <div className="ordering-notice" role="status">{notice}</div>}
     <div className="admin-forms"><Card><h2>หมวดหมู่</h2><form className="admin-form" onSubmit={submitCategory}><TextField label="ชื่อหมวดหมู่" value={categoryName} maxLength={100} required onChange={(event) => setCategoryName(event.target.value)} /><div className="form-actions"><Button loading={busy} type="submit">{editingCategory ? 'บันทึกการแก้ไข' : 'เพิ่มหมวดหมู่'}</Button>{editingCategory && <Button variant="secondary" type="button" onClick={() => { setEditingCategory(null); setCategoryName('') }}>ยกเลิก</Button>}</div></form>
       {categories.length === 0 ? <EmptyState title="ยังไม่มีหมวดหมู่" /> : <ul className="category-list">{categories.map((entry) => <li key={entry.id}><span>{entry.name}</span><span><Button variant="ghost" size="sm" onClick={() => { setEditingCategory(entry.id); setCategoryName(entry.name) }}>แก้ไข</Button><Button variant="ghost" size="sm" onClick={() => setDeleteTarget({ kind: 'category', id: entry.id, label: entry.name })}>ลบ</Button></span></li>)}</ul>}</Card>
-      <Card><h2>{editingItem ? 'แก้ไขเมนู' : 'เพิ่มเมนู'}</h2><form className="admin-form" onSubmit={submitItem}><TextField label="ชื่อเมนู" value={itemDraft.name} maxLength={100} required onChange={(event) => setItemDraft({ ...itemDraft, name: event.target.value })} /><TextField label="รายละเอียดเมนู (ถ้ามี)" value={itemDraft.description} onChange={(event) => setItemDraft({ ...itemDraft, description: event.target.value })} /><SelectField label="หมวดหมู่" value={itemDraft.categoryId} required onChange={(event) => setItemDraft({ ...itemDraft, categoryId: Number(event.target.value) })}>{categories.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</SelectField><fieldset className="package-options"><legend>แพ็กเกจที่สั่งเมนูนี้ได้</legend>{packages.length ? packages.map((entry) => <label key={entry.id} className="checkbox-field"><input type="checkbox" checked={itemDraft.packageIds.includes(entry.id)} onChange={() => togglePackage(entry.id)} /> {entry.name}</label>) : <p>ยังไม่มีแพ็กเกจที่เปิดใช้งาน</p>}</fieldset><TextField label="URL ภาพเมนู (ถ้ามี)" value={itemDraft.imageUrl} onChange={(event) => setItemDraft({ ...itemDraft, imageUrl: event.target.value })} /><label className="checkbox-field"><input type="checkbox" checked={itemDraft.available} onChange={(event) => setItemDraft({ ...itemDraft, available: event.target.checked })} /> พร้อมให้สั่ง</label><div className="form-actions"><Button loading={busy} disabled={!categories.length || !packages.length}>บันทึกเมนู</Button>{editingItem && <Button variant="secondary" type="button" onClick={() => { setEditingItem(null); setItemDraft({ ...emptyItem, categoryId: categories[0]?.id ?? 0 }) }}>ยกเลิก</Button>}</div></form></Card></div>
+      <Card><h2>{editingItem ? 'แก้ไขเมนู' : 'เพิ่มเมนู'}</h2><form className="admin-form" onSubmit={submitItem}><TextField label="ชื่อเมนู" value={itemDraft.name} maxLength={100} required onChange={(event) => setItemDraft({ ...itemDraft, name: event.target.value })} /><TextField label="รายละเอียดเมนู (ถ้ามี)" value={itemDraft.description} onChange={(event) => setItemDraft({ ...itemDraft, description: event.target.value })} /><SelectField label="หมวดหมู่" value={itemDraft.categoryId} required onChange={(event) => setItemDraft({ ...itemDraft, categoryId: Number(event.target.value) })}>{categories.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</SelectField><fieldset className="package-options"><legend>แพ็กเกจที่สั่งเมนูนี้ได้</legend>{packages.length ? packages.map((entry) => <label key={entry.id} className="checkbox-field"><input type="checkbox" checked={itemDraft.packageIds.includes(entry.id)} onChange={() => togglePackage(entry.id)} /> {entry.name}</label>) : <p>ยังไม่มีแพ็กเกจที่เปิดใช้งาน</p>}</fieldset><MenuStockUsageFields enabled={itemDraft.automaticStockDeduction} usage={itemDraft.stockUsage} stocks={recipeStocks} disabled={busy || loading || Boolean(loadError)} onChange={(automaticStockDeduction, stockUsage) => setItemDraft({ ...itemDraft, automaticStockDeduction, stockUsage })} /><TextField label="URL ภาพเมนู (ถ้ามี)" value={itemDraft.imageUrl} onChange={(event) => setItemDraft({ ...itemDraft, imageUrl: event.target.value })} /><label className="checkbox-field"><input type="checkbox" checked={itemDraft.available} onChange={(event) => setItemDraft({ ...itemDraft, available: event.target.checked })} /> พร้อมให้สั่ง</label><div className="form-actions"><Button loading={busy} disabled={loading || Boolean(loadError) || !categories.length || !packages.length}>บันทึกเมนู</Button>{editingItem && <Button variant="secondary" type="button" onClick={() => { setEditingItem(null); setItemDraft({ ...emptyItem, categoryId: categories[0]?.id ?? 0 }) }}>ยกเลิก</Button>}</div></form></Card></div>
     <Card className="menu-table"><div className="section-title"><div><h2>รายการเมนู</h2><p>ทั้งหมด {total} รายการ</p></div><SelectField label="เรียงเมนู" value={sort} disabled={busy} onChange={(event) => changeSort(event.target.value)}><option value="id,asc">เพิ่มก่อน → หลัง</option><option value="name,asc">ชื่อ A → Z</option><option value="name,desc">ชื่อ Z → A</option><option value="available,desc">พร้อมสั่งก่อน</option></SelectField></div>{loading ? <LoadingState /> : items.length === 0 ? <EmptyState title="ยังไม่มีเมนู" description="เพิ่มหมวดหมู่และเมนูแรกได้จากแบบฟอร์มด้านบน" /> : <DataTable headers={['เมนู', 'หมวดหมู่', 'แพ็กเกจ', 'สถานะ', 'จัดการ']}>{items.map((item) => <tr key={item.id}><td><span className="table-menu-name">{item.imageUrl && <img src={item.imageUrl} alt="" />}{item.name}</span></td><td>{item.categoryName}</td><td>{item.packageIds.map((id) => packages.find((entry) => entry.id === id)?.name ?? `แพ็กเกจ #${id}`).join(', ')}</td><td>{item.available ? 'พร้อมสั่ง' : 'ปิดขาย'}</td><td><div className="table-actions"><Button size="sm" variant="secondary" onClick={() => editItem(item)}>แก้ไข</Button><Button size="sm" variant="ghost" onClick={() => setDeleteTarget({ kind: 'item', id: item.id, label: item.name })}>ลบ</Button></div></td></tr>)}</DataTable>}<div className="pagination"><Button variant="secondary" disabled={busy || page === 0} onClick={() => changePage(page - 1)}>ก่อนหน้า</Button><span>หน้า {page + 1} / {Math.max(1, totalPages)}</span><Button variant="secondary" disabled={busy || page + 1 >= totalPages} onClick={() => changePage(page + 1)}>ถัดไป</Button></div></Card>
     <ConfirmDialog open={Boolean(deleteTarget)} title={removalGateway ? 'ยืนยันการนำรายการออก' : 'ยืนยันการลบ'} description={removalGateway ? `นำ “${deleteTarget?.label ?? ''}” ออกจากรายการใช้งานใช่หรือไม่? รายการที่ไม่เคยใช้และไม่มีข้อมูลอ้างอิงจะถูกลบถาวร หากมีประวัติระบบจะเก็บรายการไว้และลูกค้าสั่งใหม่ไม่ได้ หมวดหมู่ที่ยังมีเมนูใช้งานอยู่ต้องย้ายหรือเก็บเมนูออกก่อน` : `ต้องการลบ “${deleteTarget?.label ?? ''}” ใช่หรือไม่`} busy={busy} onCancel={() => setDeleteTarget(null)} onConfirm={() => void confirmDelete()} />
     </>}

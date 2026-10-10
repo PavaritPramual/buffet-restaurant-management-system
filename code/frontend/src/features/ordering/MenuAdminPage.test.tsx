@@ -9,6 +9,8 @@ vi.mock('./api', async () => {
   const actual = await vi.importActual<typeof import('./api')>('./api')
   return {
     ...actual,
+    getRecipeStocks: vi.fn().mockResolvedValue([]),
+    getMenuStockUsage: vi.fn().mockResolvedValue({ automaticStockDeduction: false, stockUsage: [] }),
     getCategories: vi.fn(),
     getBuffetPackages: vi.fn(),
     getMenuItems: vi.fn(),
@@ -101,6 +103,40 @@ function mockCatalog() {
 }
 
 describe('MenuAdminPage', () => {
+  it('saves stock quantities per serving atomically with the menu and prevents an empty recipe', async () => {
+    mockCatalog()
+    vi.mocked(api.getRecipeStocks).mockResolvedValue([{ id: 20, name: 'หมู', unit: 'กิโลกรัม', active: true }])
+    vi.mocked(api.getMenuItems).mockResolvedValue({ content: [], page: 0, size: 10, totalElements: 0, totalPages: 0 })
+    vi.mocked(api.saveMenuItem).mockResolvedValue(menuItem)
+    render(<MenuAdminPage />)
+    await screen.findByLabelText('Standard')
+    fireEvent.change(screen.getByLabelText('ชื่อเมนู'), { target: { value: 'หมูสไลซ์' } })
+    fireEvent.click(screen.getByLabelText('Standard'))
+    fireEvent.change(screen.getByLabelText('การหักสต๊อก'), { target: { value: 'on' } })
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกเมนู' }))
+    expect(await screen.findByRole('alert')).toHaveProperty('textContent', 'กรุณาเลือกวัตถุดิบที่ใช้งานได้และปริมาณต่อเสิร์ฟอย่างน้อย 1 รายการ')
+    expect(api.saveMenuItem).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'เพิ่มวัตถุดิบ' }))
+    fireEvent.change(screen.getByLabelText('วัตถุดิบ 1'), { target: { value: '20' } })
+    fireEvent.change(screen.getByLabelText('ปริมาณต่อเสิร์ฟ 1 (กิโลกรัม)'), { target: { value: '0.100' } })
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกเมนู' }))
+    await waitFor(() => expect(api.saveMenuItem).toHaveBeenCalledWith(null, expect.objectContaining({ automaticStockDeduction: true, stockUsage: [{ stockItemId: 20, quantityPerServing: 0.1 }] })))
+    await screen.findByText('บันทึกเมนูแล้ว')
+    expect((screen.getByLabelText('การหักสต๊อก') as HTMLSelectElement).value).toBe('off')
+    vi.mocked(api.getRecipeStocks).mockResolvedValue([])
+  })
+
+  it('does not replace an existing recipe when loading it for edit fails', async () => {
+    mockCatalog()
+    vi.mocked(api.getMenuItems).mockResolvedValue({ content: [menuItem], page: 0, size: 10, totalElements: 1, totalPages: 1 })
+    vi.mocked(api.getMenuStockUsage).mockRejectedValueOnce({ response: { data: { message: 'โหลดสูตรไม่สำเร็จ' } } })
+    render(<MenuAdminPage />)
+    const row = (await screen.findByText('ไก่ทอด')).closest('tr')!
+    fireEvent.click(within(row).getByRole('button', { name: 'แก้ไข' }))
+    expect(await screen.findByRole('alert')).toHaveProperty('textContent', 'โหลดสูตรไม่สำเร็จ')
+    expect(screen.getByRole('heading', { name: 'เพิ่มเมนู' })).toBeTruthy()
+    expect(api.saveMenuItem).not.toHaveBeenCalled()
+  })
   it('resets pagination when sorting changes and sends the selected API sort', async () => {
     mockCatalog()
     vi.mocked(api.getMenuItems).mockResolvedValue({ content: [menuItem], page: 0, size: 10, totalElements: 11, totalPages: 2 })
@@ -246,7 +282,7 @@ describe('MenuAdminPage', () => {
     expect(menuRow).not.toBeNull()
     window.scrollTo = vi.fn()
     fireEvent.click(within(menuRow!).getByRole('button', { name: 'แก้ไข' }))
-    expect(screen.getByRole('heading', { name: 'แก้ไขเมนู' })).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: 'แก้ไขเมนู' })).toBeTruthy()
     fireEvent.click(within(menuRow!).getByRole('button', { name: 'ลบ' }))
     fireEvent.click(screen.getByRole('button', { name: 'ยืนยัน' }))
 

@@ -34,7 +34,8 @@ export type StockTransaction = {
   id: number
   stockItemId: number
   itemName: string
-  transactionType: 'IN' | 'ADJUSTMENT'
+  transactionType: 'IN' | 'ADJUSTMENT' | 'CONSUMPTION'
+  orderId?: number | null
   quantityDelta: number
   balanceAfter: number
   reason: string

@@ -15,3 +15,4 @@
 .menu-archive-panel > p { color: var(--color-muted); overflow-wrap: anywhere; }
 .menu-archive-panel .category-list li { flex-wrap: wrap; padding: 8px 0; }
 .menu-archive-panel .ui-table td { overflow-wrap: anywhere; }
+.recipe-row { display: grid; gap: var(--space-3, 0.75rem); margin-block: 1rem; }
