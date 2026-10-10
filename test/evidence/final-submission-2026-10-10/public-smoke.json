@@ -1,0 +1,26 @@
+[
+  {
+    "path": "/api/v1/system/health",
+    "contentType": [
+      "application/json"
+    ],
+    "checkedAt": "2026-10-10T18:04:55.6328855+07:00",
+    "status": 200
+  },
+  {
+    "path": "/v3/api-docs",
+    "contentType": [
+      "application/json"
+    ],
+    "checkedAt": "2026-10-10T18:05:09.1830765+07:00",
+    "status": 200
+  },
+  {
+    "path": "/swagger-ui/index.html",
+    "contentType": [
+      "text/html"
+    ],
+    "checkedAt": "2026-10-10T18:05:09.4844121+07:00",
+    "status": 200
+  }
+]
