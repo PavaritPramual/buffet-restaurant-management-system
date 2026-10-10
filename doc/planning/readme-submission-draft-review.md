@@ -1,3 +1,18 @@
+> รายงานส่วนเดิมด้านล่างเป็นประวัติการตรวจ Draft ก่อน PR #49 merge สถานะปัจจุบันอัปเดต 10 ตุลาคม 2026 ตามหัวข้อนี้
+
+## ผลตรวจล่าสุดสำหรับ README Final
+
+- [x] หน้าที่ทั้ง 5 คนระบุโมดูลที่เขียนโค้ดและหลักฐาน Layered Architecture/SOLID/Patterns/JPA/diagrams/tests ตามใบงานข้อ 12
+- [x] เปลี่ยน baseline เป็น develop 855a954 หลัง PR #49/#52 merge และเชื่อมรายงาน UAT/Swagger ทั้งสองรุ่น
+- [x] ใช้ ERD canonical ที่รวม V16–V19 และแก้ข้อความ V19 ที่ยังระบุไม่ apply ตาม startup evidence ของ PR #52
+- [x] ตรวจ Swagger public หลัง deploy: เมนู/ออเดอร์ประกาศ 201 พร้อม Location, ErrorResponse กลางถูกแก้, Execute Stock ไม่ login 401 และ health UP
+- [x] ลิงก์ใน README และ git diff --check ผ่าน
+- [ ] README review/merge เข้า develop
+- [ ] Release PR/main, owner Git audit และ Canva export/ซ้อมตามชุดส่งจริง
+
+[ผลตรวจ public รอบนี้และขอบเขต](../testing/readme-final-public-check-2026-10-10.md) ส่วน checklist เดิมด้านล่างคงเป็นประวัติ ห้ามอ่านเป็นสถานะปัจจุบัน
+
+---
 # README ฉบับส่งงาน — draft review
 
 ตรวจและจัดทำ 10 ตุลาคม 2026 โดยปวริศช์ เป็นฉบับร่างในเครื่อง ยังไม่ commit/push และไม่เปลี่ยนโค้ด/schema/deployment

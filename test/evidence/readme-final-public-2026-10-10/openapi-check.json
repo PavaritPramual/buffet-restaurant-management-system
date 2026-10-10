@@ -1,0 +1,78 @@
+{
+  "CheckedAt": "2026-10-10T14:40:26.2869825+07:00",
+  "Menu": {
+    "201": {
+      "description": "Menu item created",
+      "headers": {
+        "Location": {
+          "description": "Relative URI of the created resource",
+          "style": "simple",
+          "schema": {
+            "type": "string",
+            "format": "uri-reference",
+            "example": "/api/v1/menu-items/123"
+          }
+        }
+      },
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/MenuItemResponse"
+          }
+        }
+      }
+    }
+  },
+  "Order": {
+    "201": {
+      "description": "Customer order created with RECEIVED status",
+      "headers": {
+        "Location": {
+          "description": "Relative URI of the created resource",
+          "style": "simple",
+          "schema": {
+            "type": "string",
+            "format": "uri-reference",
+            "example": "/api/v1/dining-sessions/123/orders/456"
+          }
+        }
+      },
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/OrderResponse"
+          }
+        }
+      }
+    }
+  },
+  "Error": {
+    "type": "object",
+    "description": "Standard error body returned for API failures",
+    "properties": {
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "UTC time when the error was created",
+        "example": "2026-10-07T08:09:10Z"
+      },
+      "status": {
+        "type": "integer",
+        "format": "int32",
+        "description": "HTTP status code"
+      },
+      "error": {
+        "type": "string",
+        "description": "HTTP reason phrase"
+      },
+      "message": {
+        "type": "string",
+        "description": "Human-readable error message"
+      },
+      "path": {
+        "type": "string",
+        "description": "Request path"
+      }
+    }
+  }
+}

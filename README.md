@@ -141,24 +141,24 @@ Enterprise Patterns ครบตามการออกแบบ: **Layered Arc
 | Strategy | `BillingEngine`, `BillCalculationStrategy`, `DiscountCalculationStrategy` แยกสูตรราคา/ส่วนลดจาก Payment | [source](doc/diagrams/class-billing-strategy.puml) / [ภาพ](doc/diagrams/previews/class-billing-strategy.svg) |
 | Template Method | `StockTransactionTemplate`, `StockInProcessor`, `StockAdjustmentProcessor` ใช้ workflow ยอดและ audit ร่วมกัน | [source](doc/diagrams/class-stock-template.puml) / [ภาพ](doc/diagrams/previews/class-stock-template.svg) |
 
-การเพิ่มสถานะธุรกิจยังต้องทบทวน enum, transitions, API/UI และสิทธิ์ร่วมกัน ส่วน consumption processor เป็น extension ใน PR #49 ที่ยังรอรับรอง
+การเพิ่มสถานะธุรกิจยังต้องทบทวน enum, transitions, API/UI และสิทธิ์ร่วมกัน ส่วน StockConsumptionProcessor ขยาย Template Method เดิมสำหรับการหักวัตถุดิบตามสูตรใน PR #49 ที่ merge แล้ว
 
 ## Database Design (ER Diagram)
 
-![ER Diagram snapshot V1-V15 ที่ยังเก็บอยู่ใน develop c778150](img/readme/er-diagram-develop.svg)
+![ER Diagram รวมสูตรเมนู สูตรออเดอร์ และประวัติสต๊อกถึง V19](doc/diagrams/previews/er-diagram.svg)
 
-*[เปิด ERD เต็ม](img/readme/er-diagram-develop.svg) · [Data Dictionary baseline](doc/database/step2-schema-approved.md) · [JPA/FK/cascade/fetch rationale](doc/architecture/jpa-entity-rationale.md) · [Migration files](code/backend/src/main/resources/db/migration)*
+*[เปิด ERD เต็ม](doc/diagrams/previews/er-diagram.svg) · [Data Dictionary baseline](doc/database/step2-schema-approved.md) · [JPA/FK/cascade/fetch rationale](doc/architecture/jpa-entity-rationale.md) · [Migration files](code/backend/src/main/resources/db/migration)*
 
-**สถานะภาพ:** ERD ใน develop ยังติดชื่อ V1–V15 และไม่แสดง archive columns ของ V16–V18 ครบ จึงใช้เป็นภาพโครงความสัมพันธ์พร้อม delta links ด้านล่าง [ERD ที่รวม V16–V18 และ V19 ที่เสนอ](doc/diagrams/previews/er-diagram.svg) / [source](doc/diagrams/er-diagram.puml) อยู่ใน PR #49 ยังรอรับรอง ต้อง refresh ภาพก่อนรุ่นส่ง ไม่ใช้ภาพเก่าอ้างว่า schema ปัจจุบันมีเพียง V15
+**สถานะภาพ:** ใช้ [ERD source](doc/diagrams/er-diagram.puml) และ preview จาก PR #49 ที่ merge แล้ว ครอบคลุม archive deltas V16–V18 และสูตรเมนู/สูตรออเดอร์ V19 ภาพ V15 ใน `img/readme/` เก็บเป็นประวัติที่ระบุ revision ใน manifest
 
 - **One-to-One** — `UserAccount` กับ `UserProfile` ใช้ shared primary key; DiningSession กับ Payment เป็น domain 1:0..1 โดย FK/UNIQUE ที่ DB ไม่ใช่ JPA association ทั้งสองฝั่ง
 - **One-to-Many** — `CustomerOrder` กับ `OrderItem`; order เป็น parent, item ถือ FK และเก็บชื่ออาหาร snapshot
 - **Many-to-Many** — Menu กับ Package ผ่าน `package_menu_items` ฝั่ง JPA เก็บ package IDs เป็น ElementCollection ไม่ใช่ bidirectional `@ManyToMany`
 - Session อ้าง Table/Package/Soup แบบ LAZY ไม่มี cascade ลบข้อมูลหลัก; `package_price_at_open` รักษาราคาของรอบเดิม
 
-Repo baseline มี V1–V18; V16–V18 เพิ่มการเก็บออกตาม [Stock/User delta](doc/database/r01c-stock-user-archive.md), [Table/Package/Soup delta](doc/database/pavarit-r01-b-schema-delta.md) และ migration V18 ของ Menu/Category สถานะ read-only กลางก่อนงานนี้พบ V1–V18 success **ไม่ใช่ checksum/JPA validation ของรุ่นส่ง**
+Repository มี migrations V1–V19 โดย V16–V18 เพิ่มการเก็บออกตาม [Stock/User delta](doc/database/r01c-stock-user-archive.md), [Table/Package/Soup delta](doc/database/pavarit-r01-b-schema-delta.md) และ V18 ของ Menu/Category
 
-V19 อยู่ใน PR #49: [สูตรปัจจุบัน/สูตร Order และ CONSUMPTION](doc/database/menu-stock-consumption-v19.md) ยังไม่ apply กลาง Flyway รัน pending migrations ตอน startup ตาม config ห้ามแก้ applied files หรือ `repair` เพื่อให้ผ่านเฉย ๆ
+V19 เพิ่ม [สูตรปัจจุบัน/สูตร Order และ CONSUMPTION](doc/database/menu-stock-consumption-v19.md) หลักฐาน startup log และ public UAT ของ PR #52 ระบุ validate 19 migrations, schema version 19 และ JPA เริ่มสำเร็จ ดู [รายงานและขอบเขตหลักฐาน](test/evidence/uat-buffet-2026-10-10/report.md) Flyway ใช้ประวัติ/checksum ตรวจ migration ที่ apply แล้ว ห้ามแก้ไฟล์ย้อนหลังหรือ repair เพื่อให้ผ่านเฉย ๆ
 
 ## Installation & Setup
 
@@ -275,6 +275,9 @@ npm run build
 | [Public UAT + Swagger](doc/testing/pavarit-public-uat-2026-10-10.md) | baseline develop `c778150`; Render 10 ต.ค. | Core Flow ถึง PAID/close; 78/78 operations ถูกเรียก รวม validation/permission checks ไม่ใช่ happy path ทุก CRUD; backend deployed SHA ยังรอหลักฐาน |
 | [PR #49 regression](doc/testing/pavarit-menu-stock-report-2026-10-10.md) | head `c92a282`; H2/PG แยกและ local browser | backend429, frontend185, guards6 ผ่าน; browser feature5/CoreFlow16/StockProfile8 ผ่าน; lint5 warningsเดิม; buildผ่าน |
 | [CI PR #49](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/38018109842) | `c92a282`, CI Java17/Node24 | Backend/PostgreSQL และ Frontend tests/lint/build ผ่าน ไม่ใช่ผล deploy หรือ Final release |
+| [Public stock UAT + Swagger PR #52](test/evidence/uat-buffet-2026-10-10/report.md) | Render `af2b45b`, 10 ต.ค. | สูตร snapshot, หักครั้งเดียว, shortage rollback และ role checks ผ่านตามขอบเขตรายงาน; V19/JPA จาก startup log เจ้าของระบบ |
+| [Swagger correction PR #52](test/evidence/pr52-swagger-fix-2026-10-10/report.md) | local `1823c7f`, H2 ใหม่ | 58 tests ผ่าน; OpenAPI create 201/Location และ ErrorResponse ผ่าน local; public Swagger หลัง deploy ตรวจ 201/Location และ ErrorResponse ผ่านตามรายงานล่าสุด |
+| [ตรวจ README/public ล่าสุด](doc/testing/readme-final-public-check-2026-10-10.md) | code baseline `855a954`, 10 ต.ค. | ตรวจหน้าที่ตามโจทย์ ลิงก์และ schema/diagram references; public Swagger/OpenAPI และ health ผ่านหลัง cold start; Execute Stock ไม่ login ตอบ 401 ถูกต้อง |
 
 [Test Plan](doc/testing/test-plan.md) · [Requirement–Test Traceability](doc/testing/requirement-test-traceability.md) · [รายงานและภาพ](test/evidence/menu-stock-v19-2026-10-10/)
 
@@ -290,7 +293,7 @@ Render Web Service เสิร์ฟ React และ `/api/v1` จาก origin
 
 [Deployment Diagram — design](doc/diagrams/previews/deployment-production-design.svg) / [source](doc/diagrams/deployment-production-design.puml) · [runtime evidence ตามวันที่ตรวจ](doc/diagrams/deployment-production-runtime.md) · [Deploy/redeploy/rollback runbook](doc/deployment/production-runbook.md)
 
-URL นี้ใช้ใน public UAT วันที่ 10 ต.ค. Frontend bytes ตรง baseline `c778150` แต่ยังไม่มี backend SHA readback ที่รับรองในรายงาน ไม่ใช้ URL ที่เปิดได้แทนการรับรอง release Render Free อาจ cold start และ staff HTTP sessions ต้อง login ใหม่หลัง restart; customer grant อยู่ DB พร้อมตรวจอายุ/สถานะทุกคำขอ ผล elapsed TTL, cold start และ persistence ต้องแนบตามรุ่นส่ง
+Public UAT วันที่ 10 ต.ค. มีหลักฐาน Core Flow รุ่นก่อน และสูตรสต๊อกบน `af2b45b` พร้อม Render/startup evidence ใน PR #52 ผู้ใช้ยืนยัน deploy develop ล่าสุดแล้ว ส่วนผล public smoke รอบ README บันทึกใน [รายงานตรวจล่าสุด](doc/testing/readme-final-public-check-2026-10-10.md) Render Free อาจ cold start; staff HTTP sessions ต้อง login ใหม่หลัง restart ส่วน customer grant อยู่ DB และตรวจอายุ/สถานะทุกคำขอ
 
 Merge ไม่ใช่ deploy ถ้าแอปเปิด Flyway ตอน startup การ deploy อาจ apply pending migrations จึงต้องอนุมัติ schema ก่อน deploy รุ่นที่เพิ่ม migration
 
@@ -329,7 +332,7 @@ JUnit tests อยู่ `code/backend/src/test/` และ Vitest tests อย�
 | Class + Patterns | [Diagram index](doc/diagrams/README.md), [Pattern analysis](doc/design-patterns.md) |
 | Sequence อย่างน้อย 3 scenario | [เปิดรอบ](doc/diagrams/sequence-open-session.puml), [แลก QR](doc/diagrams/sequence-qr-exchange.puml), [สั่ง/ครัว](doc/diagrams/sequence-ordering-kitchen.puml), [ชำระ/close](doc/diagrams/sequence-billing-payment.puml) พร้อม preview ใน index |
 | Activity | [Customer](doc/diagrams/activity-customer-ordering.puml), [Kitchen](doc/diagrams/activity-kitchen.puml), [Payment/close](doc/diagrams/activity-payment-close.puml), [Stock](doc/diagrams/activity-stock.puml) |
-| ERD / Dictionary / JPA | [ERD](img/readme/er-diagram-develop.svg), [Dictionary](doc/database/step2-schema-approved.md), [JPA rationale](doc/architecture/jpa-entity-rationale.md), [forward deltas](doc/database/) |
+| ERD / Dictionary / JPA | [ERD](doc/diagrams/previews/er-diagram.svg), [Dictionary](doc/database/step2-schema-approved.md), [JPA rationale](doc/architecture/jpa-entity-rationale.md), [forward deltas](doc/database/) |
 | Component / Deployment / State | [Component](img/readme/component-develop.svg), [Deployment](doc/diagrams/deployment-production-design.puml), [Order State](doc/diagrams/state-order.puml) |
 | SOLID S/O/L/I/D | [ไฟล์/บรรทัดและเหตุผล](doc/solid-analysis.md), [เอกสารโมดูล](doc/architecture/) |
 | API / Tests | [Swagger](https://buffet-restaurant-management.onrender.com/swagger-ui.html), [Test Plan](doc/testing/test-plan.md), [Traceability](doc/testing/requirement-test-traceability.md), [Evidence](test/evidence/) |
