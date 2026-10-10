@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +72,7 @@ class OpenApiContractIntegrationTest {
                 new ApiResponseRef("/api/v1/orders/{id}/status", "patch", "401"),
                 new ApiResponseRef("/api/v1/orders/{id}/status", "patch", "403"),
                 new ApiResponseRef("/api/v1/orders/{id}/status", "patch", "404"),
+                new ApiResponseRef("/api/v1/orders/{id}/status", "patch", "409"),
                 new ApiResponseRef("/api/v1/payments/sessions/{sessionId}", "get", "400"),
                 new ApiResponseRef("/api/v1/payments/sessions/{sessionId}", "get", "401"),
                 new ApiResponseRef("/api/v1/payments/sessions/{sessionId}", "get", "403"),
@@ -137,6 +140,60 @@ class OpenApiContractIntegrationTest {
         mockMvc.perform(get("/api/v1/auth/me"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().string(""));
+    }
+
+    @Test
+    void documentsCreatedResponsesAndLocationHeaders() throws Exception {
+        JsonNode api = readApiDocs();
+        assertCreatedResponse(api, "/api/v1/menu-items", "MenuItemResponse", "/api/v1/menu-items/123");
+        assertCreatedResponse(api, "/api/v1/dining-sessions/{sessionId}/orders", "OrderResponse",
+                "/api/v1/dining-sessions/123/orders/456");
+    }
+
+    @Test
+    void sharedErrorsPreserveFieldsWithoutOperationSpecificExamples() throws Exception {
+        JsonNode api = readApiDocs();
+        JsonNode schema = api.path("components").path("schemas").path("ErrorResponse");
+        JsonNode properties = schema.path("properties");
+        Set<String> fields = new HashSet<>();
+        properties.fieldNames().forEachRemaining(fields::add);
+        Assertions.assertEquals(Set.of("timestamp", "status", "error", "message", "path"), fields);
+        Assertions.assertEquals("integer", properties.path("status").path("type").asText());
+        for (String field : List.of("error", "message", "path")) {
+            Assertions.assertEquals("string", properties.path(field).path("type").asText());
+        }
+        Assertions.assertEquals("date-time", properties.path("timestamp").path("format").asText());
+        Assertions.assertFalse(schema.has("example"), "Shared errors must not imply a specific operation");
+        for (String field : List.of("status", "error", "message", "path")) {
+            Assertions.assertFalse(properties.path(field).has("example"),
+                    "Shared " + field + " example would apply incorrectly to other statuses/operations");
+        }
+        // These operations previously rendered the Billing 400 example under unrelated errors.
+        for (ApiResponseRef response : List.of(
+                new ApiResponseRef("/api/v1/stock", "get", "401"),
+                new ApiResponseRef("/api/v1/stock", "get", "403"),
+                new ApiResponseRef("/api/v1/stock/items", "post", "409"),
+                new ApiResponseRef("/api/v1/orders/incoming", "get", "401"),
+                new ApiResponseRef("/api/v1/orders/incoming", "get", "403"),
+                new ApiResponseRef("/api/v1/orders/{id}/status", "patch", "409"))) {
+            assertErrorResponseSchema(api, response);
+            JsonNode content = api.path("paths").path(response.path()).path(response.method())
+                    .path("responses").path(response.code()).path("content");
+            for (JsonNode mediaType : content) {
+                Assertions.assertFalse(mediaType.has("example") || mediaType.has("examples"),
+                        "Generic responses should use neutral schema samples: " + response);
+            }
+        }
+    }
+
+    private static void assertCreatedResponse(JsonNode api, String path, String schemaName, String locationExample) {
+        JsonNode responses = api.path("paths").path(path).path("post").path("responses");
+        Assertions.assertFalse(responses.has("200"), "Create must document runtime 201, not default 200: " + path);
+        assertResponseSchema(api, path, "post", "201", schemaName);
+        JsonNode location = responses.path("201").path("headers").path("Location").path("schema");
+        Assertions.assertEquals("string", location.path("type").asText(), path + " Location type");
+        Assertions.assertEquals("uri-reference", location.path("format").asText(), path + " Location format");
+        Assertions.assertEquals(locationExample, location.path("example").asText(), path + " Location example");
     }
 
     private JsonNode readApiDocs() throws Exception {

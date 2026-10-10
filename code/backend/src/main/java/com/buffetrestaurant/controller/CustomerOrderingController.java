@@ -8,6 +8,10 @@ import com.buffetrestaurant.dto.response.OrderResponse;
 import com.buffetrestaurant.service.CustomerOrderingService;
 import com.buffetrestaurant.service.impl.CustomerSessionAccessService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -45,6 +49,10 @@ public class CustomerOrderingController {
     @PostMapping("/dining-sessions/{sessionId}/orders")
     @Operation(summary = "Place a customer order with initial RECEIVED status",
             description = "Requires the customer_session cookie and an allowed Origin")
+    @ApiResponse(responseCode = "201", description = "Customer order created with RECEIVED status",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderResponse.class)),
+            headers = @Header(name = "Location", description = "Relative URI of the created resource",
+                    schema = @Schema(type = "string", format = "uri-reference", example = "/api/v1/dining-sessions/123/orders/456")))
     public ResponseEntity<OrderResponse> place(@PathVariable Long sessionId,
                                                @CookieValue(name = CustomerSessionAccessService.COOKIE_NAME, required = false)
                                                String token,
