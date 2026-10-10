@@ -37,6 +37,16 @@ public class MenuStockUsageServiceImpl implements MenuStockUsageService {
                 throw new BusinessRuleException("Recipe quantity must be positive with at most three decimal places");
             if (sorted.putIfAbsent(entry.stockItemId(), entry) != null) throw new BusinessRuleException("Duplicate stock item in recipe");
         }
+        // A manager may edit menu presentation while preserving a historical recipe whose stock is now inactive.
+        // Revalidate stock availability only when the recipe itself changes.
+        var existing = item.getStockUsage();
+        boolean unchangedRecipe = item.isAutomaticStockDeduction()
+                && existing.size() == sorted.size()
+                && existing.stream().allMatch(usage -> {
+                    var entry = sorted.get(usage.getStockItemId());
+                    return entry != null && entry.quantityPerServing().compareTo(usage.getQuantityPerServing()) == 0;
+                });
+        if (unchangedRecipe) return;
         List<MenuStockUsage> recipe = new ArrayList<>();
         for (var entry : sorted.values()) {
             StockItem stock = stocks.findByIdForUpdate(entry.stockItemId()).orElseThrow(() -> new ResourceNotFoundException("Stock item not found: " + entry.stockItemId()));

@@ -137,6 +137,26 @@ describe('MenuAdminPage', () => {
     expect(screen.getByRole('heading', { name: 'เพิ่มเมนู' })).toBeTruthy()
     expect(api.saveMenuItem).not.toHaveBeenCalled()
   })
+
+  it('allows editing menu details while preserving a recipe with inactive stock', async () => {
+    mockCatalog()
+    vi.mocked(api.getRecipeStocks).mockResolvedValue([])
+    vi.mocked(api.getMenuItems).mockResolvedValue({ content: [menuItem], page: 0, size: 10, totalElements: 1, totalPages: 1 })
+    vi.mocked(api.getMenuStockUsage).mockResolvedValue({ automaticStockDeduction: true, stockUsage: [{ stockItemId: 20, stockItemName: 'หมู', unit: 'กิโลกรัม', quantityPerServing: 0.1, active: false }] })
+    vi.mocked(api.saveMenuItem).mockResolvedValue(menuItem)
+
+    render(<MenuAdminPage />)
+    const row = (await screen.findByText('ไก่ทอด')).closest('tr')!
+    fireEvent.click(within(row).getByRole('button', { name: 'แก้ไข' }))
+    await screen.findByRole('heading', { name: 'แก้ไขเมนู' })
+    fireEvent.change(screen.getByLabelText('ชื่อเมนู'), { target: { value: 'ไก่ทอดสูตรเดิม' } })
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกเมนู' }))
+
+    await waitFor(() => expect(api.saveMenuItem).toHaveBeenCalledWith(10, expect.objectContaining({
+      name: 'ไก่ทอดสูตรเดิม', automaticStockDeduction: true,
+      stockUsage: [{ stockItemId: 20, quantityPerServing: 0.1 }],
+    })))
+  })
   it('resets pagination when sorting changes and sends the selected API sort', async () => {
     mockCatalog()
     vi.mocked(api.getMenuItems).mockResolvedValue({ content: [menuItem], page: 0, size: 10, totalElements: 11, totalPages: 2 })

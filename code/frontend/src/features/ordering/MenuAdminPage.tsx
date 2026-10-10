@@ -25,6 +25,7 @@ export default function MenuAdminPage({ removalGateway }: { removalGateway?: Men
   const [notice, setNotice] = useState(''); const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true)
   const catalogRequest = useRef(0)
   const mutationInFlight = useRef(false)
+  const originalRecipe = useRef('')
   const invalidateCatalog = useCallback(() => { ++catalogRequest.current }, [])
 
   const load = useCallback(async (currentPage: number) => {
@@ -57,7 +58,9 @@ export default function MenuAdminPage({ removalGateway }: { removalGateway?: Men
   function submitItem(event: FormEvent) {
     event.preventDefault()
     if (!itemDraft.packageIds.length) { setMutationError('กรุณาเลือกแพ็กเกจอย่างน้อย 1 รายการ'); return }
-    if (itemDraft.automaticStockDeduction && (!itemDraft.stockUsage.length || itemDraft.stockUsage.some(entry => !recipeStocks.some(stock => stock.id === entry.stockItemId && stock.active) || entry.quantityPerServing <= 0))) {
+    const recipeSignature = (enabled: boolean, usage: StockUsageInput[]) => JSON.stringify({ enabled, usage: [...usage].sort((a, b) => a.stockItemId - b.stockItemId) })
+    const unchangedRecipe = editingItem !== null && recipeSignature(itemDraft.automaticStockDeduction, itemDraft.stockUsage) === originalRecipe.current
+    if (itemDraft.automaticStockDeduction && (!itemDraft.stockUsage.length || itemDraft.stockUsage.some(entry => (!recipeStocks.some(stock => stock.id === entry.stockItemId && stock.active) && !unchangedRecipe) || entry.quantityPerServing <= 0))) {
       setMutationError('กรุณาเลือกวัตถุดิบที่ใช้งานได้และปริมาณต่อเสิร์ฟอย่างน้อย 1 รายการ'); return
     }
     const input: MenuItemInput = { categoryId: itemDraft.categoryId, name: itemDraft.name.trim(), description: itemDraft.description.trim() || null, available: itemDraft.available, packageIds: itemDraft.packageIds, imageUrl: itemDraft.imageUrl.trim() || null }
@@ -69,7 +72,9 @@ export default function MenuAdminPage({ removalGateway }: { removalGateway?: Men
     const recipe = await getMenuStockUsage(item.id)
     setRecipeStocks(current => [...current, ...recipe.stockUsage.filter(entry => !current.some(stock => stock.id === entry.stockItemId)).map(entry => ({ id: entry.stockItemId, name: entry.stockItemName, unit: entry.unit, active: entry.active }))])
     setEditingItem(item.id)
-    setItemDraft({ categoryId: item.categoryId, name: item.name, description: item.description ?? '', available: item.available, packageIds: item.packageIds, imageUrl: item.imageUrl ?? '', automaticStockDeduction: recipe.automaticStockDeduction, stockUsage: recipe.stockUsage.map(({ stockItemId, quantityPerServing }) => ({ stockItemId, quantityPerServing })) })
+    const stockUsage = recipe.stockUsage.map(({ stockItemId, quantityPerServing }) => ({ stockItemId, quantityPerServing }))
+    originalRecipe.current = JSON.stringify({ enabled: recipe.automaticStockDeduction, usage: [...stockUsage].sort((a, b) => a.stockItemId - b.stockItemId) })
+    setItemDraft({ categoryId: item.categoryId, name: item.name, description: item.description ?? '', available: item.available, packageIds: item.packageIds, imageUrl: item.imageUrl ?? '', automaticStockDeduction: recipe.automaticStockDeduction, stockUsage })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }) }
   function togglePackage(packageId: number) { setItemDraft((current) => ({ ...current, packageIds: current.packageIds.includes(packageId) ? current.packageIds.filter((id) => id !== packageId) : [...current.packageIds, packageId] })) }

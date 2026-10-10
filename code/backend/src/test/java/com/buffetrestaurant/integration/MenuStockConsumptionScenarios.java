@@ -122,8 +122,13 @@ abstract class MenuStockConsumptionScenarios {
         mvc.perform(get("/api/v1/menu-items/"+menu+"/stock-usage").session(kitchen).header("X-User-Role","MANAGER")).andExpect(status().isForbidden());
         mvc.perform(get("/api/v1/menu-items/"+menu+"/stock-usage").session(manager)).andExpect(status().isOk()).andExpect(jsonPath("$.stockUsage[0].unit").value("กิโลกรัม"));
         jdbc.update("UPDATE stock_items SET active=false WHERE id=?",ID);
-        mvc.perform(put("/api/v1/menu-items/"+menu).session(manager).contentType(MediaType.APPLICATION_JSON).content(menuBody("Changed",true,recipe("0.2")))).andExpect(status().isConflict());
-        assertThat(jdbc.queryForObject("SELECT name FROM menu_items WHERE id=?",String.class,menu)).isEqualTo("Valid");
+        mvc.perform(put("/api/v1/menu-items/"+menu).session(manager).contentType(MediaType.APPLICATION_JSON).content(menuBody("Changed",true,recipe("0.1"))))
+                .andExpect(status().isOk());
+        assertThat(jdbc.queryForObject("SELECT name FROM menu_items WHERE id=?",String.class,menu)).isEqualTo("Changed");
+        assertThat(jdbc.queryForObject("SELECT quantity_per_serving FROM menu_stock_usage WHERE menu_item_id=?",BigDecimal.class,menu)).isEqualByComparingTo("0.1");
+        mvc.perform(put("/api/v1/menu-items/"+menu).session(manager).contentType(MediaType.APPLICATION_JSON).content(menuBody("Changed again",true,recipe("0.2"))))
+                .andExpect(status().isConflict());
+        assertThat(jdbc.queryForObject("SELECT name FROM menu_items WHERE id=?",String.class,menu)).isEqualTo("Changed");
     }
     @Test void referencesProtectStockUnitAndArchiveInsteadOfHardDelete() throws Exception {
         long menu=create("Referenced",recipe("0.1")); order(menu,1);
