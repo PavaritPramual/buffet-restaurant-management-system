@@ -30,6 +30,7 @@ export default function MenuAdminPage({ removalGateway }: { removalGateway?: Men
   const mutationInFlight = useRef(false)
   const originalRecipe = useRef('')
   const invalidateCatalog = useCallback(() => { ++catalogRequest.current }, [])
+  const invalidateRecipeStockRequest = useCallback(() => { ++recipeStockRequest.current }, [])
   const loadRecipeStocks = useCallback(async () => {
     const request = ++recipeStockRequest.current
     setRecipeStockLoading(true)
@@ -69,8 +70,8 @@ export default function MenuAdminPage({ removalGateway }: { removalGateway?: Men
     // Stock choices are independent from catalog availability.
     // oxlint-disable-next-line react/set-state-in-effect
     void loadRecipeStocks()
-    return () => { ++recipeStockRequest.current }
-  }, [loadRecipeStocks])
+    return invalidateRecipeStockRequest
+  }, [invalidateRecipeStockRequest, loadRecipeStocks])
   function changePage(nextPage: number) { if (nextPage === page) return; invalidateCatalog(); setLoading(true); setPage(nextPage) }
   function changeSort(nextSort: string) { if (nextSort === sort) return; invalidateCatalog(); setLoading(true); setPage(0); setSort(nextSort) }
   function retryLoad() { void load(page) }
