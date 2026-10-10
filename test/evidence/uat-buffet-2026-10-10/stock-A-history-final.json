@@ -1,0 +1,38 @@
+[
+  {
+    "id": 14,
+    "stockItemId": 6,
+    "itemName": "UAT261010TEERAMET วัตถุดิบสูตรสำเร็จ",
+    "transactionType": "CONSUMPTION",
+    "quantityDelta": -0.5,
+    "balanceAfter": 2.3,
+    "reason": "ใช้วัตถุดิบสำหรับออเดอร์ #11",
+    "actorUsername": "kitchenTeera",
+    "createdAt": "2026-10-10T05:33:37.175587Z",
+    "orderId": 11
+  },
+  {
+    "id": 13,
+    "stockItemId": 6,
+    "itemName": "UAT261010TEERAMET วัตถุดิบสูตรสำเร็จ",
+    "transactionType": "CONSUMPTION",
+    "quantityDelta": -0.2,
+    "balanceAfter": 2.8,
+    "reason": "ใช้วัตถุดิบสำหรับออเดอร์ #7",
+    "actorUsername": "kitchenTeera",
+    "createdAt": "2026-10-10T05:31:19.683390Z",
+    "orderId": 7
+  },
+  {
+    "id": 11,
+    "stockItemId": 6,
+    "itemName": "UAT261010TEERAMET วัตถุดิบสูตรสำเร็จ",
+    "transactionType": "IN",
+    "quantityDelta": 3,
+    "balanceAfter": 3,
+    "reason": "UAT261010TEERAMET รับเข้าทดสอบสูตรสำเร็จ",
+    "actorUsername": "Manager",
+    "createdAt": "2026-10-10T05:13:54.688450Z",
+    "orderId": null
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "timestamp": "2026-10-10T05:32:53.815514169Z",
+  "status": 409,
+  "error": "Conflict",
+  "message": "เริ่มทำไม่ได้: UAT261010TEERAMET วัตถุดิบไม่พอ ต้องใช้ 0.200 kg มี 0.050",
+  "path": "/api/v1/orders/8/status"
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "orderId": 11,
+    "sessionId": 15,
+    "tableNumber": "UAT261010TEERA",
+    "items": [
+      {
+        "menuItemId": 44,
+        "name": "UAT261010TEERAMET สูตรสำเร็จ",
+        "quantity": 2
+      }
+    ],
+    "status": "PREPARING",
+    "createdAt": "2026-10-10T05:30:50.530507Z"
+  },
+  {
+    "orderId": 10,
+    "sessionId": 15,
+    "tableNumber": "UAT261010TEERA",
+    "items": [
+      {
+        "menuItemId": 46,
+        "name": "UAT261010TEERAMET สต๊อกไม่พอ",
+        "quantity": 2
+      }
+    ],
+    "status": "RECEIVED",
+    "createdAt": "2026-10-10T05:28:02.225676Z"
+  },
+  {
+    "orderId": 9,
+    "sessionId": 15,
+    "tableNumber": "UAT261010TEERA",
+    "items": [
+      {
+        "menuItemId": 45,
+        "name": "UAT261010TEERAMET ไม่หักสต๊อก",
+        "quantity": 1
+      }
+    ],
+    "status": "SERVED",
+    "createdAt": "2026-10-10T05:27:48.197466Z"
+  },
+  {
+    "orderId": 8,
+    "sessionId": 15,
+    "tableNumber": "UAT261010TEERA",
+    "items": [
+      {
+        "menuItemId": 46,
+        "name": "UAT261010TEERAMET สต๊อกไม่พอ",
+        "quantity": 2
+      }
+    ],
+    "status": "RECEIVED",
+    "createdAt": "2026-10-10T05:27:29.774209Z"
+  },
+  {
+    "orderId": 7,
+    "sessionId": 15,
+    "tableNumber": "UAT261010TEERA",
+    "items": [
+      {
+        "menuItemId": 44,
+        "name": "UAT261010TEERAMET สูตรสำเร็จ",
+        "quantity": 2
+      }
+    ],
+    "status": "PREPARING",
+    "createdAt": "2026-10-10T05:26:34.878227Z"
+  }
+]
