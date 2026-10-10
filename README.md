@@ -8,7 +8,7 @@
 
 [เปิดเว็บ](https://buffet-restaurant-management.onrender.com/) · [Swagger UI](https://buffet-restaurant-management.onrender.com/swagger-ui.html) · [ติดตั้ง](#installation--setup) · [เอกสารส่งงาน](#documentation-and-submission-index)
 
-> **เอกสารเตรียมส่ง Final — อัปเดต 10 ตุลาคม 2026** ตรวจโค้ดที่รวมใน `develop` รุ่น `855a954` (PR #49/#52 merge แล้ว) หลักฐาน public UAT ของสูตรสต๊อกตรวจบน Render รุ่น `af2b45b`; การรับรอง deployed commit รุ่นส่งและ release เข้า `main` ต้องอ้างหลักฐานรอบสุดท้าย
+> **เอกสารส่ง Final — อัปเดต 10 ตุลาคม 2026** ตรวจโค้ดที่รวมใน `develop` รุ่น `855a954` (PR #49/#52 merge แล้ว) หลักฐาน public UAT ของสูตรสต๊อกตรวจบน Render รุ่น `af2b45b`; การรับรอง deployed commit รุ่นส่งและ release เข้า `main` ต้องอ้างหลักฐานรอบสุดท้าย
 
 ![หน้าลูกค้าดูยอดบิลและเมนูหลังขอคิดบิล บน Render ในรอบ UAT](img/readme/customer-bill-public.png)
 
@@ -337,9 +337,9 @@ JUnit tests อยู่ `code/backend/src/test/` และ Vitest tests อย�
 | SOLID S/O/L/I/D | [ไฟล์/บรรทัดและเหตุผล](doc/solid-analysis.md), [เอกสารโมดูล](doc/architecture/) |
 | API / Tests | [Swagger](https://buffet-restaurant-management.onrender.com/swagger-ui.html), [Test Plan](doc/testing/test-plan.md), [Traceability](doc/testing/requirement-test-traceability.md), [Evidence](test/evidence/) |
 | Git / PR / Reviews | [Git audit](doc/planning/step3-git-audit.md), [เกณฑ์ปัจจุบัน](doc/planning/course-criteria-updates.md), [Pull Requests](https://github.com/PavaritPramual/buffet-restaurant-management-system/pulls) |
-| Slides | [Canva ทีมฉบับร่าง](https://www.canva.com/d/yWw6P3disBOSfHS), [ไฟล์/สถานะใน doc/slide](doc/slide/README.md), [Diagram coverage](doc/slide/course-diagram-coverage.md) |
+| Slides | [Canva สำหรับนำเสนอ](https://canva.link/43kx8nvyrmulyam), [ไฟล์/สถานะใน doc/slide](doc/slide/README.md), [Diagram coverage](doc/slide/course-diagram-coverage.md) |
 
-สไลด์ยังเป็นฉบับล่วงหน้า ต้องจัดใหม่ตามโค้ดที่รับรองและเวลานำเสนอ **9 นาที + ถามตอบ 3 นาที** ตาม handoff รอบนี้ Runbook 12 นาทีเดิมเป็นประวัติ เก็บ PPTX/PDF ที่ export จาก Canva พร้อม version และ owner approval ก่อนใช้เป็นรุ่นส่ง
+ใช้ [Canva ชุดนำเสนอปัจจุบัน](https://canva.link/43kx8nvyrmulyam) ตามที่ปวริศช์กำหนด โดยนำเสนอจากลิงก์นี้โดยตรง ปัจจุบันยังไม่มี PPTX ที่ export จากชุดนี้ ไฟล์สไลด์และ runbook รุ่นก่อนใน `doc/slide/` เก็บเป็นประวัติ ไม่ใช่ชุดนำเสนอปัจจุบัน
 
 Git ขั้นต่ำตามโจทย์คือ **15 meaningful commits ต่อคน** ใช้ประวัติที่เข้า `develop` แล้วตามข้อตกลงทีม ตรวจผู้เขียน/ผู้ร่วมเขียน ความหมายและเวลา ไม่ใช้จำนวนอย่างเดียวรับรองคะแนน ไม่ฝาก commit/push แทนกัน
 
@@ -348,7 +348,7 @@ Git ขั้นต่ำตามโจทย์คือ **15 meaningful commi
 - สูตรสต๊อก PR #49 และ Swagger fixes PR #52 merge แล้ว; public UAT ตรวจสูตรบน `af2b45b` และ V19/JPA startup จาก log เจ้าของระบบ ยังไม่มี stock reservation, unit conversion หรือ auto-return
 - Payment เป็นการบันทึกผลรับชำระ ไม่เรียก gateway ลูกค้าไม่เป็นผู้ยืนยัน PAID
 - QR แต่ละชุดใช้ได้ครั้งเดียว หลายมือถือขอ QR รุ่นถัดไปจาก Staff
-- ก่อนส่งต้องยืนยัน deployed SHA ที่ตรง release, public smoke ของรุ่นส่ง, Git audit รายบุคคล และ Canva export/ซ้อมตามหลักฐานล่าสุด
-- `main` ยังเป็น bootstrap commit `ac72620` ณ วันที่ตรวจ ยังไม่ใช่ release ของระบบที่อยู่ใน develop
+- ก่อนส่งต้องยืนยัน deployed SHA ที่ตรง release, public smoke ของรุ่นส่ง, Git audit รายบุคคล และการซ้อม Canva ตามหลักฐานล่าสุด
+- รุ่นส่งใน `main` รวมจาก `develop` หลัง README ผ่าน PR #51 และปวริศช์อนุมัติลิงก์ Canva สำหรับนำเสนอ เมื่อ 10 ตุลาคม 2026
 
 ติดตาม [Step FIX](https://app.notion.com/p/3f4cb2e9d47a81d1ae9fd42e77d189c9), [Step 3 Final](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6) และ [รายงานตรวจ README ฉบับนี้](doc/planning/readme-submission-draft-review.md) เมื่อรับรอง release แล้วให้ refresh revision/URLs/ผลทดสอบก่อนส่ง
