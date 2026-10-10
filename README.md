@@ -8,11 +8,11 @@
 
 [เปิดเว็บ](https://buffet-restaurant-management.onrender.com/) · [Swagger UI](https://buffet-restaurant-management.onrender.com/swagger-ui.html) · [ติดตั้ง](#installation--setup) · [เอกสารส่งงาน](#documentation-and-submission-index)
 
-> **ฉบับร่างสำหรับตรวจ ก่อนรับรองชุดส่งงาน** ตรวจ `develop` ที่ [`c778150`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/c778150c79657b80930ceca6a4f10c136c1fc285) เมื่อ 10 ตุลาคม 2026 ส่วนสูตรเมนูและหักสต๊อกอยู่ใน [PR #49](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/49) ที่ยังรอรีวิว ไม่ใช่ฟีเจอร์บนเว็บจริงที่รับรองแล้ว
+> **เอกสารเตรียมส่ง Final — อัปเดต 10 ตุลาคม 2026** ตรวจโค้ดที่รวมใน `develop` รุ่น `855a954` (PR #49/#52 merge แล้ว) หลักฐาน public UAT ของสูตรสต๊อกตรวจบน Render รุ่น `af2b45b`; การรับรอง deployed commit รุ่นส่งและ release เข้า `main` ต้องอ้างหลักฐานรอบสุดท้าย
 
 ![หน้าลูกค้าดูยอดบิลและเมนูหลังขอคิดบิล บน Render ในรอบ UAT](img/readme/customer-bill-public.png)
 
-*ภาพระบบจริงใน public UAT วันที่ 10 ตุลาคม 2026 ยอดบิล 747.50 บาท เป็นข้อมูล UAT ไม่มีการรับเงินจริง ดู [รายงานและข้อจำกัด](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/c92a2823255a5cce097c7216fb10a1346f76115c/doc/testing/pavarit-public-uat-2026-10-10.md)*
+*ภาพระบบจริงใน public UAT วันที่ 10 ตุลาคม 2026 ยอดบิล 747.50 บาท เป็นข้อมูล UAT ไม่มีการรับเงินจริง ดู [รายงานและข้อจำกัด](doc/testing/pavarit-public-uat-2026-10-10.md)*
 
 ## Project Overview
 
@@ -24,13 +24,27 @@
 
 | ลำดับ | ชื่อ-นามสกุล | รหัสนักศึกษา | Section | Branch | หน้าที่รับผิดชอบ |
 |---:|---|---|---|---|---|
-| 1 | นายปวริศช์ ประมวล | 673380278-9 | 01 | `pavarit_673380278-9_01` | Table, Package/Soup, DiningSession/QR; Architecture, integration และ E2E; ประสาน Git/release และเอกสาร |
-| 2 | นายศิระพัทธ์ วงศ์วิวัฒน์เสรี | 673380293-3 | 01 | `sirapat_673380293-3_01` | Menu/Ordering, Customer/shared UI; test plan, regression และ traceability |
-| 3 | นายศรัณย์ พาพรชัย | 673380515-1 | 02 | `sarun_673380515-1_02` | Kitchen/Serving, Order State; API/DTO, serialization และ contract audit |
-| 4 | นายธีรเมธ สายคำ | 673380273-9 | 02 | `teeramet_673380273-9_02` | Billing/Payment, Strategy; Docker, deployment, network/runtime และ runbook |
-| 5 | นายเมธัส มณีวิจิตร | 673380300-2 | 01 | `methus_673380300-2_01` | Auth/User/Profile, Stock และ Template Method; database, Flyway และ tooling |
+| 1 | นายปวริศช์ ประมวล | 673380278-9 | 01 | `pavarit_673380278-9_01` | โต๊ะ แพ็กเกจ น้ำซุป รอบกินและ QR; เชื่อมโมดูลและตรวจสถาปัตยกรรมรวม |
+| 2 | นายศิระพัทธ์ วงศ์วิวัฒน์เสรี | 673380293-3 | 01 | `sirapat_673380293-3_01` | หมวดหมู่ เมนู การสั่งอาหารและหน้า Customer; UI กลางและ regression |
+| 3 | นายศรัณย์ พาพรชัย | 673380515-1 | 02 | `sarun_673380515-1_02` | ครัว การเสิร์ฟและ Order State; มาตรฐาน REST API/DTO และตรวจ contract |
+| 4 | นายธีรเมธ สายคำ | 673380273-9 | 02 | `teeramet_673380273-9_02` | คำนวณบิลและรับชำระ; Docker และ public deployment |
+| 5 | นายเมธัส มณีวิจิตร | 673380300-2 | 01 | `methus_673380300-2_01` | Login ผู้ใช้/Profile และสต๊อก; migration และสิทธิ์ฐานข้อมูล |
 
 ชื่อ รหัส Section และ branch ตรวจเทียบ [Team](https://app.notion.com/p/3cfcb2e9d47a813795c9fc40d62b9868) กับ remote branches หน้าที่รวมงานเพิ่มเติมตรวจจาก PR/เอกสาร ไม่ใช้ตารางแบ่งงานเป็นหลักฐาน contribution รายบุคคลแทน Git
+
+### ความรับผิดชอบต่อโค้ดและหลักฐานตามรายวิชา
+
+ทุกคนรับผิดชอบ Controller → Service → Repository, Entity, Request/Response DTO, validation และ tests ในโมดูลของตน พร้อมอธิบายเหตุผล SOLID, ความสัมพันธ์ JPA, cascade/fetch และ diagram ที่เกี่ยวข้อง ตารางนี้ระบุเจ้าของโมดูลและผลงานหลักที่มีหลักฐานใน repository ส่วนประวัติผู้เขียนและผู้รีวิวตรวจจาก Git/PR ประกอบ
+
+| สมาชิก | โค้ดและพฤติกรรมระบบที่รับผิดชอบ | หลักฐาน Software Design และการตรวจรับ |
+|---|---|---|
+| **ปวริศช์** | Table/Package/Soup CRUD และเก็บออก; เปิด/ปิด DiningSession, ราคา snapshot, QR exchange/customer grants; Staff Table/Session และ Manager master-data UI; เชื่อม session กับ Ordering/Billing, ขอคิดบิล และสูตรเมนู/หักสต๊อกเมื่อครัวเริ่มทำ | ตรวจ Layered Architecture และ shared provider interfaces; SOLID/constructor injection และ State registry ใน PR #25; [Table/Session SOLID–JPA](doc/architecture/pavarit-table-session-solid-jpa.md), [stock consumption design](doc/architecture/menu-stock-consumption.md); Component/Class/Sequence ของ Table/Session/QR; integration/concurrency และ [public UAT/Swagger](doc/testing/pavarit-public-uat-2026-10-10.md); รวม README และเอกสารส่งงาน |
+| **ศิระพัทธ์** | MenuCategory/MenuItem, ความสัมพันธ์แพ็กเกจกับเมนู, Customer Ordering และประวัติออเดอร์; Customer QR/cookie flow, shared UI และการเก็บออก/คืนเมนู | [Menu/Ordering SOLID–JPA](doc/architecture/sirapat-menu-ordering-solid-jpa.md); DTO/Mapper และ Repository/Service Layer ของ Ordering; diagram ของ Menu/Ordering; test plan, requirement–test traceability, frontend tests และ [public regression](doc/testing/sirapat-public-regression-2026-10-09.md) |
+| **ศรัณย์** | Fulfillment APIs และ Kitchen/Serving UI; transition RECEIVED → PREPARING → READY → SERVED และสิทธิ์ครัว/บริการ | **State Pattern** และ transition tests; [Pattern analysis](doc/design-patterns.md), [Order State diagram](doc/diagrams/order-fulfillment-state-diagram.md); API/DTO, enum/เวลา/ราคา, HTTP status, ErrorResponse และ shared contracts; Order/OrderItem JPA rationale, deletion contract และ Requirement Matrix/Git audit |
+| **ธีรเมธ** | BillingEngine, discount strategies, BillingContext integration, Payment และ Staff Billing UI; production Docker build, Spring Boot เสิร์ฟ React/API ผ่าน Render URL เดียว | **Strategy Pattern**, ราคา snapshot/การปัดเศษ และป้องกันชำระซ้ำ; [Billing/Payment SOLID–JPA](doc/architecture/teeramet-billing-payment-solid-jpa.md); Billing/Payment Sequence และ Deployment diagram; [production runbook](doc/deployment/production-runbook.md), HTTPS/cookie/runtime checks และ public UAT/Swagger ของ PR #52 |
+| **เมธัส** | Auth/User/Profile, BCrypt และ session login; Stock metadata, รับเข้า/ปรับยอด, history, target/active และเก็บออก/คืน; Flyway schema และ DB grants/RLS | **Template Method** ของ Stock transaction processors และ rollback tests; [Auth/Stock design](doc/architecture/template-method-auth-stock.md); User/Profile One-to-One, Stock/Transaction One-to-Many และ [JPA rationale](doc/architecture/jpa-entity-rationale.md); ERD/Data Dictionary, migration/JPA/security validation และ [DB validation report](doc/testing/methus-db-validation-auth-stock-profile-2026-10-09.md) |
+
+งาน integration ที่ปวริศช์รับเพิ่มบันทึกแยกจากเจ้าของโมดูลเดิม เช่น Staff/Manager UI, bill request และ menu-stock consumption ตาม PR #21/#49 ส่วน State, Strategy และ Template Method ยังคงระบุผู้รับผิดชอบตาม implementation ของแต่ละโมดูล การรับรองรุ่นส่งต้องตรวจ [Requirement Matrix](doc/planning/step3-requirement-matrix.md), [SOLID](doc/solid-analysis.md), [Patterns](doc/design-patterns.md) และ [Git audit](doc/planning/step3-git-audit.md) ร่วมกัน
 
 ## Features and Core Flow
 
@@ -49,7 +63,7 @@
 - หลังขอคิดบิล ทุกเครื่องของรอบนั้นสั่งเพิ่มไม่ได้ เมื่อ PAID ยังต้องให้พนักงานกด close แยก
 - ข้อมูลที่มีประวัติใช้การเก็บออกตาม contract ไม่ลบประวัติ Order/Payment/Stock
 
-**งานเพิ่มเติมที่ยังรอ:** PR #49 ให้ Manager กำหนดสูตรต่อเสิร์ฟ เก็บสูตรตอนสั่ง และหัก Stock เมื่อครัวเริ่มทำ สต๊อกไม่พอได้ 409 และ rollback ทั้งชุด [อ่าน design](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/c92a2823255a5cce097c7216fb10a1346f76115c/doc/architecture/menu-stock-consumption.md) — ยังไม่ merge/apply V19/deploy
+**สูตรเมนูและสต๊อก:** Manager กำหนดวัตถุดิบต่อเสิร์ฟได้ หรือเลือกไม่หักอัตโนมัติ สูตรถูกเก็บตอนสั่งและหักเมื่อครัวเริ่มทำ สต๊อกไม่พอได้ 409 และ rollback ทั้งชุด [Design](doc/architecture/menu-stock-consumption.md) · [Public UAT/Swagger หลัง deploy PR #49](test/evidence/uat-buffet-2026-10-10/report.md) · [Swagger contract fixes PR #52](test/evidence/pr52-swagger-fix-2026-10-10/report.md)
 
 <details>
 <summary>ดูหน้าจอ Manager, Staff และ Kitchen</summary>
@@ -93,7 +107,7 @@
 
 *[เปิดภาพเต็ม](img/readme/component-develop.svg) · [Diagram index และ source](doc/diagrams/README.md) · [System Design](doc/system-design/README.md)*
 
-ภาพนี้คัดลอกจาก develop โดยยังมีชื่อ revision/schema เก่าในภาพ ส่วน [Component ที่ปรับสำหรับ PR #49](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/c92a2823255a5cce097c7216fb10a1346f76115c/doc/diagrams/previews/component.svg) เพิ่มจุดเชื่อมสูตร/consumption และยังรอรีวิว ก่อนรุ่นส่งต้องเลือก diagram ที่ตรง release จริง
+ภาพนี้คัดลอกจาก develop โดยยังมีชื่อ revision/schema เก่าในภาพ ส่วน [Component ที่ปรับสำหรับ PR #49](doc/diagrams/previews/component.svg) เพิ่มจุดเชื่อมสูตร/consumption และยังรอรีวิว ก่อนรุ่นส่งต้องเลือก diagram ที่ตรง release จริง
 
 | ชั้น | ตัวอย่าง | หน้าที่ |
 |---|---|---|
@@ -135,7 +149,7 @@ Enterprise Patterns ครบตามการออกแบบ: **Layered Arc
 
 *[เปิด ERD เต็ม](img/readme/er-diagram-develop.svg) · [Data Dictionary baseline](doc/database/step2-schema-approved.md) · [JPA/FK/cascade/fetch rationale](doc/architecture/jpa-entity-rationale.md) · [Migration files](code/backend/src/main/resources/db/migration)*
 
-**สถานะภาพ:** ERD ใน develop ยังติดชื่อ V1–V15 และไม่แสดง archive columns ของ V16–V18 ครบ จึงใช้เป็นภาพโครงความสัมพันธ์พร้อม delta links ด้านล่าง [ERD ที่รวม V16–V18 และ V19 ที่เสนอ](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/c92a2823255a5cce097c7216fb10a1346f76115c/doc/diagrams/previews/er-diagram.svg) / [source](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/c92a2823255a5cce097c7216fb10a1346f76115c/doc/diagrams/er-diagram.puml) อยู่ใน PR #49 ยังรอรับรอง ต้อง refresh ภาพก่อนรุ่นส่ง ไม่ใช้ภาพเก่าอ้างว่า schema ปัจจุบันมีเพียง V15
+**สถานะภาพ:** ERD ใน develop ยังติดชื่อ V1–V15 และไม่แสดง archive columns ของ V16–V18 ครบ จึงใช้เป็นภาพโครงความสัมพันธ์พร้อม delta links ด้านล่าง [ERD ที่รวม V16–V18 และ V19 ที่เสนอ](doc/diagrams/previews/er-diagram.svg) / [source](doc/diagrams/er-diagram.puml) อยู่ใน PR #49 ยังรอรับรอง ต้อง refresh ภาพก่อนรุ่นส่ง ไม่ใช้ภาพเก่าอ้างว่า schema ปัจจุบันมีเพียง V15
 
 - **One-to-One** — `UserAccount` กับ `UserProfile` ใช้ shared primary key; DiningSession กับ Payment เป็น domain 1:0..1 โดย FK/UNIQUE ที่ DB ไม่ใช่ JPA association ทั้งสองฝั่ง
 - **One-to-Many** — `CustomerOrder` กับ `OrderItem`; order เป็น parent, item ถือ FK และเก็บชื่ออาหาร snapshot
@@ -144,7 +158,7 @@ Enterprise Patterns ครบตามการออกแบบ: **Layered Arc
 
 Repo baseline มี V1–V18; V16–V18 เพิ่มการเก็บออกตาม [Stock/User delta](doc/database/r01c-stock-user-archive.md), [Table/Package/Soup delta](doc/database/pavarit-r01-b-schema-delta.md) และ migration V18 ของ Menu/Category สถานะ read-only กลางก่อนงานนี้พบ V1–V18 success **ไม่ใช่ checksum/JPA validation ของรุ่นส่ง**
 
-V19 อยู่ใน PR #49: [สูตรปัจจุบัน/สูตร Order และ CONSUMPTION](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/c92a2823255a5cce097c7216fb10a1346f76115c/doc/database/menu-stock-consumption-v19.md) ยังไม่ apply กลาง Flyway รัน pending migrations ตอน startup ตาม config ห้ามแก้ applied files หรือ `repair` เพื่อให้ผ่านเฉย ๆ
+V19 อยู่ใน PR #49: [สูตรปัจจุบัน/สูตร Order และ CONSUMPTION](doc/database/menu-stock-consumption-v19.md) ยังไม่ apply กลาง Flyway รัน pending migrations ตอน startup ตาม config ห้ามแก้ applied files หรือ `repair` เพื่อให้ผ่านเฉย ๆ
 
 ## Installation & Setup
 
@@ -258,11 +272,11 @@ npm run build
 
 | หลักฐาน | Revision / environment | ผลและขอบเขต |
 |---|---|---|
-| [Public UAT + Swagger](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/c92a2823255a5cce097c7216fb10a1346f76115c/doc/testing/pavarit-public-uat-2026-10-10.md) | baseline develop `c778150`; Render 10 ต.ค. | Core Flow ถึง PAID/close; 78/78 operations ถูกเรียก รวม validation/permission checks ไม่ใช่ happy path ทุก CRUD; backend deployed SHA ยังรอหลักฐาน |
-| [PR #49 regression](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/c92a2823255a5cce097c7216fb10a1346f76115c/doc/testing/pavarit-menu-stock-report-2026-10-10.md) | head `c92a282`; H2/PG แยกและ local browser | backend429, frontend185, guards6 ผ่าน; browser feature5/CoreFlow16/StockProfile8 ผ่าน; lint5 warningsเดิม; buildผ่าน |
+| [Public UAT + Swagger](doc/testing/pavarit-public-uat-2026-10-10.md) | baseline develop `c778150`; Render 10 ต.ค. | Core Flow ถึง PAID/close; 78/78 operations ถูกเรียก รวม validation/permission checks ไม่ใช่ happy path ทุก CRUD; backend deployed SHA ยังรอหลักฐาน |
+| [PR #49 regression](doc/testing/pavarit-menu-stock-report-2026-10-10.md) | head `c92a282`; H2/PG แยกและ local browser | backend429, frontend185, guards6 ผ่าน; browser feature5/CoreFlow16/StockProfile8 ผ่าน; lint5 warningsเดิม; buildผ่าน |
 | [CI PR #49](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/38018109842) | `c92a282`, CI Java17/Node24 | Backend/PostgreSQL และ Frontend tests/lint/build ผ่าน ไม่ใช่ผล deploy หรือ Final release |
 
-[Test Plan](doc/testing/test-plan.md) · [Requirement–Test Traceability](doc/testing/requirement-test-traceability.md) · [รายงานและภาพ](https://github.com/PavaritPramual/buffet-restaurant-management-system/tree/c92a2823255a5cce097c7216fb10a1346f76115c/test/evidence/menu-stock-v19-2026-10-10/)
+[Test Plan](doc/testing/test-plan.md) · [Requirement–Test Traceability](doc/testing/requirement-test-traceability.md) · [รายงานและภาพ](test/evidence/menu-stock-v19-2026-10-10/)
 
 การปรับ README นี้ตรวจเอกสาร ลิงก์และภาพ ไม่ได้รัน runtime suite ใหม่ ตัวเลขมาจากรายงาน/CI ที่ระบุ แยก fixture/mock, H2, PostgreSQL และ public ตามแต่ละผล
 
@@ -328,15 +342,10 @@ Git ขั้นต่ำตามโจทย์คือ **15 meaningful commi
 
 ## Known Limitations / Release Status
 
-- PR #49 สูตรสต๊อกยังรอ review/merge และ V19 กลาง/public acceptance ไม่มี reservation, unit conversion หรือ auto-return
+- สูตรสต๊อก PR #49 และ Swagger fixes PR #52 merge แล้ว; public UAT ตรวจสูตรบน `af2b45b` และ V19/JPA startup จาก log เจ้าของระบบ ยังไม่มี stock reservation, unit conversion หรือ auto-return
 - Payment เป็นการบันทึกผลรับชำระ ไม่เรียก gateway ลูกค้าไม่เป็นผู้ยืนยัน PAID
 - QR แต่ละชุดใช้ได้ครั้งเดียว หลายมือถือขอ QR รุ่นถัดไปจาก Staff
-- Final ยังรอรับรอง release/deployed SHA, schema/checksum, public regression รุ่นส่ง, Git audit รายบุคคล และ Canva export/ซ้อม
+- ก่อนส่งต้องยืนยัน deployed SHA ที่ตรง release, public smoke ของรุ่นส่ง, Git audit รายบุคคล และ Canva export/ซ้อมตามหลักฐานล่าสุด
 - `main` ยังเป็น bootstrap commit `ac72620` ณ วันที่ตรวจ ยังไม่ใช่ release ของระบบที่อยู่ใน develop
 
 ติดตาม [Step FIX](https://app.notion.com/p/3f4cb2e9d47a81d1ae9fd42e77d189c9), [Step 3 Final](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6) และ [รายงานตรวจ README ฉบับนี้](doc/planning/readme-submission-draft-review.md) เมื่อรับรอง release แล้วให้ refresh revision/URLs/ผลทดสอบก่อนส่ง
-
-
-### Optional menu stock recipes (V19 PR)
-
-Manager can set ingredient quantities per serving; the recipe is frozen when ordered and stock is deducted once when Kitchen starts preparing. See [design and course criteria](doc/architecture/menu-stock-consumption.md), [V19 dictionary](doc/database/menu-stock-consumption-v19.md), and [previous public UAT/Swagger report](doc/testing/pavarit-public-uat-2026-10-10.md). Shared migration/deployment acceptance of this feature remains a separate gate after review.
