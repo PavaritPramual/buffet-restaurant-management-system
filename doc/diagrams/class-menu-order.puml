@@ -16,9 +16,11 @@ class BuffetPackage {
 price : BigDecimal
 }
 class MenuCategory {
+ archivedAt : OffsetDateTime (V18)
 name : String
 }
 class MenuItem {
+ archivedAt : OffsetDateTime (V18)
 category : MenuCategory
  packageIds : Set<Long>
  available : boolean

@@ -1,3 +1,11 @@
+# Diagram index — ชุดส่ง V19
+
+ตรวจ 10 ตุลาคม 2026: diagram มีครบตามใบงานข้อ 9.1 จำนวน 28 PlantUML sources พร้อม SVG 28 ภาพ (รวมภาพย่อ 5 ภาพ) ดู [ตารางเทียบชนิดและ revision](../planning/final-submission-checklist.md) และ [manifest](../../test/evidence/final-submission-2026-10-10/diagram-manifest.json)
+
+V19 รวมใน PR #49 แล้วและหลักฐาน startup/public UAT ใน PR #52 รายงาน schema V19; ไม่ใช่ migration ที่ยังรอ implement ข้อความ baseline เก่าด้านล่างเป็นประวัติ ไม่ใช้รับรองรุ่นส่งแทนผลตรวจล่าสุด
+
+## ประวัติการตรวจรอบก่อน
+
 # Diagram index — ครบตามใบงานข้อ 9.1
 
 ## R01-B archive delta — V17

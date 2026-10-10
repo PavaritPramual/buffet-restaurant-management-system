@@ -11,7 +11,7 @@ skinparam classBorderColor #173A45
 skinparam actorBorderColor #173A45
 skinparam usecaseBackgroundColor #F2E6D4
 skinparam usecaseBorderColor #A54A2E
-title All actors and implemented use cases - develop d84f071
+title All actors and implemented use cases - final code baseline 5ff8076
 left to right direction
 actor Customer
 actor "SERVICE_STAFF" as Staff
@@ -46,7 +46,9 @@ rectangle "Administration module" {
  usecase "Update contact profile\nfirst / last name and phone" as Profile
  usecase "Manage tables / packages / soups" as Catalog
  usecase "Manage menu categories / items" as AdminMenu
+ usecase "Configure stock per serving\nOptional automatic deduction" as Recipe
  usecase "Manage stock master data" as Master
+ usecase "Guarded delete / archive / restore\nUsers and master data" as Lifecycle
  usecase "View stock / transaction history" as Read
  usecase "Record stock-in / signed adjustment" as Move
 }
@@ -56,14 +58,18 @@ Manager --> Users
 Manager --> Profile
 Manager --> Catalog
 Manager --> AdminMenu
+Manager --> Recipe
 Manager --> Master
+Manager --> Lifecycle
 Manager --> Read
 Manager --> Move
 Supervisor --> Read
 Supervisor --> Move
 note bottom of Supervisor
 No Kitchen / Serving / Payment privilege.
-Account edit/delete is not implemented; contact-profile updates are limited to first name, last name, and phone.
+Manager can delete unreferenced accounts or archive referenced accounts.
+Guarded restore leaves accounts inactive; active toggle is explicit.
+Contact-profile updates are limited to first name, last name, and phone.
 end note
 note bottom
 Employees login before protected use cases.

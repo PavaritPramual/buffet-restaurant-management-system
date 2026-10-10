@@ -1,3 +1,11 @@
+# Deployment — รุ่นส่งปัจจุบัน
+
+Topology URL เดียวด้านล่างยังใช้จริง: Render เสิร์ฟ React และ Spring Boot, API /api/v1, Supabase Session Pooler. หลักฐานล่าสุดอยู่ที่ [public UAT/19 migrations](../../test/evidence/uat-buffet-2026-10-10/report.md) และ [Swagger smoke หลัง PR #52](../testing/readme-final-public-check-2026-10-10.md)
+
+รอบนี้ตรวจ health/OpenAPI แบบ read-only และไม่เข้าถึง Render dashboard; owner-reported deployed SHA กับผล HTTP เป็นหลักฐานคนละชนิด อย่าอ่าน log V15 ด้านล่างเป็นสถานะล่าสุดของฐาน V19 การนำรุ่นเข้า main ไม่รัน migration เพิ่มหรือเปลี่ยน Render deployment source โดยอัตโนมัติ
+
+## ประวัติการตรวจรอบก่อน
+
 # Production deployment — observed and configured topology
 
 Source revision: `2f8bc4b` on `teeramet_673380273-9_02`. An owner-provided Render Deploys screenshot on 9 October 2026 shows this commit as **Live**. This diagram separates what public endpoints showed from what the source config specifies.

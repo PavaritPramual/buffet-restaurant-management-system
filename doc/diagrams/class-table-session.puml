@@ -4,8 +4,11 @@ skinparam shadowing false
 skinparam classAttributeIconSize 0
 skinparam backgroundColor #FFFDF9
 skinparam defaultFontName Tahoma
-title Table / DiningSession / customer grants - code baseline 6d83eac
+title Table / DiningSession / customer grants - final code baseline 5ff8076
 class RestaurantTable {
+ archived : boolean (V17)
+ +archive() : void
+ +restore() : void
  id : Long
  tableNumber : String
  capacity : Integer
@@ -34,10 +37,16 @@ class CustomerSessionGrant {
  expiresAt : OffsetDateTime
 }
 class BuffetPackage {
+ archived : boolean (V17)
+ +archive() : void
+ +restore() : void
  price : BigDecimal
  active : boolean
 }
 class Soup {
+ archived : boolean (V17)
+ +archive() : void
+ +restore() : void
  active : boolean
 }
 interface DiningSessionService

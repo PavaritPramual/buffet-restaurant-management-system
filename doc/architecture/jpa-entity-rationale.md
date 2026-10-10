@@ -1,3 +1,13 @@
+# JPA rationale — รุ่นส่งหลัง archive และสูตร
+
+ตาราง baseline ด้านล่างให้อ่านร่วมกับ [V17 rationale](../database/pavarit-r01-b-schema-delta.md), [V16 Stock/User](../database/r01c-stock-user-archive.md), [V18 Menu](../database/r01-a-menu-archive-proposal.md) และ [V19 recipes/JPA](../database/menu-stock-consumption-v19.md)
+
+Table/Package/Soup ปัจจุบันลบรายการที่ไม่มีการอ้างอิงได้ และเก็บออกแทนเมื่อมีประวัติตาม service guards; ไม่ใช่การลบประวัติ session แบบ cascade. Package/Soup มีทั้ง active และ archived: เปิดใช้งานกับคืนรายการเป็นคนละการตัดสินใจ. เมนู/สต๊อก/ผู้ใช้ใช้ archivedAt และรักษาประวัติที่อ้างอิง ข้อมูลสูตรปัจจุบันกับสูตรใน OrderItem เป็น ElementCollection คนละตารางและ LAZY ไม่ใช่ entity MenuStockUsage แยก
+
+[Class Table/Session](../diagrams/previews/class-table-session.svg) · [Class Menu/Order](../diagrams/previews/class-menu-order.svg) · [Class Stock](../diagrams/previews/class-stock-template.svg)
+
+## ประวัติการตรวจรอบก่อน
+
 # JPA Entity Rationale
 
 สถานะ: เอกสารอธิบาย mapping ที่ **implemented อยู่แล้ว** (ตรวจกับ `code/backend/.../domain/*.java` และ migration V1–V15) ไม่มีการเปลี่ยน mapping เพื่อให้เอกสารดูดีขึ้น

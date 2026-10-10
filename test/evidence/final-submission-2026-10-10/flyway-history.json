@@ -1,0 +1,159 @@
+{
+  "project": "zbflfljthmzqhshahemv",
+  "checked_date": "2026-10-10",
+  "scope": "read-only history; connector role is not JDBC runtime role",
+  "rows": [
+    {
+      "installed_rank": 1,
+      "version": "1",
+      "description": "baseline",
+      "script": "V1__baseline.sql",
+      "checksum": -431459505,
+      "success": true
+    },
+    {
+      "installed_rank": 2,
+      "version": "2",
+      "description": "create restaurant tables",
+      "script": "V2__create_restaurant_tables.sql",
+      "checksum": -376022096,
+      "success": true
+    },
+    {
+      "installed_rank": 3,
+      "version": "3",
+      "description": "create buffet packages and soups",
+      "script": "V3__create_buffet_packages_and_soups.sql",
+      "checksum": 678764387,
+      "success": true
+    },
+    {
+      "installed_rank": 4,
+      "version": "4",
+      "description": "create menu and order tables",
+      "script": "V4__create_menu_and_order_tables.sql",
+      "checksum": 1977155574,
+      "success": true
+    },
+    {
+      "installed_rank": 5,
+      "version": "5",
+      "description": "restrict menu and order access",
+      "script": "V5__restrict_menu_and_order_access.sql",
+      "checksum": -21432884,
+      "success": true
+    },
+    {
+      "installed_rank": 6,
+      "version": "6",
+      "description": "create dining sessions",
+      "script": "V6__create_dining_sessions.sql",
+      "checksum": 1714973593,
+      "success": true
+    },
+    {
+      "installed_rank": 7,
+      "version": "7",
+      "description": "link orders to dining sessions",
+      "script": "V7__link_orders_to_dining_sessions.sql",
+      "checksum": 421808321,
+      "success": true
+    },
+    {
+      "installed_rank": 8,
+      "version": "8",
+      "description": "snapshot session package price",
+      "script": "V8__snapshot_session_package_price.sql",
+      "checksum": 356417345,
+      "success": true
+    },
+    {
+      "installed_rank": 9,
+      "version": "10",
+      "description": "create user and stock tables",
+      "script": "V10__create_user_and_stock_tables.sql",
+      "checksum": 693950150,
+      "success": true
+    },
+    {
+      "installed_rank": 10,
+      "version": "11",
+      "description": "restrict flyway and stock access",
+      "script": "V11__restrict_flyway_and_stock_access.sql",
+      "checksum": 1583091535,
+      "success": true
+    },
+    {
+      "installed_rank": 11,
+      "version": "9",
+      "description": "create payments table",
+      "script": "V9__create_payments_table.sql",
+      "checksum": 1126750035,
+      "success": true
+    },
+    {
+      "installed_rank": 12,
+      "version": "12",
+      "description": "align payment backend privileges",
+      "script": "V12__align_payment_backend_privileges.sql",
+      "checksum": 1502075674,
+      "success": true
+    },
+    {
+      "installed_rank": 13,
+      "version": "13",
+      "description": "restrict remaining client database access",
+      "script": "V13__restrict_remaining_client_database_access.sql",
+      "checksum": 419855576,
+      "success": true
+    },
+    {
+      "installed_rank": 14,
+      "version": "14",
+      "description": "add session bill request",
+      "script": "V14__add_session_bill_request.sql",
+      "checksum": -1840534327,
+      "success": true
+    },
+    {
+      "installed_rank": 15,
+      "version": "15",
+      "description": "add stock target active and profile names",
+      "script": "V15__add_stock_target_active_and_profile_names.sql",
+      "checksum": -1092732854,
+      "success": true
+    },
+    {
+      "installed_rank": 16,
+      "version": "16",
+      "description": "add stock item and user archive",
+      "script": "V16__add_stock_item_and_user_archive.sql",
+      "checksum": -1042908435,
+      "success": true
+    },
+    {
+      "installed_rank": 17,
+      "version": "17",
+      "description": "archive table package soup",
+      "script": "V17__archive_table_package_soup.sql",
+      "checksum": -1722267369,
+      "success": true
+    },
+    {
+      "installed_rank": 18,
+      "version": "18",
+      "description": "archive menu catalog",
+      "script": "V18__archive_menu_catalog.sql",
+      "checksum": 208639656,
+      "success": true
+    },
+    {
+      "installed_rank": 19,
+      "version": "19",
+      "description": "menu stock consumption",
+      "script": "V19__menu_stock_consumption.sql",
+      "checksum": -730974897,
+      "success": true
+    }
+  ]
+}

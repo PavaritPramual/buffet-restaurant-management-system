@@ -8,7 +8,7 @@
 
 [เปิดเว็บ](https://buffet-restaurant-management.onrender.com/) · [Swagger UI](https://buffet-restaurant-management.onrender.com/swagger-ui.html) · [ติดตั้ง](#installation--setup) · [เอกสารส่งงาน](#documentation-and-submission-index)
 
-> **เอกสารส่ง Final — อัปเดต 10 ตุลาคม 2026** ตรวจโค้ดที่รวมใน `develop` รุ่น `855a954` (PR #49/#52 merge แล้ว) หลักฐาน public UAT ของสูตรสต๊อกตรวจบน Render รุ่น `af2b45b`; การรับรอง deployed commit รุ่นส่งและ release เข้า `main` ต้องอ้างหลักฐานรอบสุดท้าย
+> **เอกสารส่ง Final — อัปเดต 10 ตุลาคม 2026** ตรวจโค้ดที่รวมใน `develop` รุ่น `097ad12` (PR #49/#52/#53 merge แล้ว) หลักฐาน public UAT ของสูตรสต๊อกตรวจบน Render รุ่น `af2b45b`; การรับรอง deployed commit รุ่นส่งและ release เข้า `main` ต้องอ้างหลักฐานรอบสุดท้าย
 
 ![หน้าลูกค้าดูยอดบิลและเมนูหลังขอคิดบิล บน Render ในรอบ UAT](img/readme/customer-bill-public.png)
 
@@ -103,9 +103,9 @@
 
 ## System Architecture
 
-![Component Diagram snapshot ที่อยู่ใน develop c778150](img/readme/component-develop.svg)
+![Component Diagram ปัจจุบัน พร้อม source](doc/diagrams/previews/component.svg)
 
-*[เปิดภาพเต็ม](img/readme/component-develop.svg) · [Diagram index และ source](doc/diagrams/README.md) · [System Design](doc/system-design/README.md)*
+*[เปิดภาพเต็ม](doc/diagrams/previews/component.svg) · [Diagram index และ source](doc/diagrams/README.md) · [System Design](doc/system-design/README.md)*
 
 ภาพนี้คัดลอกจาก develop โดยยังมีชื่อ revision/schema เก่าในภาพ ส่วน [Component ที่ปรับสำหรับ PR #49](doc/diagrams/previews/component.svg) เพิ่มจุดเชื่อมสูตร/consumption ผ่านรีวิวและ merge เข้า develop แล้ว ก่อนรุ่นส่งต้องตรวจ diagram เทียบกับ release commit อีกครั้ง
 
@@ -333,13 +333,14 @@ JUnit tests อยู่ `code/backend/src/test/` และ Vitest tests อย�
 | Sequence อย่างน้อย 3 scenario | [เปิดรอบ](doc/diagrams/sequence-open-session.puml), [แลก QR](doc/diagrams/sequence-qr-exchange.puml), [สั่ง/ครัว](doc/diagrams/sequence-ordering-kitchen.puml), [ชำระ/close](doc/diagrams/sequence-billing-payment.puml) พร้อม preview ใน index |
 | Activity | [Customer](doc/diagrams/activity-customer-ordering.puml), [Kitchen](doc/diagrams/activity-kitchen.puml), [Payment/close](doc/diagrams/activity-payment-close.puml), [Stock](doc/diagrams/activity-stock.puml) |
 | ERD / Dictionary / JPA | [ERD](doc/diagrams/previews/er-diagram.svg), [Dictionary](doc/database/step2-schema-approved.md), [JPA rationale](doc/architecture/jpa-entity-rationale.md), [forward deltas](doc/database/) |
-| Component / Deployment / State | [Component](img/readme/component-develop.svg), [Deployment](doc/diagrams/deployment-production-design.puml), [Order State](doc/diagrams/state-order.puml) |
+| Component / Deployment / State | [Component](doc/diagrams/previews/component.svg), [Deployment](doc/diagrams/deployment-production-design.puml), [Order State](doc/diagrams/state-order.puml) |
 | SOLID S/O/L/I/D | [ไฟล์/บรรทัดและเหตุผล](doc/solid-analysis.md), [เอกสารโมดูล](doc/architecture/) |
 | API / Tests | [Swagger](https://buffet-restaurant-management.onrender.com/swagger-ui.html), [Test Plan](doc/testing/test-plan.md), [Traceability](doc/testing/requirement-test-traceability.md), [Evidence](test/evidence/) |
 | Git / PR / Reviews | [Git audit](doc/planning/step3-git-audit.md), [เกณฑ์ปัจจุบัน](doc/planning/course-criteria-updates.md), [Pull Requests](https://github.com/PavaritPramual/buffet-restaurant-management-system/pulls) |
+| Checklist รุ่นส่ง | [เอกสาร/diagram/หลักฐาน/Git/release](doc/planning/final-submission-checklist.md) |
 | Slides | [Canva สำหรับนำเสนอ](https://canva.link/43kx8nvyrmulyam), [ไฟล์/สถานะใน doc/slide](doc/slide/README.md), [Diagram coverage](doc/slide/course-diagram-coverage.md) |
 
-ใช้ [Canva ชุดนำเสนอปัจจุบัน](https://canva.link/43kx8nvyrmulyam) ตามที่ปวริศช์กำหนด โดยนำเสนอจากลิงก์นี้โดยตรง ปัจจุบันยังไม่มี PPTX ที่ export จากชุดนี้ ไฟล์สไลด์และ runbook รุ่นก่อนใน `doc/slide/` เก็บเป็นประวัติ ไม่ใช่ชุดนำเสนอปัจจุบัน
+ใช้ [Canva ชุดนำเสนอปัจจุบัน](https://canva.link/43kx8nvyrmulyam) ตามที่ปวริศช์กำหนด โดยนำเสนอจากลิงก์นี้โดยตรง เก็บ [PDF](doc/slide/team-final-canva-v4-2026-10-10.pdf) และ [PPTX](doc/slide/team-final-canva-v4-2026-10-10.pptx) ที่ export จาก Canva ครบ 24 หน้าแล้ว ไฟล์สไลด์และ runbook รุ่นก่อนใน `doc/slide/` เก็บเป็นประวัติ ไม่ใช่ชุดนำเสนอปัจจุบัน
 
 Git ขั้นต่ำตามโจทย์คือ **15 meaningful commits ต่อคน** ใช้ประวัติที่เข้า `develop` แล้วตามข้อตกลงทีม ตรวจผู้เขียน/ผู้ร่วมเขียน ความหมายและเวลา ไม่ใช้จำนวนอย่างเดียวรับรองคะแนน ไม่ฝาก commit/push แทนกัน
 
@@ -349,6 +350,6 @@ Git ขั้นต่ำตามโจทย์คือ **15 meaningful commi
 - Payment เป็นการบันทึกผลรับชำระ ไม่เรียก gateway ลูกค้าไม่เป็นผู้ยืนยัน PAID
 - QR แต่ละชุดใช้ได้ครั้งเดียว หลายมือถือขอ QR รุ่นถัดไปจาก Staff
 - ก่อนส่งต้องยืนยัน deployed SHA ที่ตรง release, public smoke ของรุ่นส่ง, Git audit รายบุคคล และการซ้อม Canva ตามหลักฐานล่าสุด
-- รุ่นส่งใน `main` รวมจาก `develop` หลัง README ผ่าน PR #51 และปวริศช์อนุมัติลิงก์ Canva สำหรับนำเสนอ เมื่อ 10 ตุลาคม 2026
+- release เข้า `main` ใช้ PR จาก `develop` หลังชุดเอกสารนี้ผ่าน reviewer; ตรวจสถานะจริงจาก GitHub ไม่ใช้ข้อความนี้แทนหลักฐาน merge
 
 ติดตาม [Step FIX](https://app.notion.com/p/3f4cb2e9d47a81d1ae9fd42e77d189c9), [Step 3 Final](https://app.notion.com/p/3f1cb2e9d47a81e28aa2dc642cd6ead6) และ [รายงานตรวจ README ฉบับนี้](doc/planning/readme-submission-draft-review.md) เมื่อรับรอง release แล้วให้ refresh revision/URLs/ผลทดสอบก่อนส่ง

@@ -47,5 +47,5 @@ end
 Session --> Staff : DiningSessionResponse COMPLETED
 Customer -> CB : GET /bill-status with old cookie
 CB --> Customer : rejected after close
-note over CB,DB : Bill-status polling every5s while page visible.\nPAID response uses recorded amount; Final public regression still pending.
+note over CB,DB : Bill-status polling every5s while page visible.\nPAID response uses recorded amount; see revision-scoped public reports for acceptance.
 @enduml

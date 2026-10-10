@@ -1,5 +1,4 @@
 @startuml
-!pragma layout smetana
 skinparam shadowing false
 skinparam backgroundColor #FFF9EE
 skinparam defaultFontName Tahoma
@@ -19,6 +18,9 @@ passwordHash : String
 role : UserRole
 active : boolean
 createdAt : Instant
+archivedAt : Instant
++archive()
++restore()
 }
 class UserProfile {
 userId : Long
@@ -45,6 +47,15 @@ class AuthController {
 class SessionUserContextProvider {
 +requireCurrentRequestRole(role)
 }
+class UserLifecycleService
+class StaffSessionRegistry
+interface StockTransactionRepository <<Repository>>
+UserLifecycleService --> UserAccountRepository
+UserLifecycleService --> UserProfileRepository
+UserLifecycleService --> UserContextProvider
+UserLifecycleService --> StaffSessionRegistry
+UserLifecycleService --> StockTransactionRepository
+AdminUserController --> UserLifecycleService : guarded delete / restore / activation
 class HttpSession
 UserAccount "1" -- "0..1" UserProfile : shared PK / MapsId
 interface AuthenticationService
@@ -76,5 +87,8 @@ createUser creates both; authenticate requires a profile.
 Manager-only list/create/updateProfile; first/last name are required by the API for new accounts and updates,
 but V15 columns stay nullable for legacy rows. phoneNumber is optional (max 20).
 Incomplete session identities return 401; disallowed roles return 403.
+Lifecycle checks actor/last active Manager and revokes sessions.
+Unreferenced accounts may be deleted; referenced accounts are archived.
+Restore clears archivedAt but does not activate login.
 end note
 @enduml
