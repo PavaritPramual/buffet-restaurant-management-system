@@ -291,5 +291,15 @@
     }
   ],
   "dataRetained": true,
-  "session15Status": "ACTIVE; no payment/close in this UAT run"
+  "session15Status": "ACTIVE; no payment/close in this UAT run",
+  "documentationCorrection": {
+    "codeCommit": "1823c7f53a98e9992f7f93c28471ec1f863eba06",
+    "environment": "local isolated H2 / Swagger localhost:18888",
+    "verifiedAtICT": "2026-10-10T13:19:14+07:00",
+    "local": "passed: 58 tests, package and Swagger UI checks; unauthenticated Stock Execute401",
+    "publicRetest": false,
+    "centralDatabaseAccess": false,
+    "ci": "See checks of the new PR52 head; not public deployment evidence",
+    "report": "../pr52-swagger-fix-2026-10-10/report.md"
+  }
 }

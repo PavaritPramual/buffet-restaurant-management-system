@@ -126,3 +126,12 @@ POST `/api/v1/menu-items` สร้าง menu46 และ POST `/api/v1/dining-
 - Billing/Payment/close ไม่ได้ทดสอบซ้ำในUATStockนี้; ผลรอบก่อนต้องอ้างหลักฐานรอบก่อนแยกต่างหาก
 
 รายงานนี้พร้อมให้ reviewer ตรวจผลที่รันจริงและข้อจำกัด แต่ไม่ควรเปลี่ยนกรณีที่ไม่ได้รันเป็นผ่าน หรือรับรองว่าฐานข้อมูล/ระบบทั้งหมดผ่าน
+
+
+## ผลแก้ตาม review PR #52 — แยกจาก UAT public เดิม
+
+เพิ่มวันที่ 10 ตุลาคม 2026 เวลา 13:14–13:19 น. (Asia/Bangkok). Code commit `1823c7f53a98e9992f7f93c28471ec1f863eba06` แก้ DOC-01 โดยเอา examples เฉพาะ Billing ออกจาก shared ErrorResponse และแก้ DOC-02 โดยประกาศ 201 พร้อม DTO/Location สำหรับการสร้าง menu และ customer order. Runtime behavior และ fields ของ ErrorResponse คงเดิม
+
+**ผล local ผ่าน**: regression tests 58 ข้อผ่านทั้งหมด, package ผ่าน; ตรวจ Swagger UI ของ environment แยก `http://localhost:18888` ด้วย H2 ใหม่/seed=false/bootstrap=false และ Execute GET Stock ไม่ login ตอบ401/pathถูกต้อง. [รายงานแก้และหลักฐานใหม่](../pr52-swagger-fix-2026-10-10/report.md) ระบุ commit, environment, tests, ภาพ และ OpenAPI excerpts
+
+**ผล public ของ af2b45b ไม่เปลี่ยน**: DOC-01/DOC-02 ข้างต้นยังเป็นประวัติไม่ผ่านด้านเอกสารของ release ที่ทดสอบจริง. ไม่ได้ deploy/retest โค้ดแก้บน Render และไม่ตรวจ/apply migration บนฐานกลางรอบนี้. CI ติดตามแยกที่ [checks ของ PR52](https://github.com/PavaritPramual/buffet-restaurant-management-system/pull/52/checks); CI ผ่านไม่ถือว่า public retest ผ่าน
