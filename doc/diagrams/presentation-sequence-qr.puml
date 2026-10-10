@@ -1,0 +1,28 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 24
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+skinparam componentBackgroundColor #F2E6D4
+skinparam componentBorderColor #173A45
+autonumber
+actor Customer
+boundary "React page" as UI
+control "Customer Session API" as API
+database "Session / grants" as DB
+Customer -> UI : Scan QR with URL fragment
+UI -> UI : Capture token and clear fragment
+UI -> API : POST qr-exchange with token in body
+API -> DB : Lock ACTIVE session; rotate QR\nStore credential hash and expiry
+API --> UI : HttpOnly cookie + customer DTO
+UI -> API : Read menu / place order with cookie
+API -> DB : Verify hash, expiry and ACTIVE
+API --> UI : Data of this session only
+note over UI,DB : QR is exchanged once. Multiple devices use the next rotated QR.\nThe detailed sequence and error cases are in the appendix.
+@enduml

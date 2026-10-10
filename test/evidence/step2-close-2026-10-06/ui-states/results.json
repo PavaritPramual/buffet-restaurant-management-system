@@ -1,0 +1,62 @@
+{
+  "executedAt": "2026-10-06T05:59:44.559Z",
+  "results": [
+    {
+      "name": "kitchen",
+      "viewport": {
+        "width": 768,
+        "height": 1000
+      },
+      "result": "PASS",
+      "style": {
+        "font": "\"Noto Sans Thai\", system-ui, sans-serif",
+        "primary": "#9a3412",
+        "overflow": false
+      },
+      "states": [
+        "loading",
+        "empty",
+        "error"
+      ],
+      "source": "controlled HTTP response fixtures; real authenticated shell"
+    },
+    {
+      "name": "staff",
+      "viewport": {
+        "width": 768,
+        "height": 1000
+      },
+      "result": "PASS",
+      "style": {
+        "font": "\"Noto Sans Thai\", system-ui, sans-serif",
+        "primary": "#9a3412",
+        "overflow": false
+      },
+      "states": [
+        "loading",
+        "empty",
+        "error"
+      ],
+      "source": "controlled HTTP response fixtures; real authenticated shell"
+    },
+    {
+      "name": "admin",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "result": "PASS",
+      "style": {
+        "font": "\"Noto Sans Thai\", system-ui, sans-serif",
+        "primary": "#9a3412",
+        "overflow": false
+      },
+      "states": [
+        "loading",
+        "empty",
+        "error"
+      ],
+      "source": "controlled HTTP response fixtures; real authenticated shell"
+    }
+  ]
+}

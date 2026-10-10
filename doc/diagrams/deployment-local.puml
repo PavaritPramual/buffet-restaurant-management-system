@@ -1,0 +1,29 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title Local deployment architecture - existing runtime configuration
+node "User browser" as Browser
+node "Local workstation / Docker Compose" {
+ node "Frontend service\nVite :5173" as Web
+ node "Backend service\nSpring Boot :8080" as API
+}
+database "Configured database" as DB
+Browser --> Web : HTTP / React
+Browser --> API : HTTP / cookie / allowed CORS Origin
+API --> DB : JDBC / configured datasource
+note right of DB
+Local isolated tests use H2 or disposable PostgreSQL.
+Shared runtime may use Supabase Session Pooler + SSL.
+Compose does not start a database container.
+end note
+@enduml

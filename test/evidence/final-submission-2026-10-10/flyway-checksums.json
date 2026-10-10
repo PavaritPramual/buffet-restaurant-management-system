@@ -1,0 +1,135 @@
+[
+  {
+    "version": "1",
+    "path": "code/backend/src/main/resources/db/migration/common/V1__baseline.sql",
+    "history": -431459505,
+    "calculated": -431459505,
+    "match": true
+  },
+  {
+    "version": "2",
+    "path": "code/backend/src/main/resources/db/migration/common/V2__create_restaurant_tables.sql",
+    "history": -376022096,
+    "calculated": -376022096,
+    "match": true
+  },
+  {
+    "version": "3",
+    "path": "code/backend/src/main/resources/db/migration/postgresql/V3__create_buffet_packages_and_soups.sql",
+    "history": 678764387,
+    "calculated": 678764387,
+    "match": true
+  },
+  {
+    "version": "4",
+    "path": "code/backend/src/main/resources/db/migration/common/V4__create_menu_and_order_tables.sql",
+    "history": 1977155574,
+    "calculated": 1977155574,
+    "match": true
+  },
+  {
+    "version": "5",
+    "path": "code/backend/src/main/resources/db/migration/postgresql/V5__restrict_menu_and_order_access.sql",
+    "history": -21432884,
+    "calculated": -21432884,
+    "match": true
+  },
+  {
+    "version": "6",
+    "path": "code/backend/src/main/resources/db/migration/postgresql/V6__create_dining_sessions.sql",
+    "history": 1714973593,
+    "calculated": 1714973593,
+    "match": true
+  },
+  {
+    "version": "7",
+    "path": "code/backend/src/main/resources/db/migration/common/V7__link_orders_to_dining_sessions.sql",
+    "history": 421808321,
+    "calculated": 421808321,
+    "match": true
+  },
+  {
+    "version": "8",
+    "path": "code/backend/src/main/resources/db/migration/common/V8__snapshot_session_package_price.sql",
+    "history": 356417345,
+    "calculated": 356417345,
+    "match": true
+  },
+  {
+    "version": "10",
+    "path": "code/backend/src/main/resources/db/migration/common/V10__create_user_and_stock_tables.sql",
+    "history": 693950150,
+    "calculated": 693950150,
+    "match": true
+  },
+  {
+    "version": "11",
+    "path": "code/backend/src/main/resources/db/migration/postgresql/V11__restrict_flyway_and_stock_access.sql",
+    "history": 1583091535,
+    "calculated": 1583091535,
+    "match": true
+  },
+  {
+    "version": "9",
+    "path": "code/backend/src/main/resources/db/migration/postgresql/V9__create_payments_table.sql",
+    "history": 1126750035,
+    "calculated": 1126750035,
+    "match": true
+  },
+  {
+    "version": "12",
+    "path": "code/backend/src/main/resources/db/migration/postgresql/V12__align_payment_backend_privileges.sql",
+    "history": 1502075674,
+    "calculated": 1502075674,
+    "match": true
+  },
+  {
+    "version": "13",
+    "path": "code/backend/src/main/resources/db/migration/postgresql/V13__restrict_remaining_client_database_access.sql",
+    "history": 419855576,
+    "calculated": 419855576,
+    "match": true
+  },
+  {
+    "version": "14",
+    "path": "code/backend/src/main/resources/db/migration/common/V14__add_session_bill_request.sql",
+    "history": -1840534327,
+    "calculated": -1840534327,
+    "match": true
+  },
+  {
+    "version": "15",
+    "path": "code/backend/src/main/resources/db/migration/common/V15__add_stock_target_active_and_profile_names.sql",
+    "history": -1092732854,
+    "calculated": -1092732854,
+    "match": true
+  },
+  {
+    "version": "16",
+    "path": "code/backend/src/main/resources/db/migration/common/V16__add_stock_item_and_user_archive.sql",
+    "history": -1042908435,
+    "calculated": -1042908435,
+    "match": true
+  },
+  {
+    "version": "17",
+    "path": "code/backend/src/main/resources/db/migration/common/V17__archive_table_package_soup.sql",
+    "history": -1722267369,
+    "calculated": -1722267369,
+    "match": true
+  },
+  {
+    "version": "18",
+    "path": "code/backend/src/main/resources/db/migration/postgresql/V18__archive_menu_catalog.sql",
+    "history": 208639656,
+    "calculated": 208639656,
+    "match": true
+  },
+  {
+    "version": "19",
+    "path": "code/backend/src/main/resources/db/migration/postgresql/V19__menu_stock_consumption.sql",
+    "history": -730974897,
+    "calculated": -730974897,
+    "match": true
+  }
+]

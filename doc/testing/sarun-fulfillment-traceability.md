@@ -1,0 +1,31 @@
+# Requirement to test traceability — Order Fulfillment (Kitchen & Serving)
+
+Owner: ศรัณย์. Companion to `doc/testing/requirement-test-traceability.md` (Menu/Ordering).
+State diagram: `doc/diagrams/order-fulfillment-state-diagram.md`.
+
+Updated after PR #14 review (role separation on `/orders/*`, auto-refresh copy/behavior
+mismatch, staff order time, Kitchen ticket typography) — see rows below marked as added in
+that round.
+
+| Requirement | Current evidence | Integration evidence still needed |
+|---|---|---|
+| Kitchen can move `RECEIVED -> PREPARING -> READY` | `OrderStateTest` covers the RECEIVED and PREPARING policies; `OrderFulfillmentServiceTest.advanceStatus_whenReceivedToPreparing_*`, `advanceStatus_whenPreparingToReady_*`; `OrderFulfillmentControllerTest.updateStatus_whenValidTransition_*`; `OrderFulfillmentIntegrationTest.fulfillmentLifecycle_whenAdvancedInOrder_movesThroughEveryStatus` | Real Kitchen board browser check |
+| Staff can move `READY -> SERVED` | `OrderStateTest` covers the READY policy; `OrderFulfillmentServiceTest.advanceStatus_whenReadyToServed_*`; `OrderFulfillmentIntegrationTest.fulfillmentLifecycle_whenAdvancedInOrder_movesThroughEveryStatus` | Real Staff serving browser check |
+| Skipping a status is rejected | `OrderFulfillmentServiceTest.advanceStatus_whenSkippingReceivedToReady_rejectsWithBusinessRuleException`, `advanceStatus_whenSkippingReceivedToServed_rejectsWithBusinessRuleException`; `OrderFulfillmentControllerTest.updateStatus_whenSkippingState_returns400AndErrorResponse`; `OrderFulfillmentIntegrationTest.updateStatus_whenSkippingReceivedToReady_returns400AndLeavesOrderUnchanged` | None |
+| Reversing a status is rejected | `OrderFulfillmentServiceTest.advanceStatus_whenReversingPreparingToReceived_*`, `advanceStatus_whenReversingReadyToPreparing_*`; `OrderFulfillmentIntegrationTest.updateStatus_whenReversingPreparingToReceived_returns400AndLeavesOrderUnchanged` | None |
+| `SERVED` is terminal; no further change allowed | `OrderStateTest` covers the SERVED terminal policy; `OrderFulfillmentServiceTest.advanceStatus_whenOrderAlreadyServed_*`; `OrderFulfillmentIntegrationTest.updateStatus_whenOrderAlreadyServed_returns400` | None |
+| Unknown order id returns `404` | `OrderFulfillmentServiceTest.advanceStatus_whenOrderNotFound_throwsResourceNotFoundException`; `OrderFulfillmentControllerTest.updateStatus_whenOrderNotFound_returns404AndErrorResponse`; `OrderFulfillmentIntegrationTest.updateStatus_whenOrderDoesNotExist_returns404` | None |
+| Unsupported/lowercase enum value on the status body returns `400` with shared `ErrorResponse` | `OrderFulfillmentControllerTest.updateStatus_whenUnsupportedEnum_returns400AndErrorResponse`, `updateStatus_whenBodyMissingStatus_returns400AndErrorResponse` | None |
+| Kitchen board lists only `RECEIVED`/`PREPARING` orders, oldest first | `OrderFulfillmentServiceTest.getIncomingOrders_whenCalled_returnsReceivedAndPreparingOrders`; `OrderFulfillmentControllerTest.incoming_whenCalled_returns200AndReceivedAndPreparingOrders`; `OrderFulfillmentIntegrationTest.getIncomingOrders_whenOrderIsReadyOrServed_excludesIt` | None |
+| Staff board lists only `READY` orders | `OrderFulfillmentServiceTest.getReadyOrders_whenCalled_returnsOnlyReadyOrders`; `OrderFulfillmentControllerTest.ready_whenCalled_returns200AndReadyOrders` | None |
+| `/orders/incoming`, `/orders/ready`, `PATCH /orders/{id}/status` reject an unauthenticated caller with `401` | `FixtureOrderFulfillmentAccessProviderTest.require*_whenRoleHeaderMissing/Blank/Unknown_throwsUnauthorized`; `OrderFulfillmentServiceTest` denial cases; `OrderFulfillmentControllerTest.*_whenCallerNotAuthenticated_returns401AndErrorResponse`; `OrderFulfillmentIntegrationTest.incoming_whenRoleHeaderMissing_returns401`, `incoming_whenRoleHeaderUnknown_returns401`, `ready_whenRoleHeaderMissing_returns401`, `updateStatus_whenRoleHeaderMissing_returns401AndLeavesOrderUnchanged` | Real login once Authentication ships; this is a fixture header (`X-User-Role`), not a JWT |
+| Kitchen board and staff serving board reject the wrong staff role with `403`; `SUPERVISOR`/`MANAGER` can access both | `FixtureOrderFulfillmentAccessProviderTest.require*_whenRoleIs*_throwsForbidden/allowsAccess`; `OrderFulfillmentServiceTest.*requiresKitchenAccessNotServiceStaffAccess` etc.; `OrderFulfillmentControllerTest.*_whenCallerIs*_returns403AndErrorResponse`; `OrderFulfillmentIntegrationTest.incoming_whenCallerIsServiceStaff_returns403`, `ready_whenCallerIsKitchenStaff_returns403`, `updateStatus_whenServiceStaffTriesToStartPreparing_returns403AndLeavesOrderUnchanged`, `updateStatus_whenKitchenStaffTriesToMarkServed_returns403AndLeavesOrderUnchanged`, `manager_canActOnBothKitchenAndServiceStaffEndpoints` | None |
+| Kitchen board and staff board auto-refresh (poll) so new/changed orders appear without a manual click, matching the on-page copy | `KitchenBoardPage.test.tsx: polls automatically and shows a new order without any button click, matching the promised copy`; `StaffServingPage.test.tsx` (same) | Real API integration and 360px browser check |
+| Kitchen board ticket line (table + item count) uses the documented Kitchen KDS typography (`kitchen-sample`, 20px bold) | `KitchenBoardPage.test.tsx: shows the table and item count in kitchen-ticket typography` | Visual check against `design-system.css` `.kitchen-sample` sample |
+| Staff serving board shows the order's created time, same as the kitchen board | `StaffServingPage.test.tsx: shows the order created time for a READY order` | None |
+| Kitchen board UI shows table, items, time and status, with start-preparing/mark-ready actions and loading/error/empty states | `KitchenBoardPage.test.tsx` | Real API integration and 360px/tablet browser check |
+| Staff serving UI shows READY orders and marks served | `StaffServingPage.test.tsx` | Real API integration and 360px/tablet browser check |
+| State diagram matches code | `doc/diagrams/order-fulfillment-state-diagram.md` reviewed against `service/state/*State.java` | ปวริศช์ integration review |
+
+Update this table with PR links and actual run results during integration. A route existing
+in code is not evidence that its database or security boundary works.

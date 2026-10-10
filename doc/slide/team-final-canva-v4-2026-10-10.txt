@@ -1,0 +1,318 @@
+ระบบจัดการ ร้านบุฟเฟต์
+CP353002
+ทีม 5 คน · 9 นาที
+โต๊ะ → ออเดอร์ → ครัว → สต๊อก → บิล
+เชื่อมการเปิดโต๊ะและการสั่งอาหารเข้ากับรอบเดียวกัน ติดตามงานครัว การใช้วัตถุดิบ และการชำระเงินจนปิดรอบ
+pavarit_673380278-9_01
+20 วินาที · 1/10
+หนึ่งรอบโต๊ะ เชื่อมทุกบทบาท
+฿
+→
+→
+Customer
+Kitchen
+Service Staff
+Manager · ข้อมูลร้าน
+Supervisor · สต๊อก
+ลูกค้าสั่งอาหาร ครัวเริ่มทำ และพนักงานดูแลการชำระเงิน แต่ละบทบาทใช้ข้อมูลรอบโต๊ะเดียวกัน โดย backend ตรวจสิทธิ์ทุกคำขอ
+pavarit_673380278-9_01
+35 วินาที · 2/10
+แยกหน้าจอ กฎธุรกิจ และข้อมูล
+Controller
+Service
+→
+→
+→
+React
+HTTP / DTO
+กฎ + Transaction
+Repository / DB
+SRP
+ISP
+DIP
+Controller รับคำขอ ส่วน Service คุมกฎธุรกิจ Repository ดูแลการอ่านเขียนข้อมูล ทำให้ทดสอบแต่ละชั้นแยกกันได้
+pavarit_673380278-9_01
+35 วินาที · 3/10
+ออเดอร์เก่า ยังคงใช้สูตรเดิม
+Order #7
+Order #11
+0.100 × 2
+0.250 × 2
+0.200 kg
+0.500 kg
+แก้สูตร
+Snapshot ตอนสั่ง · ตัวอย่างจาก UAT รุ่น af2b45b
+ระบบเก็บสูตรตอนสั่งไว้กับออเดอร์ เมื่อแก้สูตร ออเดอร์เก่าจึงยังหักวัตถุดิบตามสูตรเดิม
+methus_673380300-2_01
+35 วินาที · 4/10
+Template Method ใช้ขั้นตอนร่วมกัน
+ตรวจ
+คำนวณ Δ
+บันทึก + Audit
+→
+→
+IN
+ADJUSTMENT
+CONSUMPTION
++
+±
+−
+Template กำหนดขั้นตอนตรวจและบันทึกไว้ร่วมกัน แต่ละ Processor เปลี่ยนวิธีคำนวณยอดและประเภทประวัติผ่าน Hook
+methus_673380300-2_01
+25 วินาที · 5/10
+เริ่มทำ จึงหักสต๊อกครั้งเดียว
+RECEIVED
+→
+PREPARING
+→
+READY → SERVED
+3.000
+2.800
+→
+−0.200 kg
+409
+ไม่พอ → คงเดิม
+UAT af2b45b · สูตร 0.100 × 2 · duplicate ไม่เพิ่ม CONSUMPTION
+ระบบหักวัตถุดิบตามสูตรเมื่อเปลี่ยนเป็น PREPARING ถ้าสต๊อกไม่พอ จะปฏิเสธทั้งคำขอและคงยอดเดิม
+sarun_673380515-1_02
+45 วินาที · 6/10
+Strategy แยกราคาและส่วนลด
+BillCalculationStrategy
+DiscountCalculationStrategy
+ราคา
+ส่วนลด
+→
+↓
+฿
+BigDecimal
+HALF_UP · 2
+BillingEngine เรียกการคิดราคาและส่วนลดผ่าน Interface จึงเปลี่ยนวิธีคำนวณได้ โดยยังตรวจสัญญาและปัดเศษที่ส่วนกลาง
+teeramet_673380273-9_02
+45 วินาที · 7/10
+เอกสาร API ตรงกับผลจริง
+POST
+→
+201
+Created
+{ }
+DTO
+Location
+PR52 · ผ่าน local / CI · public retest ของการแก้ยังไม่ยืนยัน
+PR52 ประกาศ 201 พร้อม DTO และ Location ให้ตรงกับ API จริง และแก้ตัวอย่าง ErrorResponse ที่เคยแสดงข้อมูลข้าม Operation
+sirapat_673380293-3_01
+30 วินาที · 8/10
+Live Demo · 3:30
+฿
+→
+→
+เปิดโต๊ะ + QR
+สั่ง · ครัว · สต๊อก
+ชำระ + ปิดรอบ
+0:00–0:55
+0:55–2:15
+2:15–3:30
+buffet-restaurant-management.onrender.com · เตรียมข้อมูลและซ้อมก่อนใช้งานจริง
+สาธิตหนึ่งรอบโต๊ะ ตั้งแต่เปิด QR จนชำระเงินและปิดรอบ ระหว่างทางแสดงว่าสต๊อกลดลงตอนครัวเริ่มทำอาหาร
+sirapat_673380293-3_01
+210 วินาที · 9/10
+กฎชัด ทดสอบได้ หลักฐานตามรุ่น
+✓
+✓
+→
+→
+สัญญาร่วม
+Regression
+Revision + Environment
+ใช้สัญญาร่วมและ Regression ลดปัญหาระหว่างโมดูล ระบุรุ่นโค้ดและสภาพแวดล้อมของผลทดสอบ เพื่อให้ตรวจสอบย้อนกลับได้
+sirapat_673380293-3_01
+60 วินาที · 10/10
+หลักฐานคนละรุ่น ต้องอ่านแยกกัน
+PUBLIC
+CI
+MERGED CODE
+af2b45b
+25c7a40
+855a954
+8 UI
+12 API
+431
+Backend
+187 + 6 Frontend
+PR52
+Swagger
+UI load-failure ไม่ได้รัน · Swagger public retest ยังไม่ยืนยัน
+UAT แสดงผลบนเว็บจริง ส่วน CI ตรวจโค้ดในรุ่นที่ระบุ การ merge ยืนยันว่าโค้ดรวมแล้ว ยังต้องทดสอบการแก้ Swagger บนเว็บจริง
+pavarit_673380278-9_01
+Q&A · 11/24
+SOLID ผ่านหน้าที่และสัญญา
+S
+แยกหน้าที่
+O
+เพิ่มผ่าน Hook
+L
+รักษาสัญญา
+I
+Interface พอดี
+D
+ฉีด Dependency
+SOLID ช่วยแบ่งหน้าที่และจำกัดสิ่งที่แต่ละส่วนต้องรู้ จึงเพิ่มหรือทดแทนพฤติกรรมได้ โดยรักษาสัญญาที่ส่วนอื่นเรียกใช้
+pavarit_673380278-9_01
+Q&A · 12/24
+Enterprise Patterns ทำงานร่วมกัน
+MVC
+Service Layer
+Repository
+→
+→
+Layered Architecture
+DTO + Mapper
+Dependency Injection
+แต่ละชั้นรับผิดชอบงานของตนเอง และส่งข้อมูลผ่าน DTO Service ประสาน use case ส่วน Repository ดูแลการเข้าถึงฐานข้อมูล
+pavarit_673380278-9_01
+Q&A · 13/24
+State · เลือกพฤติกรรมตามสถานะ
+OrderFulfillmentServiceImpl
+↓
+OrderState · status() / next()
+ReceivedState
+PreparingState
+ReadyState
+ServedState
+implements
+Service เลือก State จากสถานะปัจจุบันของออเดอร์ แต่ละ State กำหนดสถานะถัดไป จึงปฏิเสธการข้ามขั้นหรือทำซ้ำ
+sarun_673380515-1_02
+Q&A · 14/24
+Strategy · Engine รู้เพียง Interface
+BillingEngine
+BillCalculationStrategy
+DiscountCalculationStrategy
+↑
+↑
+Standard / Child Rate
+PromotionDiscountStrategy
+Engine พึ่งพา Interface สำหรับราคาและส่วนลด จึงใช้วิธีคำนวณหลายแบบได้ โดยไม่ผูกกับคลาสใดคลาสหนึ่ง
+teeramet_673380273-9_02
+Q&A · 15/24
+Template · เพิ่ม Consumption ผ่าน Hook
+StockTransactionTemplate
+final processWithOrder() · calculateDelta()
+extends
+StockInProcessor
+StockAdjustmentProcessor
+StockConsumptionProcessor
+IN
+ADJUSTMENT
+CONSUMPTION + orderId
+Template วางขั้นตรวจและบันทึกไว้เป็น final Consumption เพิ่มการหักยอดและผูกประวัติกับ orderId ผ่าน Hook
+methus_673380300-2_01
+Q&A · 16/24
+Domain · รอบโต๊ะเป็นแกนกลาง
+DiningSession
+↓
+CustomerOrder
+↓
+OrderItem
+MenuItem
+→
+Payment
+→
+StockTransaction
+↓
+สูตร Snapshot
+รอบโต๊ะเชื่อมออเดอร์กับการชำระเงิน ส่วน OrderItem เก็บสูตรตอนสั่ง ประวัติ CONSUMPTION อ้าง orderId เพื่อย้อนดูที่มาของการหักสต๊อก
+pavarit_673380278-9_01
+Q&A · 17/24
+ER · สูตรปัจจุบันแยกจาก Snapshot
+menu_items
+order_items
+↓
+↓
+menu_stock_usage
+order_item_stock_usage
+stock_items
+↓
+V19 · FK + composite PK · Snapshot เป็นข้อมูลของ OrderItem
+สูตรของเมนูปัจจุบันและสูตรตอนสั่งอยู่คนละตาราง FK และ composite PK รักษาการอ้างอิง โดยไม่ให้การแก้เมนูเปลี่ยนออเดอร์เก่า
+methus_673380300-2_01
+Q&A · 18/24
+Sequence · เปิดรอบอย่างเป็นขั้นตอน
+Staff
+Controller
+Service
+Database
+→
+POST
+→
+Authorize
+→
+Lock + Save
+201 + QR
+Service ตรวจสิทธิ์และเงื่อนไข แล้วล็อกโต๊ะก่อนสร้างรอบ ระบบบันทึกรอบกับสถานะโต๊ะใน Transaction เดียวกัน และคืน 201 พร้อม QR
+pavarit_673380278-9_01
+Q&A · 19/24
+Sequence · สั่งก่อน หักเมื่อเริ่มทำ
+Customer · สั่ง
+→
+RECEIVED
+Snapshot
+↓
+Kitchen · เริ่มทำ
+←
+ตรวจ Stock ทุกตัว
+↓
+หัก + Audit + PREPARING
+Transaction เดียว
+ตอนสั่ง ระบบสร้าง RECEIVED พร้อมสูตร Snapshot เมื่อครัวเริ่มทำ จึงตรวจทุกวัตถุดิบแล้วหักยอดพร้อมเปลี่ยนสถานะใน Transaction เดียว
+sarun_673380515-1_02
+Q&A · 20/24
+Sequence · PAID แล้วจึงปิดรอบ
+฿
+→
+→
+ขอคิดบิล
+PAID
+ปิดรอบ
+Customer
+Service Staff
+AVAILABLE
+PAID ยืนยันการรับชำระ ส่วนการปิดรอบเป็นอีกคำสั่งหนึ่ง พนักงานปิดรอบหลังชำระแล้ว เพื่อคืนโต๊ะ AVAILABLE และยกเลิกสิทธิ์ลูกค้า
+teeramet_673380273-9_02
+Q&A · 21/24
+Activity · ลูกค้าสั่งและติดตาม
+แลก QR
+→
+สั่งอาหาร
+→
+RECEIVED
+↓
+ติดตาม
+←
+ขอคิดบิล
+←
+ปิดรอบ · สิทธิ์สิ้นสุด
+Network / 5xx → Retry
+เมื่อขอคิดบิล ระบบหยุดรับออเดอร์เพิ่ม และเมื่อปิดรอบ สิทธิ์ลูกค้าสิ้นสุด หน้าเว็บแยกสิทธิ์หมดอายุออกจาก Network หรือ 5xx ที่ให้ลองใหม่ได้
+sirapat_673380293-3_01
+Q&A · 22/24
+Deployment · API คุมการเข้าถึงข้อมูล
+Render · TLS
+Spring Boot React / API
+→
+→
+↓
+Session Pooler
+←
+PostgreSQL
+Browser เรียก API ผ่าน HTTPS แล้ว backend จึงติดต่อฐานข้อมูลผ่าน Pooler ภาพแสดงโครงสร้างที่ตั้งค่าไว้ ต้องยืนยันรุ่นที่ deploy ก่อนสาธิตจริง
+teeramet_673380273-9_02
+Q&A · 23/24
+Use Case · เปิดโต๊ะ
+→
+→
+SERVICE_STAFF
+AVAILABLE
+ACTIVE + QR
+ผิดเงื่อนไข → ปฏิเสธ · รายละเอียด / แหล่งอ้างอิงอยู่ใน Notes
+พนักงานเปิดได้เฉพาะโต๊ะ AVAILABLE ที่ผ่านเงื่อนไข ระบบสร้างรอบ ACTIVE พร้อม QR สำหรับให้ลูกค้าแลกสิทธิ์ของรอบนี้
+pavarit_673380278-9_01
+Q&A · 24/24

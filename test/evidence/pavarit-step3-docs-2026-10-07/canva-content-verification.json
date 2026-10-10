@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-07",
+  "code_baseline": "472fba4f25a27fa2e3cd1e1213151ce971646f3a",
+  "docs_reference_commit": "0f1a05c38bc6baa5436369d45a6545ea030a64d1",
+  "main_slides": 32,
+  "appendix_slides": 8,
+  "notes": 40,
+  "owners": 5,
+  "source_references": 107,
+  "unique_source_files_verified_at_commit": 60,
+  "local_markdown_links_checked": 90,
+  "markdown_sha256": "ad71e629a841bbb1d74b6475b4dd3f0d8aa710bb7d5da0a4f5beb6329e9de42e",
+  "runtime_changes": 0,
+  "canva_upload": "success_after_specific_user_approval",
+  "canva_visual_review": false,
+  "canva_pdf_export": false,
+  "new_tests_run": false,
+  "pptx_review_required": false,
+  "errors": [],
+  "canva_design_id": "DAHXQy_ZUvQ",
+  "canva_edit_url": "https://www.canva.com/d/D0dhcGCjuTTS7pV",
+  "canva_page_count": 40,
+  "canva_dimensions": [
+    1920,
+    1080
+  ],
+  "canva_readback": {
+    "all_expected_slide_text_present": true,
+    "notes_match_source": 40,
+    "editable_richtext_elements": 535,
+    "text_elements_outside_canvas": 0,
+    "errors": []
+  },
+  "canva_visual_review_limitation": "Canva preview URL could not be opened by image viewer; full visual QA pending",
+  "canva_pdf_export_limitation": "Connected Canva tools have no PDF export operation; export and archive pending",
+  "owners_confirmed": false,
+  "final_release_verified": false
+}

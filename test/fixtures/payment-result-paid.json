@@ -1,0 +1,8 @@
+{
+  "paymentId": 1,
+  "sessionId": 1,
+  "amount": 997.50,
+  "paymentMethod": "CASH",
+  "paymentStatus": "PAID",
+  "paidAt": "2026-09-18T11:30:00+07:00"
+}

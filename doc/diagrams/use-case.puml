@@ -1,0 +1,78 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title All actors and implemented use cases - final code baseline 5ff8076
+left to right direction
+actor Customer
+actor "SERVICE_STAFF" as Staff
+actor "KITCHEN_STAFF" as Kitchen
+rectangle "Buffet restaurant" {
+ usecase "Exchange single-use QR" as QR
+ usecase "View package menu" as CustomerMenu
+ usecase "Place order / view status" as Order
+ usecase "Request bill / view bill status" as Bill
+ usecase "Open session\nSelect package and soup" as Open
+ usecase "Read READY / mark SERVED" as Serve
+ usecase "Receive payment" as Pay
+ usecase "Close after same-session PAID" as Close
+ usecase "Read incoming orders\nRECEIVED / PREPARING" as Incoming
+ usecase "PREPARING / READY transitions" as Prepare
+}
+Customer --> QR
+Customer --> CustomerMenu
+Customer --> Order
+Customer --> Bill
+Staff --> Open
+Staff --> Serve
+Staff --> Pay
+Staff --> Close
+Kitchen --> Incoming
+Kitchen --> Prepare
+actor "MANAGER" as Manager
+actor "SUPERVISOR" as Supervisor
+rectangle "Administration module" {
+ usecase "Login / logout" as Login
+ usecase "List / create users\nBasic profile at creation" as Users
+ usecase "Update contact profile\nfirst / last name and phone" as Profile
+ usecase "Manage tables / packages / soups" as Catalog
+ usecase "Manage menu categories / items" as AdminMenu
+ usecase "Configure stock per serving\nOptional automatic deduction" as Recipe
+ usecase "Manage stock master data" as Master
+ usecase "Guarded delete / archive / restore\nUsers and master data" as Lifecycle
+ usecase "View stock / transaction history" as Read
+ usecase "Record stock-in / signed adjustment" as Move
+}
+Manager --> Login
+Supervisor --> Login
+Manager --> Users
+Manager --> Profile
+Manager --> Catalog
+Manager --> AdminMenu
+Manager --> Recipe
+Manager --> Master
+Manager --> Lifecycle
+Manager --> Read
+Manager --> Move
+Supervisor --> Read
+Supervisor --> Move
+note bottom of Supervisor
+No Kitchen / Serving / Payment privilege.
+Manager can delete unreferenced accounts or archive referenced accounts.
+Guarded restore leaves accounts inactive; active toggle is explicit.
+Contact-profile updates are limited to first name, last name, and phone.
+end note
+note bottom
+Employees login before protected use cases.
+Customer access is QR exchange and HttpOnly grant.
+end note
+@enduml

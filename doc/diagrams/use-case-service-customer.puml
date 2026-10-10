@@ -1,0 +1,41 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title Customer, Service and Kitchen use cases
+left to right direction
+actor Customer
+actor "SERVICE_STAFF" as Staff
+actor "KITCHEN_STAFF" as Kitchen
+rectangle "Buffet restaurant" {
+ usecase "Exchange single-use QR" as QR
+ usecase "View package menu" as Menu
+ usecase "Place order / view status" as Order
+ usecase "Request bill / view bill status" as Bill
+ usecase "Open session\nSelect package and soup" as Open
+ usecase "Read READY / mark SERVED" as Serve
+ usecase "Receive payment" as Pay
+ usecase "Close after same-session PAID" as Close
+ usecase "Read incoming orders\nRECEIVED / PREPARING" as Incoming
+ usecase "PREPARING / READY transitions" as Prepare
+}
+Customer --> QR
+Customer --> Menu
+Customer --> Order
+Customer --> Bill
+Staff --> Open
+Staff --> Serve
+Staff --> Pay
+Staff --> Close
+Kitchen --> Incoming
+Kitchen --> Prepare
+@enduml

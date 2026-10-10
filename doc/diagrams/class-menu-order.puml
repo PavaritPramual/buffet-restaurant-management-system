@@ -1,0 +1,75 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title Menu and Ordering classes - actual implementation
+class BuffetPackage {
+price : BigDecimal
+}
+class MenuCategory {
+ archivedAt : OffsetDateTime (V18)
+name : String
+}
+class MenuItem {
+ archivedAt : OffsetDateTime (V18)
+category : MenuCategory
+ packageIds : Set<Long>
+ available : boolean
+ imageUrl : String
+ automaticStockDeduction : boolean
+ stockUsage : List<MenuStockUsage>
+}
+class CustomerOrder {
+sessionId : Long
+ tableNumber : String
+ status : OrderStatus
+ createdAt : OffsetDateTime
+ items : List<OrderItem>
+ +addItem(menuItemId, itemName, quantity)
+ +updateStatus(status)
+}
+class OrderItem {
+menuItemId : Long
+ itemName : String
+ quantity : Integer
+ order : CustomerOrder
+ stockUsage : List<MenuStockUsage> (frozen)
+}
+interface CustomerOrderingService <<Service Layer>>
+class CustomerOrderingServiceImpl <<Service Layer>>
+interface SessionContextProvider <<Provider contract>>
+interface CustomerOrderRepository <<Repository>>
+class OrderingMapper <<DTO Mapper>>
+CustomerOrderingService <|.. CustomerOrderingServiceImpl
+CustomerOrderingServiceImpl --> SessionContextProvider
+CustomerOrderingServiceImpl --> CustomerOrderRepository
+CustomerOrderingServiceImpl --> OrderingMapper
+CustomerOrderRepository --> CustomerOrder
+MenuCategory "1" -- "0..*" MenuItem
+BuffetPackage "0..*" -- "0..*" MenuItem : package_menu_items
+CustomerOrder "1" *-- "1..*" OrderItem : ALL / LAZY
+note bottom of CustomerOrder
+sessionId and menuItemId are scalar IDs in these classes.
+FK constraints exist in DB; no invented ManyToOne fields.
+end note
+class MenuStockUsage <<Embeddable>> {
+ stockItemId : Long
+ quantityPerServing : BigDecimal
+ unit : String
+}
+interface MenuStockUsageService
+class MenuStockUsageServiceImpl
+MenuStockUsageService <|.. MenuStockUsageServiceImpl
+CustomerOrderingServiceImpl --> MenuStockUsageService : snapshot under menu lock
+MenuItem "1" *-- "0..*" MenuStockUsage : recipe ElementCollection / LAZY
+OrderItem "1" *-- "0..*" MenuStockUsage : separate snapshot table / LAZY
+@enduml

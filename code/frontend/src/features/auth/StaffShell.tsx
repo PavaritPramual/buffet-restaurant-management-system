@@ -1,0 +1,81 @@
+import { useEffect, useRef, useState } from 'react'
+import { Navigate, NavLink, Outlet, useMatch, useNavigate } from 'react-router-dom'
+import { authApi, getErrorMessage, roleLabels } from '../admin/api'
+import type { UserContext } from '../admin/api'
+import './staff-shell.css'
+
+export default function StaffShell() {
+  const kitchenMatch = useMatch('/kitchen')
+  const navigate = useNavigate()
+  const [user, setUser] = useState<UserContext | null>(null)
+  const [checking, setChecking] = useState(true)
+  const [loggingOut, setLoggingOut] = useState(false)
+  const [error, setError] = useState('')
+  const authRevision = useRef(0)
+  const logoutPending = useRef(false)
+
+  useEffect(() => {
+    let active = true
+    const revision = ++authRevision.current
+    const isCurrent = () => active && revision === authRevision.current
+    const handleSessionExpired = () => {
+      ++authRevision.current
+      setUser(null)
+      navigate('/admin', { replace: true })
+    }
+    window.addEventListener('auth:session-expired', handleSessionExpired)
+    authApi.current()
+      .then((currentUser) => { if (isCurrent()) setUser(currentUser) })
+      .catch(() => { if (isCurrent()) navigate('/admin', { replace: true }) })
+      .finally(() => { if (isCurrent()) setChecking(false) })
+    return () => {
+      active = false
+      window.removeEventListener('auth:session-expired', handleSessionExpired)
+    }
+  }, [navigate])
+
+  async function handleLogout() {
+    if (logoutPending.current) return
+    logoutPending.current = true
+    const revision = ++authRevision.current
+    setLoggingOut(true)
+    setError('')
+    try {
+      await authApi.logout()
+      if (revision === authRevision.current) { setUser(null); navigate('/admin', { replace: true }) }
+    } catch (requestError) {
+      if (revision === authRevision.current) setError(getErrorMessage(requestError))
+    } finally {
+      if (revision === authRevision.current) { logoutPending.current = false; setLoggingOut(false) }
+    }
+  }
+
+  if (checking) return <div className="admin-loading">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
+  if (!user) return null
+
+  if (user.role !== 'SERVICE_STAFF' && user.role !== 'KITCHEN_STAFF') {
+    return <Navigate to="/admin/stock" replace />
+  }
+
+  const isKitchenRoute = kitchenMatch !== null
+  if (isKitchenRoute && user.role !== 'KITCHEN_STAFF') return <Navigate to="/staff/tables" replace />
+  if (!isKitchenRoute && user.role === 'KITCHEN_STAFF') return <Navigate to="/kitchen" replace />
+
+  return <div className="staff-shell">
+    <header className="staff-shell-header">
+      <div className="staff-shell-brand"><span className="admin-brand-mark">BR</span><strong>BUFFET <span>ระบบจัดการร้าน</span></strong></div>
+      <div className="staff-shell-user">
+        <div><strong>{user.displayName}</strong><span>{roleLabels[user.role]}</span></div>
+        <button className="admin-logout" title="ออกจากระบบ" aria-label="ออกจากระบบ" disabled={loggingOut} onClick={() => void handleLogout()}>↗</button>
+      </div>
+    </header>
+    <nav className="staff-shell-nav" aria-label="งานพนักงาน">
+      {user.role === 'SERVICE_STAFF' ? <>
+        <NavLink to="/staff/tables">โต๊ะและรอบกิน</NavLink>
+        <NavLink to="/staff/serving">งานเสิร์ฟ</NavLink>
+      </> : <NavLink to="/kitchen">งานครัว</NavLink>}
+    </nav>
+    {error && <p className="admin-error staff-shell-error" role="alert">ออกจากระบบไม่สำเร็จ: {error}</p>}
+    <Outlet />
+  </div>
+}

@@ -1,0 +1,389 @@
+{
+  "fonts": {
+    "sarabun": true,
+    "code": true
+  },
+  "pages": [
+    {
+      "page": 1,
+      "title": "ระบบร้านบุฟเฟต์ที่เชื่อมทุกบทบาท",
+      "issues": []
+    },
+    {
+      "page": 2,
+      "title": "ผู้ใช้งานทั้งห้ากลุ่มมีหน้าที่ต่างกัน",
+      "issues": []
+    },
+    {
+      "page": 3,
+      "title": "Use Case Description กำหนดเงื่อนไขเปิดรอบ",
+      "issues": []
+    },
+    {
+      "page": 4,
+      "title": "Controller Service และ Repository แยกหน้าที่",
+      "issues": []
+    },
+    {
+      "page": 5,
+      "title": "Session เป็นแกนของความสัมพันธ์ข้อมูล",
+      "issues": []
+    },
+    {
+      "page": 6,
+      "title": "S แยกงาน HTTP ออกจากกฎเปิดรอบ",
+      "issues": []
+    },
+    {
+      "page": 7,
+      "title": "O เปลี่ยนนโยบายราคาโดยไม่แก้ Engine",
+      "issues": []
+    },
+    {
+      "page": 8,
+      "title": "L การแทน implementation ต้องรักษาสัญญา",
+      "issues": []
+    },
+    {
+      "page": 9,
+      "title": "I ให้ผู้เรียกใช้เฉพาะข้อมูลที่จำเป็น",
+      "issues": []
+    },
+    {
+      "page": 10,
+      "title": "D Service รับ dependency ผ่าน constructor",
+      "issues": []
+    },
+    {
+      "page": 11,
+      "title": "State เก็บกฎลำดับงานไว้กับสถานะ",
+      "issues": []
+    },
+    {
+      "page": 12,
+      "title": "Strategy แยกนโยบายคำนวณจากงานรับชำระ",
+      "issues": []
+    },
+    {
+      "page": 13,
+      "title": "Template Method ให้ Stock ใช้ขั้นตอนเดียวกัน",
+      "issues": []
+    },
+    {
+      "page": 14,
+      "title": "QR แลกสิทธิ์ก่อนเรียก Ordering",
+      "issues": []
+    },
+    {
+      "page": 15,
+      "title": "คิดบิล ชำระ และปิดรอบเป็นคนละขั้น",
+      "issues": []
+    },
+    {
+      "page": 16,
+      "title": "Deployment ของ runtime ที่มีอยู่ปัจจุบัน",
+      "issues": []
+    },
+    {
+      "page": 17,
+      "title": "Test ต้องยืนยันผลที่คาด ไม่ใช่แค่เรียกเมธอด",
+      "issues": []
+    },
+    {
+      "page": 18,
+      "title": "ผล baseline ผ่าน พร้อมขอบเขตหลักฐานที่ชัดเจน",
+      "issues": []
+    },
+    {
+      "page": 19,
+      "title": "เดโมแสดงการทำงานร่วมกันครบหนึ่งรอบ",
+      "issues": []
+    },
+    {
+      "page": 20,
+      "title": "สรุปการออกแบบจากปัญหาถึงหลักฐาน",
+      "issues": []
+    },
+    {
+      "page": 21,
+      "title": "หนึ่งรอบกินคือข้อมูลร่วมของทั้งร้าน",
+      "issues": []
+    },
+    {
+      "page": 22,
+      "title": "ลูกค้า พนักงานบริการ และครัวทำอะไรกับระบบ",
+      "issues": []
+    },
+    {
+      "page": 23,
+      "title": "แต่ละบทบาทมีงานและสิทธิ์ต่างกัน",
+      "issues": []
+    },
+    {
+      "page": 24,
+      "title": "Manager และ Supervisor มีสิทธิ์ต่างกัน",
+      "issues": []
+    },
+    {
+      "page": 25,
+      "title": "แบ่งชั้นเพื่อแยกเหตุผลที่โค้ดต้องเปลี่ยน",
+      "issues": []
+    },
+    {
+      "page": 26,
+      "title": "Component แสดงขอบเขตและจุดเชื่อมของโมดูล",
+      "issues": []
+    },
+    {
+      "page": 27,
+      "title": "โมดูลอ่านข้อมูลผ่านสัญญาขนาดเล็ก",
+      "issues": []
+    },
+    {
+      "page": 28,
+      "title": "DiningSession เชื่อมข้อมูลธุรกรรมของร้าน",
+      "issues": []
+    },
+    {
+      "page": 29,
+      "title": "Domain Model แสดงแนวคิดก่อนรายละเอียดคลาส",
+      "issues": []
+    },
+    {
+      "page": 30,
+      "title": "Cascade ใช้เฉพาะข้อมูลที่เป็นเจ้าของร่วมกัน",
+      "issues": []
+    },
+    {
+      "page": 31,
+      "title": "FK รักษาประวัติเมื่อข้อมูลต้นทางถูกลบ",
+      "issues": []
+    },
+    {
+      "page": 32,
+      "title": "ERD แสดงตารางและความสัมพันธ์ของฐานข้อมูล",
+      "issues": []
+    },
+    {
+      "page": 33,
+      "title": "ล็อกราคาแพ็กเกจไว้ตอนเปิดรอบ",
+      "issues": []
+    },
+    {
+      "page": 34,
+      "title": "Class ของ Session แสดง Entity และ provider",
+      "issues": []
+    },
+    {
+      "page": 35,
+      "title": "Service Layer ประสานงาน แล้วใช้ Repository เก็บข้อมูล",
+      "issues": []
+    },
+    {
+      "page": 36,
+      "title": "DTO และ Mapper แยก API ออกจาก JPA Entity",
+      "issues": []
+    },
+    {
+      "page": 37,
+      "title": "Transaction ทำให้หลายการเปลี่ยนเป็นงานเดียว",
+      "issues": []
+    },
+    {
+      "page": 38,
+      "title": "Class Diagram แสดงตำแหน่ง State Pattern",
+      "issues": []
+    },
+    {
+      "page": 39,
+      "title": "Service ตรวจ next ก่อนบันทึกสถานะ",
+      "issues": []
+    },
+    {
+      "page": 40,
+      "title": "State Diagram แสดงลำดับ Order และสิทธิ์",
+      "issues": []
+    },
+    {
+      "page": 41,
+      "title": "Class Diagram แสดง composition ของ Strategy",
+      "issues": []
+    },
+    {
+      "page": 42,
+      "title": "BillingEngine ใช้ Strategy แล้วปัดยอดครั้งสุดท้าย",
+      "issues": []
+    },
+    {
+      "page": 43,
+      "title": "Class Diagram แสดง Template และ hooks",
+      "issues": []
+    },
+    {
+      "page": 44,
+      "title": "process บันทึกทั้งยอดใหม่และผู้ทำรายการ",
+      "issues": []
+    },
+    {
+      "page": 45,
+      "title": "QR แลกได้ครั้งเดียว แล้วใช้ cookie ต่อ",
+      "issues": []
+    },
+    {
+      "page": 46,
+      "title": "Sequence แสดงการแลก QR และออกสิทธิ์ลูกค้า",
+      "issues": []
+    },
+    {
+      "page": 47,
+      "title": "React ต้องกันคำขอซ้ำและผลตอบกลับเก่า",
+      "issues": []
+    },
+    {
+      "page": 48,
+      "title": "เปิดรอบต้องตรวจโต๊ะและ capacity ก่อนสร้างข้อมูล",
+      "issues": []
+    },
+    {
+      "page": 49,
+      "title": "Sequence แสดงการเปิดรอบใน transaction เดียว",
+      "issues": []
+    },
+    {
+      "page": 50,
+      "title": "Ordering อ่านเฉพาะเมนูของแพ็กเกจในรอบ",
+      "issues": []
+    },
+    {
+      "page": 51,
+      "title": "Activity แสดงทางเลือกและเงื่อนไขก่อนสั่ง",
+      "issues": []
+    },
+    {
+      "page": 52,
+      "title": "ขอคิดบิลแล้วทุกเครื่องสั่งเพิ่มไม่ได้",
+      "issues": []
+    },
+    {
+      "page": 53,
+      "title": "Payment คำนวณยอดฝั่ง backend และกันจ่ายซ้ำ",
+      "issues": []
+    },
+    {
+      "page": 54,
+      "title": "PAID ยังต้องให้พนักงานกดปิดรอบ",
+      "issues": []
+    },
+    {
+      "page": 55,
+      "title": "Sequence แยกคิดบิล ชำระ และปิดรอบ",
+      "issues": []
+    },
+    {
+      "page": 56,
+      "title": "สิทธิ์พนักงานมาจาก server session",
+      "issues": []
+    },
+    {
+      "page": 57,
+      "title": "สต็อกเปลี่ยนผ่านธุรกรรมที่ตรวจย้อนหลังได้",
+      "issues": []
+    },
+    {
+      "page": 58,
+      "title": "ทดสอบตามความเสี่ยงของแต่ละชั้น",
+      "issues": []
+    },
+    {
+      "page": 59,
+      "title": "ตัวอย่าง test สำหรับ Strategy ที่แทนกันได้",
+      "issues": []
+    },
+    {
+      "page": 60,
+      "title": "Test ของ QR ตรวจว่า POST เกิดเพียงครั้งเดียว",
+      "issues": []
+    },
+    {
+      "page": 61,
+      "title": "PostgreSQL test จัดลำดับคำขอ Order กับ close",
+      "issues": []
+    },
+    {
+      "page": 62,
+      "title": "DTO ตรวจค่าที่จำเป็นก่อนเข้า use case",
+      "issues": []
+    },
+    {
+      "page": 63,
+      "title": "ตัวอย่างบิลจากราคาที่ล็อกไว้ตอนเปิดรอบ",
+      "issues": []
+    },
+    {
+      "page": 64,
+      "title": "เวลาและทศนิยมต้องตรง API กับฐานข้อมูล",
+      "issues": []
+    },
+    {
+      "page": 65,
+      "title": "ระบบที่ตรวจแล้วรันด้วย frontend กับ backend แยก",
+      "issues": []
+    },
+    {
+      "page": 66,
+      "title": "ขอบเขตที่ยังไม่รับรองสำหรับชุดส่ง Final",
+      "issues": []
+    },
+    {
+      "page": 67,
+      "title": "อ้างอิงโค้ดและหลักฐานที่ตรวจย้อนกลับได้",
+      "issues": []
+    },
+    {
+      "page": 68,
+      "title": "Use Case ภาพรวมทุก actor ของระบบ",
+      "issues": []
+    },
+    {
+      "page": 69,
+      "title": "Class ของ Menu และ Ordering ตรง source",
+      "issues": []
+    },
+    {
+      "page": 70,
+      "title": "Class ของ Auth และ UserProfile แบบ shared PK",
+      "issues": []
+    },
+    {
+      "page": 71,
+      "title": "Sequence ของ Ordering ครัว และงานเสิร์ฟ",
+      "issues": []
+    },
+    {
+      "page": 72,
+      "title": "Activity ของครัวและการยืนยันเสิร์ฟ",
+      "issues": []
+    },
+    {
+      "page": 73,
+      "title": "Activity ของ Payment และ close แยกกัน",
+      "issues": []
+    },
+    {
+      "page": 74,
+      "title": "Activity ของการรับเข้าและปรับสต็อก",
+      "issues": []
+    },
+    {
+      "page": 75,
+      "title": "Deployment design สำหรับระบบสาธารณะ",
+      "issues": []
+    },
+    {
+      "page": 76,
+      "title": "MVC แยกหน้าจอ HTTP และข้อมูลของระบบ",
+      "issues": []
+    }
+  ],
+  "issues": []
+}

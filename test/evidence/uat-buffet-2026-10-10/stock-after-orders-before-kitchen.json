@@ -1,0 +1,28 @@
+[
+  {
+    "id": 7,
+    "sku": "UAT261010TEERAMET-B",
+    "name": "UAT261010TEERAMET วัตถุดิบไม่พอ",
+    "unit": "kg",
+    "quantity": 0.05,
+    "lowStockThreshold": 0.1,
+    "openingTargetStock": 1,
+    "shortfall": 0.95,
+    "active": true,
+    "updatedAt": "2026-10-10T05:19:09.871228Z",
+    "archivedAt": null
+  },
+  {
+    "id": 6,
+    "sku": "UAT261010TEERAMET-A",
+    "name": "UAT261010TEERAMET วัตถุดิบสูตรสำเร็จ",
+    "unit": "kg",
+    "quantity": 3,
+    "lowStockThreshold": 0.1,
+    "openingTargetStock": 3,
+    "shortfall": 0,
+    "active": true,
+    "updatedAt": "2026-10-10T05:13:54.775352Z",
+    "archivedAt": null
+  }
+]

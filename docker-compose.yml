@@ -1,0 +1,27 @@
+services:
+  backend:
+    build:
+      context: ./code/backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - path: ./code/backend/.env
+        required: false
+    environment:
+      SERVER_PORT: "8080"
+      DINING_SESSION_STAFF_ACCESS_PROVIDER: session
+      FULFILLMENT_ACCESS_PROVIDER: session
+      MASTER_DATA_ACCESS_PROVIDER: session
+      ORDERING_SESSION_PROVIDER: database
+      MENU_ADMIN_ACCESS_PROVIDER: session
+      BILLING_CONTEXT_PROVIDER: database
+      PAYMENT_STATUS_PROVIDER: database
+  frontend:
+    build:
+      context: ./code/frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: "http://localhost:8080/api/v1"
+    depends_on:
+      - backend

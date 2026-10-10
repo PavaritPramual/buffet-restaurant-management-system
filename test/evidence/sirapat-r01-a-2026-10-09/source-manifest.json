@@ -1,0 +1,122 @@
+{
+  "base": "69fb7afae06cf4230c814c0e58c4e8e13700ac3e",
+  "capture": "R01-A implementation before commit; actual V18; no V16/V17 placeholders",
+  "files": [
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/exception/MenuConflictException.java",
+      "sha256": "4ad3322c0b6ab08b43fd5276a17086e9da1697c7aa3f5b4a3f70359286f1318b"
+    },
+    {
+      "path": "code/backend/src/main/resources/db/migration/h2/V18__archive_menu_catalog.sql",
+      "sha256": "732d28a595fe9e2285dd10aa4311af4e59165e9e134afd6c02215c8c13e5b65a"
+    },
+    {
+      "path": "code/backend/src/main/resources/db/migration/postgresql/V18__archive_menu_catalog.sql",
+      "sha256": "63cdd5ed2430e4d9f771e089527d7b27d0834f446a55ecb6881b8b682e08db8b"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/MenuArchiveFkRollbackTest.java",
+      "sha256": "39e34492fc0508d92430016e833296b6cfa4e5886c5b888c1ee067e4cd69843b"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/MenuArchiveIntegrationTest.java",
+      "sha256": "ec754cf41cf1d5168ddb39ae96a9041fdd824261b4084e29a154dee6cba8929a"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/MenuArchiveMigrationTest.java",
+      "sha256": "94d36a212ccc1df7fbc83d0f0cc4253878b501e29a7ae1feff3260239ddcaf19"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/PostgresMenuArchiveConcurrencyTest.java",
+      "sha256": "03b19c6e688ae4b531c26e6a96a990cf3193252ffe83fa82fd0665fae22b10f3"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/MenuArchivePanel.test.tsx",
+      "sha256": "50d085e1fa3f5d7fe396ea6cd3f9228aa49ff53466ea930c011f6d7e97cf372f"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/MenuArchivePanel.tsx",
+      "sha256": "4fb31eac5aa84e4f329f5761b976ff68488036497a1a240cf374af39453d0345"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/MenuRemovalApi.test.ts",
+      "sha256": "74ed060811e0fe1ffad9dbdc963be3ad7aa404242d7e6c8e1f20d47dd2048904"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/MenuCategoryController.java",
+      "sha256": "2e663d993c2a42f5841cce1a0042962e031ac54f06aa94ff60af932e9a32d24d"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/controller/MenuItemController.java",
+      "sha256": "50f9fb514470f9f41cc6c6f57592d5411e5cd43988ef62b17e7c872f9885104b"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/MenuCategory.java",
+      "sha256": "9d89bfcb3d67a612f346708f1b7e9e39534774d04b6d0a21d0dac166c08900b5"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/domain/MenuItem.java",
+      "sha256": "8ba067f0540bd6cd7590e5a1cdcb889a56b1f1079d77f4dc52a4822744fd9d3b"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/exception/GlobalExceptionHandler.java",
+      "sha256": "88923637d5a072b683281bf070ae009b988919b3e447720448d3d1c0b6756f91"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/repository/MenuCategoryRepository.java",
+      "sha256": "c6253720f8dd5d1bd67e2e35741063329f67db9621b459fc3e9f198ece59d6f5"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/repository/MenuItemRepository.java",
+      "sha256": "ceec0c9d4f4673ef5397f23a17c5ecde4d3dfaf51bc560679e98112d4031b3ae"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/MenuCatalogService.java",
+      "sha256": "dc08e9d2699dab0643126815a08f28f161d178dad9d70dca670bbed85c85785e"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/CustomerOrderingServiceImpl.java",
+      "sha256": "ce0314e350547ce3a54eefe8cb625c6402882c23eec10c9b1f0cd9022c07148c"
+    },
+    {
+      "path": "code/backend/src/main/java/com/buffetrestaurant/service/impl/MenuCatalogServiceImpl.java",
+      "sha256": "08c24f7708d1ff429000a045710681b1e4ff057efbf22eb982179c52b246b862"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/MenuCatalogIntegrationTest.java",
+      "sha256": "0f487efd350c625e9c318e8063a5951d909166695ad727254433b234180dbb7b"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/MenuOrderingMigrationTest.java",
+      "sha256": "5a3d401e17b1dfe3dc0ac7a358f65273d437d416682055672efa2d2214f031fc"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/OrderingIntegrationTest.java",
+      "sha256": "e523114fe480cddcd1e611f785b97013a7eb0115792b2801e224446f9129c2f7"
+    },
+    {
+      "path": "code/backend/src/test/java/com/buffetrestaurant/integration/PostgresMenuOrderingMigrationTest.java",
+      "sha256": "b85fb7c974f9bbcb90d4687e516f73317c9c45ff67953fb4788db58b6d8331c3"
+    },
+    {
+      "path": "code/frontend/src/FoundationApp.tsx",
+      "sha256": "6fb43cee00879cdc6c6784b538d13c49849ffbb6c711f11e3dcb1e189a91d636"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/MenuAdminPage.test.tsx",
+      "sha256": "089efcb17c723657e04ca69d1769cd111a17f16e3825b114937041b901b320f6"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/MenuAdminPage.tsx",
+      "sha256": "61b5c5f4a93574e9a692231dfd65c6ea78bd51bfcfbd4b1351aa0b5a183ef39e"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/api.ts",
+      "sha256": "c5017941c1fa662256134c63a1539bd77fd1d699f520efe84c048197e8a04b88"
+    },
+    {
+      "path": "code/frontend/src/features/ordering/ordering.css",
+      "sha256": "a2f7129e1041754f4b2164bac6ebc8949f8bbf3e01be77d137e769c77659bc2f"
+    }
+  ]
+}

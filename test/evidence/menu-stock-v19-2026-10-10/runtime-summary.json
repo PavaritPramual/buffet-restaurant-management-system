@@ -1,0 +1,38 @@
+{
+  "sourceCommit": "e41a2755cea7b38d63e8d8dade8fabe7d0b71d65",
+  "startedAt": "2026-10-10T02:36:51.319Z",
+  "finishedAt": "2026-10-10T02:37:51.183Z",
+  "database": "fresh isolated in-memory H2",
+  "envFileImport": false,
+  "seedFixtures": false,
+  "httpMocks": "specified per runner",
+  "providers": {
+    "masterData": "session",
+    "menu": "session",
+    "ordering": "database",
+    "diningSession": "session",
+    "fulfillment": "session",
+    "billing": "database",
+    "payment": "database"
+  },
+  "webUrl": "http://127.0.0.1:5177",
+  "apiUrl": "http://127.0.0.1:8087/api/v1",
+  "scripts": [
+    {
+      "script": "menu-stock-consumption.cjs",
+      "exitCode": 0,
+      "runnerSha256": "856ce4c3d7998b26df67322f19f32c98300cbb566d19979c7bf2abb96792e108"
+    },
+    {
+      "script": "step3-core-flow.cjs",
+      "exitCode": 0,
+      "runnerSha256": "8110edcb2bd9fed82c341524de8dacc3705f7613d798ceaac07386c13da0e195"
+    },
+    {
+      "script": "step3-stock-profile.cjs",
+      "exitCode": 0,
+      "runnerSha256": "6b765e4e9212166e013237d1b09660e2b77bba9c4a654b9e29ca5e6cef51e300"
+    }
+  ],
+  "publicAcceptance": false
+}

@@ -1,0 +1,29 @@
+@startuml
+title Staff payment and separate close
+start
+:Require SERVICE_STAFF;
+:Require customer bill request and ACTIVE session;
+:Read opening price snapshot;
+:Calculate adult/child pricing and backend percentage discount;
+:Round payable total once HALF_UP;
+:Show public display breakdown;
+:Read existing Payment;
+if (Already recorded?) then (yes)
+ :Show recorded amount and status;
+else (no)
+ :Staff confirms CASH / QR / CARD;
+ :Backend recalculates and inserts PAID;
+ if (Response unknown?) then (yes)
+  :Read status manually;
+  if (Confirmed no record?) then (yes)
+   :Allow staff to confirm manual retry;
+  else (record or read failed)
+   :Show recorded result or block retry;
+  endif
+ endif
+endif
+:Staff requests close separately;
+:Require ACTIVE and matching PAID Payment;
+:Complete session and return table AVAILABLE atomically;
+stop
+@enduml

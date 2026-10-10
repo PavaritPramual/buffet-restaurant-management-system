@@ -1,0 +1,36 @@
+{
+  "baseline": "097ad127d30f5a0923cffca00c89c5a2b8df1561",
+  "method": "Non-merge author commits reachable from develop; coauthors retained separately; count is not individual ownership approval",
+  "authors": {
+    "PavaritPramual": {
+      "count": 90,
+      "first": "2026-09-18T13:25:58+07:00",
+      "last": "2026-10-10T17:41:25+07:00",
+      "emptyChanges": 0
+    },
+    "kojidesu01": {
+      "count": 22,
+      "first": "2026-09-20T13:48:03+07:00",
+      "last": "2026-10-10T13:20:57+07:00",
+      "emptyChanges": 0
+    },
+    "Sirapat Wongwiwatseree": {
+      "count": 40,
+      "first": "2026-09-20T10:40:41+07:00",
+      "last": "2026-10-09T23:59:50+07:00",
+      "emptyChanges": 0
+    },
+    "methus-bit": {
+      "count": 17,
+      "first": "2026-09-18T15:34:58+07:00",
+      "last": "2026-10-09T22:43:12+07:00",
+      "emptyChanges": 0
+    },
+    "sarunph-ctrl": {
+      "count": 30,
+      "first": "2026-09-18T17:23:48+07:00",
+      "last": "2026-10-09T17:44:31+07:00",
+      "emptyChanges": 0
+    }
+  }
+}

@@ -1,0 +1,124 @@
+diff --git a/code/frontend/src/features/admin/AdminShell.test.tsx b/code/frontend/src/features/admin/AdminShell.test.tsx
+index 65fe433..f408250 100644
+--- a/code/frontend/src/features/admin/AdminShell.test.tsx
++++ b/code/frontend/src/features/admin/AdminShell.test.tsx
+@@ -75,0 +76,62 @@ describe('AdminShell', () => {
++  it('submits login once while the request is pending', async () => {
++    vi.mocked(authApi.current).mockRejectedValue(new Error('not signed in'))
++    let resolve!: (user: UserContext) => void
++    vi.mocked(authApi.login).mockReturnValue(new Promise<UserContext>((done) => { resolve = done }))
++    renderShell('/admin/stock')
++    fireEvent.change(await screen.findByLabelText('ชื่อผู้ใช้'), { target: { value: 'manager' } })
++    fireEvent.change(screen.getByLabelText('รหัสผ่าน'), { target: { value: 'test-password' } })
++    const button = screen.getByRole('button', { name: 'เข้าสู่ระบบ' })
++    fireEvent.submit(button.closest('form')!)
++    fireEvent.submit(button.closest('form')!)
++    expect(authApi.login).toHaveBeenCalledTimes(1)
++    expect((screen.getByRole('button', { name: 'กำลังเข้าสู่ระบบ...' }) as HTMLButtonElement).disabled).toBe(true)
++    await act(async () => resolve(manager))
++    expect(await screen.findByText('หน้า stock')).toBeTruthy()
++  })
++
++  it('ignores a login response after session expiry and permits a new login', async () => {
++    vi.mocked(authApi.current).mockRejectedValue(new Error('not signed in'))
++    let resolve!: (user: UserContext) => void
++    vi.mocked(authApi.login).mockReturnValueOnce(new Promise<UserContext>((done) => { resolve = done }))
++      .mockResolvedValueOnce({ ...manager, role: 'SUPERVISOR' })
++    renderShell('/admin/stock')
++    fireEvent.change(await screen.findByLabelText('ชื่อผู้ใช้'), { target: { value: 'manager' } })
++    fireEvent.change(screen.getByLabelText('รหัสผ่าน'), { target: { value: 'test-password' } })
++    fireEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }))
++    act(() => window.dispatchEvent(new Event('auth:session-expired')))
++    await act(async () => resolve(manager))
++    expect(screen.queryByText('หน้า stock')).toBeNull()
++    expect((screen.getByLabelText('รหัสผ่าน') as HTMLInputElement).value).toBe('')
++    fireEvent.change(screen.getByLabelText('รหัสผ่าน'), { target: { value: 'new-test-password' } })
++    fireEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }))
++    expect(await screen.findByText('หน้า stock')).toBeTruthy()
++    expect(authApi.login).toHaveBeenCalledTimes(2)
++    expect(screen.queryByRole('link', { name: 'พนักงาน' })).toBeNull()
++  })
++
++  it('submits logout once while the request is pending', async () => {
++    vi.mocked(authApi.current).mockResolvedValue(manager)
++    let resolve!: () => void
++    vi.mocked(authApi.logout).mockReturnValue(new Promise<void>((done) => { resolve = done }))
++    renderShell('/admin/stock')
++    const button = await screen.findByRole('button', { name: 'ออกจากระบบ' })
++    fireEvent.click(button); fireEvent.click(button)
++    expect(authApi.logout).toHaveBeenCalledTimes(1)
++    expect((button as HTMLButtonElement).disabled).toBe(true)
++    await act(async () => resolve())
++    expect(await screen.findByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
++  })
++
++  it('ignores a logout failure after session expiry', async () => {
++    vi.mocked(authApi.current).mockResolvedValue(manager)
++    let reject!: (error: Error) => void
++    vi.mocked(authApi.logout).mockReturnValue(new Promise<void>((_, fail) => { reject = fail }))
++    renderShell('/admin/stock')
++    fireEvent.click(await screen.findByRole('button', { name: 'ออกจากระบบ' }))
++    act(() => window.dispatchEvent(new Event('auth:session-expired')))
++    await act(async () => reject(new Error('old logout failed')))
++    expect(screen.getByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
++    expect(screen.queryByText('หน้า stock')).toBeNull()
++    expect(screen.queryByRole('alert')).toBeNull()
++  })
++
+diff --git a/test/browser/step3-core-flow.cjs b/test/browser/step3-core-flow.cjs
+index e834dd9..7145638 100644
+--- a/test/browser/step3-core-flow.cjs
++++ b/test/browser/step3-core-flow.cjs
+@@ -52,0 +53,9 @@ async function main() {
++    const invalidLogin = ctx.anonymous.page
++    await invalidLogin.goto(web + '/admin')
++    await invalidLogin.getByLabel('ชื่อผู้ใช้', { exact:true }).fill(run + '-unknown')
++    await invalidLogin.getByLabel('รหัสผ่าน', { exact:true }).fill(run + '-invalid')
++    const invalidResponse = invalidLogin.waitForResponse(r => r.url().endsWith('/auth/login') && r.request().method() === 'POST')
++    await invalidLogin.getByRole('button', { name:'เข้าสู่ระบบ', exact:true }).click()
++    assert.equal((await invalidResponse).status(),401)
++    await invalidLogin.getByRole('alert').waitFor()
++    assert.equal((await ctx.anonymous.request.get(api + '/auth/me')).status(),401)
+@@ -67 +76 @@ async function main() {
+-    pass(scenario, 'Four independent cookie contexts; anonymous and spoofed-header denial')
++    pass(scenario, 'Four independent cookie contexts; invalid login, anonymous and spoofed-header denial')
+@@ -127,0 +137,27 @@ async function main() {
++    scenario = 'same-tab fresh QR resets cart and reload restores cookie without re-exchange'
++    const timeOrigin = await a.evaluate(() => performance.timeOrigin)
++    await a.getByRole('button',{name:'เพิ่ม '+item.name,exact:true}).click()
++    await a.getByRole('button',{name:'ยืนยันการสั่ง',exact:true}).click()
++    await a.getByRole('dialog').waitFor()
++    await staff.reload()
++    await staff.locator('a[href*="/customer/qr#token="]').waitFor()
++    const replacementQr = await qr()
++    assert.notEqual(replacementQr,firstQr)
++    let rescanExchanges = 0
++    a.on('request',r=>{if(r.method()==='POST' && r.url().endsWith('/dining-sessions/qr-exchange')) rescanExchanges++})
++    const exchanged = a.waitForResponse(r=>r.url().endsWith('/dining-sessions/qr-exchange') && r.request().method()==='POST')
++    await a.goto(replacementQr)
++    assert.equal((await exchanged).status(),200)
++    await a.getByRole('button',{name:'เพิ่ม '+item.name,exact:true}).waitFor()
++    assert.equal(await a.evaluate(() => performance.timeOrigin),timeOrigin,'Rescan must be same-document navigation')
++    assert.equal(new URL(a.url()).hash,'')
++    assert.equal(await a.getByRole('dialog').count(),0)
++    assert(await a.getByRole('button',{name:'ยืนยันการสั่ง',exact:true}).isDisabled())
++    assert.equal(rescanExchanges,1,'StrictMode must not redeem a one-use QR twice')
++    await a.reload()
++    await a.getByRole('button',{name:'เพิ่ม '+item.name,exact:true}).waitFor()
++    assert.equal(rescanExchanges,1,'Reload must restore the cookie rather than re-exchange the used token')
++    assert.equal((await request('phoneA','get','/dining-sessions/customer-context')).sessionId,sessionId)
++    assert.equal((await request('phoneB','get','/dining-sessions/customer-context')).sessionId,sessionId)
++    await shot('phoneA','customer-rescan-restored-360.png')
++    pass(scenario,{sessionId,sameDocument:true,rescanExchanges,cartReset:true,phones:2})
+@@ -185,0 +222,8 @@ async function main() {
++    assert.equal((await ctx.manager.request.get(api+'/stock')).status(),401)
++    await request('supervisor','post','/auth/logout')
++    await ctx.supervisor.page.getByRole('button',{name:'โหลดข้อมูลใหม่',exact:true}).click()
++    await ctx.supervisor.page.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
++    assert.equal((await ctx.supervisor.request.get(api+'/stock')).status(),401)
++    await staff.getByRole('button',{name:'ออกจากระบบ',exact:true}).click()
++    await staff.getByRole('heading',{name:'เข้าสู่ระบบ',exact:true}).waitFor()
++    assert.equal((await ctx.staff.request.get(api+'/orders/ready')).status(),401)
+@@ -189 +233 @@ async function main() {
+-    pass(scenario,'Real server logout -> next UI API401; Manager hidden; Kitchen logout')
++    pass(scenario,'Real server logout -> UI API401 for Manager/Supervisor; Staff/Kitchen UI logout revokes access')

@@ -1,0 +1,16 @@
+{
+  "CheckedAt": "2026-10-10T14:42:26.5304103+07:00",
+  "HealthStatus": 200,
+  "HealthBody": {
+    "status": "UP",
+    "service": "buffet-restaurant-backend"
+  },
+  "StockStatus": 401,
+  "StockBody": {
+    "timestamp": "2026-10-10T07:42:27.092358707Z",
+    "status": 401,
+    "error": "Unauthorized",
+    "message": "A signed-in user is required",
+    "path": "/api/v1/stock"
+  }
+}

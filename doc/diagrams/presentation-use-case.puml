@@ -1,0 +1,33 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 24
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+skinparam componentBackgroundColor #F2E6D4
+skinparam componentBorderColor #173A45
+left to right direction
+actor Customer
+actor SERVICE_STAFF as Service
+actor KITCHEN_STAFF as Kitchen
+actor MANAGER as Manager
+actor SUPERVISOR as Supervisor
+rectangle "Buffet restaurant" {
+usecase "Order from package menu\nRequest / view bill" as Order
+usecase "Open / serve / receive payment\nClose same-session PAID" as Staff
+usecase "Prepare received orders\nMark READY" as Prepare
+usecase "Manage store / menu / stock\nList / create users with basic profile" as Admin
+usecase "Stock-in / adjustment\nRead stock history" as Stock
+}
+Customer --> Order
+Service --> Staff
+Kitchen --> Prepare
+Manager --> Admin
+Supervisor --> Stock
+note bottom : Presentation overview. Detailed use cases and exceptions are in the appendix.
+@enduml

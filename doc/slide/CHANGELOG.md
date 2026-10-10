@@ -1,0 +1,54 @@
+# Slide version history
+
+## Sirapat QA content — 9 October 2026
+
+- Prepared three current QA content blocks with complete Thai speaker notes, public Core Flow/Stock/Profile results and precise local/CI/API/browser boundaries.
+- Source baseline d84f071, submitted QR wording11edeb0; live2f8bc4b is owner-reported, not independently attested. PR #36 CI ata43a558 passed backend352/frontend125 and guards6.
+- User deferred Canva and requested separate files. Delivered sirapat-qa-2026-10-09/sirapat-qa-v01.pptx and PDF, three complete notes and source links; all slides/PDF pages visually inspected, native Tahoma font/package/geometry/import checks passed. PDF exported with PowerPoint; it is not a Canva export.
+- Added real public volume evidence: 30 available foods/5categories, QR order3 with6menus/8pieces visible in Kitchen and after customer reload; bill499/session4 closed. Shared Canva/order/team approval remain separate pending gates.
+
+## Contract and State review — 7 October 2026
+
+- Updated working speaker-note source for Order State context/classes, real session role checks, rejected-transition evidence, Order/OrderItem cascade/fetch rationale, and UTC/date/number serialization.
+- Updated the ordering sequence and current v02 speaker-note examples to use `OrderStateResolver` / `RegistryOrderStateResolver.resolve()`; obsolete static state-resolution examples were removed from current notes.
+- Refreshed PlantUML State class/ordering sequence sources to show the session access provider and registry resolver; regenerated and visually reviewed `class-order-state.svg` and `sequence-ordering-kitchen.svg` with PlantUML 1.2025.0. Canva/PPTX/PDF synchronization/export remains pending. No public deployment URL is available to confirm live behavior.
+- This is a source-note update only; Canva remains the deck source and has not been edited or exported in this review.
+
+## v02b-draft — แก้รีวิว PR #24 วันที่ 7 ตุลาคม 2026
+
+- แก้ User/Profile ให้เป็น list/create + basic displayName/email, แยก CustomerMenu/AdminMenu และ cardinality UserAccount–UserProfile เป็น 1 ต่อ 0..1
+- Regenerate SVG 4 ชุด และนำเข้าเป็น [Canva v02b](https://www.canva.com/d/yWw6P3disBOSfHS) หน้า 2, 24, 68, 70 เปลี่ยนเฉพาะภาพ/notes คงลำดับ ผู้พูด และโค้ดเดิมทั้ง76หน้า เก็บ v02 เดิมเป็นประวัติ
+- ยังเป็นฉบับล่วงหน้า ไม่รับรองเนื้อหา/เวลา/การส่งออก/Final รอให้โค้ดทุกส่วนเสร็จแล้วทบทวนตาม comment ของปวริศช์
+- เพิ่มหลักฐาน Supabase SELECT สด V1–V14/checksums/grants และ refresh Git audit snapshot ก่อน commit แก้รีวิว ดู [รายงาน](../testing/pr24-review-fixes-report.md)
+
+## สถานะฉบับล่วงหน้า — 7 ตุลาคม 2026
+
+- ปวริศช์ยังไม่รับรองสไลด์ เก็บ comment ว่าเนื้อหาเยอะ สลับผู้พูดบ่อย และเนื้อหา/ลำดับต้องทบทวนหลังโค้ดทุกส่วนเสร็จ
+- คงสไลด์เดิมไว้ ยังไม่แก้เนื้อหา ลำดับ หรือผู้พูด เวลา 12 นาทีและ runbook เป็นร่างที่ยังไม่รับรอง
+- ชื่อไฟล์สำรองที่ต้อง export จาก Canva คือ `team-final-v02-draft.pptx` ยังไม่ได้ดาวน์โหลดเนื่องจากเครื่องมือ export/browser ใช้ไม่ได้ ดู [สถานะร่าง](team-final-v02-draft-status.md)
+
+## ปรับแนวทางเก็บไฟล์ — 7 ตุลาคม 2026
+
+- ตามคำยืนยันล่าสุด เก็บ PPTX และ PDF ที่ export จาก Canva ไว้ใน `doc/slide/` ตามเลขเวอร์ชัน โดย Canva ยังคงเป็นต้นฉบับและเครื่องมือพรีเซนต์
+- v02 ใช้ชื่อ `team-final-v02.pptx` และ `team-final-v02.pdf` ตรวจภาพและฟอนต์หลัง export ก่อนรับรอง ไม่มีไฟล์ export ทั้งสองใน repo ณ การปรับแนวทางนี้
+- ข้อความไม่ใช้ PPTX ในบันทึกรุ่นก่อนเป็นประวัติของแนวทางเดิม ร่าง PPTX รายคนเดิมไม่ใช่ไฟล์ export ชุดทีมจาก Canva
+
+## v02 — 7 ตุลาคม 2026
+
+- ปรับตามผู้ใช้ให้มีcodeจริง ภาพdiagramตามข้อ9.1ครบ ผู้พูดหนึ่งbranchต่อหน้า ฟอนต์ไทยมีหัวและลำดับตามหลักการออกแบบซอฟต์แวร์
+- ระบุช่วงพูด12นาทีเป็น20หน้าหลัก อีก56หน้าเป็นภาคผนวกอ้างอิง ไม่เพิ่มเวลาพูดเป็น76หน้า
+- 23ภาพรายละเอียดและ5ภาพย่อพร้อมPlantUML/SVG 35หน้าcode 76notes SARABUN/JetBrainsMono navy/cream/terracotta/gold
+- อัปเดตUseCaseDescriptions Auth/MenuOrderClasses Orderingsequence Stock/CustomerActivities StatepermissionsและDeploymentdesignที่เคยขาด/ล้าสมัย
+- บันทึกในเวลานั้นว่าปรับเกณฑ์ Git เป็น 5 meaningful commits ต่อคนตามการแจ้งของปวริศช์; การแจ้งนี้ถูกยกเลิกวันที่ 8 ต.ค. และเกณฑ์ปัจจุบันกลับเป็น 15 ตาม [บันทึกเกณฑ์](../planning/course-criteria-updates.md)
+- [Canva v02](https://www.canva.com/d/wORhypcIcwvGuFK) `DAHXSWQA-Vs` นำเข้า76หน้า อ่านกลับครบ 704ข้อความแก้ได้/28diagramimages ไม่มีelementออกนอกcanvas ตรวจภาพlocalครบ ไม่อ้างCanvaallpagevisualQA/PDF/owner/releaseว่าผ่านแล้ว
+- v01คงไว้เป็นประวัติ ไม่แก้/ลบdesignเดิม ไม่สร้างPPTX ไม่แก้runtime ไม่mergePR24
+
+## v01-content — 7 ตุลาคม 2026
+
+- เปลี่ยนต้นฉบับ/เครื่องมือพรีเซนต์เป็นCanvaรวมทั้ง5คน ไม่ใช้PPTXเป็นชุดส่งหรือขอreview
+- เตรียม32หน้าหลัก+8หน้าภาคผนวกพร้อมspeaker notes เจ้าของและ107source references
+- เพิ่มรายละเอียดtestsเป็น4หน้าหลักและภาคผนวก race cases แยกunit/API/PostgreSQL/frontend/browser และผลlocal/fixture/public
+- อ้างcodebaseline472fba4 กับdocsPR24; ไม่อ้างStock/Profileใหม่ publicdeployment SOLIDgapsหรือreleaseว่าผ่านแล้ว
+- ผู้ใช้อนุมัติการส่งไฟล์แล้ว นำเข้าเป็น [Canva Team Final v01](https://www.canva.com/d/D0dhcGCjuTTS7pV) design `DAHXQy_ZUvQ` จำนวน 40 หน้า 1920×1080
+- อ่านกลับข้อความทุกหน้าครบ notes ตรงร่าง 40 หน้า และพบข้อความแก้ไขได้ 535 รายการ ไม่มีองค์ประกอบข้อความออกนอก canvas; ยังไม่ได้รับรองภาพทุกหน้า/owner review หรือ export PDF จาก Canva
+- ร่างPPTX/PDFรายคนเดิมเก็บเป็นประวัติ Reviewerข้ามส่วนนี้ได้

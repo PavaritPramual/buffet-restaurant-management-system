@@ -1,0 +1,37 @@
+{
+  "prNumber": 36,
+  "head": "9b9eddf0c9b29110983113bd821223eb189b176e",
+  "runId": 37876116678,
+  "url": "https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37876116678",
+  "conclusion": "success",
+  "createdAt": "2026-10-09T02:46:02Z",
+  "completedAt": "2026-10-09T02:47:48Z",
+  "backend": {
+    "jobId": 113644998470,
+    "passed": 352,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "frontend": {
+    "jobId": 113644998181,
+    "passed": 125,
+    "files": 14,
+    "guards": 6,
+    "lintErrors": 0,
+    "existingWarnings": 4,
+    "build": "PASS"
+  },
+  "excerpts": {
+    "frontend": [
+      "2026-10-09T02:46:27.6983044Z  Test Files  14 passed (14)",
+      "2026-10-09T02:46:27.6983636Z       Tests  125 passed (125)",
+      "2026-10-09T02:46:28.0351680Z Found 4 warnings and 0 errors.",
+      "2026-10-09T02:46:31.5714939Z ✓ built in 231ms"
+    ],
+    "backend": [
+      "2026-10-09T02:47:42.4885161Z [INFO] Tests run: 352, Failures: 0, Errors: 0, Skipped: 0",
+      "2026-10-09T02:47:43.8846625Z [INFO] BUILD SUCCESS"
+    ]
+  }
+}

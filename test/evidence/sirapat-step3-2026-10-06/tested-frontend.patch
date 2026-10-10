@@ -1,0 +1,128 @@
+diff --git a/code/frontend/src/features/admin/AdminShell.test.tsx b/code/frontend/src/features/admin/AdminShell.test.tsx
+index 93eed30..65fe433 100644
+--- a/code/frontend/src/features/admin/AdminShell.test.tsx
++++ b/code/frontend/src/features/admin/AdminShell.test.tsx
+@@ -1,5 +1,5 @@
+ // @vitest-environment jsdom
+-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
++import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+ import { AxiosError, AxiosHeaders } from 'axios'
+ import { afterEach, describe, expect, it, vi } from 'vitest'
+ import { MemoryRouter, Route, Routes } from 'react-router-dom'
+@@ -46,6 +46,33 @@ function renderShell(path: string) {
+ }
+ 
+ describe('AdminShell', () => {
++  it.each(['MANAGER', 'SUPERVISOR'] as const)('removes %s data when a protected API reports an expired session', async (role) => {
++    vi.mocked(authApi.current).mockResolvedValue({ ...manager, role })
++    renderShell('/admin/stock')
++    expect(await screen.findByText('หน้า stock')).toBeTruthy()
++    await act(async () => {
++      await apiClient.get('/stock', {
++        adapter: (config) => Promise.reject(new AxiosError('Unauthorized', 'ERR_BAD_REQUEST', config, undefined, {
++          config, data: {}, headers: new AxiosHeaders(), status: 401, statusText: 'Unauthorized',
++        })),
++      }).catch(() => undefined)
++    })
++    expect(await screen.findByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
++    expect(screen.queryByText('หน้า stock')).toBeNull()
++    expect(screen.queryByRole('link', { name: 'สต็อก' })).toBeNull()
++  })
++
++  it('ignores a session restore response that arrives after session expiry', async () => {
++    let resolve!: (user: UserContext) => void
++    vi.mocked(authApi.current).mockReturnValue(new Promise<UserContext>((done) => { resolve = done }))
++    renderShell('/admin/stock')
++    act(() => window.dispatchEvent(new Event('auth:session-expired')))
++    expect(await screen.findByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
++    await act(async () => resolve(manager))
++    expect(screen.queryByText('หน้า stock')).toBeNull()
++    expect(screen.getByRole('heading', { name: 'เข้าสู่ระบบ' })).toBeTruthy()
++  })
++
+   it.each(['/kitchen', '/kitchen/', '/KITCHEN'])('keeps kitchen login on matched route %s', async (path) => {
+     vi.mocked(authApi.current).mockResolvedValue(kitchen)
+     renderShell(path)
+diff --git a/code/frontend/src/features/admin/AdminShell.tsx b/code/frontend/src/features/admin/AdminShell.tsx
+index 2108dfd..b32df4d 100644
+--- a/code/frontend/src/features/admin/AdminShell.tsx
++++ b/code/frontend/src/features/admin/AdminShell.tsx
+@@ -1,4 +1,4 @@
+-import { useEffect, useState } from 'react'
++import { useEffect, useRef, useState } from 'react'
+ import type { FormEvent } from 'react'
+ import { Navigate, NavLink, Outlet, useOutletContext } from 'react-router-dom'
+ import { authApi, getErrorMessage, roleLabels } from './api'
+@@ -14,38 +14,62 @@ export default function AdminShell() {
+   const [submitting, setSubmitting] = useState(false)
+   const [logoutError, setLogoutError] = useState('')
+   const [loggingOut, setLoggingOut] = useState(false)
++  const authRevision = useRef(0)
++  const loginPending = useRef(false)
++  const logoutPending = useRef(false)
+ 
+   useEffect(() => {
++    const revision = ++authRevision.current
++    let active = true
++    const isCurrent = () => active && revision === authRevision.current
++    const handleSessionExpired = () => {
++      ++authRevision.current
++      setUser(null); setChecking(false); setPassword('')
++      setError(''); setLogoutError('')
++      loginPending.current = false; logoutPending.current = false
++      setSubmitting(false); setLoggingOut(false)
++    }
++    window.addEventListener('auth:session-expired', handleSessionExpired)
+     authApi.current()
+-      .then(setUser)
+-      .catch(() => setUser(null))
+-      .finally(() => setChecking(false))
++      .then((current) => { if (isCurrent()) setUser(current) })
++      .catch(() => { if (isCurrent()) setUser(null) })
++      .finally(() => { if (isCurrent()) setChecking(false) })
++    return () => {
++      active = false
++      window.removeEventListener('auth:session-expired', handleSessionExpired)
++    }
+   }, [])
+ 
+   async function handleLogin(event: FormEvent<HTMLFormElement>) {
+     event.preventDefault()
++    if (loginPending.current) return
++    loginPending.current = true
++    const revision = ++authRevision.current
+     setSubmitting(true)
+     setError('')
+     try {
+-      setUser(await authApi.login(username, password))
+-      setPassword('')
++      const current = await authApi.login(username, password)
++      if (revision === authRevision.current) { setUser(current); setPassword('') }
+     } catch (requestError) {
+-      setError(getErrorMessage(requestError))
++      if (revision === authRevision.current) setError(getErrorMessage(requestError))
+     } finally {
+-      setSubmitting(false)
++      if (revision === authRevision.current) { loginPending.current = false; setSubmitting(false) }
+     }
+   }
+ 
+   async function handleLogout() {
++    if (logoutPending.current) return
++    logoutPending.current = true
++    const revision = ++authRevision.current
+     setLoggingOut(true)
+     setLogoutError('')
+     try {
+       await authApi.logout()
+-      setUser(null)
++      if (revision === authRevision.current) setUser(null)
+     } catch (requestError) {
+-      setLogoutError(getErrorMessage(requestError))
++      if (revision === authRevision.current) setLogoutError(getErrorMessage(requestError))
+     } finally {
+-      setLoggingOut(false)
++      if (revision === authRevision.current) { logoutPending.current = false; setLoggingOut(false) }
+     }
+   }
+ 

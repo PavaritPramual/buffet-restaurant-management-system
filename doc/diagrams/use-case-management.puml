@@ -1,0 +1,47 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title Manager and Supervisor use cases - implemented V19 menu-stock extension
+left to right direction
+actor "MANAGER" as Manager
+actor "SUPERVISOR" as Supervisor
+rectangle "Restaurant administration" {
+ usecase "Login / logout" as Login
+ usecase "List / create users\nBasic profile at creation" as Users
+ usecase "Update contact profile\nfirst / last name and phone" as Profile
+ usecase "Manage tables / packages / soups" as Catalog
+ usecase "Manage menu categories / items" as Menu
+ usecase "Configure stock per serving\nOptional automatic deduction" as Recipe
+ usecase "Manage stock master data" as Master
+ usecase "Guarded delete / archive / restore\nUsers and master data" as Lifecycle
+ usecase "View stock / transaction history" as Read
+ usecase "Record stock-in / signed adjustment" as Move
+}
+Manager --> Login
+Supervisor --> Login
+Manager --> Users
+Manager --> Profile
+Manager --> Catalog
+Manager --> Menu
+Manager --> Recipe
+Manager --> Master
+Manager --> Lifecycle
+Manager --> Read
+Manager --> Move
+Supervisor --> Read
+Supervisor --> Move
+note bottom of Supervisor
+No Kitchen / Serving / Payment privilege.
+User profile and guarded account archive follow existing Auth API contracts.
+end note
+@enduml

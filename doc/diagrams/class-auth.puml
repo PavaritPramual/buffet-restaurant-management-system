@@ -1,0 +1,94 @@
+@startuml
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title User and server-session authentication - actual classes
+class UserAccount {
+id : Long
+username : String
+passwordHash : String
+role : UserRole
+active : boolean
+createdAt : Instant
+archivedAt : Instant
++archive()
++restore()
+}
+class UserProfile {
+userId : Long
+displayName : String
+email : String
+firstName : String
+lastName : String
+phoneNumber : String
++updateContact(firstName, lastName, phoneNumber)
+}
+class AuthService {
++authenticate(username, password) : UserContext
++createUser(request) : UserResponse
++updateProfile(id, request) : UserResponse
++listUsers() : List<UserResponse>
+}
+interface UserAccountRepository <<Repository>>
+interface UserProfileRepository <<Repository>>
+class AuthController {
++login(request)
++me()
++logout()
+}
+class SessionUserContextProvider {
++requireCurrentRequestRole(role)
+}
+class UserLifecycleService
+class StaffSessionRegistry
+interface StockTransactionRepository <<Repository>>
+UserLifecycleService --> UserAccountRepository
+UserLifecycleService --> UserProfileRepository
+UserLifecycleService --> UserContextProvider
+UserLifecycleService --> StaffSessionRegistry
+UserLifecycleService --> StockTransactionRepository
+AdminUserController --> UserLifecycleService : guarded delete / restore / activation
+class HttpSession
+UserAccount "1" -- "0..1" UserProfile : shared PK / MapsId
+interface AuthenticationService
+interface UserAdministrationService
+interface UserContextProvider
+class UserSessionKeys <<common>>
+class AdminUserController {
++list()
++create(request)
++updateProfile(id, request)
+}
+AuthenticationService <|.. AuthService
+UserAdministrationService <|.. AuthService
+UserContextProvider <|.. SessionUserContextProvider
+AuthController --> AuthenticationService
+AuthController --> UserContextProvider
+AdminUserController --> UserAdministrationService
+AdminUserController --> UserContextProvider
+AuthController ..> UserSessionKeys
+SessionUserContextProvider ..> UserSessionKeys
+AuthService --> UserAccountRepository
+AuthService --> UserProfileRepository
+AuthController --> HttpSession : UserContext
+SessionUserContextProvider --> HttpSession
+note bottom of AuthService
+Authentication and user administration have separate contracts.
+Profile is optional in the database (0..1).
+createUser creates both; authenticate requires a profile.
+Manager-only list/create/updateProfile; first/last name are required by the API for new accounts and updates,
+but V15 columns stay nullable for legacy rows. phoneNumber is optional (max 20).
+Incomplete session identities return 401; disallowed roles return 403.
+Lifecycle checks actor/last active Manager and revokes sessions.
+Unreferenced accounts may be deleted; referenced accounts are archived.
+Restore clears archivedAt but does not activate login.
+end note
+@enduml

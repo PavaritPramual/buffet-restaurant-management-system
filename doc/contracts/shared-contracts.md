@@ -1,0 +1,213 @@
+# Shared Contracts
+
+เอกสารนี้เป็น canonical contract ระหว่าง Module จนกว่าจะถึง Integration Checkpoint การเปลี่ยน field, type หรือ enum ต้องแจ้ง Entity Owner และ Module ที่ใช้งานก่อน merge
+
+## Conventions
+
+R01-B Table/Package/Soup add `archived: boolean` (non-null, default false). See [removal contract](deletion-contract.md) and [V17 field/restore semantics](../database/pavarit-r01-b-schema-delta.md). These master-data fields are not added to CustomerSessionResponse or BillingContext. The existing session-scoped package endpoint retains its BuffetPackageResponse shape. Team forward migration reservation: Methus V16, Pavarit V17, Sirapat V18; no shared apply is authorized here.
+
+- Base API: `/api/v1`
+- ID ใช้ JSON number และ Java `Long`
+- จำนวนเงินใช้ JSON number และ Java `BigDecimal`
+- วันเวลาที่ API ส่งออกใช้ ISO-8601 UTC พร้อม timezone เช่น `2026-10-07T08:09:10Z`
+- Enum ส่งผ่าน JSON เป็น uppercase string และไม่รับ lowercase
+- Field ที่ไม่ระบุว่า nullable ต้องมีค่า
+- Reviewed baseline: [Resource Removal and History Contract](deletion-contract.md) defines shared delete/archive/restore behavior and was approved in PR #41. Resource-specific implementation, schema/FK, migration, and public-acceptance gates remain separate. `active=false` remains distinct from archived.
+
+## SessionContext
+
+Owner: ปวริศช์ — Table & Dining Session
+
+| Field | JSON type | Nullable | Notes |
+|---|---|---|---|
+| `sessionId` | number | No | Dining Session identifier |
+| `sessionToken` | string | No | QR token แบบใช้ครั้งเดียวใน response พนักงานเท่านั้น; ต้องไม่อยู่ใน response ลูกค้า |
+| `packageId` | number | No | Buffet Package identifier |
+| `tableId` | number | No | Restaurant Table identifier |
+| `tableNumber` | string | No | หมายเลขโต๊ะที่แสดงต่อผู้ใช้ |
+| `sessionStatus` | string | No | `DiningSessionStatus` |
+| `adultCount` | number | No | Integer ตั้งแต่ 0 ขึ้นไป |
+| `childCount` | number | No | Integer ตั้งแต่ 0 ขึ้นไป |
+
+ลูกค้าเปิด `/customer/qr#token={sessionToken}`; หน้าเว็บล้าง fragment แล้วส่ง token ใน body ของ `POST /api/v1/dining-sessions/qr-exchange` พร้อม `Origin` ที่อนุญาต Backend หมุน QR token และออก `customer_session` แบบสุ่มใน `HttpOnly` cookie อายุสูงสุด 8 ชั่วโมง เก็บเฉพาะ SHA-256 hash ของ credential ใน `customer_session_grants` ลูกค้าหลายเครื่องแลก QR รุ่นถัดไปได้คนละ credential
+
+Customer response มีเพียง `sessionId`, `packageId`, `tableNumber`, `sessionStatus`; ไม่ส่ง `sessionToken`, ราคา snapshot หรือข้อมูล Billing คำขอเมนู/ออเดอร์ต้องมี cookie ของ session เดียวกันที่ยัง `ACTIVE` และคำขอเขียนต้องผ่าน Origin check การปิดรอบเพิกถอน credentials ทั้งหมด
+
+### Customer package read after archive — R01-B
+
+`GET /dining-sessions/{sessionId}/package` ตรวจ cookie ผ่าน CustomerSessionVerifier และอ่านได้เฉพาะแพ็กเกจที่ผูกกับ ACTIVE session นั้น แม้แพ็กเกจ inactive/archived แล้ว โดย CustomerSessionPackageService แยกจาก CatalogService ที่ใช้จัดการข้อมูลหลัก. Response ยังคง BuffetPackageResponse เดิมและ Cache-Control no-store; ไม่เพิ่ม endpoint/field, ไม่คืน QR หรือราคา snapshot. แพ็กเกจที่เก็บออกยังไม่อยู่ในรายการหลักและไม่รับเลือกเปิดรอบใหม่. cookie ขาด/ผิดได้401, cookie ผิดรอบได้404, หลังcloseสิทธิ์เดิมถูกเพิกถอน. Billing/Payment ยังคำนวณจากราคา snapshot ไม่ใช้ราคาปัจจุบันที่ package read แสดง
+
+### Staff DiningSessionResponse — U02
+
+Staff endpoints `POST /dining-sessions`, `GET /dining-sessions/{id}`, `GET /dining-sessions/active` และ `POST /dining-sessions/{id}/close` เพิ่มสอง field ต่อไปนี้ โดยรักษา field เดิมทุกตัว
+
+| Field | JSON type | Nullable | Notes |
+|---|---|---|---|
+| `packageName` | string | No | ชื่อปัจจุบันของแพ็กเกจผ่าน JPA relationship รวมรายการ inactive และรอบที่ปิดแล้ว |
+| `soupName` | string | No | ชื่อปัจจุบันของน้ำซุปผ่าน JPA relationship รวมรายการ inactive และรอบที่ปิดแล้ว |
+
+Mapper อ่านชื่อภายใน transaction ของ DiningSession service เดิม หน้า Staff ไม่เรียก Catalog API เพิ่มเพื่อประกอบชื่อ ชื่อไม่ใช่ snapshot: การเปลี่ยนชื่อข้อมูลหลักเปลี่ยนชื่อที่แสดงในรอบเก่าด้วย แต่ราคา Billing ยังคงอ่าน `packagePriceAtOpen` ผ่าน reader เดิม ไม่เพิ่มชื่อให้ Customer DTO หรือ SessionContext ของ Ordering ไม่เปลี่ยน ERD, migration, สิทธิ์, QR/cookie หรือกฎ Payment/close
+
+## OrderFulfillmentContext
+
+Owner: ศิระพัทธ์ (Order data) / ศรัณย์ (fulfillment contract review)
+
+| Field | JSON type | Nullable | Notes |
+|---|---|---|---|
+| `orderId` | number | No | Order identifier |
+| `sessionId` | number | No | Dining Session identifier |
+| `tableNumber` | string | No | หมายเลขโต๊ะ |
+| `items` | array | No | `{ menuItemId, name, quantity }` |
+| `status` | string | No | `OrderStatus` |
+| `createdAt` | string | No | ISO-8601 with timezone |
+
+## BillingContext
+
+Owner: ธีรเมธ — Billing & Payment
+
+| Field | JSON type | Nullable | Notes |
+|---|---|---|---|
+| `sessionId` | number | No | Dining Session identifier |
+| `packagePrice` | number | No | ราคาแพ็กเกจ ณ ตอนเปิด Dining Session จาก `package_price_at_open`; backend อ่านเอง ไม่รับจาก browser |
+| `adultCount` | number | No | จำนวนผู้ใหญ่ |
+| `childCount` | number | No | จำนวนเด็ก |
+| `discountContext` | object | Yes | Billing owner กำหนดรายละเอียดภายใน |
+| `sessionStatus` | string | No | `DiningSessionStatus` |
+
+Dining Session owner ให้ข้อมูลผ่าน `DiningSessionBillingReader.requireBySessionId(sessionId)` ซึ่งคืนราคา snapshot, จำนวนคน และสถานะ; Billing owner เป็นผู้เติม `discountContext` และคำนวณยอด
+
+## Billing preview API
+
+Owner: ธีรเมธ — Billing & Payment (pending cross-module review)
+
+`POST /api/v1/billing/preview` accepts `{ "sessionId": 1 }` only as business input.
+`sessionId` is a required positive integer (Java `Long`). Browser-supplied prices,
+counts, status or discounts are not used. `BillingContext` above is internal backend
+calculation input; its existing fixtures remain calculation examples, not HTTP request bodies.
+The backend provider must resolve the price snapshot at session opening, guest counts,
+status and backend-owned discount rules. Only ACTIVE sessions can be previewed for payment.
+
+Response 200: `sessionId`, `subtotalAmount`, `discountAmount`, `totalAmount` (JSON numbers).
+Amounts are display values in baht at two decimal places. `subtotalAmount - discountAmount = totalAmount`.
+Precise subtotal, percentage discount, pre-rounding total and adjustment stay in internal `BillCalculation`.
+The payable total is calculated at full BigDecimal precision then rounded once with HALF_UP.
+Display discount is the display subtotal minus payable total; it is not an intermediate calculation input.
+Preview does not create a payment or close a session. This replaces the earlier response fields;
+frontend and Swagger are updated together and API owner review is required before merge.
+
+Errors: 400 invalid input/inactive session, 401 login required, 403 SERVICE_STAFF required,
+404 session not found, 503 provider unavailable. Database and session providers are implemented;
+production defaults remain disabled until runtime configuration enables them.
+Request fixture: `test/fixtures/billing-preview-request.json`.
+Frontend: `/billing/preview` for entering an ID, `/staff/sessions/:sessionId/billing` for a selected session.
+
+
+## PaymentResult
+
+### Payment HTTP API
+
+- `POST /api/v1/payments`: รับ `{sessionId, paymentMethod}`; backend อ่านราคา snapshot และคำนวณยอดเอง คืน PaymentResult และ HTTP 201 เมื่อบันทึก PAID
+- `GET /api/v1/payments/sessions/{sessionId}`: อ่าน PaymentResult เดิมโดยไม่สร้างหรือส่งชำระซ้ำ; ไม่มีรายการคืน 404
+- ทั้งสอง endpoint ต้อง login เป็น SERVICE_STAFF; ไม่ login คืน 401, role อื่นคืน 403
+- หลังบันทึก PAID ยังต้องกดปิดรอบแยก; close rule อ่านสถานะจาก PaymentStatusLookup
+- การอ่านสถานะล้มเหลวไม่เท่ากับยังไม่ชำระ; ห้าม retry อัตโนมัติ หลัง GET สำเร็จและไม่พบรายการจึงปลดล็อกให้ผู้ใช้ยืนยันลองชำระใหม่ได้
+- Endpoint อ่านสถานะเป็น contract เพิ่มเติมที่ต้องให้ศรัณย์/ปวริศช์ review ใน PR
+
+Owner: ธีรเมธ — Billing & Payment
+
+| Field | JSON type | Nullable | Notes |
+|---|---|---|---|
+| `paymentId` | number | No | Payment identifier |
+| `sessionId` | number | No | Dining Session identifier |
+| `amount` | number | No | Recorded amount from Payment, not a recalculated preview |
+| `paymentMethod` | string | No | `PaymentMethod` |
+| `paymentStatus` | string | No | `PaymentStatus` |
+| `paidAt` | string | Yes | ISO-8601 UTC (`Z`); required when PAID, null otherwise |
+
+## UserContext
+
+Owner: เมธัส — Authentication
+
+| Field | JSON type | Nullable | Notes |
+|---|---|---|---|
+| `userId` | number | No | User identifier |
+| `username` | string | No | ชื่อบัญชีพนักงาน |
+| `displayName` | string | No | ชื่อที่แสดงในหน้า staff |
+| `role` | string | No | `UserRole` |
+
+`POST /api/v1/auth/login` and authenticated `GET /api/v1/auth/me` return these four fields. An unauthenticated `/auth/me` intentionally returns an empty `401`; login failures use the standard `ErrorResponse`. Staff authentication is carried in the `JSESSIONID` cookie, not a JSON credential field.
+
+## Staff Profile API (`UserResponse`)
+
+`GET /api/v1/admin/users` returns `200` and `UserResponse[]`; `POST /api/v1/admin/users` returns `201` and the created `UserResponse`. Both require MANAGER. The response fields are `id` (number), `username`, `displayName`, nullable `email`, and `role`. Passwords and account-internal fields are never returned.
+
+Create request fields: `username` (required, max 80), `password` (required, 8–72), `displayName` (required, max 120), `email` (optional/null, valid email, max 254), and `role` (required `UserRole`). Invalid values return `400 ErrorResponse`; a duplicate username returns `409 ErrorResponse`.
+
+## Stock API
+
+Stock quantity and threshold fields are JSON numbers backed by Java `BigDecimal`; maximum precision is 9 integer and 3 fractional digits. `StockItemResponse` is `{id, sku, name, unit, quantity, lowStockThreshold, updatedAt}` with `updatedAt` as an ISO-8601 UTC string. `StockTransactionResponse` is `{id, stockItemId, itemName, transactionType, quantityDelta, balanceAfter, reason, actorUsername, createdAt}`; quantity values are JSON numbers and `createdAt` is ISO-8601 UTC.
+
+| Method / path | Request | Success | Access |
+|---|---|---|---|
+| `POST /api/v1/stock/items` | `{sku, name, unit, lowStockThreshold}`; metadata only, starts at zero | `201` + `Location` | MANAGER |
+| `PUT /api/v1/stock/items/{id}` | Same metadata; does not set quantity | `200` | MANAGER |
+| `GET /api/v1/stock` | — | `200 StockItemResponse[]` | MANAGER, SUPERVISOR |
+| `POST /api/v1/stock/{itemId}/in` | Positive numeric `quantity`, non-blank `reason` | `200 StockTransactionResponse` | MANAGER, SUPERVISOR |
+| `POST /api/v1/stock/{itemId}/adjustments` | Non-zero signed numeric `quantityDelta`, non-blank `reason` | `200 StockTransactionResponse` | MANAGER, SUPERVISOR |
+| `GET /api/v1/stock/transactions?itemId={id}` | Optional numeric filter | `200 StockTransactionResponse[]` | MANAGER, SUPERVISOR |
+
+Invalid input/balance returns `400 ErrorResponse`, missing resource `404 ErrorResponse`, duplicate or conflicting metadata `409 ErrorResponse`, unauthenticated `401 ErrorResponse`, and wrong role `403 ErrorResponse`.
+
+## Fulfillment authorization (Step 2 integration)
+
+### Customer bill request และ Manager catalog extension
+
+อ่าน [Customer bill request contract](customer-bill-request.md) สำหรับ POST bill-request/GET bill-status, Staff `billRequestedAt`, กฎหยุด Order และ V14 nullable timestamp ลูกค้าใช้ cookie scope เดิมและ backend คำนวณยอด Stock catalog เพิ่ม Manager-only POST/PUT โดยไม่เปลี่ยน Stock movement contracts
+
+Customer bill response ใช้ enum `CustomerBillStatus` (NOT_REQUESTED/REQUESTED/PAID) แยกจากสถานะรอบกิน `bill.totalAmount` เป็นยอดสุทธิของบิลเสมอ ส่วน `dueAmount` คือยอดค้าง (ศูนย์หลัง PAID) และ `paidAmount` คือยอด PAID ที่บันทึก (ศูนย์ก่อนจ่าย) REQUESTED/PAID ห้าม Order ใหม่; PAID ยังต้อง Staff close แยก ไม่มีการเปลี่ยน BillSummary/PaymentResult หรือ migration
+
+Runtime ใช้ `SessionOrderFulfillmentAccessProvider` ผ่าน `SessionUserContextProvider` จาก login cookie ของพนักงาน ไม่รับสิทธิ์จาก `X-User-Role` หรือ `X-User-Id` Kitchen board และ RECEIVED → PREPARING → READY จำกัด KITCHEN_STAFF; ready board และ READY → SERVED จำกัด SERVICE_STAFF เท่านั้น MANAGER/SUPERVISOR ใช้สอง flow นี้ไม่ได้ ไม่มี login คืน 401 และ role ผิดคืน 403 Endpoint, DTO และ Order states เดิมคงเดิม
+
+Table/Package/Soup master-data endpoints ใช้ session guard: SERVICE_STAFF/MANAGER/SUPERVISOR อ่านได้ และ MANAGER เท่านั้นที่แก้ข้อมูล GET/HEAD ใช้สิทธิ์อ่านเดียวกัน Customer อ่านเมนูผ่าน QR grant ไม่ใช้ master-data endpoints นี้ `MASTER_DATA_ACCESS_PROVIDER=session` เป็นค่า runtime; ค่า disabled ใน test resources แยก business-rule tests เดิมจาก integration security tests ที่เปิด session guard ชัดเจน ห้ามปิด guard ใน runtime
+
+Compose เปิด Fulfillment/DiningSession/Menu authorization เป็น session และ Ordering/Billing/Payment data provider เป็น database Standalone ใช้ตัวแปรจาก `.env.example`; disabled providers ปฏิเสธคำขอเมื่อยังไม่กำหนด runtime Fixture providers ใช้เฉพาะ tests/profile ที่ระบุชัด ไม่ใช้ใน demo Core Flow ที่รับรอง
+
+## Shared Enums
+
+| Enum | Values |
+|---|---|
+| `TableStatus` | `AVAILABLE`, `OCCUPIED` |
+| `DiningSessionStatus` | `ACTIVE`, `COMPLETED`, `CANCELLED` |
+| `OrderStatus` | `RECEIVED`, `PREPARING`, `READY`, `SERVED` |
+| `PaymentMethod` | `CASH`, `QR`, `CARD` |
+| `PaymentStatus` | `PENDING`, `PAID`, `FAILED` |
+| `UserRole` | `SERVICE_STAFF`, `KITCHEN_STAFF`, `SUPERVISOR`, `MANAGER` |
+
+Entity ต้องใช้ `@Enumerated(EnumType.STRING)` เท่านั้น ห้ามใช้ `EnumType.ORDINAL`
+
+## Internal interfaces หลัง Architecture refactor
+
+- UserSessionKeys.USER_CONTEXT_SESSION_KEY ยังคงค่า `userContext`; ไม่อ้าง constant จาก Controller
+- UserContextProvider สำเร็จเมื่อ userId เป็นบวก username ไม่ว่าง role มีค่า; displayName อาจไม่มีค่า. Missing/malformed identity → 401, complete identity กับ role ผิด → 403. Header role ไม่เพิ่มสิทธิ์
+- AuthenticationService แยกจาก UserAdministrationService (list/create/updateProfile). V15 เพิ่ม Profile `firstName`/`lastName` (บังคับสำหรับบัญชีใหม่) และ `phoneNumber` (optional, max 20, ไม่มี pattern เพราะรูปแบบเบอร์ยังไม่มีผู้ถือ Data Dictionary ยืนยัน) ใน create/list response และ `PUT /api/v1/admin/users/{id}/profile` (MANAGER เท่านั้น; เก็บ `displayName`/`email` เดิม)
+- Stock V15: `openingTargetStock` (≥ 0), `active`, `shortfall = max(target − quantity, 0)` (คำนวณตอนอ่าน) ผ่าน `POST/PUT /api/v1/stock/items`, `PUT /api/v1/stock/items/{id}/active`; item inactive ปฏิเสธ stock-in/adjustment ด้วย 409 แต่อ่านประวัติได้
+- CustomerSessionVerifier แยก read/context จาก requireSessionForOrder; runtime order verification ต้องใช้ transaction/lock และปฏิเสธรอบขอคิดบิลหรือปิดแล้ว
+- SessionContextProvider ไม่มี fallback read สำหรับ order อีกต่อไป; implementations ต้องประกาศ order behavior เอง. Fixture เป็น synthetic และไม่พิสูจน์ DB lock
+- BillingContextProvider คืน snapshot/counts/status ของ ID เดียวกัน ไม่คืน null. discountContext เป็น nullได้หมายถึงไม่มี promotion
+- BillCalculator คืน BillCalculation ภายใน; JSON ของ BillSummary/PaymentResult เดิม ราคา snapshot/rounding/payment-recorded amount คงเดิม
+- StockTransactionProcessor ทำงานหลัง validation/row lock ภายใน StockService transaction. qualifiers แยก stockInProcessor กับ stockAdjustmentProcessor
+- OrderStateResolver รับ non-null enum และคืน State; registry ตรวจครบและไม่ซ้ำตอน startup. เปลี่ยน registration ได้โดยไม่แก้ resolver; enum/API/UI workflow ใหม่ยังต้อง review ร่วม
+
+HTTP routes, public DTOs/enums และ cookie settings ไม่เปลี่ยน. Fixture Fulfillment ปรับ role ให้ตรง runtime: Kitchen เท่านั้นทำครัว และ Service Staff เท่านั้นเสิร์ฟ; Manager/Supervisor ใช้ทั้งสอง flow ไม่ได้
+
+## Menu stock consumption — V19
+
+Manager POST/PUT `/api/v1/menu-items` accepts additive `automaticStockDeduction` and `stockUsage: [{stockItemId, quantityPerServing}]`. Enabled requires at least one unique active/nonarchived stock item; positive quantity up to 9 integer/3 fractional digits. Disabled requires an empty recipe. Both fields omitted preserves an existing recipe for legacy clients and defaults false for a new menu. Frontend sends both fields explicitly. Catalog and recipe save in one transaction.
+
+`GET /api/v1/menu-items/{id}/stock-usage` requires Manager session: `{automaticStockDeduction, stockUsage:[{stockItemId, stockItemName, unit, quantityPerServing, active}]}`. 401 missing login; 403 wrong role; 404 missing menu. Public/customer `MenuItemResponse` and `OrderResponse` do not gain recipe or inventory fields.
+
+`PATCH /api/v1/orders/{id}/status` still uses `{status}` and existing State/role rules. RECEIVED to PREPARING consumes the recipe frozen at order time; 409 stock conflict leaves order/balances unchanged. No stock reservation at order time; no unit conversion/reversal added.
+
+`StockTransactionResponse` adds nullable `orderId`; `transactionType` gains CONSUMPTION with negative quantityDelta. Manager/Supervisor history access remains; Kitchen receives no generic Stock endpoint privileges. Stock unit cannot change while a recipe/snapshot refers to it. Referenced Stock is archived rather than hard-deleted.
+
+[Design and course criteria](../architecture/menu-stock-consumption.md) · [V19 dictionary](../database/menu-stock-consumption-v19.md)

@@ -1,0 +1,21 @@
+{
+  "design_id": "DAHXmHjoiFU",
+  "canva": "https://canva.link/43kx8nvyrmulyam",
+  "pages": 24,
+  "exported": "2026-10-10",
+  "content": "Existing chosen Canva version, unchanged; original title includes Draft v4",
+  "files": [
+    {
+      "path": "doc/slide/team-final-canva-v4-2026-10-10.pdf",
+      "sha256": "b99d0c078e6a8b5af36f6bdc0f5c39f3eecd6bbca649fac03e1f9b587f666893"
+    },
+    {
+      "path": "doc/slide/team-final-canva-v4-2026-10-10.pptx",
+      "sha256": "d8870721dc02263c943ddebac45bcb074174cb3c333f8a97444fecbea3ea3e33"
+    },
+    {
+      "path": "doc/slide/team-final-canva-v4-2026-10-10.txt",
+      "sha256": "68c7393559f54d909fa995a00cd85e7fabb586dcee83e4b91bf17d042b89b8de"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "startedAt": "2026-10-08T05:36:39.080Z",
+  "finishedAt": "2026-10-08T05:36:40.785Z",
+  "sourceCommit": "4f8bc5a6fe072476772ef8c3ffcd610c9b35dc5c",
+  "sourceTree": "clean",
+  "environment": "local-h2",
+  "webUrl": "http://127.0.0.1:5177",
+  "apiUrl": "http://127.0.0.1:8087/api/v1",
+  "httpMocks": true,
+  "browser": "145.0.7632.117",
+  "counts": {
+    "passed": 3,
+    "failed": 0
+  },
+  "results": [
+    {
+      "name": "One order card when refresh observes it before acknowledgement",
+      "result": "PASS",
+      "observed": {
+        "cards": 1,
+        "actualPostCount": 1,
+        "persistedOrders": 1
+      },
+      "fixture": "Actual order POST commits; its response is held until refresh observes the order"
+    },
+    {
+      "name": "Order failure remains after an earlier history refresh completes",
+      "result": "PASS",
+      "observed": {
+        "errorBefore": "ส่งคำสั่งซื้อไม่สำเร็จ",
+        "alertsAfterRefresh": 1
+      },
+      "fixture": "503 order response injected; real earlier GET response delayed"
+    },
+    {
+      "name": "Remount waits for the latest QR, restores B and orders successfully",
+      "result": "PASS",
+      "observed": {
+        "uiTable": "B-muz3t8pb",
+        "cookieTable": "B-muz3t8pb",
+        "persistedBOrders": 1,
+        "mismatchedOrderHttpStatus": 404
+      },
+      "fixture": "B exchange held before server processing; SPA route left and browser Back restores its fragment-free URL"
+    }
+  ]
+}

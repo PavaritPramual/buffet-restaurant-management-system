@@ -1,0 +1,58 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 24
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+skinparam componentBackgroundColor #F2E6D4
+skinparam componentBorderColor #173A45
+hide circle
+top to bottom direction
+entity "restaurant_tables" as T {
+* id : BIGINT <<PK>>
+table_number : VARCHAR <<UK>>
+status : VARCHAR
+}
+entity "buffet_packages" as P {
+* id : BIGINT <<PK>>
+price : DECIMAL(10,2)
+}
+entity "soups" as Soup {
+* id : BIGINT <<PK>>
+}
+entity "dining_sessions" as S {
+* id : BIGINT <<PK>>
+table_id / package_id / soup_id <<FK>>
+package_price_at_open : DECIMAL(10,2)
+adult_count / child_count : INT
+status : VARCHAR
+}
+entity "orders" as O {
+* id : BIGINT <<PK>>
+session_id : BIGINT <<FK>>
+status : VARCHAR
+}
+entity "order_items" as I {
+* id : BIGINT <<PK>>
+order_id : BIGINT <<FK>>
+menu_item_id : BIGINT <<FK>>
+quantity : INT
+}
+entity "payments" as Pay {
+* id : BIGINT <<PK>>
+session_id : BIGINT <<FK, UK>>
+amount : DECIMAL(10,2)
+}
+T ||--o{ S
+P ||--o{ S
+Soup ||--o{ S
+S ||--o{ O
+O ||--|{ I
+S ||--o| Pay
+note bottom : Core table subset. Complete fields, Menu/User/Stock/grants and constraints are in the full ERD.
+@enduml

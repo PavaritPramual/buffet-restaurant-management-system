@@ -1,0 +1,57 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Tahoma
+
+title Billing strategies and public response boundary
+interface BillCalculationStrategy {
+ +calculate(context) : BigDecimal
+}
+interface DiscountCalculationStrategy {
+ +calculateDiscount(context, subtotal) : BigDecimal
+}
+class StandardBillCalculation
+class ChildRateCalculationStrategy {
+ -rate : BigDecimal
+}
+class PromotionDiscountStrategy
+interface BillCalculator {
+ +calculate(context) : BillCalculation
+}
+class BillingEngine {
+ +calculate(context) : BillCalculation
+}
+class BillCalculation <<internal>> {
+ subtotalNoneDiscount
+ discountAmount
+ totalBeforeRounding
+ roundingAdjustment
+ totalAmount
+}
+class BillingPreviewService
+class BillSummary <<public DTO>> {
+ sessionId
+ subtotalAmount
+ discountAmount
+ totalAmount
+}
+BillCalculationStrategy <|.. StandardBillCalculation
+BillCalculationStrategy <|.. ChildRateCalculationStrategy
+DiscountCalculationStrategy <|.. PromotionDiscountStrategy
+StandardBillCalculation o-- BillCalculationStrategy : delegates child amount
+BillingEngine o-- BillCalculationStrategy : pricing
+BillingEngine o-- DiscountCalculationStrategy : discount
+BillingEngine --> BillCalculation
+BillCalculator <|.. BillingEngine
+BillingPreviewService --> BillCalculator
+BillingPreviewService --> BillSummary : maps display amounts
+note bottom of BillingEngine
+ Strategies are immutable/stateless and injected.
+ Calculate exactly, round payable total once HALF_UP.
+ Composition replaces the obsolete addStrategy list design;
+ Invalid pricing is rejected before the discount policy.
+ Final owners still review release evidence.
+end note
+@enduml

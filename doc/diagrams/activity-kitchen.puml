@@ -1,0 +1,82 @@
+@startuml
+title Kitchen/Serving order fulfillment - role, State and V19 stock guards
+
+|Customer|
+start
+:ส่งคำสั่งอาหารผ่าน QR;
+
+|System|
+:สร้าง Order พร้อมสูตรวัตถุดิบตอนสั่ง;
+:ตั้งสถานะเริ่มต้น = RECEIVED;
+
+|Kitchen Staff|
+:ขออ่าน Incoming Orders;
+
+|System|
+if (role = KITCHEN_STAFF?) then (อนุญาต)
+    :แสดง RECEIVED / PREPARING;
+else (ปฏิเสธ)
+    :ปฏิเสธการอ่าน (403);
+    stop
+endif
+
+|Kitchen Staff|
+:ขอเริ่มทำ Order (RECEIVED → PREPARING);
+
+|System|
+if (role ถูกต้องและเป็น next state?) then (อนุญาต)
+    :ล็อก Order และ Stock เรียง ID;
+    :รวมปริมาณจากสูตรตอนสั่ง;
+    if (วัตถุดิบใช้งานได้และเพียงพอ?) then (ใช่ หรือไม่ใช้สูตร)
+        :หักวัตถุดิบและบันทึก CONSUMPTION;
+        :บันทึก PREPARING ใน transaction เดียว;
+    else (ไม่)
+        :409 พร้อมรายการที่ขาด; rollback ทั้งชุด;
+        :คง RECEIVED เพื่อเติมสต๊อกแล้วลองใหม่;
+        stop
+    endif
+else (ปฏิเสธ)
+    :ปฏิเสธคำขอ; state เดิมไม่เปลี่ยน;
+    stop
+endif
+
+|Kitchen Staff|
+:ปรุงและจัดเตรียมอาหารตาม Order;
+
+|Kitchen Staff|
+:ขอเปลี่ยน PREPARING → READY;
+
+|System|
+if (role ถูกต้องและเป็น next state?) then (อนุญาต)
+    :บันทึก READY;
+else (ปฏิเสธ)
+    :ปฏิเสธคำขอ; state เดิมไม่เปลี่ยน;
+    stop
+endif
+
+|Service Staff|
+:ขออ่าน READY Orders;
+
+|System|
+if (role = SERVICE_STAFF?) then (อนุญาต)
+    :แสดง READY Orders;
+else (ปฏิเสธ)
+    :ปฏิเสธการอ่าน (403);
+    stop
+endif
+
+|Service Staff|
+:ตรวจสอบ Order ที่ READY;
+:นำอาหารไปส่งมอบที่โต๊ะลูกค้า;
+:ขอยืนยันการเสิร์ฟ (READY → SERVED);
+
+|System|
+if (role ถูกต้องและเป็น next state?) then (อนุญาต)
+    :บันทึก SERVED;
+else (ปฏิเสธ)
+    :ปฏิเสธคำขอ; state เดิมไม่เปลี่ยน;
+    stop
+endif
+
+stop
+@enduml

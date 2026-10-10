@@ -1,0 +1,14 @@
+{
+  "orderId": 1,
+  "sessionId": 1,
+  "tableNumber": "A01",
+  "items": [
+    {
+      "menuItemId": 101,
+      "name": "Sliced Pork",
+      "quantity": 2
+    }
+  ],
+  "status": "RECEIVED",
+  "createdAt": "2026-09-18T10:00:00+07:00"
+}

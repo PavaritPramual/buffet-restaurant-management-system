@@ -1,0 +1,89 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title Ordering and fulfillment - actual services / State Pattern
+autonumber
+actor Customer
+actor Kitchen
+actor "Service Staff" as Staff
+boundary "CustomerOrderingController" as C
+control "CustomerOrderingServiceImpl" as S
+participant "SessionContextProvider" as P
+database "CustomerOrderRepository" as R
+control "OrderFulfillmentServiceImpl" as F
+participant "SessionOrderFulfillmentAccessProvider" as Access
+participant "RegistryOrderStateResolver" as Resolver
+participant "Resolved OrderState" as State
+control "MenuStockUsageService" as Recipe
+control "OrderStockConsumptionService" as Consume
+database "StockItemRepository" as Stock
+control "StockConsumptionTransactionProcessor" as Processor
+Customer -> C : POST session orders / customer cookie
+C -> S : placeOrder(sessionId, credential, request)
+S -> P : requireSessionForOrder(sessionId, credential)
+P -> P : check grant / ACTIVE / bill request / lock session
+S -> S : package membership / availability / item snapshot
+S -> Recipe : snapshot locked menu recipe per OrderItem
+S -> R : save CustomerOrder / status RECEIVED
+R --> C : OrderResponse
+Kitchen -> F : GET /orders/incoming (JSESSIONID)
+F -> Access : requireKitchenAccess()
+Access --> F : authenticated KITCHEN_STAFF
+F -> R : RECEIVED and PREPARING orders
+Kitchen -> F : PATCH status PREPARING (JSESSIONID)
+F -> Access : requireKitchenAccess()
+Access --> F : authenticated KITCHEN_STAFF
+F -> R : findByIdForUpdate(orderId) / lock root order row
+F -> Resolver : resolve(currentStatus)
+Resolver --> F : current state
+F -> State : next()
+State --> F : expected PREPARING
+F -> Consume : consume(order) in same transaction
+Consume -> Stock : lock stock rows by ascending ID
+Consume -> Consume : aggregate frozen quantities / active / sufficient
+alt insufficient or inactive stock
+ Consume --> F : 409; rollback; keep RECEIVED
+else all stock valid (or no snapshot)
+ Consume -> Processor : final template workflow / negative delta / order audit
+ F -> R : updateStatus PREPARING / save / commit
+end
+Kitchen -> F : PATCH status READY (JSESSIONID)
+F -> Access : requireKitchenAccess()
+Access --> F : authenticated KITCHEN_STAFF
+F -> Resolver : resolve(PREPARING)
+Resolver --> F : PreparingState
+F -> State : next()
+State --> F : expected READY
+F -> R : updateStatus READY / save
+Staff -> F : GET /orders/ready (JSESSIONID)
+F -> Access : requireServiceStaffAccess()
+Access --> F : authenticated SERVICE_STAFF
+Staff -> F : PATCH status SERVED (JSESSIONID)
+F -> Access : requireServiceStaffAccess()
+Access --> F : authenticated SERVICE_STAFF
+F -> Resolver : resolve(READY)
+Resolver --> F : ReadyState
+F -> State : next()
+State --> F : expected SERVED
+F -> R : updateStatus SERVED / save
+note over Access
+Missing login -> 401 ErrorResponse.
+Wrong role -> 403 ErrorResponse; X-User-Role is not authority.
+Access denial happens before order status is written.
+end note
+note over F,State
+State singleton objects stay in service logic.
+Entity stores enum; no Order.setState / Order.nextState.
+Only the matching staff role may pass access-provider checks.
+end note
+@enduml

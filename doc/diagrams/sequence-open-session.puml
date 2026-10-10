@@ -1,0 +1,33 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName Tahoma
+title Open session and Staff QR - code baseline 6d83eac
+autonumber
+actor SERVICE_STAFF as Staff
+boundary DiningSessionController as C
+control DiningSessionServiceImpl as S
+participant SessionDiningSessionStaffAccessProvider as Access
+database "JPA repositories / DB" as DB
+Staff -> C : POST /api/v1/dining-sessions\nOpenDiningSessionRequest + login cookie
+C -> S : openSession(request)
+S -> Access : requireServiceStaffAccess()
+Access --> S : SERVICE_STAFF / reject
+group single transaction
+ S -> DB : RestaurantTableRepository.findByIdForUpdate(tableId)
+ DB --> S : table row locked
+ S -> S : require AVAILABLE / total people >=1 / <=capacity
+ S -> DB : read package and soup; require active
+ S -> S : generate SecureRandom QR token\nconstruct session with packagePriceAtOpen
+ S -> DB : table.occupy(); save(table)\nsaveAndFlush(session ACTIVE)
+end
+S --> C : DiningSessionResponse (Staff-only QR token; no price snapshot)
+C --> Staff : 201 + Location
+Staff -> Staff : QRCodeSVG points to /customer/qr#token=...\npoll/get Staff session to show rotated QR
+note over C,DB
+ Missing table ->404; invalid DTO ->400;
+ occupied/capacity/missing or inactive package-soup ->400.
+ Row lock prevents two ACTIVE sessions for one table.
+ packagePriceAtOpen stays internal; Billing reads it through its reader.
+ startTime: LocalDateTime from UTC Clock; mapper emits UTC OffsetDateTime.
+end note
+@enduml

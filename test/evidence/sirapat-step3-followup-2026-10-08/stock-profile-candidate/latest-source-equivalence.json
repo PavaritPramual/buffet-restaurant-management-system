@@ -1,0 +1,11 @@
+{
+  "testedCommit": "cc72fa0c9125c50de185e02940b3359faee776f8",
+  "latestHead": "5a75d42d280f0688edbd1ccd3d231d5353b3878e",
+  "changedFiles": [
+    "doc/database/auth-stock-schema-delta.md",
+    "doc/database/step2-schema-approved.md"
+  ],
+  "unchangedRecordedRuntimeAndTestBlobs": 344,
+  "testsRerunOnLatestHead": false,
+  "scope": "docs-only comparison; recorded execution stays at tested commit"
+}

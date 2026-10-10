@@ -1,0 +1,43 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam backgroundColor #FFF9EE
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 18
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #A54A2E
+skinparam classBackgroundColor #FFF9EE
+skinparam classBorderColor #173A45
+skinparam actorBorderColor #173A45
+skinparam usecaseBackgroundColor #F2E6D4
+skinparam usecaseBorderColor #A54A2E
+title Customer ordering activity - cookie / package / bill rules
+|Service Staff|
+start
+:Login and select available table;
+:Select active package / soup and guest count;
+|System|
+:Validate capacity and open session atomically;
+|Customer|
+:Scan current QR;
+|System|
+:Exchange once and rotate QR;
+:Issue HttpOnly customer grant;
+repeat
+ |Customer|
+ :Choose menu and quantity;
+ |System|
+ if (Active grant / same session / no bill request?) then (yes)
+  :Validate package membership / availability;
+  :Create order RECEIVED with item snapshots;
+ else (no)
+  :Reject order using ErrorResponse;
+ endif
+ |Customer|
+repeat while (Order more?) is (yes) not (no)
+:Request bill;
+|System|
+:Record bill request and stop new orders for all grants;
+:Customer can still read orders and bill status;
+stop
+@enduml

@@ -1,0 +1,1 @@
+PASS: candidate runner rejects public mode before credentials/browser/network/test-data setup. Public acceptance requires the confirmed release procedure.

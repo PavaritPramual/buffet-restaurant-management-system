@@ -1,0 +1,30 @@
+{
+  "result": "passed",
+  "canonicalFiles": 348,
+  "sourceAnchors": 54,
+  "documentLinks": 135,
+  "diagrams": 7,
+  "backend": {
+    "tests": 348,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "postgresSuites": 7,
+  "frontendTests": 121,
+  "urlGuards": 6,
+  "lint": {
+    "errors": 0,
+    "warnings": 4
+  },
+  "browser": {
+    "core-flow": 16,
+    "stock-profile": 8,
+    "ui-state-fixtures": 12,
+    "concurrency-fixtures": 3,
+    "stock-profile-fixtures": 10
+  },
+  "screenshots": 53,
+  "runtimeDiff": "empty",
+  "publicAcceptance": false
+}

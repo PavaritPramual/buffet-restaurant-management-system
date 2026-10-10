@@ -1,0 +1,170 @@
+{
+  "generatedAt": "2026-10-07T11:52:49.357981+00:00",
+  "integratedBaselineCommit": "cb612d9bd396f7ec5b4ca6c70925acf087e305a6",
+  "automatedSourceCommit": "cb612d9bd396f7ec5b4ca6c70925acf087e305a6",
+  "browserSourceCommit": "f97ef42872b5d0fd585d475815166b42b021bc62",
+  "sourceTree": "dirty working tree; pair with source diff",
+  "dirtyChanges": "Only test-plan/traceability documentation; tested-docs-diff.json and source-hashes.json attached; runtime/test sources unchanged",
+  "java": "21.0.6",
+  "maven": "3.9.16",
+  "node": "24.13.1",
+  "browser": "145.0.7632.117",
+  "backend": {
+    "tests": 334.0,
+    "failures": 0.0,
+    "errors": 0.0,
+    "skipped": 27.0
+  },
+  "backendPassed": 307.0,
+  "frontend": {
+    "passed": 116,
+    "failed": 0,
+    "files": 14,
+    "lintErrors": 0,
+    "lintWarnings": 4,
+    "build": "PASS"
+  },
+  "urlGuards": {
+    "passed": 6,
+    "failed": 0,
+    "source": "Node test execution; not HTTPS runtime acceptance"
+  },
+  "coreFlow": {
+    "counts": {
+      "passed": 16,
+      "failed": 0
+    },
+    "startedAt": "2026-10-07T11:49:06.442Z",
+    "finishedAt": "2026-10-07T11:49:29.862Z",
+    "httpMocks": false
+  },
+  "stateApiNegativeRequests": {
+    "count": 12,
+    "requests": [
+      {
+        "role": "anonymous",
+        "from": "RECEIVED",
+        "requested": "PREPARING",
+        "httpStatus": 401,
+        "unchanged": true,
+        "unknownOrder": false
+      },
+      {
+        "role": "manager",
+        "from": "RECEIVED",
+        "requested": "PREPARING",
+        "httpStatus": 403,
+        "unchanged": true,
+        "unknownOrder": false
+      },
+      {
+        "role": "supervisor",
+        "from": "RECEIVED",
+        "requested": "PREPARING",
+        "httpStatus": 403,
+        "unchanged": true,
+        "unknownOrder": false
+      },
+      {
+        "role": "staff",
+        "from": "RECEIVED",
+        "requested": "PREPARING",
+        "httpStatus": 403,
+        "unchanged": true,
+        "unknownOrder": false
+      },
+      {
+        "role": "kitchen",
+        "from": "RECEIVED",
+        "requested": "READY",
+        "httpStatus": 400,
+        "unchanged": true,
+        "unknownOrder": false
+      },
+      {
+        "role": "kitchen",
+        "from": "RECEIVED",
+        "requested": "unknown",
+        "httpStatus": 400,
+        "unchanged": true,
+        "unknownOrder": false
+      },
+      {
+        "role": "kitchen",
+        "from": "RECEIVED",
+        "requested": "PREPARING",
+        "httpStatus": 404,
+        "unchanged": true,
+        "unknownOrder": true
+      },
+      {
+        "role": "kitchen",
+        "from": "PREPARING",
+        "requested": "RECEIVED",
+        "httpStatus": 400,
+        "unchanged": true,
+        "unknownOrder": false
+      },
+      {
+        "role": "kitchen",
+        "from": "READY",
+        "requested": "SERVED",
+        "httpStatus": 403,
+        "unchanged": true,
+        "unknownOrder": false
+      },
+      {
+        "role": "kitchen",
+        "from": "READY",
+        "requested": "PREPARING",
+        "httpStatus": 400,
+        "unchanged": true,
+        "unknownOrder": false
+      },
+      {
+        "role": "staff",
+        "from": "SERVED",
+        "requested": "SERVED",
+        "httpStatus": 400,
+        "unchanged": true,
+        "unknownOrder": false
+      },
+      {
+        "role": "kitchen",
+        "from": "SERVED",
+        "requested": "READY",
+        "httpStatus": 400,
+        "unchanged": true,
+        "unknownOrder": false
+      }
+    ]
+  },
+  "uiStateFixtures": {
+    "roleGroups": 4,
+    "states": 12,
+    "passedGroups": 4,
+    "executedAt": "2026-10-07T11:49:36.412Z",
+    "httpMocks": true
+  },
+  "concurrencyFixtures": {
+    "counts": {
+      "passed": 3,
+      "failed": 0
+    },
+    "httpMocks": true,
+    "startedAt": "2026-10-07T11:49:36.976Z",
+    "finishedAt": "2026-10-07T11:49:38.889Z"
+  },
+  "screenshots": {
+    "core-flow": 17,
+    "ui-state-fixtures": 12,
+    "concurrency-fixtures": 3
+  },
+  "publicAcceptance": false,
+  "pending": [
+    "PR #26 reviewer recheck after remaining StateFactory text fix",
+    "Stock opening target/active and Profile extensions UI review",
+    "Public same-origin HTTPS, timed TTL and Secure cookies",
+    "Final release/main/deployed commit and owner reviews"
+  ]
+}

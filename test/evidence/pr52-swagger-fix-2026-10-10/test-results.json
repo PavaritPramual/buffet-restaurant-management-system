@@ -1,0 +1,57 @@
+{
+  "codeCommit": "1823c7f53a98e9992f7f93c28471ec1f863eba06",
+  "environment": "local Java 21.0.12.1; Maven 3.9.12; release 17; test profile H2 (isolated in-memory database)",
+  "recordedAt": "2026-10-10T13:15:14.733733+07:00",
+  "command": "cd code/backend && mvn --batch-mode --no-transfer-progress -Dtest=OpenApiContractIntegrationTest,MenuCatalogIntegrationTest,OrderingIntegrationTest,OrderFulfillmentControllerTest,MenuStockConsumptionIntegrationTest test",
+  "suites": [
+    {
+      "name": "com.buffetrestaurant.controller.OpenApiContractIntegrationTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "5.878"
+    },
+    {
+      "name": "com.buffetrestaurant.integration.MenuCatalogIntegrationTest",
+      "tests": "18",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "6.79"
+    },
+    {
+      "name": "com.buffetrestaurant.integration.OrderingIntegrationTest",
+      "tests": "15",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "5.589"
+    },
+    {
+      "name": "com.buffetrestaurant.controller.OrderFulfillmentControllerTest",
+      "tests": "14",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "2.448"
+    },
+    {
+      "name": "com.buffetrestaurant.integration.MenuStockConsumptionIntegrationTest",
+      "tests": "7",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "23.478"
+    }
+  ],
+  "totals": {
+    "tests": 58,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "package": "mvn --batch-mode --no-transfer-progress -DskipTests package: BUILD SUCCESS (2026-10-10T13:14:45+07:00)",
+  "centralDatabaseAccess": false,
+  "publicRetest": false
+}

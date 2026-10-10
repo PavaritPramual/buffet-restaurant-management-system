@@ -1,0 +1,110 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Tahoma
+title Table / DiningSession / customer grants - final code baseline 5ff8076
+class RestaurantTable {
+ archived : boolean (V17)
+ +archive() : void
+ +restore() : void
+ id : Long
+ tableNumber : String
+ capacity : Integer
+ status : TableStatus
+ +isAvailable() : boolean
+ +occupy() : void
+ +makeAvailable() : void
+}
+class DiningSession {
+ id : Long
+ adultCount : Integer
+ childCount : Integer
+ packagePriceAtOpen : BigDecimal
+ sessionToken : String
+ startTime : LocalDateTime
+ endTime : LocalDateTime
+ billRequestedAt : OffsetDateTime
+ status : DiningSessionStatus
+ +requestBill() : void
+ +rotateQrToken(token) : void
+ +complete(endTime) : void
+}
+class CustomerSessionGrant {
+ tokenHash : String
+ createdAt : OffsetDateTime
+ expiresAt : OffsetDateTime
+}
+class BuffetPackage {
+ archived : boolean (V17)
+ +archive() : void
+ +restore() : void
+ price : BigDecimal
+ active : boolean
+}
+class Soup {
+ archived : boolean (V17)
+ +archive() : void
+ +restore() : void
+ active : boolean
+}
+interface DiningSessionService
+class DiningSessionServiceImpl {
+ +openSession(request) : DiningSessionResponse
+ +closeSession(id) : DiningSessionResponse
+}
+class CustomerSessionAccessService {
+ +exchange(qrToken) : ExchangeResult
+ +requireContext(credential) : CustomerSessionResponse
+ +requireSession(id, credential, forOrder) : SessionContextSnapshot
+}
+class CustomerBillingService {
+ +request(id, credential) : CustomerBillStatusResponse
+ +status(id, credential) : CustomerBillStatusResponse
+}
+interface CustomerSessionVerifier
+interface BillCalculator
+class DatabaseSessionContextProvider
+interface SessionContextProvider
+SessionContextProvider <|.. DatabaseSessionContextProvider
+DatabaseSessionContextProvider --> CustomerSessionVerifier : read / order verification
+CustomerSessionVerifier <|.. CustomerSessionAccessService
+CustomerBillingService --> CustomerSessionVerifier
+CustomerBillingService --> BillCalculator
+interface DiningSessionBillingReader
+class DatabaseDiningSessionBillingReader {
+ +requireBySessionId(id) : BillingSnapshot
+}
+DiningSessionBillingReader <|.. DatabaseDiningSessionBillingReader
+DatabaseDiningSessionBillingReader --> DiningSessionRepository
+interface PaymentStatusLookup
+interface DiningSessionRepository {
+ +findByIdForUpdate(id)
+ +findBySessionTokenForUpdate(token)
+}
+DiningSession "0..*" --> "1" RestaurantTable : table_id / LAZY / no JPA cascade
+DiningSession "0..*" --> "1" BuffetPackage : package_id / LAZY / no JPA cascade
+DiningSession "0..*" --> "1" Soup : soup_id / LAZY / no JPA cascade
+CustomerSessionGrant "0..*" --> "1" DiningSession : session_id / LAZY / no JPA cascade
+DiningSessionService <|.. DiningSessionServiceImpl
+DiningSessionServiceImpl --> DiningSessionRepository
+DiningSessionServiceImpl --> PaymentStatusLookup : ObjectProvider / same-session PAID
+CustomerSessionAccessService --> DiningSessionRepository : QR / order locks
+CustomerBillingService --> DiningSessionRepository : bill-request lock
+DatabaseDiningSessionBillingReader ..> DiningSession : read opening-price snapshot
+note bottom of DiningSession
+ ACTIVE -> COMPLETED only after PAID + separate close.
+ CANCELLED is declared in enum; no cancel endpoint implemented.
+ Bill request keeps ACTIVE but blocks new Orders.
+ QR token is Staff-only; neither Staff nor Customer DTO exposes the price snapshot.
+ Billing reads packagePriceAtOpen through DiningSessionBillingReader.
+ start/end: LocalDateTime + SQL TIMESTAMP; mapper labels API timestamps UTC.
+ billRequestedAt: OffsetDateTime + TIMESTAMP WITH TIME ZONE.
+end note
+note bottom of CustomerSessionGrant
+ SQL ON DELETE CASCADE belongs to the grant FK, not JPA cascade.
+ Close explicitly deletes grants; expiry is checked on each request.
+ Parent entities do not declare inverse session/grant collections.
+end note
+@enduml

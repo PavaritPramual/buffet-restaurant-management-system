@@ -1,0 +1,252 @@
+{
+  "tested_code_sha": "de7b5d546a05ad3ccef8c641ee5c53d638a8e039",
+  "environment": "Windows Java21 SpringBoot3.5.16 PostgreSQL18 disposable localhost:15432, HTTP jar localhost:18081",
+  "scope": "real local HTTP smoke, not browser/public/Supabase acceptance",
+  "checks": [
+    {
+      "method": "GET",
+      "path": "/actuator/health",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/v3/api-docs",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/orders/incoming",
+      "expected": 401,
+      "actual": 401,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users",
+      "expected": 201,
+      "actual": 201,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users",
+      "expected": 201,
+      "actual": 201,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users",
+      "expected": 201,
+      "actual": 201,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/orders/incoming",
+      "expected": 403,
+      "actual": 403,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/orders/ready",
+      "expected": 403,
+      "actual": 403,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/orders/incoming",
+      "expected": 403,
+      "actual": 403,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/orders/incoming",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/orders/ready",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/stock/items",
+      "expected": 201,
+      "actual": 201,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/stock/3/in",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/stock/3/adjustments",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/stock/transactions?itemId=3",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/stock",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tables",
+      "expected": 201,
+      "actual": 201,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/buffet-packages",
+      "expected": 201,
+      "actual": 201,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/soups",
+      "expected": 201,
+      "actual": 201,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions",
+      "expected": 201,
+      "actual": 201,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions/qr-exchange",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/dining-sessions/customer-context",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions/3/bill-request",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/billing/preview",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments",
+      "expected": 201,
+      "actual": 201,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dining-sessions/3/close",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/dining-sessions/customer-context",
+      "expected": 401,
+      "actual": 401,
+      "pass": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/logout",
+      "expected": 204,
+      "actual": 204,
+      "pass": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "expected": 401,
+      "actual": 401,
+      "pass": true
+    }
+  ],
+  "semantic_checks": [
+    "Stock balance8/history2",
+    "customer/staff/payment totals equal",
+    "customer response excludes QR token",
+    "credential rejected after close"
+  ],
+  "secrets_recorded": false
+}

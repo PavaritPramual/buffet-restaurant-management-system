@@ -1,0 +1,131 @@
+{
+  "startedAt": "2026-10-06T15:08:02.126Z",
+  "finishedAt": "2026-10-06T15:08:41.582Z",
+  "sourceCommit": "a351fbaf5878f3ad1d68ae3906bd63eb337ffe20",
+  "sourceTree": "dirty working tree; pair with source diff",
+  "environment": "local-h2",
+  "webUrl": "http://localhost:5175",
+  "apiUrl": "http://localhost:8085/api/v1",
+  "deployedCommit": null,
+  "deployedCommitSource": null,
+  "browser": "145.0.7632.117",
+  "httpMocks": false,
+  "counts": {
+    "passed": 14,
+    "failed": 0
+  },
+  "pending": [
+    "Stock target/active and Profile owner implementation/UI review",
+    "Public release schema/provider confirmation and full release rerun"
+  ],
+  "results": [
+    {
+      "name": "real staff logins and role matrix",
+      "result": "PASS",
+      "detail": "Four independent cookie contexts; invalid login, anonymous and spoofed-header denial"
+    },
+    {
+      "name": "direct URL case and trailing slash guards",
+      "result": "PASS",
+      "detail": "Actual protected routes with real roles"
+    },
+    {
+      "name": "Manager master data UI",
+      "result": "PASS",
+      "detail": {
+        "tableId": 3,
+        "packageId": 3
+      }
+    },
+    {
+      "name": "Manager category and Menu CRUD through UI",
+      "result": "PASS",
+      "detail": {
+        "categoryId": 5,
+        "menuItemId": 5,
+        "createUpdateDelete": "UI only; real HTTP responses and persisted reload",
+        "deletedItemId": 6,
+        "deletedCategoryId": 6
+      }
+    },
+    {
+      "name": "open actual session and reject unpaid close",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "tableId": 3
+      }
+    },
+    {
+      "name": "one-use QR and two independent phones",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "phones": 2,
+        "qrReuseStatus": 404
+      }
+    },
+    {
+      "name": "same-tab fresh QR resets cart and reload restores cookie without re-exchange",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "sameDocument": true,
+        "rescanExchanges": 1,
+        "cartReset": true,
+        "phones": 2
+      }
+    },
+    {
+      "name": "single confirmed order and actual Kitchen Serving transitions",
+      "result": "PASS",
+      "detail": {
+        "orderId": 1,
+        "status": "SERVED",
+        "orderPosts": 1
+      }
+    },
+    {
+      "name": "bill request stops both phones and backend orders",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "phones": 2,
+        "rejectedOrderStatus": 409
+      }
+    },
+    {
+      "name": "payment recorded; both customers show total due and paid",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "amount": 997.5,
+        "dueAmount": 0
+      }
+    },
+    {
+      "name": "explicit close returns AVAILABLE and revokes both phones",
+      "result": "PASS",
+      "detail": {
+        "sessionId": 1,
+        "tableStatus": "AVAILABLE",
+        "phonesRevoked": 2
+      }
+    },
+    {
+      "name": "four-role protected API401 hides mounted UI",
+      "result": "PASS",
+      "detail": "All four mounted shells receive real protected HTTP401 after server-side invalidation; no UI logout or HTTP mocks; not a timed TTL-expiry test"
+    },
+    {
+      "name": "Staff and Kitchen explicit UI logout revokes access",
+      "result": "PASS",
+      "detail": "Separate successful login and UI logout for both roles; protected APIs return HTTP401"
+    },
+    {
+      "name": "Swagger customer bill contract",
+      "result": "PASS",
+      "detail": "HTTP200 and bill paths present"
+    }
+  ]
+}

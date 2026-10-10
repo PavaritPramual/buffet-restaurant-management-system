@@ -1,0 +1,9 @@
+app:
+  menu:
+    admin-access-provider: fixture
+  ordering:
+    session-provider: database
+  dining-session:
+    staff-access-provider: fixture
+  fulfillment:
+    access-provider: fixture
