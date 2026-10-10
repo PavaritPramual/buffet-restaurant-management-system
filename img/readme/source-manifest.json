@@ -1,0 +1,40 @@
+[
+  {
+    "asset": "customer-bill-public.png",
+    "source": "test/evidence/pavarit-public-uat-2026-10-10/customer-bill-requested-served-1280.png",
+    "sha256": "0f88cd0f47dd603c218dbe345606a2e4e70eccfdeeb36d15415f1f8cbed29462",
+    "byteIdentical": true
+  },
+  {
+    "asset": "manager-menu-public.png",
+    "source": "test/evidence/pavarit-public-uat-2026-10-10/menu-images-1280.png",
+    "sha256": "477e1eaaadc3d943f8ca60f89a052c1b82285a9eb4ab9fa654d8e4b2999ed551",
+    "byteIdentical": true
+  },
+  {
+    "asset": "staff-payment-local.png",
+    "source": "test/evidence/menu-stock-v19-2026-10-10/core-flow/staff-paid-768.png",
+    "sha256": "38f0e7cf5d7ac6cbdbe0ee4d2e8cb370b26e756c46f86b01cc65944140a49e77",
+    "byteIdentical": true
+  },
+  {
+    "asset": "kitchen-preparing-local.png",
+    "source": "test/evidence/menu-stock-v19-2026-10-10/menu-stock/kitchen-preparing-768.png",
+    "sha256": "c30ac70be4b7fe6bf5a50356952a7770a606f73d45ff2ac5045fed13322bd8b0",
+    "byteIdentical": true
+  },
+  {
+    "asset": "component-develop.svg",
+    "source": "doc/diagrams/previews/component.svg",
+    "sourceCommit": "c778150c79657b80930ceca6a4f10c136c1fc285",
+    "sha256": "5cbe6fa2b49031e165d94dfed78e835adcd40b9355af55d04da0da4c403c5ee0",
+    "byteIdentical": true
+  },
+  {
+    "asset": "er-diagram-develop.svg",
+    "source": "doc/diagrams/previews/er-diagram.svg",
+    "sourceCommit": "c778150c79657b80930ceca6a4f10c136c1fc285",
+    "sha256": "6f1f8cf8e570d22e376b06469bc45f5555e77d987d8b0d8f6e4004638931b8d2",
+    "byteIdentical": true
+  }
+]
