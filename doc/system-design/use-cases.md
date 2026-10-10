@@ -4,6 +4,12 @@
 
 [ภาพรวม](../diagrams/previews/use-case.svg) · [Customer/Service/Kitchen](../diagrams/previews/use-case-service-customer.svg) · [Manager/Supervisor](../diagrams/previews/use-case-management.svg) · [source](../diagrams/use-case.puml)
 
+## สถานะรุ่นส่ง V19
+
+ตรวจ code baseline 5ff8076 วันที่ 10 ตุลาคม 2026: UC-03 เก็บสูตรต่อเสิร์ฟเป็น snapshot ภายใต้ menu lock ตอนสั่ง; UC-04 หักรวมวัตถุดิบเมื่อ RECEIVED → PREPARING ผ่าน Template Method ใน transaction เดียว สต๊อกไม่พอ/inactive/archived ตอบ 409 และ rollback ทั้งสถานะและยอด. Manager เลือกไม่หักอัตโนมัติได้
+
+Manager มี guarded delete/archive/restore ของข้อมูลหลักและบัญชีตาม contract; ลบจริงเฉพาะรายการที่ไม่มี reference อื่น เมื่อมีประวัติเก็บออกและยังอ่านประวัติได้ คืน User/Stock แล้วยัง inactive จนเปิดใช้งานชัดเจน ดู [R01 contract](../contracts/deletion-contract.md) และ [V19 design](../architecture/menu-stock-consumption.md)
+
 ## UC-01 เปิดรอบและเลือกแพ็กเกจ/น้ำซุป
 
 - **ผู้ใช้หลัก** SERVICE_STAFF

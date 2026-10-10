@@ -1,3 +1,9 @@
+# สถานะเอกสาร SOLID/Patterns รุ่นส่ง
+
+เทียบ develop หลัง PR #25/#26/#28/#49/#52 merge แล้ว รอบนี้ทวน interfaces/constructor injection, State resolver, Billing Strategy และ Stock Template/Consumption จาก source ปัจจุบัน พร้อม Class diagram แยกแต่ละ Pattern. ตัวอย่างเดิมมี commit-pinned links จึงเก็บบรรทัดตาม revision ที่อ้าง ไม่เปลี่ยน SHA เก่าให้ดูใหม่โดยไม่ตรวจ [Checklist รุ่นส่ง](planning/final-submission-checklist.md) แยกการมีหลักฐานออกจาก peer review และ public release
+
+## ประวัติการตรวจรอบก่อน
+
 # SOLID analysis — Architecture refactor
 
 ตัวอย่าง refactor ด้านล่างอ้างโค้ด `de7b5d546a05ad3ccef8c641ee5c53d638a8e039` วันที่ 7 ตุลาคม 2026 ต่อจาก PR #24; เก็บ commit นี้เพื่อให้ลิงก์ไฟล์/บรรทัดเดิมตรวจย้อนกลับได้ [เอกสารก่อน refactor](https://github.com/PavaritPramual/buffet-restaurant-management-system/blob/0dbbe1b7deae5db4189aa803f04a5246ccee8746/doc/solid-analysis.md) เป็นประวัติ G01–G05 ก่อนแก้

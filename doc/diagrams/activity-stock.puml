@@ -11,16 +11,27 @@ skinparam classBorderColor #173A45
 skinparam actorBorderColor #173A45
 skinparam usecaseBackgroundColor #F2E6D4
 skinparam usecaseBorderColor #A54A2E
-title Stock management activity - V15 actual (item lifecycle + signed delta)
+title Stock management activity - V19 (metadata, archive and signed delta)
 |Manager / Supervisor|
 start
 :Login with stock permission;
 :Read quantity / threshold / target / active / history;
+if (Manager removes or restores item?) then (yes)
+ |System|
+ :Require MANAGER and lock item;
+ if (Restore request?) then (yes)
+  :Restore archived item as inactive; preserve history;
+ else (remove)
+  :Delete only if unreferenced; otherwise archive;
+ endif
+ stop
+else (no)
+endif
 if (Manager changes item metadata?) then (yes)
  :Create item, edit metadata or set active / inactive;
  |System|
  :Validate request and lock StockItem;
- if (SKU duplicate, or SKU/unit changed after history?) then (yes)
+ if (SKU duplicate, SKU/unit changed after history,\nor unit changed with recipe/snapshot references?) then (yes)
   :Reject with 409;
  else (no)
   :Save metadata / opening target / active;
@@ -34,7 +45,7 @@ endif
 |System|
 :Validate request;
 :Lock StockItem in StockService transaction;
-if (Item inactive?) then (yes)
+if (Item inactive or archived?) then (yes)
  :Reject with 409 without changing item or history;
  stop
 else (no)

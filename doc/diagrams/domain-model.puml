@@ -5,12 +5,13 @@ skinparam classAttributeIconSize 0
 skinparam backgroundColor #FFFDF9
 skinparam defaultFontName Tahoma
 
-title Domain Model - Buffet Restaurant Management System (V19 proposed menu-stock extension)
+title Domain Model - Buffet Restaurant Management System (implemented V19 menu-stock extension)
 
 skinparam classAttributeIconSize 0
 skinparam shadowing false
 
 class UserAccount {
+    archivedAt
     id
     username
     role
@@ -29,6 +30,7 @@ class UserProfile {
 UserAccount "1" -- "0..1" UserProfile : profile >
 
 class RestaurantTable {
+    archived
     id
     tableNumber
     capacity
@@ -62,6 +64,7 @@ note right of DiningSession
 end note
 
 class BuffetPackage {
+    archived
     id
     name
     price
@@ -69,17 +72,20 @@ class BuffetPackage {
 }
 
 class Soup {
+    archived
     id
     name
     active
 }
 
 class MenuCategory {
+    archivedAt
     id
     name
 }
 
 class MenuItem {
+    archivedAt
     id
     name
     description
@@ -108,6 +114,7 @@ class Payment {
 }
 
 class StockItem {
+    archivedAt
     id
     name
     unit

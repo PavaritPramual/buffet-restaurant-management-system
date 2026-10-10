@@ -1,3 +1,13 @@
+# Git audit — ชุดส่ง 10 ตุลาคม 2026
+
+ตรวจชุดส่งวันที่ 10 ตุลาคม 2026 โดยปวริศช์ เทียบ merged develop `5ff807625d3c0a78692068a644ad2a528e988cff` และเอกสารชุดนี้ ไม่มีการเปลี่ยน runtime หรือ migration ใช้ [Checklist รุ่นส่ง](final-submission-checklist.md) เป็นสถานะปัจจุบัน รายงานด้านล่างเป็นประวัติตามวันที่และ revision ของแต่ละรอบ
+
+[รายการ commits ล่าสุด](../../test/evidence/final-submission-2026-10-10/develop-commits.csv) · [สรุปจำนวนและช่วงเวลา](../../test/evidence/final-submission-2026-10-10/git-summary.json)
+
+นับ non-merge commits ที่อยู่ใน develop เท่านั้น เก็บ author/date/message/changed paths และ co-author trailers ไว้ตรวจความหมายและตัวตน ไม่ใช้ commit บน branch ที่ยังไม่รวม และไม่อ้างคำยืนยันของสมาชิกแทนเจ้าตัว
+
+## ประวัติการตรวจรอบก่อน
+
 # Git audit — Step 3
 
 ## เกณฑ์ปัจจุบัน — ขั้นต่ำ 15 meaningful commits ต่อคน

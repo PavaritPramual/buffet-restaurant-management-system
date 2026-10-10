@@ -1,3 +1,9 @@
+# สถานะเอกสาร SOLID/Patterns รุ่นส่ง
+
+เทียบ develop หลัง PR #25/#26/#28/#49/#52 merge แล้ว รอบนี้ทวน interfaces/constructor injection, State resolver, Billing Strategy และ Stock Template/Consumption จาก source ปัจจุบัน พร้อม Class diagram แยกแต่ละ Pattern. ตัวอย่างเดิมมี commit-pinned links จึงเก็บบรรทัดตาม revision ที่อ้าง ไม่เปลี่ยน SHA เก่าให้ดูใหม่โดยไม่ตรวจ [Checklist รุ่นส่ง](planning/final-submission-checklist.md) แยกการมีหลักฐานออกจาก peer review และ public release
+
+## ประวัติการตรวจรอบก่อน
+
 # Design Patterns — implemented patterns and review status
 
 แกน pattern examples เดิมอ้าง source หลัง Architecture refactor `de7b5d546a05ad3ccef8c641ee5c53d638a8e039`. Fulfillment State source/tests ตรวจซ้ำกับ merged `develop d84f071` วันที่ 9 ตุลาคม; PR #25/#26 และ Stock/Profile PR #28 merge แล้ว. การตรวจนี้ไม่ใช่ approval ของเอกสาร delta รอบใหม่หรือ Final release.

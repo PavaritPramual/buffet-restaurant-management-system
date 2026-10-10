@@ -1,3 +1,11 @@
+# Data Dictionary — รุ่นส่ง V1–V19
+
+โครงสร้างปัจจุบันให้อ่านตารางเดิมร่วมกับ delta [V15 Auth/Stock](auth-stock-schema-delta.md), [V16 Stock/User archive](r01c-stock-user-archive.md), [V17 Table/Package/Soup archive](pavarit-r01-b-schema-delta.md), [V18 Menu archive](r01-a-menu-archive-proposal.md) และ [V19 สูตร/consumption](menu-stock-consumption-v19.md) รวมทั้งหมดใน ERD ปัจจุบัน
+
+หลักฐาน PR #52 startup log รายงาน validate 19 migrations และ schema V19 พร้อม JPA initialize; [public UAT](../../test/evidence/uat-buffet-2026-10-10/report.md) แยกจาก local/CI ไม่ apply หรือ repair ฐานกลางในรอบเอกสารนี้
+
+## ประวัติการตรวจรอบก่อน
+
 # Data Dictionary และ schema ที่รับรองสำหรับ Step 2
 
 **Step FIX R01-B (ยังไม่ apply):** [V17 schema delta](pavarit-r01-b-schema-delta.md) เพิ่ม archived ใน Table/Package/Soup แยกจาก active ตาม contract ที่เจ้าของรับรอง. ข้อตกลงทีม เมธัสV16 ปวริศช์V17 ศิระพัทธ์V18. เอกสาร Step2 baseline ด้านล่างยังเก็บเป็นประวัติ ไม่ใช่การรับรองว่า V17 เข้า Supabase แล้ว

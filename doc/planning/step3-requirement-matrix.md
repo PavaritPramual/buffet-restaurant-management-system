@@ -1,3 +1,9 @@
+# Requirement Matrix — สถานะชุดส่งปัจจุบัน
+
+ตรวจชุดส่งวันที่ 10 ตุลาคม 2026 โดยปวริศช์ เทียบ merged develop `5ff807625d3c0a78692068a644ad2a528e988cff` และเอกสารชุดนี้ ไม่มีการเปลี่ยน runtime หรือ migration ใช้ [Checklist รุ่นส่ง](final-submission-checklist.md) เป็นสถานะปัจจุบัน รายงานด้านล่างเป็นประวัติตามวันที่และ revision ของแต่ละรอบ
+
+## ประวัติการตรวจรอบก่อน
+
 # Requirement Matrix — Final
 
 ตรวจเอกสารเทียบกับ merged `develop` [`d4633d5`](https://github.com/PavaritPramual/buffet-restaurant-management-system/commit/d4633d52f7ece4bc1645594f85fc1a8548f458df), ซึ่งรวม PR #34–#36 และ #38. CI ของ PR #38 merge commit [run 37900705251](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37900705251) ผ่าน; PR #38 เปลี่ยนเฉพาะ frontend routing ให้ production `/` redirect ไป `/admin` และ local development ยังใช้ Design System. PR #36 head `b2928f5` ก่อน merge มี CI [run 37878436100](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37878436100), ส่วน merge commit `a6da906` มี CI [run 37883005451](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/37883005451). ผล CI ก่อน merge/หลัง merge ไม่ยืนยันว่า public runtime deploy QR fix แล้ว; Live SHA ยังไม่ attest อิสระ. สถานะเอกสารนี้ 9 ต.ค. 2026.

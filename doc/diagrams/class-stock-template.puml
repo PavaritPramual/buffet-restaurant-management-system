@@ -32,6 +32,9 @@ class StockItem {
  lowStockThreshold : BigDecimal
  openingTargetStock : BigDecimal (V15)
  active : boolean (V15)
+ archivedAt : Instant (V16)
+ +archive() : void
+ +restore() : void
  +updateDetails(sku, name, unit, threshold) : void
  +updateOpeningTarget(target) : void
  +changeActive(active) : void
