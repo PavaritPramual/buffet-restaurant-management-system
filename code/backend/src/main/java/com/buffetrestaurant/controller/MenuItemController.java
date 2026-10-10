@@ -7,6 +7,10 @@ import com.buffetrestaurant.dto.response.PageResponse;
 import com.buffetrestaurant.service.MenuCatalogService;
 import com.buffetrestaurant.service.MenuAdminAccessProvider;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -67,6 +71,10 @@ public class MenuItemController {
     public MenuItemResponse get(@PathVariable Long id) { return service.getMenuItem(id); }
 
     @PostMapping
+    @ApiResponse(responseCode = "201", description = "Menu item created",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = MenuItemResponse.class)),
+            headers = @Header(name = "Location", description = "Relative URI of the created resource",
+                    schema = @Schema(type = "string", format = "uri-reference", example = "/api/v1/menu-items/123")))
     public ResponseEntity<MenuItemResponse> create(@Valid @RequestBody MenuItemRequest request) {
         access.requireMenuWriteAccess();
         MenuItemResponse created = service.createMenuItem(request);

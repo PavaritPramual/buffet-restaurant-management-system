@@ -1,0 +1,305 @@
+{
+  "runId": "UAT261010TEERAMET",
+  "url": "https://buffet-restaurant-management.onrender.com",
+  "date": "2026-10-10",
+  "timezone": "Asia/Bangkok",
+  "deployedCommit": {
+    "sha": "af2b45ba5d73cfcb271d312f978374b394dd4b97",
+    "evidence": "user-supplied Render Live screenshot",
+    "deployedTime": "2026-10-10T11:23:55+07:00"
+  },
+  "V19": {
+    "status": "validated and up to date in user-supplied startup log",
+    "directDatabaseInspection": false,
+    "sqlOrMigrationExecuted": false
+  },
+  "browserMode": "single browser; sequential Staff logout/login explicitly approved",
+  "qrMethod": "fresh real QR link from Staff UI; no physical camera test",
+  "ui": [
+    {
+      "id": "UI-01",
+      "test": "สร้างวัตถุดิบ/รับเข้า",
+      "expected": "เริ่มศูนย์; รับเข้าและ IN history ตรงกัน",
+      "actual": "A ID6 เริ่ม 0; รับเข้า 3 kg; IN11 +3/balance3; UI/API ตรงกัน",
+      "status": "ผ่าน",
+      "timeICT": "12:13–12:13:54",
+      "evidence": [
+        "ui-stock-A-initial-zero.jpg",
+        "ui-stock-A-in-3kg.jpg"
+      ]
+    },
+    {
+      "id": "UI-02",
+      "test": "เมนูมีสูตร/ไม่มีสูตร",
+      "expected": "บันทึก 0.100 kg ต่อเสิร์ฟและเมนูสูตรว่างได้",
+      "actual": "menu44 automatic=true/A0.1; menu45 false/[]; อ่าน UI/API กลับตรง",
+      "status": "ผ่าน",
+      "timeICT": "12:14–12:21",
+      "evidence": [
+        "ui-menu-recipe-readback.jpg",
+        "swagger-menu45-no-stock-usage-200.jpg"
+      ]
+    },
+    {
+      "id": "UI-03",
+      "test": "QR สด → สั่ง 2 เสิร์ฟ",
+      "expected": "RECEIVED; ไม่หักก่อน PREPARING",
+      "actual": "ลิงก์จาก QR สดของ session15 เข้า Customer ได้; UI order7/menu44×2 RECEIVED; A3/B0.05 หลังสั่งทุกใบ",
+      "status": "ผ่านเฉพาะ QR link/grant และเว็บ; ไม่ได้ตรวจกล้อง",
+      "timeICT": "12:26:04–12:29",
+      "evidence": [
+        "ui-customer-order7-received.jpg",
+        "stock-after-orders-before-kitchen.json"
+      ]
+    },
+    {
+      "id": "UI-04",
+      "test": "ครัวเริ่มทำ",
+      "expected": "หักสูตร×จำนวนเสิร์ฟ; CONSUMPTION ผูก orderId",
+      "actual": "UI order7 PREPARING; A3→2.8; transaction13 CONSUMPTION -0.2/orderId7; UI/API ตรง",
+      "status": "ผ่าน",
+      "timeICT": "12:31:19–12:32:04",
+      "evidence": [
+        "ui-kitchen-order7-preparing.jpg",
+        "ui-stock-after-order7.jpg",
+        "swagger-consumption-order7.jpg"
+      ]
+    },
+    {
+      "id": "UI-05",
+      "test": "เริ่มทำซ้ำ",
+      "expected": "ไม่หัก stock/history ซ้ำ",
+      "actual": "UI เปลี่ยนปุ่มเป็นพร้อมเสิร์ฟ จึงส่งคำขอซ้ำผ่าน Swagger; 400 PREPARING→PREPARING; history มีของ order7 เพียงรายการเดียว",
+      "status": "ผ่าน",
+      "timeICT": "12:32:37; ยืนยัน history 12:35–12:36",
+      "evidence": [
+        "swagger-order7-duplicate-400.jpg",
+        "stock-A-history-final.json"
+      ]
+    },
+    {
+      "id": "UI-06",
+      "test": "stock ไม่พอแบบ 2 วัตถุดิบ",
+      "expected": "ปฏิเสธทั้ง order; ไม่หัก A ที่มีพอ; B/history คงเดิม; RECEIVED",
+      "actual": "UI order10 ต้องใช้ A/B อย่างละ0.2 แต่ B0.05; ข้อความปฏิเสธ; order10 RECEIVED; ไม่มี CONSUMPTION ของ order8/10 ใน A/B",
+      "status": "ผ่าน",
+      "timeICT": "12:33; ยืนยัน history 12:35–12:36",
+      "evidence": [
+        "ui-kitchen-order10-shortage.jpg",
+        "stock-A-history-final.json",
+        "stock-B-history-final.json"
+      ]
+    },
+    {
+      "id": "UI-07",
+      "test": "เปลี่ยนสูตรหลังสั่ง",
+      "expected": "ออเดอร์เก่า snapshot; ออเดอร์ใหม่สูตรล่าสุด",
+      "actual": "สร้าง order7 เมื่อ A0.1; Manager UI เปลี่ยนเป็น0.25 และ PUT ยืนยัน; order7×2 หัก0.2; order11×2 หัก0.5",
+      "status": "ผ่าน",
+      "timeICT": "12:26:34 → แก้12:30:20 → เริ่ม12:31:19/12:33:37",
+      "evidence": [
+        "menu44-updated-recipe.json",
+        "stock-A-history-final.json"
+      ]
+    },
+    {
+      "id": "UI-08",
+      "test": "เมนูไม่มีสูตร",
+      "expected": "สั่ง/เริ่ม/เสิร์ฟได้; ไม่หัก stock",
+      "actual": "order9/menu45×1 เดิน RECEIVED→PREPARING→READY→SERVED ผ่าน UI; ไม่มี CONSUMPTION ของ order9",
+      "status": "ผ่าน",
+      "timeICT": "12:27:48–12:34:50 โดยประมาณ",
+      "evidence": [
+        "ui-kitchen-order9-no-recipe-preparing.jpg",
+        "ui-service-order9-ready.jpg",
+        "customer-orders-after-kitchen.json"
+      ]
+    },
+    {
+      "id": "UI-09",
+      "test": "stock load failure/retry (เงื่อนไขถ้าเกิด)",
+      "expected": "เมนูอื่นยังใช้ได้; retry หลังระบบคืน",
+      "actual": "Stock/menu โหลดสำเร็จตลอดรอบ; ไม่พบ failure จึงไม่สามารถรับรอง recovery และไม่แก้ระบบกลางเพื่อบังคับให้ล้มเหลว",
+      "status": "ทดสอบไม่ได้ — ไม่เกิดเงื่อนไข",
+      "timeICT": "12:13–12:36",
+      "evidence": [
+        "ui-stock-final.jpg"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "id": "API-01",
+      "test": "POST /stock/items",
+      "expected": "201; quantity=0",
+      "actual": "Manager สร้าง stock B ID7 ตาม schema →201/quantity0",
+      "status": "ผ่าน",
+      "timeICT": "12:18:45",
+      "evidence": [
+        "swagger-stock-B-create-201-zero.jpg"
+      ]
+    },
+    {
+      "id": "API-02",
+      "test": "POST /stock/{itemId}/in",
+      "expected": "ยอด/history/UI ตรง",
+      "actual": "B+0.05 →200/transaction12/balance0.05; UI ตรง",
+      "status": "ผ่าน",
+      "timeICT": "12:19:09",
+      "evidence": [
+        "swagger-stock-B-in-0050-200.jpg",
+        "ui-stock-A-B-baseline.jpg"
+      ]
+    },
+    {
+      "id": "API-03",
+      "test": "GET /stock/transactions?itemId=6/7",
+      "expected": "IN/CONSUMPTION ตาม order; เทียบ UI",
+      "actual": "A มีIN11, CONSUMPTION13(order7,-0.2),14(order11,-0.5); B มีIN12เท่านั้น; UI ตรง",
+      "status": "ผ่าน",
+      "timeICT": "12:19:36; 12:32:04; 12:35–12:36",
+      "evidence": [
+        "stock-A-history-final.json",
+        "stock-B-history-final.json",
+        "ui-stock-final.jpg"
+      ]
+    },
+    {
+      "id": "API-04",
+      "test": "POST/PUT /menu-items",
+      "expected": "บันทึกสูตรได้; snapshot ไม่เปลี่ยนย้อนหลัง",
+      "actual": "POSTmenu46→201 สูตรA/B0.1; PUTmenu44→200 สูตรA0.25 หลังorder7; history ยืนยันsnapshot",
+      "status": "ผ่าน API; documentation 201 ไม่ตรง",
+      "timeICT": "12:20:17; 12:30:20",
+      "evidence": [
+        "swagger-menu-rollback-create-201.jpg",
+        "menu44-updated-recipe.json"
+      ]
+    },
+    {
+      "id": "API-05",
+      "test": "GET /menu-items/{id}/stock-usage",
+      "expected": "สูตรตรง Manager UI",
+      "actual": "44=0.1ก่อน/0.25หลัง;45=false/[];46=A/B0.1 →200",
+      "status": "ผ่าน",
+      "timeICT": "12:18:03–12:30:33",
+      "evidence": [
+        "swagger-menu44-stock-usage-200.jpg",
+        "swagger-menu44-updated-0250.jpg",
+        "menu46-stock-usage.json"
+      ]
+    },
+    {
+      "id": "API-06",
+      "test": "GET /dining-sessions/15/menu",
+      "expected": "cookie QR อ่านเฉพาะเมนูpackageได้",
+      "actual": "200: menu44/45/46 ผูกpackage7 ตรง Customer UI; cookieส่งอัตโนมัติ ไม่กรอกช่องcookie",
+      "status": "ผ่าน",
+      "timeICT": "12:27:03",
+      "evidence": [
+        "swagger-customer-menu15-200.jpg"
+      ]
+    },
+    {
+      "id": "API-07",
+      "test": "POST /dining-sessions/15/orders",
+      "expected": "สร้าง RECEIVED; ไม่หักก่อนครัว",
+      "actual": "bodyตามSwagger: menu46×2 →201/order8/RECEIVED; stockก่อนครัวยังA3/B0.05; GETorders200ตรงUI",
+      "status": "ผ่าน API; documentation 201 ไม่ตรง",
+      "timeICT": "12:27:29; GET12:28:42",
+      "evidence": [
+        "swagger-customer-order8-201.jpg",
+        "customer-orders-before-kitchen.json",
+        "stock-after-orders-before-kitchen.json"
+      ]
+    },
+    {
+      "id": "API-08",
+      "test": "GET /orders/incoming (Kitchen)",
+      "expected": "พบออเดอร์UAT/สถานะตรงUI",
+      "actual": "200: order7/8/9/10/11 ก่อนเริ่ม; หลังเริ่มพบ7/11PREPARING,8/10RECEIVED;9READYไม่อยู่incoming",
+      "status": "ผ่าน",
+      "timeICT": "12:31; 12:33:50โดยประมาณ",
+      "evidence": [
+        "incoming-before-kitchen.json",
+        "incoming-after-shortage.json",
+        "swagger-incoming-kitchen-200.jpg"
+      ]
+    },
+    {
+      "id": "API-09",
+      "test": "PATCH /orders/{id}/status",
+      "expected": "PREPARING200; หักถูก; ส่งซ้ำไม่หัก",
+      "actual": "order11 PREPARING200 หัก0.5; order7ซ้ำ400; historyของ7เพียง13รายการเดียว ไม่มีduplicate",
+      "status": "ผ่าน",
+      "timeICT": "12:32:37; 12:33:37",
+      "evidence": [
+        "swagger-order11-preparing-200.jpg",
+        "swagger-order7-duplicate-400.jpg",
+        "stock-A-history-final.json"
+      ]
+    },
+    {
+      "id": "API-10",
+      "test": "PATCH order8 stock ไม่พอ",
+      "expected": "409/ErrorResponse; rollbackทั้งorder/stock",
+      "actual": "409 Conflict ต้องใช้0.200มี0.050; order8/10RECEIVED; Aหักเฉพาะ7/11 รวม0.7 ไม่มี partial หรือhistoryของshortage; B0.05ไม่เปลี่ยน",
+      "status": "ผ่าน",
+      "timeICT": "12:32:53; ยืนยัน12:35–12:36",
+      "evidence": [
+        "order8-shortage-error409.json",
+        "incoming-after-shortage.json",
+        "stock-final.json",
+        "stock-B-history-final.json"
+      ]
+    },
+    {
+      "id": "API-11",
+      "test": "ไม่มี Staff login",
+      "expected": "401/ErrorResponse",
+      "actual": "GET incoming401 A signed-in user is required; logoutแล้ว GETstock401 แม้Customer grantยังอยู่",
+      "status": "ผ่าน",
+      "timeICT": "12:00:25; 12:34:24",
+      "evidence": [
+        "swagger-incoming-no-login-401.jpg",
+        "swagger-stock-no-login-401.jpg"
+      ]
+    },
+    {
+      "id": "API-12",
+      "test": "roleผิด",
+      "expected": "403; ไม่อนุญาตเข้าถึงต่างหน้าที่",
+      "actual": "Manager GETincoming403; Kitchen GETstock403 Your role is not allowed to perform this operation",
+      "status": "ผ่าน",
+      "timeICT": "12:20:43; 12:33:56",
+      "evidence": [
+        "swagger-incoming-manager-403.jpg",
+        "swagger-stock-kitchen-403.jpg"
+      ]
+    }
+  ],
+  "documentationFindings": [
+    {
+      "id": "DOC-01",
+      "status": "fail",
+      "detail": "ErrorResponse examples use billing400 under other codes/endpoints"
+    },
+    {
+      "id": "DOC-02",
+      "status": "fail",
+      "detail": "Menu and customer order creates respond201 but Swagger declares200 only"
+    }
+  ],
+  "dataRetained": true,
+  "session15Status": "ACTIVE; no payment/close in this UAT run",
+  "documentationCorrection": {
+    "codeCommit": "1823c7f53a98e9992f7f93c28471ec1f863eba06",
+    "environment": "local isolated H2 / Swagger localhost:18888",
+    "verifiedAtICT": "2026-10-10T13:19:14+07:00",
+    "local": "passed: 58 tests, package and Swagger UI checks; unauthenticated Stock Execute401",
+    "publicRetest": false,
+    "centralDatabaseAccess": false,
+    "ci": "See checks of the new PR52 head; not public deployment evidence",
+    "report": "../pr52-swagger-fix-2026-10-10/report.md"
+  }
+}

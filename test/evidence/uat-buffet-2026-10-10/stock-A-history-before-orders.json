@@ -1,0 +1,14 @@
+[
+  {
+    "id": 11,
+    "stockItemId": 6,
+    "itemName": "UAT261010TEERAMET วัตถุดิบสูตรสำเร็จ",
+    "transactionType": "IN",
+    "quantityDelta": 3,
+    "balanceAfter": 3,
+    "reason": "UAT261010TEERAMET รับเข้าทดสอบสูตรสำเร็จ",
+    "actorUsername": "Manager",
+    "createdAt": "2026-10-10T05:13:54.688450Z",
+    "orderId": null
+  }
+]

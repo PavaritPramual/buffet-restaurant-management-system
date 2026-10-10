@@ -1,0 +1,173 @@
+{
+  "runId": "UAT261010TEERAMET",
+  "stock": [
+    {
+      "id": 6,
+      "sku": "UAT261010TEERAMET-A",
+      "name": "UAT261010TEERAMET วัตถุดิบสูตรสำเร็จ",
+      "quantity": 2.3,
+      "unit": "kg",
+      "inTransactionId": 11,
+      "initialQuantity": 0,
+      "receivedQuantity": 3
+    },
+    {
+      "id": 7,
+      "sku": "UAT261010TEERAMET-B",
+      "name": "UAT261010TEERAMET วัตถุดิบไม่พอ",
+      "unit": "kg",
+      "quantity": 0.05,
+      "lowStockThreshold": 0.1,
+      "openingTargetStock": 1,
+      "shortfall": 1,
+      "active": true,
+      "updatedAt": "2026-10-10T05:18:45.376714203Z",
+      "archivedAt": null,
+      "inTransactionId": 12,
+      "initialQuantity": 0,
+      "receivedQuantity": 0.05
+    }
+  ],
+  "menus": [
+    {
+      "id": 44,
+      "categoryId": 13,
+      "categoryName": "UAT261010TEERAMET",
+      "name": "UAT261010TEERAMET สูตรสำเร็จ",
+      "description": "UAT PR49: สูตรล่าสุด 0.250 kg; order7 snapshot 0.100",
+      "available": true,
+      "packageIds": [
+        7
+      ],
+      "imageUrl": null,
+      "automaticStockDeduction": true,
+      "stockUsage": [
+        {
+          "stockItemId": 6,
+          "quantityPerServing": 0.25
+        }
+      ],
+      "previousQuantityPerServing": 0.1
+    },
+    {
+      "id": 45,
+      "categoryId": 13,
+      "categoryName": "UAT261010TEERAMET",
+      "name": "UAT261010TEERAMET ไม่หักสต๊อก",
+      "description": "UAT PR49: เมนูไม่มีสูตร",
+      "available": true,
+      "packageIds": [
+        7
+      ],
+      "imageUrl": null,
+      "automaticStockDeduction": false,
+      "stockUsage": []
+    },
+    {
+      "id": 46,
+      "categoryId": 13,
+      "categoryName": "UAT261010TEERAMET",
+      "name": "UAT261010TEERAMET สต๊อกไม่พอ",
+      "description": "UAT rollback: A มีพอ, B ไม่พอ, 0.100 kg ต่อวัตถุดิบต่อเสิร์ฟ",
+      "available": true,
+      "packageIds": [
+        7
+      ],
+      "imageUrl": null,
+      "automaticStockDeduction": true,
+      "stockUsage": [
+        {
+          "stockItemId": 6,
+          "quantityPerServing": 0.1
+        },
+        {
+          "stockItemId": 7,
+          "quantityPerServing": 0.1
+        }
+      ]
+    }
+  ],
+  "setup": {
+    "categoryId": 13,
+    "packageId": 7,
+    "sessionId": 15,
+    "tableName": "UAT261010TEERA",
+    "soupName": "UAT261010TEERAMET",
+    "sessionStatus": "ACTIVE",
+    "adultCount": 1,
+    "childCount": 0
+  },
+  "orders": [
+    {
+      "id": 7,
+      "case": "happy UI and old recipe snapshot",
+      "menuId": 44,
+      "quantity": 2,
+      "status": "PREPARING",
+      "quantityPerServingSnapshot": 0.1
+    },
+    {
+      "id": 8,
+      "case": "insufficient API",
+      "menuId": 46,
+      "quantity": 2,
+      "status": "RECEIVED"
+    },
+    {
+      "id": 9,
+      "case": "no recipe UI",
+      "menuId": 45,
+      "quantity": 1,
+      "status": "SERVED"
+    },
+    {
+      "id": 10,
+      "case": "insufficient UI",
+      "menuId": 46,
+      "quantity": 2,
+      "status": "RECEIVED"
+    },
+    {
+      "id": 11,
+      "case": "snapshot new recipe UI",
+      "menuId": 44,
+      "quantity": 2,
+      "status": "PREPARING",
+      "quantityPerServingSnapshot": 0.25
+    }
+  ],
+  "transactions": {
+    "A": [
+      {
+        "id": 14,
+        "type": "CONSUMPTION",
+        "delta": -0.5,
+        "balanceAfter": 2.3,
+        "orderId": 11
+      },
+      {
+        "id": 13,
+        "type": "CONSUMPTION",
+        "delta": -0.2,
+        "balanceAfter": 2.8,
+        "orderId": 7
+      },
+      {
+        "id": 11,
+        "type": "IN",
+        "delta": 3,
+        "balanceAfter": 3,
+        "orderId": null
+      }
+    ],
+    "B": [
+      {
+        "id": 12,
+        "type": "IN",
+        "delta": 0.05,
+        "balanceAfter": 0.05,
+        "orderId": null
+      }
+    ]
+  }
+}

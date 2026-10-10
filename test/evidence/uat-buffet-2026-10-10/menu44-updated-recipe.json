@@ -1,0 +1,12 @@
+{
+  "automaticStockDeduction": true,
+  "stockUsage": [
+    {
+      "stockItemId": 6,
+      "stockItemName": "UAT261010TEERAMET วัตถุดิบสูตรสำเร็จ",
+      "unit": "kg",
+      "quantityPerServing": 0.25,
+      "active": true
+    }
+  ]
+}

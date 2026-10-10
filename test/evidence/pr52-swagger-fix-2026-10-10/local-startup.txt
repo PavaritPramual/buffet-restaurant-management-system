@@ -1,0 +1,8 @@
+LOCAL H2 ONLY; no Supabase connection or central SQL/migration execution.
+2026-10-10T13:15:04.673+07:00  INFO 59 --- [buffet-restaurant-backend] [           main] c.b.BuffetRestaurantApplication          : The following 1 profile is active: "demo"
+2026-10-10T13:15:11.487+07:00  INFO 59 --- [buffet-restaurant-backend] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:swagger_pr52 user=SA
+2026-10-10T13:15:12.065+07:00  INFO 59 --- [buffet-restaurant-backend] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "15 - add stock target active and profile names"
+2026-10-10T13:15:12.220+07:00  INFO 59 --- [buffet-restaurant-backend] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 15 migrations to schema "public", now at version v19 (execution time 00:00.292s)
+2026-10-10T13:15:15.490+07:00  INFO 59 --- [buffet-restaurant-backend] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-10T13:15:20.753+07:00  INFO 59 --- [buffet-restaurant-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 18888 (http) with context path '/'
+2026-10-10T13:15:20.792+07:00  INFO 59 --- [buffet-restaurant-backend] [           main] c.b.BuffetRestaurantApplication          : Started BuffetRestaurantApplication in 17.311 seconds (process running for 18.289)
