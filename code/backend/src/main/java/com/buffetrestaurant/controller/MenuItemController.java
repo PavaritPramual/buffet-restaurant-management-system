@@ -27,7 +27,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class MenuItemController {
     private final MenuCatalogService service;
     private final MenuAdminAccessProvider access;
-    public MenuItemController(MenuCatalogService service, MenuAdminAccessProvider access) { this.service = service; this.access = access; }
+    private final com.buffetrestaurant.service.MenuStockUsageService stockUsage;
+    public MenuItemController(MenuCatalogService service, MenuAdminAccessProvider access,
+            com.buffetrestaurant.service.MenuStockUsageService stockUsage) {
+        this.service = service; this.access = access; this.stockUsage = stockUsage;
+    }
+
+    @GetMapping("/{id}/stock-usage")
+    @Operation(summary = "Manager-only stock quantities per serving; excludes current stock balance")
+    public com.buffetrestaurant.dto.response.MenuStockUsageResponse stockUsage(@PathVariable Long id) {
+        return stockUsage.read(id);
+    }
 
     @GetMapping("/archived")
     @Operation(summary = "Manager-only archived menu items")

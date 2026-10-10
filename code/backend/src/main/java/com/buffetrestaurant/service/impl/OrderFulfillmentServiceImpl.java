@@ -23,17 +23,20 @@ public class OrderFulfillmentServiceImpl implements OrderFulfillmentService {
     private final OrderingMapper mapper;
     private final OrderFulfillmentAccessProvider accessProvider;
     private final OrderStateResolver stateResolver;
+    private final com.buffetrestaurant.service.OrderStockConsumptionService stockConsumption;
 
     public OrderFulfillmentServiceImpl(
             CustomerOrderRepository orderRepository,
             OrderingMapper mapper,
             OrderFulfillmentAccessProvider accessProvider,
-            OrderStateResolver stateResolver
+            OrderStateResolver stateResolver,
+            com.buffetrestaurant.service.OrderStockConsumptionService stockConsumption
     ) {
         this.orderRepository = orderRepository;
         this.mapper = mapper;
         this.accessProvider = accessProvider;
         this.stateResolver = stateResolver;
+        this.stockConsumption = stockConsumption;
     }
 
     @Override
@@ -65,12 +68,13 @@ public class OrderFulfillmentServiceImpl implements OrderFulfillmentService {
             throw new BusinessRuleException("Cannot change order " + orderId + " status from " + order.getStatus()
                     + " to " + requestedStatus + "; the only allowed next status is " + next.status());
         }
+        if (next.status() == OrderStatus.PREPARING) stockConsumption.consume(order);
         order.updateStatus(next.status());
         return mapper.toResponse(orderRepository.save(order));
     }
 
     private CustomerOrder findOrThrow(Long orderId) {
-        return orderRepository.findById(orderId)
+        return orderRepository.findByIdForUpdate(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
     }
 }

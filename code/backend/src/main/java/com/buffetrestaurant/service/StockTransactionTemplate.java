@@ -27,6 +27,11 @@ public abstract class StockTransactionTemplate implements StockTransactionProces
 
     public final StockTransaction process(StockItem item, BigDecimal requestedQuantity, String reason,
             UserContext actor) {
+        return processWithOrder(item, requestedQuantity, reason, actor, null);
+    }
+
+    protected final StockTransaction processWithOrder(StockItem item, BigDecimal requestedQuantity, String reason,
+            UserContext actor, Long orderId) {
         if (actor == null || actor.userId() == null) throw new AuthenticationRequiredException();
         if (!item.isActive()) throw new InactiveStockItemException();
         BigDecimal delta = calculateDelta(requestedQuantity);
@@ -38,7 +43,7 @@ public abstract class StockTransactionTemplate implements StockTransactionProces
         items.save(item);
         UserAccount account = users.getReferenceById(actor.userId());
         StockTransaction transaction = transactions.save(new StockTransaction(item, transactionType(), delta,
-                nextBalance, reason.trim(), account));
+                nextBalance, reason.trim(), account, orderId));
         return transaction;
     }
 

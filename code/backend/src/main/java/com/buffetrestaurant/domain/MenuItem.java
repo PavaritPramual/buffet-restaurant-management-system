@@ -46,6 +46,20 @@ public class MenuItem {
     @Column(name = "package_id", nullable = false)
     private Set<Long> packageIds = new LinkedHashSet<>();
 
+    @Column(name = "automatic_stock_deduction", nullable = false)
+    private boolean automaticStockDeduction;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "menu_stock_usage", joinColumns = @JoinColumn(name = "menu_item_id"))
+    private java.util.List<MenuStockUsage> stockUsage = new java.util.ArrayList<>();
+
+    public boolean isAutomaticStockDeduction() { return automaticStockDeduction; }
+    public java.util.List<MenuStockUsage> getStockUsage() { return java.util.List.copyOf(stockUsage); }
+    public void replaceStockUsage(boolean enabled, java.util.List<MenuStockUsage> usage) {
+        automaticStockDeduction = enabled;
+        stockUsage.clear(); stockUsage.addAll(usage);
+    }
+
     protected MenuItem() {}
 
     public MenuItem(MenuCategory category, String name, String description, boolean available,

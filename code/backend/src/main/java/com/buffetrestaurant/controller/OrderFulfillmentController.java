@@ -63,7 +63,10 @@ public class OrderFulfillmentController {
 
     @Operation(summary = "Advance an order to the next fulfillment status",
             description = "KITCHEN_STAFF may advance RECEIVED to PREPARING and PREPARING to READY. "
-                    + "SERVICE_STAFF may advance READY to SERVED. No other role may transition an order.")
+                    + "SERVICE_STAFF may advance READY to SERVED. No other role may transition an order. "
+                    + "Starting PREPARING consumes the recipe frozen at order placement atomically; insufficient or inactive stock returns 409 without changing order or stock.")
+    @ApiResponse(responseCode = "409", description = "Recipe stock is insufficient or unavailable; no partial consumption",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "400", description = "Transition is not the next legal status",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "200", description = "Order transitioned to its next legal status",

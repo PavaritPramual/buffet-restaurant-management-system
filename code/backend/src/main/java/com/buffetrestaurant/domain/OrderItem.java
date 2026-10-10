@@ -33,6 +33,17 @@ public class OrderItem {
     @Column(length = 255)
     private String note;
 
+    @jakarta.persistence.ElementCollection(fetch = FetchType.LAZY)
+    @jakarta.persistence.CollectionTable(name = "order_item_stock_usage", joinColumns = @JoinColumn(name = "order_item_id"))
+    private java.util.List<MenuStockUsage> stockUsage = new java.util.ArrayList<>();
+
+    public void snapshotStockUsage(java.util.List<MenuStockUsage> usage) {
+        stockUsage.clear();
+        usage.forEach(entry -> stockUsage.add(new MenuStockUsage(entry.getStockItemId(),
+                entry.getQuantityPerServing(), entry.getUnit())));
+    }
+    public java.util.List<MenuStockUsage> getStockUsage() { return java.util.List.copyOf(stockUsage); }
+
     protected OrderItem() {}
 
     OrderItem(CustomerOrder order, Long menuItemId, String itemName, int quantity) {

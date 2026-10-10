@@ -49,8 +49,10 @@ public class CustomerOrder {
         this.createdAt = OffsetDateTime.now(ZoneOffset.UTC);
     }
 
-    public void addItem(Long menuItemId, String itemName, int quantity) {
-        items.add(new OrderItem(this, menuItemId, itemName, quantity));
+    public OrderItem addItem(Long menuItemId, String itemName, int quantity) {
+        OrderItem item = new OrderItem(this, menuItemId, itemName, quantity);
+        items.add(item);
+        return item;
     }
 
     /**
