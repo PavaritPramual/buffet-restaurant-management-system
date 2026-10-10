@@ -157,6 +157,23 @@ describe('MenuAdminPage', () => {
       stockUsage: [{ stockItemId: 20, quantityPerServing: 0.1 }],
     })))
   })
+
+  it('keeps the menu catalog available when loading recipe stock options fails', async () => {
+    mockCatalog()
+    vi.mocked(api.getRecipeStocks).mockRejectedValueOnce({ response: { data: { message: 'Stock API ไม่พร้อมใช้งาน' } } })
+      .mockResolvedValueOnce([])
+    vi.mocked(api.getMenuItems).mockResolvedValue({ content: [menuItem], page: 0, size: 10, totalElements: 1, totalPages: 1 })
+
+    render(<MenuAdminPage />)
+    expect(await screen.findByText('ไก่ทอด')).toBeTruthy()
+    expect(await screen.findByText(/โหลดรายการวัตถุดิบไม่สำเร็จ: Stock API ไม่พร้อมใช้งาน/)).toBeTruthy()
+    expect(api.getMenuItems).toHaveBeenCalledTimes(1)
+
+    fireEvent.click(screen.getByRole('button', { name: 'โหลดรายการวัตถุดิบใหม่' }))
+    await waitFor(() => expect(screen.queryByText(/โหลดรายการวัตถุดิบไม่สำเร็จ/)).toBeNull())
+    expect(screen.getByText('ไก่ทอด')).toBeTruthy()
+    expect(api.getMenuItems).toHaveBeenCalledTimes(1)
+  })
   it('resets pagination when sorting changes and sends the selected API sort', async () => {
     mockCatalog()
     vi.mocked(api.getMenuItems).mockResolvedValue({ content: [menuItem], page: 0, size: 10, totalElements: 11, totalPages: 2 })
