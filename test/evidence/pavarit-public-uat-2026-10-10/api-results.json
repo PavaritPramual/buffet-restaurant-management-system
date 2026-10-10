@@ -1,0 +1,257 @@
+{
+  "sourceCommit": "c778150c79657b80930ceca6a4f10c136c1fc285",
+  "publicUrl": "https://buffet-restaurant-management.onrender.com",
+  "checks": [
+    {
+      "name": "POST /api/v1/auth/login",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/buffet-packages",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/soups",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/tables",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/menu-items?size=100",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/menu-categories?size=100",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /actuator/health/readiness",
+      "who": "anonymous",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /v3/api-docs",
+      "who": "anonymous",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/uat-nonexistent",
+      "who": "anonymous",
+      "status": 404,
+      "pass": true
+    },
+    {
+      "name": "GET /actuator/health/readiness",
+      "who": "anonymous",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /v3/api-docs",
+      "who": "anonymous",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/uat-nonexistent",
+      "who": "anonymous",
+      "status": 404,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/buffet-packages",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/soups",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/tables",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/menu-items?size=100",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/menu-categories?size=100",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/orders/incoming",
+      "who": "manager",
+      "status": 403,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/orders/ready",
+      "who": "manager",
+      "status": 403,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/dining-sessions/active",
+      "who": "manager",
+      "status": 403,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/stock",
+      "who": "anonymous",
+      "status": 401,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/orders/incoming",
+      "who": "anonymous",
+      "status": 401,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/orders/ready",
+      "who": "anonymous",
+      "status": 401,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/dining-sessions/active",
+      "who": "anonymous",
+      "status": 401,
+      "pass": true
+    },
+    {
+      "name": "POST /api/v1/auth/login",
+      "who": "anonymous",
+      "status": 401,
+      "pass": true
+    },
+    {
+      "name": "DELETE /api/v1/menu-categories/12",
+      "who": "manager",
+      "status": 409,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/menu-categories",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "GET /api/v1/stock",
+      "who": "manager",
+      "status": 200,
+      "pass": true
+    }
+  ],
+  "cookieFlags": [
+    {
+      "who": "manager",
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    }
+  ],
+  "runtime": {
+    "sourceCommit": "c778150c79657b80930ceca6a4f10c136c1fc285",
+    "assets": [
+      {
+        "path": "/assets/index-Dh3hE-jP.js",
+        "sha256": "57a911fa350a1fb15f4482662e4a1d63db6e6836b99f580d68c4248a6ce12ed3",
+        "localExists": true,
+        "same": true
+      },
+      {
+        "path": "/assets/index-mlBSFan-.css",
+        "sha256": "208a9c1d84f5387e1804dbe5ea35a1916100cdc4ae3439904cff81a8eff34ad7",
+        "localExists": true,
+        "same": true
+      }
+    ]
+  },
+  "createdIds": {
+    "tableId": 9,
+    "packageId": 6,
+    "soupId": 6,
+    "categoryId": 12,
+    "menuItemId": 43,
+    "stockItemId": 5
+  },
+  "stockFinal": {
+    "id": 5,
+    "sku": "BEEF-002",
+    "name": "เนื้อริบอาย",
+    "unit": "กิโลกรัม",
+    "quantity": 7,
+    "lowStockThreshold": 2,
+    "openingTargetStock": 8,
+    "shortfall": 1,
+    "active": true,
+    "updatedAt": "2026-10-09T18:14:25.797199Z",
+    "archivedAt": null
+  },
+  "swaggerUi": {
+    "url": "https://buffet-restaurant-management.onrender.com/swagger-ui/index.html",
+    "operationsTotal": 78,
+    "getOperations": 33,
+    "mutatingOperations": 45,
+    "uniqueOperationsAttempted": 78,
+    "method": "Browser Swagger UI on the Render deployment",
+    "coreFlow": {
+      "sessionId": 13,
+      "tableNumber": "C01",
+      "billingPreviewStatus": 200,
+      "billingTotal": 747.5,
+      "paymentReadBeforeRecordStatus": 404,
+      "paymentCreateStatus": 201,
+      "paymentMethod": "CASH",
+      "paymentStatus": "PAID",
+      "paymentReadAfterRecordStatus": 200,
+      "closeBeforePaymentStatus": 400,
+      "closeAfterPaymentStatus": 200,
+      "sessionStatusAfterClose": "COMPLETED",
+      "tableStatusAfterClose": "AVAILABLE",
+      "customerContextAfterCloseStatus": 401,
+      "customerOrdersAfterCloseStatus": 401
+    },
+    "otherChecks": {
+      "duplicateBillRequestStatus": 200,
+      "orderAfterBillRequestStatus": 409,
+      "invalidQrExchangeStatus": 404,
+      "loginStatus": 200,
+      "logoutStatus": 204,
+      "authMeAfterLogoutStatus": 401,
+      "invalidCreateOrUpdatePayloadsStatus": 400,
+      "unknownResourceDeleteOrRestoreStatus": 404,
+      "roleDeniedStatus": 403
+    },
+    "mutationSafety": "CRUD create/update/delete/restore routes were dispatched with empty payloads or nonexistent IDs. These calls checked validation and not-found behavior without changing catalog or staff data. The payment record and session close above were intentional UAT state changes; no payment gateway was called."
+  }
+}
