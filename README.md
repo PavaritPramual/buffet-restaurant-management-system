@@ -107,7 +107,7 @@
 
 *[เปิดภาพเต็ม](img/readme/component-develop.svg) · [Diagram index และ source](doc/diagrams/README.md) · [System Design](doc/system-design/README.md)*
 
-ภาพนี้คัดลอกจาก develop โดยยังมีชื่อ revision/schema เก่าในภาพ ส่วน [Component ที่ปรับสำหรับ PR #49](doc/diagrams/previews/component.svg) เพิ่มจุดเชื่อมสูตร/consumption และยังรอรีวิว ก่อนรุ่นส่งต้องเลือก diagram ที่ตรง release จริง
+ภาพนี้คัดลอกจาก develop โดยยังมีชื่อ revision/schema เก่าในภาพ ส่วน [Component ที่ปรับสำหรับ PR #49](doc/diagrams/previews/component.svg) เพิ่มจุดเชื่อมสูตร/consumption ผ่านรีวิวและ merge เข้า develop แล้ว ก่อนรุ่นส่งต้องตรวจ diagram เทียบกับ release commit อีกครั้ง
 
 | ชั้น | ตัวอย่าง | หน้าที่ |
 |---|---|---|
