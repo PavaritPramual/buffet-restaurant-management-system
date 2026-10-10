@@ -88,3 +88,7 @@ SessionContextProvider, DiningSessionBillingReader, PaymentStatusLookup แล�
 ## หลักฐานทดสอบ
 
 [รายงานรอบนี้](testing/architecture-refactor-report.md) · [ผลตรวจ source/API](../test/evidence/architecture-refactor-2026-10-07/source-contracts.json) · [Class/Component diagrams](diagrams/README.md)
+
+## V19 menu-stock extension — 10 October 2026
+
+[Scoped SOLID and course before/after matrix](architecture/menu-stock-consumption.md) links the new recipe service, consumption interface/implementation and Template subclass. State resolver and Billing Strategy remain in place; constructor injection and service boundaries remain. Integration scenarios run against real H2/PostgreSQL transactions; browser uses actual login. This is evidence for the touched scope, not a blanket certification of SOLID or Final.

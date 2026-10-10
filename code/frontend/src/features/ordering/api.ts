@@ -7,7 +7,12 @@ export interface MenuItem { id: number; categoryId: number; categoryName: string
 export interface Category { id: number; name: string }
 export interface BuffetPackage { id: number; name: string; price: number; description: string | null; active: boolean }
 export interface SessionContext { sessionId: number; packageId: number; tableNumber: string; sessionStatus: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' }
-export interface MenuItemInput { categoryId: number; name: string; description: string | null; available: boolean; packageIds: number[]; imageUrl: string | null }
+export interface StockUsageInput { stockItemId: number; quantityPerServing: number }
+export interface MenuStockUsage { automaticStockDeduction: boolean; stockUsage: (StockUsageInput & { stockItemName: string; unit: string; active: boolean })[] }
+export interface RecipeStockOption { id: number; name: string; unit: string; active: boolean }
+export interface MenuItemInput { categoryId: number; name: string; description: string | null; available: boolean; packageIds: number[]; imageUrl: string | null; automaticStockDeduction?: boolean; stockUsage?: StockUsageInput[] }
+export async function getRecipeStocks() { return (await apiClient.get<RecipeStockOption[]>('/stock')).data }
+export async function getMenuStockUsage(id: number) { return (await apiClient.get<MenuStockUsage>(`/menu-items/${id}/stock-usage`)).data }
 export interface Order { orderId: number; sessionId: number; tableNumber: string; items: { menuItemId: number; name: string; quantity: number }[]; status: OrderStatus; createdAt: string }
 export interface PageResult<T> { content: T[]; page: number; size: number; totalElements: number; totalPages: number }
 

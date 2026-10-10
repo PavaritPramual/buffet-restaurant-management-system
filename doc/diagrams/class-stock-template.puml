@@ -39,6 +39,7 @@ class StockItem {
  +applyDelta(delta) : void
 }
 class StockTransaction {
+ orderId : Long (nullable except CONSUMPTION)
  transactionType : StockTransactionType
  quantityDelta : BigDecimal
  balanceAfter : BigDecimal
@@ -48,6 +49,15 @@ class StockTransaction {
 interface StockItemRepository
 interface StockTransactionRepository
 interface UserAccountRepository
+class StockConsumptionProcessor
+interface StockConsumptionTransactionProcessor
+interface OrderStockConsumptionService
+class OrderStockConsumptionServiceImpl
+StockTransactionTemplate <|-- StockConsumptionProcessor
+StockConsumptionTransactionProcessor <|.. StockConsumptionProcessor
+OrderStockConsumptionService <|.. OrderStockConsumptionServiceImpl
+OrderStockConsumptionServiceImpl --> StockConsumptionTransactionProcessor
+OrderStockConsumptionServiceImpl --> StockItemRepository : stock IDs ascending
 StockTransactionTemplate <|-- StockInProcessor
 StockTransactionTemplate <|-- StockAdjustmentProcessor
 StockTransactionProcessor <|.. StockTransactionTemplate
@@ -60,10 +70,11 @@ StockItem "1" -- "0..*" StockTransaction
 note bottom of StockTransactionTemplate
  final workflow: actor -> active guard (409) -> delta -> nonnegative balance
  -> apply/save -> audit actor/reason/balance.
- Transaction belongs to StockService, not the template.
- Types: IN / ADJUSTMENT. Adjustment uses signed delta.
+ Transaction belongs to StockService or Fulfillment, not the template.
+ Consumption uses processWithOrder final workflow; order_id / negative delta / unique order-stock audit.
+ Types: IN / ADJUSTMENT / CONSUMPTION. Adjustment uses signed delta.
  openingTargetStock/active implemented by V15; shortfall = max(target - quantity, 0), derived, not persisted.
  Manager-only item create/update/active; inactive item rejects stock-in/adjust with 409.
- SKU and unit are locked once transactions exist.
+ SKU and unit are locked once transactions exist; recipe/snapshot references also lock unit.
 end note
 @enduml

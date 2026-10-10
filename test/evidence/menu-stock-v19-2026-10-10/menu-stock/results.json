@@ -1,0 +1,49 @@
+{
+  "sourceCommit": "e41a2755cea7b38d63e8d8dade8fabe7d0b71d65",
+  "sourceState": "working tree; pair with PR diff",
+  "runnerCommit": "same PR",
+  "startedAt": "2026-10-10T02:37:04.179Z",
+  "finishedAt": "2026-10-10T02:37:14.891Z",
+  "environment": "fresh isolated H2 / real session and database providers",
+  "httpMocks": false,
+  "publicAcceptance": false,
+  "results": [
+    {
+      "scenario": "Manager saves recipe through shared UI; recipe read is Manager-only",
+      "result": "PASS",
+      "detail": {
+        "menuId": 1,
+        "stockItemId": 1
+      }
+    },
+    {
+      "scenario": "Insufficient stock leaves both stock and order unchanged",
+      "result": "PASS",
+      "detail": {
+        "status": 409
+      }
+    },
+    {
+      "scenario": "Frozen recipe survives edit; kitchen consumes once",
+      "result": "PASS",
+      "detail": {
+        "consumed": 0.2,
+        "balance": 0.3,
+        "orderId": 1
+      }
+    },
+    {
+      "scenario": "Stock audit UI and Payment/close remain consistent",
+      "result": "PASS",
+      "detail": {
+        "paymentAmount": 299,
+        "stockBalance": 0.3
+      }
+    },
+    {
+      "scenario": "Swagger UI loads; new recipe and consumption contracts present",
+      "result": "PASS",
+      "detail": "HTTP feature calls above exercise changed endpoints with real cookies"
+    }
+  ]
+}

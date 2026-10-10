@@ -66,3 +66,11 @@ PR #24–#29 และ #31–#38 merge แล้ว; PR #30 ปิดโดย�
 | Gitเกณฑ์รายคน สมาชิกยืนยัน สไลด์รวม release | ทุกคน ปวริศช์ประสาน | auditสุดท้าย +slides +reviewed release/main/deploySHA |
 
 รายการไม่ได้ถ่วงน้ำหนักเป็นคะแนนหรือ percent เพราะไม่มีคะแนนรายข้อที่ยืนยันครบ ไม่ติ๊ก Final ทั้งระบบจาก PRเอกสารชุดเดียว
+
+## Additive menu-stock requirement — R02 (Step FIX)
+
+| Requirement | Owner | Evidence | Gate |
+|---|---|---|---|
+| Manager chooses optional stock quantities per serving; snapshot at order; atomic consumption at kitchen start | ปวริศช์ | [Design/course preservation matrix](../architecture/menu-stock-consumption.md), shared contracts, V19 migration and H2/PostgreSQL/browser evidence | Implement/tests in this PR; review/merge/shared migration/public acceptance pending |
+
+R02 extends the scope; it does not replace State/Strategy/Template Method, JPA relationships or any course diagram/deliverable requirement.

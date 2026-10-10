@@ -29,9 +29,12 @@ public class CustomerOrderingServiceImpl implements CustomerOrderingService {
     private final MenuItemRepository menuItemRepository;
     private final CustomerOrderRepository orderRepository;
     private final OrderingMapper mapper;
+    private final com.buffetrestaurant.service.MenuStockUsageService stockUsage;
 
     public CustomerOrderingServiceImpl(SessionContextProvider sessionProvider, MenuItemRepository menuItemRepository,
-                                       CustomerOrderRepository orderRepository, OrderingMapper mapper) {
+                                       CustomerOrderRepository orderRepository, OrderingMapper mapper,
+                                       com.buffetrestaurant.service.MenuStockUsageService stockUsage) {
+        this.stockUsage = stockUsage;
         this.sessionProvider = sessionProvider;
         this.menuItemRepository = menuItemRepository;
         this.orderRepository = orderRepository;
@@ -66,7 +69,7 @@ public class CustomerOrderingServiceImpl implements CustomerOrderingService {
             }
             if (!item.isAvailable()) throw new BusinessRuleException("Menu item is unavailable: " + item.getName());
             if (!item.getPackageIds().contains(session.packageId())) throw new BusinessRuleException("Menu item is not included in this package: " + item.getName());
-            order.addItem(item.getId(), item.getName(), entry.getValue());
+            stockUsage.snapshot(item, order.addItem(item.getId(), item.getName(), entry.getValue()));
         }
         return mapper.toResponse(orderRepository.save(order));
     }

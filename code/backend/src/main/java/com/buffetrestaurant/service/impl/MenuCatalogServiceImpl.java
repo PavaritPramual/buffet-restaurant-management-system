@@ -38,11 +38,13 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
     private final BuffetPackageRepository packageRepository;
     private final OrderItemRepository orderItemRepository;
     private final OrderingMapper mapper;
+    private final com.buffetrestaurant.service.MenuStockUsageService stockUsage;
 
     public MenuCatalogServiceImpl(MenuAdminAccessProvider adminAccessProvider,
                                   MenuCategoryRepository categoryRepository, MenuItemRepository itemRepository,
                                   BuffetPackageRepository packageRepository, OrderItemRepository orderItemRepository,
-                                  OrderingMapper mapper) {
+                                  OrderingMapper mapper, com.buffetrestaurant.service.MenuStockUsageService stockUsage) {
+        this.stockUsage = stockUsage;
         this.adminAccessProvider = adminAccessProvider;
         this.categoryRepository = categoryRepository;
         this.itemRepository = itemRepository;
@@ -153,6 +155,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
         requireWorking(category);
         MenuItem item = new MenuItem(category, name, clean(request.description()),
                 request.available(), clean(request.imageUrl()), request.packageIds());
+        stockUsage.configure(item, request);
         return mapper.toResponse(itemRepository.save(item));
     }
 
@@ -173,6 +176,7 @@ public class MenuCatalogServiceImpl implements MenuCatalogService {
         item.setAvailable(request.available());
         item.setImageUrl(clean(request.imageUrl()));
         item.setPackageIds(request.packageIds());
+        stockUsage.configure(item, request);
         return mapper.toResponse(itemRepository.save(item));
     }
 

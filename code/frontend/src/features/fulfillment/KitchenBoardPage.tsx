@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button, Card, EmptyState, ErrorAlert, LoadingState, PageHeader, StatusBadge } from '../../components/common'
 import type { StatusBadgeTone } from '../../components/common'
 import { getApiError, getIncomingOrders, updateOrderStatus } from './api'
@@ -26,6 +26,8 @@ export default function KitchenBoardPage() {
   const [loading, setLoading] = useState(true)
   const [updatingId, setUpdatingId] = useState<number | null>(null)
   const [error, setError] = useState('')
+  const [mutationError, setMutationError] = useState('')
+  const mutationInFlight = useRef(false)
 
   // silent = true for background polling, so it never flashes the full-page loading state.
   const load = useCallback(async (options?: { silent?: boolean }) => {
@@ -47,17 +49,19 @@ export default function KitchenBoardPage() {
   }, [load])
 
   async function advance(order: FulfillmentOrder, targetStatus: OrderStatus) {
-    if (updatingId !== null) return
+    if (mutationInFlight.current) return
+    mutationInFlight.current = true
     setUpdatingId(order.orderId)
-    setError('')
+    setMutationError('')
     try {
       const updated = await updateOrderStatus(order.orderId, targetStatus)
       setOrders((current) => updated.status === 'READY' || updated.status === 'SERVED'
         ? current.filter((entry) => entry.orderId !== order.orderId)
         : current.map((entry) => (entry.orderId === order.orderId ? updated : entry)))
     } catch (cause) {
-      setError(getApiError(cause))
+      setMutationError(getApiError(cause))
     } finally {
+      mutationInFlight.current = false
       setUpdatingId(null)
     }
   }
@@ -66,6 +70,7 @@ export default function KitchenBoardPage() {
     <PageHeader eyebrow="ครัว" title="ออเดอร์ที่รอดำเนินการ" description="เริ่มเตรียมอาหารและกดพร้อมเสิร์ฟเมื่อทำเสร็จ · รายการใหม่จะขึ้นให้อัตโนมัติ"
       action={<Button variant="secondary" onClick={() => void load()}>อัปเดต</Button>} />
     {error && <ErrorAlert message={error} />}
+    {mutationError && <ErrorAlert message={mutationError} />}
     {loading ? <LoadingState label="กำลังโหลดออเดอร์…" /> : orders.length === 0
       ? <EmptyState title="ยังไม่มีออเดอร์เข้าครัว" description="ออเดอร์ใหม่จะปรากฏที่นี่โดยอัตโนมัติ" />
       : <section className="order-board" aria-label="ออเดอร์เข้าครัว">

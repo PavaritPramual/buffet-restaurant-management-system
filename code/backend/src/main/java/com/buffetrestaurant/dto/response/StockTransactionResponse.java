@@ -21,13 +21,14 @@ public record StockTransactionResponse(
         @Schema(description = "Username of the authenticated actor, or system when no actor is recorded", example = "staff01")
         String actorUsername,
         @Schema(description = "ISO-8601 UTC timestamp", example = "2026-10-07T08:09:10Z")
-        Instant createdAt
+        Instant createdAt,
+        @Schema(description = "Order that consumed stock; null for manual movements", example = "12") Long orderId
 ) {
     public static StockTransactionResponse from(StockTransaction transaction) {
         return new StockTransactionResponse(transaction.getId(), transaction.getStockItem().getId(),
                 transaction.getStockItem().getName(), transaction.getTransactionType(),
                 transaction.getQuantityDelta(), transaction.getBalanceAfter(), transaction.getReason(),
                 transaction.getActor() == null ? "system" : transaction.getActor().getUsername(),
-                transaction.getCreatedAt());
+                transaction.getCreatedAt(), transaction.getOrderId());
     }
 }

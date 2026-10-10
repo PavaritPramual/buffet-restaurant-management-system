@@ -5,7 +5,7 @@ skinparam classAttributeIconSize 0
 skinparam backgroundColor #FFFDF9
 skinparam defaultFontName Tahoma
 
-title Domain Model - Buffet Restaurant Management System (develop d84f071)
+title Domain Model - Buffet Restaurant Management System (V19 proposed menu-stock extension)
 
 skinparam classAttributeIconSize 0
 skinparam shadowing false
@@ -147,5 +147,18 @@ UserAccount "1" -- "0..*" StockTransaction : recorded by >
 note bottom of StockItem
  openingTargetStock / active implemented in Flyway V15.
  shortfall is derived from target - quantity and is not persisted.
+end note
+class MenuStockUsage {
+ stockItemId
+ quantityPerServing
+ unit
+}
+MenuItem "1" *-- "0..*" MenuStockUsage : current recipe
+OrderItem "1" *-- "0..*" MenuStockUsage : recipe frozen when ordered
+StockItem "1" -- "0..*" MenuStockUsage : used in
+Order "0..1" -- "0..*" StockTransaction : kitchen consumption
+note bottom of MenuStockUsage
+ No stock reservation. Consumption at RECEIVED to PREPARING.
+ Recipe edits affect future orders only; old orders without snapshots stay untracked.
 end note
 @enduml

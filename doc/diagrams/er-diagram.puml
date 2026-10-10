@@ -1,11 +1,12 @@
 @startuml
 !pragma layout smetana
-title Implemented schema - Flyway V1-V15
+title Implemented schema - Flyway V1-V19 (V19 pending central approval)
 hide circle
 skinparam linetype ortho
 skinparam shadowing false
 
 entity "app_users" as app_users {
+  archived_at : TIMESTAMP WITH TIME ZONE <<V16>>
   * id : BIGINT <<PK>>
   * username : CHARACTER VARYING(80) <<UK>>
   * password_hash : CHARACTER VARYING(100)
@@ -15,6 +16,7 @@ entity "app_users" as app_users {
 }
 
 entity "buffet_packages" as buffet_packages {
+  * archived : BOOLEAN <<V17, default FALSE>>
   * id : BIGINT <<PK>>
   * name : CHARACTER VARYING(100)
   * price : NUMERIC(10,2)
@@ -46,11 +48,14 @@ entity "dining_sessions" as dining_sessions {
 }
 
 entity "menu_categories" as menu_categories {
+  archived_at : TIMESTAMP WITH TIME ZONE <<V18>>
   * id : BIGINT <<PK>>
   * name : CHARACTER VARYING(100)
 }
 
 entity "menu_items" as menu_items {
+  archived_at : TIMESTAMP WITH TIME ZONE <<V18>>
+ * automatic_stock_deduction : BOOLEAN <<V19, default FALSE>>
   * id : BIGINT <<PK>>
   * category_id : BIGINT <<FK>>
   * name : CHARACTER VARYING(100)
@@ -91,6 +96,7 @@ entity "payments" as payments {
 }
 
 entity "restaurant_tables" as restaurant_tables {
+  * archived : BOOLEAN <<V17, default FALSE>>
   * id : BIGINT <<PK>>
   * table_number : CHARACTER VARYING(20) <<UK>>
   * capacity : INTEGER
@@ -98,12 +104,14 @@ entity "restaurant_tables" as restaurant_tables {
 }
 
 entity "soups" as soups {
+  * archived : BOOLEAN <<V17, default FALSE>>
   * id : BIGINT <<PK>>
   * name : CHARACTER VARYING(100)
   * active : BOOLEAN
 }
 
 entity "stock_items" as stock_items {
+  archived_at : TIMESTAMP WITH TIME ZONE <<V16>>
   * id : BIGINT <<PK>>
   * sku : CHARACTER VARYING(40) <<UK>>
   * name : CHARACTER VARYING(120)
@@ -123,6 +131,7 @@ entity "stock_transactions" as stock_transactions {
   * balance_after : NUMERIC(12,3)
   * reason : CHARACTER VARYING(255)
   actor_user_id : BIGINT <<FK>>
+  order_id : BIGINT <<FK, consumption only>>
   * created_at : TIMESTAMP WITH TIME ZONE
 }
 
@@ -149,4 +158,21 @@ app_users |o--o{ stock_transactions : "actor_user_id"
 stock_items ||--o{ stock_transactions : "stock_item_id"
 app_users ||--o| user_profiles : "user_id"
 
+entity "menu_stock_usage" as menu_stock_usage {
+ * menu_item_id : BIGINT <<PK, FK>>
+ * stock_item_id : BIGINT <<PK, FK>>
+ * quantity_per_serving : NUMERIC(12,3) <<positive>>
+ * stock_unit : VARCHAR(24)
+}
+entity "order_item_stock_usage" as order_item_stock_usage {
+ * order_item_id : BIGINT <<PK, FK>>
+ * stock_item_id : BIGINT <<PK, FK>>
+ * quantity_per_serving : NUMERIC(12,3) <<positive, snapshot>>
+ * stock_unit : VARCHAR(24) <<snapshot>>
+}
+menu_items ||--o{ menu_stock_usage : CASCADE
+stock_items ||--o{ menu_stock_usage : RESTRICT
+order_items ||--o{ order_item_stock_usage : CASCADE
+stock_items ||--o{ order_item_stock_usage : RESTRICT
+orders |o--o{ stock_transactions : RESTRICT / unique order-stock
 @enduml

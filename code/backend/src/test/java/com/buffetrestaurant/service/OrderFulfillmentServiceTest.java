@@ -43,7 +43,7 @@ class OrderFulfillmentServiceTest {
                         com.buffetrestaurant.service.state.ReceivedState.INSTANCE,
                         com.buffetrestaurant.service.state.PreparingState.INSTANCE,
                         com.buffetrestaurant.service.state.ReadyState.INSTANCE,
-                        com.buffetrestaurant.service.state.ServedState.INSTANCE)));
+                        com.buffetrestaurant.service.state.ServedState.INSTANCE)), org.mockito.Mockito.mock(OrderStockConsumptionService.class));
     }
 
     private CustomerOrder orderWithStatus(Long id, OrderStatus status) {
@@ -91,7 +91,7 @@ class OrderFulfillmentServiceTest {
     @Test
     void advanceStatus_whenReceivedToPreparing_updatesAndReturnsOrder() {
         CustomerOrder order = orderWithStatus(1L, OrderStatus.RECEIVED);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(order));
         when(orderRepository.save(any(CustomerOrder.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         OrderResponse result = fulfillmentService.advanceStatus(1L, OrderStatus.PREPARING);
@@ -102,7 +102,7 @@ class OrderFulfillmentServiceTest {
     @Test
     void advanceStatus_whenPreparingToReady_updatesAndReturnsOrder() {
         CustomerOrder order = orderWithStatus(1L, OrderStatus.PREPARING);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(order));
         when(orderRepository.save(any(CustomerOrder.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         OrderResponse result = fulfillmentService.advanceStatus(1L, OrderStatus.READY);
@@ -113,7 +113,7 @@ class OrderFulfillmentServiceTest {
     @Test
     void advanceStatus_whenReadyToServed_updatesAndReturnsOrder() {
         CustomerOrder order = orderWithStatus(1L, OrderStatus.READY);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(order));
         when(orderRepository.save(any(CustomerOrder.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         OrderResponse result = fulfillmentService.advanceStatus(1L, OrderStatus.SERVED);
@@ -124,7 +124,7 @@ class OrderFulfillmentServiceTest {
     @Test
     void advanceStatus_whenSkippingReceivedToReady_rejectsWithBusinessRuleException() {
         CustomerOrder order = orderWithStatus(1L, OrderStatus.RECEIVED);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(order));
 
         assertThatThrownBy(() -> fulfillmentService.advanceStatus(1L, OrderStatus.READY))
                 .isInstanceOf(BusinessRuleException.class)
@@ -136,7 +136,7 @@ class OrderFulfillmentServiceTest {
     @Test
     void advanceStatus_whenSkippingReceivedToServed_rejectsWithBusinessRuleException() {
         CustomerOrder order = orderWithStatus(1L, OrderStatus.RECEIVED);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(order));
 
         assertThatThrownBy(() -> fulfillmentService.advanceStatus(1L, OrderStatus.SERVED))
                 .isInstanceOf(BusinessRuleException.class);
@@ -146,7 +146,7 @@ class OrderFulfillmentServiceTest {
     @Test
     void advanceStatus_whenReversingPreparingToReceived_rejectsWithBusinessRuleException() {
         CustomerOrder order = orderWithStatus(1L, OrderStatus.PREPARING);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(order));
 
         assertThatThrownBy(() -> fulfillmentService.advanceStatus(1L, OrderStatus.RECEIVED))
                 .isInstanceOf(BusinessRuleException.class)
@@ -158,7 +158,7 @@ class OrderFulfillmentServiceTest {
     @Test
     void advanceStatus_whenReversingReadyToPreparing_rejectsWithBusinessRuleException() {
         CustomerOrder order = orderWithStatus(1L, OrderStatus.READY);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(order));
 
         assertThatThrownBy(() -> fulfillmentService.advanceStatus(1L, OrderStatus.PREPARING))
                 .isInstanceOf(BusinessRuleException.class);
@@ -168,7 +168,7 @@ class OrderFulfillmentServiceTest {
     @Test
     void advanceStatus_whenOrderAlreadyServed_rejectsWithBusinessRuleException() {
         CustomerOrder order = orderWithStatus(1L, OrderStatus.SERVED);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(order));
 
         assertThatThrownBy(() -> fulfillmentService.advanceStatus(1L, OrderStatus.SERVED))
                 .isInstanceOf(BusinessRuleException.class)
@@ -178,7 +178,7 @@ class OrderFulfillmentServiceTest {
 
     @Test
     void advanceStatus_whenOrderNotFound_throwsResourceNotFoundException() {
-        when(orderRepository.findById(999L)).thenReturn(Optional.empty());
+        when(orderRepository.findByIdForUpdate(999L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> fulfillmentService.advanceStatus(999L, OrderStatus.PREPARING))
                 .isInstanceOf(ResourceNotFoundException.class)
@@ -225,7 +225,7 @@ class OrderFulfillmentServiceTest {
     @Test
     void advanceStatus_whenTargetIsPreparing_requiresKitchenAccessNotServiceStaffAccess() {
         CustomerOrder order = orderWithStatus(1L, OrderStatus.RECEIVED);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(order));
         when(orderRepository.save(any(CustomerOrder.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         fulfillmentService.advanceStatus(1L, OrderStatus.PREPARING);
@@ -237,7 +237,7 @@ class OrderFulfillmentServiceTest {
     @Test
     void advanceStatus_whenTargetIsReady_requiresKitchenAccessNotServiceStaffAccess() {
         CustomerOrder order = orderWithStatus(1L, OrderStatus.PREPARING);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(order));
         when(orderRepository.save(any(CustomerOrder.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         fulfillmentService.advanceStatus(1L, OrderStatus.READY);
@@ -249,7 +249,7 @@ class OrderFulfillmentServiceTest {
     @Test
     void advanceStatus_whenTargetIsServed_requiresServiceStaffAccessNotKitchenAccess() {
         CustomerOrder order = orderWithStatus(1L, OrderStatus.READY);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(order));
         when(orderRepository.save(any(CustomerOrder.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         fulfillmentService.advanceStatus(1L, OrderStatus.SERVED);

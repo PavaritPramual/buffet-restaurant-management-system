@@ -349,3 +349,7 @@ Constraints:
 Indexes:
 
 - `CREATE UNIQUE INDEX user_profiles_pkey ON public.user_profiles USING btree (user_id)`
+
+## Forward design after Step FIX — V19
+
+The Step 2 decisions above remain historical. [Menu-stock V19 dictionary](menu-stock-consumption-v19.md) adds optional recipes, frozen order requirements and consumption audit without editing applied versions. Latest read-only shared history at implementation start includes V16–V18, not V19; applying V19 requires separate approval.

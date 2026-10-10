@@ -29,7 +29,7 @@ class MenuArchiveMigrationTest {
         Flyway latest=Flyway.configure().dataSource(url,"sa","")
                 .locations("classpath:db/migration/common","classpath:db/migration/h2").load();
         latest.migrate(); latest.validate();
-        assertThat(latest.info().current().getVersion().getVersion()).isEqualTo("18");
+        assertThat(latest.info().current().getVersion().getVersion()).isEqualTo("19");
         try (var connection=DriverManager.getConnection(url,"sa",""); var sql=connection.createStatement()) {
             try (var rows=sql.executeQuery("SELECT i.available,i.archived_at,c.archived_at,o.item_name,o.quantity FROM menu_items i JOIN menu_categories c ON c.id=i.category_id JOIN order_items o ON o.menu_item_id=i.id")) {
                 assertThat(rows.next()).isTrue(); assertThat(rows.getBoolean(1)).isTrue();

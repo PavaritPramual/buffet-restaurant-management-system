@@ -211,3 +211,7 @@ Personalbranch →reviewedPR→develop →reviewedreleasePR→main ทุกค�
 [Git audit](doc/planning/step3-git-audit.md) แสดง PR/reviewer history; inventory CSV บันทึก current `develop d4633d5` (143 non-merge commits) และเก็บ snapshots `a6da906`/`d84f071` เป็น historical. สมาชิกยังต้องยืนยัน meaningfulness/account/ownership/เวลา; refresh refs อีกครั้งก่อน release.
 [สไลด์ทีมปัจจุบัน](doc/slide/README.md) / [Diagram coverage](doc/slide/course-diagram-coverage.md) / [runbook12นาที](doc/slide/team-final-12-minute-runbook.md)
 ร่างPPTX/PDFรายคนเดิมเป็นประวัติ รุ่นส่งใช้Canvaพร้อมไฟล์PPTX/PDFที่exportจากCanvaและownerรับรองตามreleaseจริง
+
+### Optional menu stock recipes (V19 PR)
+
+Manager can set ingredient quantities per serving; the recipe is frozen when ordered and stock is deducted once when Kitchen starts preparing. See [design and course criteria](doc/architecture/menu-stock-consumption.md), [V19 dictionary](doc/database/menu-stock-consumption-v19.md), and [previous public UAT/Swagger report](doc/testing/pavarit-public-uat-2026-10-10.md). Shared migration/deployment acceptance of this feature remains a separate gate after review.

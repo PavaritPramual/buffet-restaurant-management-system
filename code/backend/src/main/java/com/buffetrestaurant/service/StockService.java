@@ -49,6 +49,9 @@ public class StockService {
     public StockItemResponse updateItem(Long id, @Valid com.buffetrestaurant.dto.request.StockItemRequest request) {
         StockItem item = findItem(id);
         rejectArchived(item);
+        if (!item.getUnit().equals(request.unit().trim()) && items.countRecipeReferences(id) > 0) {
+            throw new com.buffetrestaurant.exception.ResourceConflictException("เปลี่ยนหน่วยไม่ได้ เพราะมีสูตรเมนูหรือออเดอร์อ้างอิงอยู่");
+        }
         if (items.findBySku(request.sku().trim()).filter(other -> !other.getId().equals(id)).isPresent()) {
             throw new com.buffetrestaurant.exception.DuplicateResourceException("Stock SKU already exists");
         }
@@ -77,7 +80,7 @@ public class StockService {
         requireManager();
         StockItem item = findItem(id);
         if (item.isArchived()) return;
-        if (!transactions.existsByStockItemId(id) && item.getQuantity().signum() == 0) {
+        if (!transactions.existsByStockItemId(id) && items.countRecipeReferences(id) == 0 && item.getQuantity().signum() == 0) {
             items.delete(item);
             items.flush();
         } else {

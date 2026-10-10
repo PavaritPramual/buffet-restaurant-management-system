@@ -12,6 +12,22 @@ vi.mock('./api', async () => {
 afterEach(() => { cleanup(); vi.clearAllMocks(); vi.useRealTimers() })
 
 describe('KitchenBoardPage', () => {
+  it('keeps the stock error and RECEIVED order after polling, then allows retry', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const received = { orderId: 1, sessionId: 1, tableNumber: 'A01', status: 'RECEIVED' as const, createdAt: '2026-10-10T00:00:00Z', items: [{ menuItemId: 10, name: 'หมู', quantity: 2 }] }
+    vi.mocked(api.getIncomingOrders).mockResolvedValue([received])
+    vi.mocked(api.updateOrderStatus).mockRejectedValueOnce({ response: { status: 409, data: { message: 'เริ่มทำไม่ได้: หมู ต้องใช้ 0.200 มี 0.100' } } })
+      .mockResolvedValue({ ...received, status: 'PREPARING' })
+    render(<KitchenBoardPage />)
+    fireEvent.click(await screen.findByRole('button', { name: 'เริ่มเตรียมอาหาร' }))
+    expect((await screen.findByRole('alert')).textContent).toContain('หมู ต้องใช้')
+    await vi.advanceTimersByTimeAsync(5000)
+    expect(screen.getByRole('alert').textContent).toContain('หมู ต้องใช้')
+    expect(screen.getByText('รับออเดอร์แล้ว')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'เริ่มเตรียมอาหาร' }))
+    await screen.findByText('กำลังเตรียม')
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
   it('shows an empty state when there are no incoming orders', async () => {
     vi.mocked(api.getIncomingOrders).mockResolvedValue([])
     render(<KitchenBoardPage />)

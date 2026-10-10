@@ -194,9 +194,9 @@ export default function StockPage() {
         <thead><tr><th>เวลา</th><th>วัตถุดิบ</th><th>ประเภท</th><th>ผลต่าง</th><th>คงเหลือหลังทำรายการ</th><th>เหตุผล / ผู้ทำรายการ</th></tr></thead>
         <tbody>{history.map((entry) => <tr key={entry.id}>
           <td>{dateTime(entry.createdAt)}</td><td><strong>{entry.itemName}</strong></td>
-          <td><span className={`movement-tag movement-${entry.transactionType.toLowerCase()}`}>{entry.transactionType === 'IN' ? 'รับเข้า' : 'ปรับยอด'}</span></td>
+          <td><span className={`movement-tag movement-${entry.transactionType.toLowerCase()}`}>{entry.transactionType === 'IN' ? 'รับเข้า' : entry.transactionType === 'CONSUMPTION' ? 'ใช้ทำอาหาร' : 'ปรับยอด'}</span></td>
           <td className={entry.quantityDelta < 0 ? 'delta-negative' : 'delta-positive'}>{entry.quantityDelta > 0 ? '+' : ''}{quantity(entry.quantityDelta)}</td>
-          <td>{quantity(entry.balanceAfter)}</td><td><strong>{entry.reason}</strong><span className="table-secondary">โดย {entry.actorUsername}</span></td>
+          <td>{quantity(entry.balanceAfter)}</td><td><strong>{entry.reason}{entry.orderId != null && <span> · ออเดอร์ #{entry.orderId}</span>}</strong><span className="table-secondary">โดย {entry.actorUsername}</span></td>
         </tr>)}
           {!loading && history.length === 0 && <tr><td colSpan={6} className="admin-empty">ยังไม่มีประวัติการเคลื่อนไหว</td></tr>}
         </tbody>

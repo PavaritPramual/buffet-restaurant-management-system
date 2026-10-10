@@ -46,11 +46,21 @@ public class StockTransaction {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @Column(name = "order_id")
+    private Long orderId;
+    public Long getOrderId() { return orderId; }
+
     protected StockTransaction() {
     }
 
     public StockTransaction(StockItem stockItem, StockTransactionType transactionType,
             BigDecimal quantityDelta, BigDecimal balanceAfter, String reason, UserAccount actor) {
+        this(stockItem, transactionType, quantityDelta, balanceAfter, reason, actor, null);
+    }
+
+    public StockTransaction(StockItem stockItem, StockTransactionType transactionType,
+            BigDecimal quantityDelta, BigDecimal balanceAfter, String reason, UserAccount actor, Long orderId) {
+        this.orderId = orderId;
         this.stockItem = stockItem;
         this.transactionType = transactionType;
         this.quantityDelta = quantityDelta;

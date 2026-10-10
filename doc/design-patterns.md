@@ -46,3 +46,7 @@
 [รายงาน tests](testing/architecture-refactor-report.md) · [SOLID](solid-analysis.md) · [Requirement Matrix](planning/step3-requirement-matrix.md). รอศรัณย์/ธีรเมธ/เมธัส/ศิระพัทธ์ตรวจตามพื้นที่ ยังไม่ติ๊ก public/release หรือรับรองสไลด์
 
 รายละเอียด Template Method ของ Stock (ขั้นร่วม/steps ที่ override/transaction/audit/inactive guard) และ SOLID ดู [architecture/template-method-auth-stock.md](architecture/template-method-auth-stock.md)
+
+## V19 extension of Template Method and Order State
+
+StockConsumptionProcessor reuses StockTransactionTemplate's final `processWithOrder` workflow; its hook returns a negative delta and CONSUMPTION type. OrderFulfillmentServiceImpl still calls OrderStateResolver/next(), then invokes OrderStockConsumptionService before committing PREPARING. Billing Strategy remains unchanged. See [design decision](architecture/menu-stock-consumption.md), [Template class](diagrams/class-stock-template.puml), [preview](diagrams/previews/class-stock-template.svg), and [Ordering sequence](diagrams/sequence-ordering-kitchen.puml). Original State/Strategy/Template evidence and all required diagram families remain available.

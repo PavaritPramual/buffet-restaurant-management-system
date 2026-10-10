@@ -11,7 +11,7 @@ import { customerApiClient } from '../../api/client'
 
 vi.mock('./api', async () => ({
   ...await vi.importActual<typeof import('./api')>('./api'),
-  getCategories: vi.fn(), getBuffetPackages: vi.fn(), getMenuItems: vi.fn(),
+  getRecipeStocks: vi.fn(), getMenuStockUsage: vi.fn(), getCategories: vi.fn(), getBuffetPackages: vi.fn(), getMenuItems: vi.fn(),
   redeemQr: vi.fn(), getCustomerContext: vi.fn(), getCustomerPackage: vi.fn(),
   getBillStatus: vi.fn(), requestBill: vi.fn(), getMenu: vi.fn(), getOrders: vi.fn(), placeOrder: vi.fn(),
 }))
@@ -33,6 +33,7 @@ function deferred<T>() {
   return { promise, resolve, reject }
 }
 function catalog() {
+  vi.mocked(api.getRecipeStocks).mockResolvedValue([])
   vi.mocked(api.getCategories).mockResolvedValue([category])
   vi.mocked(api.getBuffetPackages).mockResolvedValue([buffetPackage])
 }
