@@ -89,3 +89,9 @@
 ## ขอบเขตที่เพิ่มจาก baseline เดิม
 
 Stock opening target/lifecycle และ Profile firstName/lastName/phoneNumber implement ด้วย V15 แล้ว. PR #36 มีหลักฐาน public regression สำหรับ Stock/Profile และ Fulfillment; owner-reported deployment SHA ยังไม่ independently attested และไม่ใช่การรับรอง Final release.
+
+## UC-MENU-STOCK — Optional automatic stock deduction
+
+Actor Manager configures stock items and positive quantities per serving while saving a menu. Normal outcome: menu and recipe save together. Alternatives: no automatic deduction needs no recipe; duplicate/inactive/archived stock or invalid quantity rejects the save with no partial write.
+
+Actor Customer orders normally; the system freezes that menu recipe. Actor Kitchen Staff starts preparation: the system aggregates requirements, locks the Order/Stock rows, consumes and records audit before committing PREPARING. If stock is insufficient/unavailable, return 409 and keep RECEIVED without any consumption. Manager/Supervisor can replenish through existing stock permissions; Kitchen retries. Recipe edits affect future orders only; no reservation or partial preparation is added.

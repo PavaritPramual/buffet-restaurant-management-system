@@ -111,3 +111,20 @@ java -Djava.awt.headless=true -jar <plantuml.jar> -nbthread 1 -tsvg -charset UTF
 Order Entity เก็บ enum ไม่เก็บ State object; Context อยู่ FulfillmentService ภาพ Auth ใช้ UserAccount/UserProfile shared PK และ HTTP session ไม่ใช่ Supabase Auth ส่วน Stock adjustment ใช้ signed delta และ audit history
 
 อัปเดต Component และ Class Auth/Session/Stock/Billing/State ตาม contracts/registry จริง. Canva v02b คงเป็นฉบับล่วงหน้าก่อน refactor ไม่แก้สไลด์หรือรับรอง owner/rehearsal จาก PR นี้
+
+## V19 menu-stock delta — 10 October 2026
+
+[Design decision / preserved course criteria](../architecture/menu-stock-consumption.md) and [Data Dictionary delta](../database/menu-stock-consumption-v19.md). V19 is implemented/tested on disposable databases only, not yet applied centrally or accepted on Render.
+
+| Diagram | Current change | Source / preview |
+|---|---|---|
+| Component | recipe/consumption contracts, providers, V1–V19 | [source](component.puml) / [SVG](previews/component.svg) |
+| Class Menu/Order | LAZY current recipe vs frozen OrderItem values | [source](class-menu-order.puml) / [SVG](previews/class-menu-order.svg) |
+| Class Template | consumption subclass and narrow processor contract | [source](class-stock-template.puml) / [SVG](previews/class-stock-template.svg) |
+| Sequence Ordering/Kitchen | snapshot at order, root order lock, sorted Stock locks, 409/rollback | [source](sequence-ordering-kitchen.puml) / [SVG](previews/sequence-ordering-kitchen.svg) |
+| Activity Kitchen | insufficient stock keeps RECEIVED; consume and transition together | [source](activity-kitchen.puml) / [SVG](previews/activity-kitchen.svg) |
+| Domain | current/frozen recipe and consumption audit | [source](domain-model.puml) / [SVG](previews/domain-model.svg) |
+| ERD | V19 tables/FKs/index assumptions and existing V16–V18 archive fields | [source](er-diagram.puml) / [SVG](previews/er-diagram.svg) |
+| Management Use Case | optional per-serving recipe setup | [source](use-case-management.puml) / [SVG](previews/use-case-management.svg) |
+
+Other State/Strategy/Deployment/Use Case/Sequence diagrams remain. All eight changed sources render and previews are visually checked; this does not certify deployment.

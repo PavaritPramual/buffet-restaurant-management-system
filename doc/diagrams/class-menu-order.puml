@@ -23,6 +23,8 @@ category : MenuCategory
  packageIds : Set<Long>
  available : boolean
  imageUrl : String
+ automaticStockDeduction : boolean
+ stockUsage : List<MenuStockUsage>
 }
 class CustomerOrder {
 sessionId : Long
@@ -38,6 +40,7 @@ menuItemId : Long
  itemName : String
  quantity : Integer
  order : CustomerOrder
+ stockUsage : List<MenuStockUsage> (frozen)
 }
 interface CustomerOrderingService <<Service Layer>>
 class CustomerOrderingServiceImpl <<Service Layer>>
@@ -56,4 +59,15 @@ note bottom of CustomerOrder
 sessionId and menuItemId are scalar IDs in these classes.
 FK constraints exist in DB; no invented ManyToOne fields.
 end note
+class MenuStockUsage <<Embeddable>> {
+ stockItemId : Long
+ quantityPerServing : BigDecimal
+ unit : String
+}
+interface MenuStockUsageService
+class MenuStockUsageServiceImpl
+MenuStockUsageService <|.. MenuStockUsageServiceImpl
+CustomerOrderingServiceImpl --> MenuStockUsageService : snapshot under menu lock
+MenuItem "1" *-- "0..*" MenuStockUsage : recipe ElementCollection / LAZY
+OrderItem "1" *-- "0..*" MenuStockUsage : separate snapshot table / LAZY
 @enduml

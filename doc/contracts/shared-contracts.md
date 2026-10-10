@@ -199,3 +199,15 @@ Entity ต้องใช้ `@Enumerated(EnumType.STRING)` เท่านั�
 - OrderStateResolver รับ non-null enum และคืน State; registry ตรวจครบและไม่ซ้ำตอน startup. เปลี่ยน registration ได้โดยไม่แก้ resolver; enum/API/UI workflow ใหม่ยังต้อง review ร่วม
 
 HTTP routes, public DTOs/enums และ cookie settings ไม่เปลี่ยน. Fixture Fulfillment ปรับ role ให้ตรง runtime: Kitchen เท่านั้นทำครัว และ Service Staff เท่านั้นเสิร์ฟ; Manager/Supervisor ใช้ทั้งสอง flow ไม่ได้
+
+## Menu stock consumption — V19
+
+Manager POST/PUT `/api/v1/menu-items` accepts additive `automaticStockDeduction` and `stockUsage: [{stockItemId, quantityPerServing}]`. Enabled requires at least one unique active/nonarchived stock item; positive quantity up to 9 integer/3 fractional digits. Disabled requires an empty recipe. Both fields omitted preserves an existing recipe for legacy clients and defaults false for a new menu. Frontend sends both fields explicitly. Catalog and recipe save in one transaction.
+
+`GET /api/v1/menu-items/{id}/stock-usage` requires Manager session: `{automaticStockDeduction, stockUsage:[{stockItemId, stockItemName, unit, quantityPerServing, active}]}`. 401 missing login; 403 wrong role; 404 missing menu. Public/customer `MenuItemResponse` and `OrderResponse` do not gain recipe or inventory fields.
+
+`PATCH /api/v1/orders/{id}/status` still uses `{status}` and existing State/role rules. RECEIVED to PREPARING consumes the recipe frozen at order time; 409 stock conflict leaves order/balances unchanged. No stock reservation at order time; no unit conversion/reversal added.
+
+`StockTransactionResponse` adds nullable `orderId`; `transactionType` gains CONSUMPTION with negative quantityDelta. Manager/Supervisor history access remains; Kitchen receives no generic Stock endpoint privileges. Stock unit cannot change while a recipe/snapshot refers to it. Referenced Stock is archived rather than hard-deleted.
+
+[Design and course criteria](../architecture/menu-stock-consumption.md) · [V19 dictionary](../database/menu-stock-consumption-v19.md)

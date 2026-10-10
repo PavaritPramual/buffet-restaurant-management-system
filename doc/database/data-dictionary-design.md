@@ -165,3 +165,7 @@ Authentication/Stock implementation ใช้ schema ต่างจากตา
 | `created_at` | TIMESTAMP | - | NO | CURRENT_TIMESTAMP | เวลาที่ทำรายการ |
 
 ---
+
+## Current extension after menu/stock archive work
+
+[Menu-stock V19 dictionary and JPA rationale](menu-stock-consumption-v19.md) describes the additional current/frozen recipe tables and order-linked consumption. This is a forward design change; original ERD baseline remains historical and shared apply approval remains pending.

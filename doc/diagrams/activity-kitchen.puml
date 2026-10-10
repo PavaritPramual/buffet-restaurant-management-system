@@ -1,12 +1,12 @@
 @startuml
-title Kitchen/Serving order fulfillment - role and State guards (develop d84f071)
+title Kitchen/Serving order fulfillment - role, State and V19 stock guards
 
 |Customer|
 start
 :ส่งคำสั่งอาหารผ่าน QR;
 
 |System|
-:สร้าง Order;
+:สร้าง Order พร้อมสูตรวัตถุดิบตอนสั่ง;
 :ตั้งสถานะเริ่มต้น = RECEIVED;
 
 |Kitchen Staff|
@@ -25,7 +25,16 @@ endif
 
 |System|
 if (role ถูกต้องและเป็น next state?) then (อนุญาต)
-    :บันทึก PREPARING;
+    :ล็อก Order และ Stock เรียง ID;
+    :รวมปริมาณจากสูตรตอนสั่ง;
+    if (วัตถุดิบใช้งานได้และเพียงพอ?) then (ใช่ หรือไม่ใช้สูตร)
+        :หักวัตถุดิบและบันทึก CONSUMPTION;
+        :บันทึก PREPARING ใน transaction เดียว;
+    else (ไม่)
+        :409 พร้อมรายการที่ขาด; rollback ทั้งชุด;
+        :คง RECEIVED เพื่อเติมสต๊อกแล้วลองใหม่;
+        stop
+    endif
 else (ปฏิเสธ)
     :ปฏิเสธคำขอ; state เดิมไม่เปลี่ยน;
     stop

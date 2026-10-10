@@ -8,7 +8,7 @@ const web = process.env.FINAL_WEB_URL, api = process.env.FINAL_API_URL
 assert.equal(process.env.FINAL_ENVIRONMENT, 'local-h2')
 assert.equal(process.env.FINAL_ALLOW_TEST_DATA, 'true')
 assert(['127.0.0.1', 'localhost'].includes(new URL(api).hostname))
-const output = path.resolve(process.env.FINAL_EVIDENCE_DIR || 'output/playwright/menu-stock')
+const output = path.resolve(process.env.FINAL_EVIDENCE_DIR || 'output/playwright', 'menu-stock')
 const results = [], contexts = {}, startedAt = new Date().toISOString()
 const pass = (scenario, detail) => results.push({ scenario, result: 'PASS', detail })
 async function main() {
@@ -48,9 +48,9 @@ async function main() {
     await manager.getByLabel('ชื่อเมนู',{exact:true}).fill('หมูสไลซ์หนึ่งจาน')
     await manager.getByLabel('หมวดหมู่',{exact:true}).selectOption(String(category.id))
     await manager.getByLabel(pack.name,{exact:true}).check()
-    await manager.getByLabel('การหักสต๊อก',{exact:true}).selectOption('on')
+    await manager.getByRole('combobox',{name:/^การหักสต๊อก/}).selectOption('on')
     await manager.getByRole('button',{name:'เพิ่มวัตถุดิบ',exact:true}).click()
-    await manager.getByLabel('วัตถุดิบ 1',{exact:true}).selectOption(String(stock.id))
+    await manager.getByRole('combobox',{name:/^วัตถุดิบ 1/}).selectOption(String(stock.id))
     await manager.getByLabel('ปริมาณต่อเสิร์ฟ 1 (กิโลกรัม)',{exact:true}).fill('0.100')
     await shot('manager','manager-recipe-1280.png')
     const saved=manager.waitForResponse(response=>response.url().endsWith('/menu-items')&&response.request().method()==='POST')
@@ -116,6 +116,13 @@ async function main() {
     assert(spec.paths['/api/v1/orders/{id}/status'].patch.responses['409'])
     await shot('manager','swagger-stock-contract-1280.png')
     pass('Swagger UI loads; new recipe and consumption contracts present','HTTP feature calls above exercise changed endpoints with real cookies')
+  } catch (error) {
+    const manager = contexts.manager?.page
+    if (manager && new URL(manager.url()).pathname === '/admin/menu') {
+      await manager.screenshot({path:path.join(output,'failure-manager-menu.png'),fullPage:true})
+      await fs.writeFile(path.join(output,'failure-manager-menu.txt'),await manager.locator('main').innerText())
+    }
+    throw error
   } finally { await browser.close() }
   await fs.writeFile(path.join(output,'results.json'),JSON.stringify({sourceCommit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),sourceState:execFileSync('git',['status','--porcelain'],{encoding:'utf8'}).trim() ? 'working tree; pair with PR diff' : 'clean',runnerCommit:'same PR',startedAt,finishedAt:new Date().toISOString(),environment:'fresh isolated H2 / real session and database providers',httpMocks:false,publicAcceptance:false,results},null,2)+'\n')
   console.log(`PASS ${results.length} menu-stock browser scenarios`)

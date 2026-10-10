@@ -3,20 +3,20 @@
 skinparam shadowing false
 skinparam backgroundColor #FFFDF9
 skinparam defaultFontName Tahoma
-title Runtime component layers - code baseline adc5798 (8 Oct 2026)
+title Runtime component layers - V19 menu-stock integration (10 Oct 2026)
 top to bottom direction
 component "React views / shared components\nCustomer / Staff / Kitchen / Manager" as Web
 package "Spring Boot REST application" {
  component "Controllers\nHTTP / Bean Validation / response DTOs" as C
- component "Application services\nTable/Session: DiningSessionServiceImpl / CustomerSessionAccessService\nCatalog/Ordering: MenuCatalogServiceImpl / CustomerOrderingServiceImpl\nFulfillment: OrderFulfillmentServiceImpl / OrderStateResolver / RegistryOrderStateResolver\nBilling/Payment: BillingEngine / PaymentServiceImpl / CustomerBillingService\nAuth/Stock: AuthService / StockService / StockTransactionTemplate" as S
- component "Cross-module contracts\nSessionContextProvider\nDiningSessionBillingReader\nPaymentStatusLookup\nBillCalculator / CustomerSessionVerifier" as Contracts
+ component "Application services\nTable/Session: DiningSessionServiceImpl / CustomerSessionAccessService\nCatalog/Ordering: MenuCatalogServiceImpl / CustomerOrderingServiceImpl\nFulfillment: OrderFulfillmentServiceImpl / OrderStateResolver / RegistryOrderStateResolver\nBilling/Payment: BillingEngine / PaymentServiceImpl / CustomerBillingService\nAuth/Stock: AuthService / StockService / StockTransactionTemplate / StockConsumptionProcessor" as S
+ component "Cross-module contracts\nSessionContextProvider\nDiningSessionBillingReader\nPaymentStatusLookup\nBillCalculator / CustomerSessionVerifier\nMenuStockUsageService / OrderStockConsumptionService" as Contracts
  component "Session access providers\nUserContextProvider / SessionUserContextProvider\nStaff / Fulfillment / Payment / Menu" as Auth
  component "DTO mappers\nTable / DiningSession\nCatalog / Ordering" as M
  component "Spring Data JPA repositories\nEntity queries / pessimistic row locks" as Repo
  component "Domain entities\nTables / Sessions / Orders\nPayments / Users / Stock" as E
 }
 database "PostgreSQL\nSupabase Session Pooler + SSL" as DB
-component "Flyway\ncommon + postgresql V1-V15" as Fly
+component "Flyway\ncommon + postgresql V1-V19" as Fly
 Web --> C : JSON / staff login session / customer cookie
 C --> S : use cases
 S --> Repo : transactions / queries

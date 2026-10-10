@@ -47,3 +47,12 @@ Owner: ศิระพัทธ์. [Test plan](test-plan.md). Latest integrated
 Requirements: [Step3](https://app.notion.com/p/a9e90b8ff9648363a6ab81b48fd70816), [Regression](https://app.notion.com/p/85290b8ff96482c59ba201e5d9a767fd), [Stock](https://app.notion.com/p/80d90b8ff964820d8ad38171aeed722c), [Profile](https://app.notion.com/p/5e690b8ff96483c9ab05015e38d972c6). Tests and documents do not constitute another person's approval.
 
 R01-A (9 October 2026): current implementation/test mapping and separate local browser/API evidence are in [Sirapat R01-A report](sirapat-r01-a-2026-10-09.md). Combined V16/V17/V18 validation passed on `ad977e8`, and PostgreSQL CI passed again for the index-review patch `9ab3312`; final CI after the QR test scheduling correction is recorded on PR47. Actual shared FK/Flyway/RLS/grants and backend UPDATE audit, current peer approval, and public deployed-SHA acceptance remain release gates.
+
+## R02 optional recipe and stock consumption
+
+| Behavior | Evidence | Limits |
+|---|---|---|
+| Atomic recipe configuration, validation, role denial, frozen recipe, aggregation, rollback, unit/archive protection | MenuStockConsumptionIntegrationTest / shared MenuStockConsumptionScenarios | H2 does not prove PostgreSQL locking |
+| Same-order concurrent start and different orders sharing Stock | PostgresMenuStockConsumptionIntegrationTest | Disposable marked PostgreSQL; not shared/public runtime |
+| V18 upgrade defaults, FK/CHECK/unique, PostgreSQL RLS/client grants | MenuStockMigrationTest + PostgreSQL scenarios | No new central apply |
+| Manager recipe / customer order / kitchen shortage and retry / audit / Payment-close / Swagger | test/browser/menu-stock-consumption.cjs | Local isolated real HTTP; prior public UAT is historical |
