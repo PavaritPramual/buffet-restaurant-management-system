@@ -1,0 +1,19 @@
+{
+  "automaticStockDeduction": true,
+  "stockUsage": [
+    {
+      "stockItemId": 6,
+      "stockItemName": "UAT261010TEERAMET วัตถุดิบสูตรสำเร็จ",
+      "unit": "kg",
+      "quantityPerServing": 0.1,
+      "active": true
+    },
+    {
+      "stockItemId": 7,
+      "stockItemName": "UAT261010TEERAMET วัตถุดิบไม่พอ",
+      "unit": "kg",
+      "quantityPerServing": 0.1,
+      "active": true
+    }
+  ]
+}

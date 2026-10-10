@@ -1,0 +1,14 @@
+[
+  {
+    "id": 12,
+    "stockItemId": 7,
+    "itemName": "UAT261010TEERAMET วัตถุดิบไม่พอ",
+    "transactionType": "IN",
+    "quantityDelta": 0.05,
+    "balanceAfter": 0.05,
+    "reason": "UAT261010TEERAMET รับเข้ากรณีไม่พอ",
+    "actorUsername": "Manager",
+    "createdAt": "2026-10-10T05:19:09.789590Z",
+    "orderId": null
+  }
+]

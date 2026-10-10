@@ -1,0 +1,98 @@
+GET
+/api/v1/stock
+List stock items and current quantities
+Parameters
+Cancel
+
+No parameters
+
+Execute
+Clear
+Responses
+Curl
+curl -X 'GET' \
+  'http://localhost:18888/api/v1/stock' \
+  -H 'accept: */*'
+Request URL
+http://localhost:18888/api/v1/stock
+Server response
+Code	Details
+401	
+
+Error: response status is 401
+
+Response body
+Download
+{
+  "timestamp": "2026-10-10T06:19:14.840276295Z",
+  "status": 401,
+  "error": "Unauthorized",
+  "message": "A signed-in user is required",
+  "path": "/api/v1/stock"
+}
+Response headers
+ connection: keep-alive 
+ content-type: application/json 
+ date: Sat,10 Oct 2026 06:19:14 GMT 
+ keep-alive: timeout=60 
+ transfer-encoding: chunked 
+ vary: Origin,Access-Control-Request-Method,Access-Control-Request-Headers 
+Responses
+Code	Description	Links
+200	
+
+Stock item list
+
+Media type
+*/*
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "id": 17,
+    "sku": "ING-001",
+    "name": "Rice",
+    "unit": "kg",
+    "quantity": 12.5,
+    "lowStockThreshold": 2.5,
+    "openingTargetStock": 10,
+    "shortfall": 2.5,
+    "active": true,
+    "updatedAt": "2026-10-07T08:09:10Z",
+    "archivedAt": "2026-10-09T08:09:10Z"
+  }
+]
+	No links
+401	
+
+Staff login required
+
+Media type
+*/*
+Example Value
+Schema
+{
+  "timestamp": "2026-10-07T08:09:10Z",
+  "status": 0,
+  "error": "string",
+  "message": "string",
+  "path": "string"
+}
+	No links
+403	
+
+MANAGER or SUPERVISOR role required
+
+Media type
+*/*
+Example Value
+Schema
+{
+  "timestamp": "2026-10-07T08:09:10Z",
+  "status": 0,
+  "error": "string",
+  "message": "string",
+  "path": "string"
+}
+	No links

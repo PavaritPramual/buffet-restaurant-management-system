@@ -121,11 +121,12 @@ class MenuCatalogIntegrationTest {
     @Test
     void managerCanCreateReadUpdateAndDeleteItemIncludingPackageLinksAndOptionalFields() throws Exception {
         MockHttpSession manager = login(UserRole.MANAGER);
-        String body = mvc.perform(post("/api/v1/menu-items").session(manager)
+        var response = mvc.perform(post("/api/v1/menu-items").session(manager)
                         .contentType(MediaType.APPLICATION_JSON).content(itemJson(category.getId(), buffetPackage.getId(), "  ชาไทย  ", true)))
                 .andExpect(status().isCreated()).andExpect(jsonPath("$.name").value("ชาไทย"))
-                .andReturn().getResponse().getContentAsString();
-        long id = json.readTree(body).get("id").asLong();
+                .andReturn().getResponse();
+        long id = json.readTree(response.getContentAsString()).get("id").asLong();
+        assertThat(response.getHeader("Location")).isEqualTo("/api/v1/menu-items/" + id);
         mvc.perform(get("/api/v1/menu-items/" + id)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.description").value("Fresh tea"))
                 .andExpect(jsonPath("$.imageUrl").value("/images/tea.jpg"));

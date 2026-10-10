@@ -7,13 +7,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record ErrorResponse(
         @Schema(description = "UTC time when the error was created", example = "2026-10-07T08:09:10Z")
         OffsetDateTime timestamp,
-        @Schema(description = "HTTP status code", example = "400")
+        @Schema(description = "HTTP status code")
         int status,
-        @Schema(description = "HTTP reason phrase", example = "Bad Request")
+        @Schema(description = "HTTP reason phrase")
         String error,
-        @Schema(description = "Human-readable error message", example = "sessionId: must be greater than 0")
+        @Schema(description = "Human-readable error message")
         String message,
-        @Schema(description = "Request path", example = "/api/v1/billing/preview")
+        @Schema(description = "Request path")
         String path
 ) {
 }

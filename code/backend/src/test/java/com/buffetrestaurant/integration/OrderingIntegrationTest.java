@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.buffetrestaurant.domain.MenuCategory;
 import com.buffetrestaurant.domain.MenuItem;
 import com.buffetrestaurant.domain.CustomerOrder;
@@ -38,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ActiveProfiles("test")
 class OrderingIntegrationTest {
     @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
     @Autowired private MenuCategoryRepository categoryRepository;
     @Autowired private MenuItemRepository itemRepository;
     @Autowired private CustomerOrderRepository orderRepository;
@@ -103,7 +105,7 @@ class OrderingIntegrationTest {
     void placeOrder_whenValid_persistsReceivedOrderAndReturnsStatus() throws Exception {
         MenuItem item = itemRepository.save(new MenuItem(category, "ข้าวผัด", true, null, Set.of(1L)));
 
-        mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
+        var response = mockMvc.perform(post("/api/v1/dining-sessions/1/orders")
                         .cookie(customerCookie("fixture-active-credential"))
                         .header("Origin", "http://localhost:5173")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +115,10 @@ class OrderingIntegrationTest {
                 .andExpect(jsonPath("$.tableNumber").value("T01"))
                 .andExpect(jsonPath("$.status").value("RECEIVED"))
                 .andExpect(jsonPath("$.items[0].name").value("ข้าวผัด"))
-                .andExpect(jsonPath("$.items[0].quantity").value(2));
+                .andExpect(jsonPath("$.items[0].quantity").value(2))
+                .andReturn().getResponse();
+        long orderId = objectMapper.readTree(response.getContentAsString()).path("orderId").asLong();
+        assertThat(response.getHeader("Location")).isEqualTo("/api/v1/dining-sessions/1/orders/" + orderId);
 
         assertThat(orderRepository.findAll()).singleElement()
                 .extracting(order -> order.getStatus()).isEqualTo(OrderStatus.RECEIVED);
