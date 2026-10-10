@@ -75,10 +75,13 @@ it.each([401, 404])('clears success, menu, cart and dialogs and stops polling wh
   expect(api.getBillStatus).toHaveBeenCalledTimes(reads)
 })
 it.each([undefined, 503])('keeps a transient %s failure recoverable and pauses writes until bill recovery', async status => {
+  const backgroundBill = deferred<api.CustomerBillStatus>()
+  // Initial load and the immediate background poll are separate requests.
+  // Reject the captured poll instead of racing an interval against its in-flight guard.
+  vi.mocked(api.getBillStatus).mockResolvedValueOnce(bill).mockReturnValueOnce(backgroundBill.promise)
   await ready()
   fireEvent.click(screen.getByRole('button', { name: 'เพิ่ม ไก่ทอด' }))
-  vi.mocked(api.getBillStatus).mockRejectedValueOnce(status ? { response: { status } } : new Error('offline'))
-  await act(async () => poll())
+  await act(async () => backgroundBill.reject(status ? { response: { status } } : new Error('offline')))
   expect(screen.queryByText('สิทธิ์สั่งอาหารสิ้นสุดแล้ว')).toBeNull()
   expect(screen.getByText('1 รายการ · ไก่ทอด × 1')).toBeTruthy()
   expect((screen.getByRole('button', { name: 'ยืนยันการสั่ง' }) as HTMLButtonElement).disabled).toBe(true)

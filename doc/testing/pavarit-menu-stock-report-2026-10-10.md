@@ -36,6 +36,8 @@ Warnings เดิมเกี่ยวกับ hook dependencies ใน StockP
 
 Browser รอบแรกติด selector ของ SelectField และรอบถัดมาติด process Java เก่าที่ค้างจาก alias จึงแก้ runner ให้เลือก combobox ตาม accessible name และใช้ Java executable จริง ทวนใหม่ครบสาม runners ผ่าน ผลและ hash ของ runner รอบสำเร็จอยู่ใน evidence ไม่ใช้ผลรอบเสียเป็น acceptance
 
+CI ของ PR #49 head `6260952` backend/PostgreSQL ผ่าน แต่ frontend มี test เดิมหนึ่งกรณีที่เรียก interval ขณะ background bill poll ยัง in-flight ทำให้คำขอที่ต้องจำลอง error ถูกข้าม แก้เฉพาะ `CustomerAccessExpiry.test.tsx` ให้ควบคุม Promise ของ background poll และ reject คำขอนั้นโดยตรง ไม่เปลี่ยน Customer runtime หลังแก้ frontend 185 tests ผ่านในเครื่องอีกครั้ง ผล CI ของ head ที่แก้ต้องดู Actions ล่าสุด ไม่ใช้ผล local แทน CI
+
 ## สิ่งที่พิสูจน์
 
 - Manager สร้างสูตรหลายวัตถุดิบ/แก้ mode; validation จำนวน/ซ้ำ/ทศนิยม/สถานะและสิทธิ์รักษาความครบชุด
