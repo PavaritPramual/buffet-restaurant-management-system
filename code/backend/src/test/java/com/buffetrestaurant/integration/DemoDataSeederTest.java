@@ -45,10 +45,10 @@ class DemoDataSeederTest {
         assertThat(profiles.count()).isEqualTo(initialProfiles);
         assertThat(items.count()).isEqualTo(initialItems);
         assertThat(transactions.count()).isEqualTo(initialTransactions);
-        assertThat(passwordEncoder.matches("admin123", users.findByUsername("admin").orElseThrow().getPasswordHash()))
+        assertThat(passwordEncoder.matches("Manager123", users.findByUsername("Manager").orElseThrow().getPasswordHash()))
                 .isTrue();
         assertThat(jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM stock_transactions WHERE reason = 'สต็อกตั้งต้นสำหรับทดลอง' AND actor_user_id = (SELECT id FROM app_users WHERE username = 'admin')",
+            "SELECT COUNT(*) FROM stock_transactions WHERE reason = 'สต็อกตั้งต้นสำหรับทดลอง' AND actor_user_id = (SELECT id FROM app_users WHERE username = 'Manager')",
                 Integer.class)).isEqualTo(3);
     }
 

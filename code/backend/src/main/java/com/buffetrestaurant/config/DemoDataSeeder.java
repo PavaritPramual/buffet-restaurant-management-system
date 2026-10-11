@@ -26,12 +26,12 @@ public class DemoDataSeeder {
     ApplicationRunner seedDemoData(UserAccountRepository users, StockItemRepository stockItems,
             UserAdministrationService authService, StockService stockService) {
         return args -> {
-            if (users.findByUsername("admin").isEmpty()) {
-                authService.createUser(new CreateUserRequest("admin", "admin123", "[TEST DATA] ผู้จัดการตัวอย่าง",
-                        "admin@example.test", UserRole.MANAGER,
+            if (users.findByUsername("Manager").isEmpty()) {
+                authService.createUser(new CreateUserRequest("Manager", "Manager123", "[TEST DATA] ผู้จัดการตัวอย่าง",
+                        "manager@example.test", UserRole.MANAGER,
                         "Demo", "Manager", null));
             }
-            UserAccount user = users.findByUsername("admin").orElseThrow();
+            UserAccount user = users.findByUsername("Manager").orElseThrow();
 
             List<StockItem> seededItems = List.of(
                     new StockItem("ING-001", "[TEST DATA] ข้าวหอมมะลิ", "กก.", BigDecimal.ZERO, new BigDecimal("8.000"), new BigDecimal("15.000")),

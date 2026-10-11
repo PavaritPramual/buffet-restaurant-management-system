@@ -18,7 +18,7 @@ async function main() {
       assert(r.ok(), `${endpoint}: ${r.status()}`)
       return r.json()
     }
-    await post(admin, '/auth/login', { username: 'admin', password: 'admin123' })
+    await post(admin, '/auth/login', { username: 'Manager', password: 'Manager123' })
     const contexts = { admin }
     const run = `visual-${Date.now()}`
     for (const [name, role] of Object.entries({ kitchen: 'KITCHEN_STAFF', staff: 'SERVICE_STAFF' })) {

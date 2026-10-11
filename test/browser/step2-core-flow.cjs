@@ -42,7 +42,7 @@ async function main() {
       await context.page.screenshot({ path: path.join(output, file), fullPage: true,
         mask: [context.page.locator('.staff-session-qr-card')] })
     }
-    await login(ctx.admin, 'admin', 'admin123', '/admin/stock')
+    await login(ctx.admin, 'Manager', 'Manager123', '/admin/dashboard')
     const admin = ctx.admin.page
     await admin.goto(web + '/admin/users')
     for (const [name, role] of Object.entries({ staff: 'SERVICE_STAFF', kitchen: 'KITCHEN_STAFF', supervisor: 'SUPERVISOR' })) {
@@ -59,7 +59,7 @@ async function main() {
     pass('Create staff accounts through Manager UI', 'SERVICE_STAFF/KITCHEN_STAFF/SUPERVISOR')
     await login(ctx.staff, `${run}-staff`, samplePassword, '/staff/tables')
     await login(ctx.kitchen, `${run}-kitchen`, samplePassword, '/kitchen')
-    await login(ctx.supervisor, `${run}-supervisor`, samplePassword, '/admin/stock')
+    await login(ctx.supervisor, `${run}-supervisor`, samplePassword, '/admin/dashboard')
     for (const [name, incoming, ready] of [['admin',403,403], ['supervisor',403,403], ['staff',403,200], ['kitchen',200,403], ['customer',401,401]]) {
       for (const [endpoint, expected] of [['incoming',incoming], ['ready',ready]]) {
         const response = await ctx[name].request.get(`${api}/orders/${endpoint}`, { headers: { 'X-User-Role': 'MANAGER' } })

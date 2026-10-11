@@ -6,6 +6,7 @@ import AdminShell, { ManagerRoute } from './features/admin/AdminShell'
 import StockPage from './features/admin/StockPage'
 import MasterDataPage from './features/admin/MasterDataPage'
 import UsersPage from './features/admin/UsersPage'
+import DashboardPage from './features/admin/DashboardPage'
 import CustomerOrderingPage from './features/ordering/CustomerOrderingPage'
 import MenuAdminPage from './features/ordering/MenuAdminPage'
 import { menuRemovalGateway } from './features/ordering/api'
@@ -30,7 +31,8 @@ export default function FoundationApp() {
       <Route path="/staff/sessions/:sessionId/billing" element={<BillingPreviewPage />} />
     </Route>
     <Route path="/admin" element={<AdminShell />}>
-      <Route index element={<Navigate to="stock" replace />} />
+      <Route index element={<Navigate to="dashboard" replace />} />
+      <Route path="dashboard" element={<DashboardPage />} />
       <Route path="stock" element={<StockPage />} />
       <Route element={<ManagerRoute />}>
         <Route path="tables" element={<MasterDataPage key="tables" kind="tables" />} />

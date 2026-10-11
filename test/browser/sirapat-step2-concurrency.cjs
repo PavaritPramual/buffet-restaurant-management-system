@@ -31,7 +31,7 @@ async function main() {
       assert(response.ok(), url + ': ' + response.status())
       return response.json()
     }
-    await post('/auth/login', { username: 'admin', password: 'admin123' })
+    await post('/auth/login', { username: 'Manager', password: 'Manager123' })
     const runTag = Date.now().toString(36)
     const itemName = 'ไก่ทอดตรวจซ้ำ ' + runTag
     const pack = await post('/buffet-packages', { name: 'Review Package ' + runTag, price: 299 })

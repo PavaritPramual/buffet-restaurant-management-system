@@ -70,6 +70,32 @@ export const authApi = {
   },
 }
 
+export type DashboardSummary = {
+  startDate: string; endDate: string; timeZone: string; generatedAt: string
+  sales: {
+    revenue: number; paidBills: number; averageBill: number
+    daily: { date: string; bills: number; revenue: number }[]
+    byMethod: { method: 'CASH' | 'QR' | 'CARD'; bills: number; revenue: number }[]
+  }
+  visits: { openedSessions: number; adults: number; children: number; orders: number }
+  operations: {
+    availableTables: number; occupiedTables: number; activeSessions: number; activeGuests: number
+    unpaidBillRequests: number; paidAwaitingClose: number
+    receivedOrders: number; preparingOrders: number; readyOrders: number
+  }
+  stock: {
+    activeItems: number; lowStockItems: number; outOfStockItems: number; belowTargetItems: number
+    lowItems: { id: number; name: string; unit: string; quantity: number; threshold: number; target: number; shortfall: number }[]
+  }
+  popularItems: { menuItemId: number; name: string; servings: number }[]
+}
+
+export const dashboardApi = {
+  async summary(startDate: string, endDate: string) {
+    return (await apiClient.get<DashboardSummary>('/dashboard', { params: { startDate, endDate } })).data
+  },
+}
+
 export const removedMessage = 'นำรายการออกจากรายการใช้งานแล้ว ประวัติยังคงอยู่ในรายการเก็บออก'
 
 export const stockApi = {

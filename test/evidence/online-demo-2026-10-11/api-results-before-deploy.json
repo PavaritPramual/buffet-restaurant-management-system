@@ -1,0 +1,211 @@
+{
+  "verifiedAtUtc": "2026-10-11T09:06:20.8567881Z",
+  "baseUrl": "https://buffet-restaurant-management.onrender.com/api/v1",
+  "dashboardRequired": false,
+  "checks": [
+    {
+      "check": "anonymous/me",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "check": "anonymous/spoofed-manager-users",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "check": "DemoManager/login",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoManager/me",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoManager/stock",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoManager/admin/users",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoManager/orders/incoming",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "check": "DemoManager/orders/ready",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "check": "DemoManager/logout",
+      "status": 204,
+      "expected": 204,
+      "passed": true
+    },
+    {
+      "check": "DemoManager/me-after-logout",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "check": "DemoSupervisor/login",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoSupervisor/me",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoSupervisor/stock",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoSupervisor/admin/users",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "check": "DemoSupervisor/orders/incoming",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "check": "DemoSupervisor/orders/ready",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "check": "DemoSupervisor/logout",
+      "status": 204,
+      "expected": 204,
+      "passed": true
+    },
+    {
+      "check": "DemoSupervisor/me-after-logout",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "check": "DemoServiceStaff/login",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoServiceStaff/me",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoServiceStaff/stock",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "check": "DemoServiceStaff/admin/users",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "check": "DemoServiceStaff/orders/incoming",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "check": "DemoServiceStaff/orders/ready",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoServiceStaff/logout",
+      "status": 204,
+      "expected": 204,
+      "passed": true
+    },
+    {
+      "check": "DemoServiceStaff/me-after-logout",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "check": "DemoKitchenStaff/login",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoKitchenStaff/me",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoKitchenStaff/stock",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "check": "DemoKitchenStaff/admin/users",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "check": "DemoKitchenStaff/orders/incoming",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "DemoKitchenStaff/orders/ready",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "check": "DemoKitchenStaff/logout",
+      "status": 204,
+      "expected": 204,
+      "passed": true
+    },
+    {
+      "check": "DemoKitchenStaff/me-after-logout",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    }
+  ]
+}

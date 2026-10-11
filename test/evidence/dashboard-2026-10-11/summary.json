@@ -1,0 +1,76 @@
+{
+  "startDate": "2026-10-11",
+  "endDate": "2026-10-11",
+  "timeZone": "Asia/Bangkok",
+  "generatedAt": "2026-10-11T07:56:15.0382612Z",
+  "sales": {
+    "revenue": 1746.5,
+    "paidBills": 2,
+    "averageBill": 873.25,
+    "daily": [
+      {
+        "date": "2026-10-11",
+        "bills": 2,
+        "revenue": 1746.5
+      }
+    ],
+    "byMethod": [
+      {
+        "method": "CASH",
+        "bills": 1,
+        "revenue": 1247.5
+      },
+      {
+        "method": "QR",
+        "bills": 1,
+        "revenue": 499.0
+      },
+      {
+        "method": "CARD",
+        "bills": 0,
+        "revenue": 0.0
+      }
+    ]
+  },
+  "visits": {
+    "openedSessions": 3,
+    "adults": 4,
+    "children": 1,
+    "orders": 3
+  },
+  "operations": {
+    "availableTables": 1,
+    "occupiedTables": 2,
+    "activeSessions": 2,
+    "activeGuests": 4,
+    "unpaidBillRequests": 1,
+    "paidAwaitingClose": 1,
+    "receivedOrders": 0,
+    "preparingOrders": 1,
+    "readyOrders": 0
+  },
+  "stock": {
+    "activeItems": 3,
+    "lowStockItems": 1,
+    "outOfStockItems": 0,
+    "belowTargetItems": 1,
+    "lowItems": [
+      {
+        "id": 1,
+        "name": "[TEST DATA] ข้าวหอมมะลิ",
+        "unit": "กก.",
+        "quantity": 1.0,
+        "threshold": 8.0,
+        "target": 15.0,
+        "shortfall": 14.0
+      }
+    ]
+  },
+  "popularItems": [
+    {
+      "menuItemId": 1,
+      "name": "[TEST DATA] Sliced pork",
+      "servings": 6
+    }
+  ]
+}
