@@ -15,7 +15,9 @@ import org.springframework.data.repository.query.Param;
 /** Read models aggregate in the database; no entity graph or mutation privileges are exposed. */
 public interface DashboardRepository extends Repository<Payment, Long> {
     interface DailySales {
-        LocalDate getSalesDate(); long getBills(); BigDecimal getRevenue();
+        int getSalesYear(); int getSalesMonth(); int getSalesDay();
+        default LocalDate getSalesDate() { return LocalDate.of(getSalesYear(), getSalesMonth(), getSalesDay()); }
+        long getBills(); BigDecimal getRevenue();
     }
     interface MethodSales {
         PaymentMethod getMethod(); long getBills(); BigDecimal getRevenue();
@@ -36,13 +38,18 @@ public interface DashboardRepository extends Repository<Payment, Long> {
     }
     interface PopularItem { Long getId(); String getName(); long getServings(); }
 
-    // AT TIME ZONE is supported by both PostgreSQL and H2. Filter the payment instant
-    // before grouping so midnight in Bangkok is independent of the DB/server timezone.
+    // H2 casts a zoned timestamp to DATE in the database session timezone. Extract
+    // Bangkok calendar fields explicitly so H2 and PostgreSQL group the same day.
     @Query(value = """
-            select cast(paid_at at time zone 'Asia/Bangkok' as date) as salesDate,
+            select extract(year from paid_at at time zone 'Asia/Bangkok') as salesYear,
+                   extract(month from paid_at at time zone 'Asia/Bangkok') as salesMonth,
+                   extract(day from paid_at at time zone 'Asia/Bangkok') as salesDay,
                    count(*) as bills, sum(amount) as revenue
             from payments where payment_status = 'PAID' and paid_at >= :start and paid_at < :end
-            group by cast(paid_at at time zone 'Asia/Bangkok' as date) order by salesDate
+            group by extract(year from paid_at at time zone 'Asia/Bangkok'),
+                     extract(month from paid_at at time zone 'Asia/Bangkok'),
+                     extract(day from paid_at at time zone 'Asia/Bangkok')
+            order by salesYear, salesMonth, salesDay
             """, nativeQuery = true)
     List<DailySales> dailySales(@Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end);
 

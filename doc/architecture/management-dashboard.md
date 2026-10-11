@@ -8,6 +8,8 @@
 
 CI สร้าง `buffet_test_dashboard_ci` ใน PostgreSQL service ชั่วคราวพร้อม marker และส่ง opt-in ให้ชุด Dashboard โดยเฉพาะ เพื่อให้ native aggregate query และขอบเขตวันเวลาไทยถูกตรวจบน PostgreSQL ทุก PR
 
+รายวันใช้ EXTRACT ปี/เดือน/วันหลัง AT TIME ZONE เป็นเวลาไทยโดยตรง เนื่องจาก H2 แปลง TIMESTAMP WITH TIME ZONE เป็น DATE ตาม session timezone ต่างจาก PostgreSQL ชุด H2 จึงตั้ง database session เป็น UTC เพื่อยืนยันว่าบิลตรงเที่ยงคืนไทยไม่หาย แม้เครื่องทดสอบใช้เวลาไทย
+
 | ข้อมูล | นิยาม |
 |---|---|
 | ช่วงวันที่ | รวมทั้งวันเริ่มและวันสิ้นสุดใน Asia/Bangkok; ไม่ส่งวันที่ใช้วันนี้; ไม่เกิน 366 วันและไม่เกินวันนี้ ค้นด้วย `>= start` และ `< วันถัดจาก end` |
