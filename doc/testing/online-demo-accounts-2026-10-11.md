@@ -43,7 +43,15 @@ Anonymous `/auth/me` ได้ 401; ส่ง `X-User-Role: MANAGER` โดย�
 
 ## สิ่งที่ยังต้องตรวจหลัง deploy รุ่น PR #56
 
-**ยังไม่ผ่านเงื่อนไขรับรองหลัง deploy ของ reviewer**: ณ `2026-10-11T09:08:04Z` การเรียก `/api/v1/dashboard` ด้วย DemoManager ได้ **404** และ browser เปิดหน้าสต๊อกแบบเดิม หน้า Render ยังอยู่ที่ login จึง **ยังยืนยัน deployed commit ไม่ได้** ไม่ใช้ SHA ของ branch หรือผล CI มาแทน SHA ที่ Render ขึ้น Live
+### ปวริศช์ตรวจบัญชีซ้ำและปรับ README ใน PR เดิม
+
+ตรวจวันที่ 11 ตุลาคม 2026 ด้วย HTTP session แยกทั้งสี่บัญชี login/me200 และ username/role ตรง, logout204, meหลังlogout401; GET stock/users/incoming/ready ได้ 200/403 ตามตารางเดิมทุกบัญชี ส่วน Dashboard404ทุกบัญชีตรงกับรุ่นที่ยังไม่ deploy ผลที่ตัด cookie/password ออกอยู่ใน [account recheck](../../test/evidence/online-demo-2026-10-11/pavarit-account-recheck.json)
+
+README ใช้ลิงก์เข้า `/admin`, `/staff/tables` และ `/kitchen` โดยตรง พร้อมวิธีทดลอง Customer และการแยก browser session ลิงก์ `/admin` คงใช้ได้ทั้งก่อนและหลัง deploy Dashboard การตรวจนี้ไม่เขียนข้อมูลร้านหรือแก้บัญชี และไม่รับรอง browser visual/Core Flow ใหม่จากผล HTTP
+
+บัญชีออนไลน์เป็นข้อที่แก้แล้ว ส่วนรายการด้านล่างเป็น gate รับรอง Dashboard หลังรวมและ deploy รุ่นใหม่ ไม่ต้องสร้าง PR บัญชีแยกเพิ่ม
+
+**ยังไม่รับรอง Dashboard บน public deployment**: ณ `2026-10-11T09:08:04Z` การเรียก `/api/v1/dashboard` ด้วย DemoManager ได้ **404** และ browser เปิดหน้าสต๊อกแบบเดิม หน้า Render ยังอยู่ที่ login จึง **ยังยืนยัน deployed commit ไม่ได้** ไม่ใช้ SHA ของ branch หรือผล CI มาแทน SHA ที่ Render ขึ้น Live การตรวจบัญชีบนรุ่นปัจจุบันผ่านแล้ว แยกจาก gate ตรวจ Dashboard หลัง merge/deploy
 
 โค้ด Dashboard ที่ผ่าน CI ก่อนการแก้เอกสารรอบนี้คือ `c8a2cc2adfcb3a0bbc8b02d2f571ee95ee1a1d5e` ([CI run #128](https://github.com/PavaritPramual/buffet-restaurant-management-system/actions/runs/38125092490)) ไม่ใช่การรับรองว่า commit นี้ deploy แล้ว
 
@@ -52,6 +60,6 @@ Anonymous `/auth/me` ได้ 401; ส่ง `X-User-Role: MANAGER` โดย�
 1. รัน login → me → logout → me หลัง logout และตรวจสิทธิ์ตามตารางอีกครั้งบน Render รุ่นใหม่
 2. ตรวจ Dashboard API: Manager/Supervisor ได้ 200 พร้อม `Cache-Control: no-store`; Service Staff/Kitchen Staff ได้ 403 และ anonymous ได้ 401
 3. เปิด browser ให้ Manager/Supervisor เข้า `/admin/dashboard` เป็นหน้าแรก ตรวจเมนูตามสิทธิ์เดิม ส่วน Staff/Kitchen เข้าหน้าเดิม แล้วอัปเดตตาราง README ให้ตรงรุ่นที่ตรวจ
-4. แนบผลพร้อม deployed SHA จริงก่อนขอ reviewer approve ไม่ถือว่าผล 34 จุดข้างต้นเป็นหลักฐาน Dashboard หลัง deploy
+4. แนบผลพร้อม deployed SHA จริงเพื่อรับรอง Dashboard หลัง deploy ไม่ถือว่าผล 34 จุดข้างต้นเป็นหลักฐาน Dashboard หลัง deploy
 
 Customer ไม่ต้องมีบัญชี ให้ Service Staff เปิดรอบกินแล้วใช้ QR ตามขั้นตอนใน README การตรวจบัญชีครั้งนี้ไม่ได้เปิดรอบ/แลก QR หรือทดสอบ Payment/close/Stock ซ้ำ ผล core flow ก่อนหน้าและผล local/CI ของ Dashboard มีขอบเขตแยกจากรายงานนี้

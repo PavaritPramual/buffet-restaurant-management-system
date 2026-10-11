@@ -10,24 +10,26 @@
 
 ## บัญชีสำหรับทดลองเว็บ demo ออนไลน์
 
-เปิด [เว็บ demo ออนไลน์](https://buffet-restaurant-management.onrender.com/) แล้วเลือกเข้าสู่ระบบพนักงาน ใช้ตัวพิมพ์เล็ก/ใหญ่ตามตาราง ไม่ต้องติดตั้งโปรแกรมหรือรันสคริปต์ในเครื่อง
+**เปิดลิงก์เข้าสู่ระบบในตาราง แล้วกรอก Username และ Password ได้เลย** บัญชีทั้งสี่ใช้ได้บนเว็บ Render จริง ไม่ต้องติดตั้งโปรแกรมหรือรันสคริปต์ในเครื่อง ใช้ตัวพิมพ์เล็ก/ใหญ่ตามตาราง
 
-| Role | Username | Password | หน้าแรกบนเว็บออนไลน์ |
+| บัญชีและสิ่งที่ทดลองได้ | Username | Password | เข้าสู่ระบบ |
 |---|---|---|---|
-| MANAGER | `DemoManager` | `DemoManager123` | `/admin/stock` |
-| SUPERVISOR | `DemoSupervisor` | `DemoSupervisor123` | `/admin/stock` |
-| SERVICE_STAFF | `DemoServiceStaff` | `DemoServiceStaff123` | `/staff/tables` |
-| KITCHEN_STAFF | `DemoKitchenStaff` | `DemoKitchenStaff123` | `/kitchen` |
+| ผู้จัดการ MANAGER — ข้อมูลร้าน เมนู ผู้ใช้และสต๊อก | `DemoManager` | `DemoManager123` | [หน้าผู้ดูแล](https://buffet-restaurant-management.onrender.com/admin) |
+| หัวหน้างาน SUPERVISOR — สต๊อก รับเข้าและปรับยอด | `DemoSupervisor` | `DemoSupervisor123` | [หน้าผู้ดูแล](https://buffet-restaurant-management.onrender.com/admin) |
+| พนักงานบริการ SERVICE_STAFF — เปิดโต๊ะ เสิร์ฟ รับชำระและปิดรอบ | `DemoServiceStaff` | `DemoServiceStaff123` | [หน้าโต๊ะ](https://buffet-restaurant-management.onrender.com/staff/tables) |
+| พนักงานครัว KITCHEN_STAFF — รับออเดอร์และเตรียมอาหาร | `DemoKitchenStaff` | `DemoKitchenStaff123` | [หน้าครัว](https://buffet-restaurant-management.onrender.com/kitchen) |
 
 บัญชีเหล่านี้แยกจากบัญชีทีม สร้างโดย Manager ผ่านระบบจัดการผู้ใช้เดิมสำหรับเว็บสาธิตของรายวิชา รหัสเผยแพร่เพื่อให้ผู้เข้าชมลองใช้งานร่วมกัน ข้อมูลที่ทดลองเพิ่มให้ใส่ `[TEST DATA]` ในชื่อ/เหตุผล และออกจากระบบก่อนเปลี่ยน role ดู [ผลตรวจออนไลน์และรุ่นที่ deploy](doc/testing/online-demo-accounts-2026-10-11.md) ส่วนบัญชี H2 ในเครื่องอยู่ในหัวข้อ [ทดลองในเครื่องด้วย H2 แยก](#ทดลองในเครื่องด้วย-h2-แยก)
 
-**สถานะตรวจ 11 ตุลาคม 2026:** ทั้งสี่บัญชี login/me/logout และเข้าหน้าตาม role ได้จริงบนเว็บออนไลน์ แต่ Dashboard ของ PR #56 ยังรอ deploy; รุ่นที่ตรวจยังเปิด `/admin/stock` และ `GET /api/v1/dashboard` ตอบ 404 ต้องยืนยัน commit ที่ขึ้น Live และตรวจซ้ำหลัง deploy ก่อนเปลี่ยนหน้าแรกสอง role เป็น `/admin/dashboard`
+**สถานะตรวจ 11 ตุลาคม 2026:** ปวริศช์ตรวจบัญชีทั้งสี่ซ้ำบน Render แล้ว login/me/logout ผ่านและสิทธิ์อ่านข้อมูลตรง role บัญชีพร้อมทดลองบนรุ่นปัจจุบัน หน้าผู้ดูแล `/admin` จะพาไปหน้าสต๊อกในรุ่นที่ออนไลน์อยู่ และพาไป Dashboard เมื่อ deploy รุ่น PR #56 แล้ว ขณะตรวจ `GET /api/v1/dashboard` ยังตอบ 404 จึงยังไม่รับรอง Dashboard ออนไลน์ ดู [ผลตรวจและรายการตรวจหลัง deploy](doc/testing/online-demo-accounts-2026-10-11.md)
 
 **ทดลองเป็น Customer:** Customer ไม่มี username/password
 
 1. เข้า `DemoServiceStaff` → โต๊ะ → เลือกโต๊ะว่าง → เปิดรอบกินพร้อมแพ็กเกจ น้ำซุป และจำนวนผู้ใหญ่/เด็ก
 2. เปิด QR ของรอบนั้น แล้วใช้โทรศัพท์สแกน หรือเปิดลิงก์ลูกค้าจาก QR เพื่อดูเมนู สั่งอาหารและดูสถานะ QR แลกสิทธิ์ได้ครั้งเดียว; หากใช้เครื่องถัดไปให้พนักงานออก QR ใหม่จากรอบเดิม
 3. เข้า `DemoKitchenStaff` เพื่อรับงาน/เริ่มเตรียม/พร้อมเสิร์ฟ แล้วใช้ `DemoServiceStaff` ยืนยันเสิร์ฟ เมื่อ Customer ขอคิดบิลแล้วจะสั่งเพิ่มไม่ได้ พนักงานบันทึกผลรับชำระและกดปิดรอบแยกเพื่อคืนโต๊ะ การสาธิตไม่รับเงินจริงและไม่เชื่อม Payment Gateway
+
+หากลองหลาย role พร้อมกัน ให้ใช้คนละ browser หรือ browser profile เพื่อแยกบัญชีพนักงาน หากใช้แท็บใน browser เดียวกัน ให้ออกจากระบบก่อนเปลี่ยน role เพราะแท็บใช้ session ร่วมกัน Customer เปิดจากลิงก์ QR ของรอบที่ใช้งานอยู่เท่านั้น
 
 > **เอกสารส่ง Final — อัปเดต 10 ตุลาคม 2026** ตรวจโค้ดที่รวมใน `develop` รุ่น `097ad12` (PR #49/#52/#53 merge แล้ว) หลักฐาน public UAT ของสูตรสต๊อกตรวจบน Render รุ่น `af2b45b`; การรับรอง deployed commit รุ่นส่งและ release เข้า `main` ต้องอ้างหลักฐานรอบสุดท้าย
 
