@@ -4,7 +4,7 @@
 - ข้อมูลทดสอบทั้งหมดมีป้าย **`[TEST DATA]`** ในชื่อ/เหตุผล เพื่อแยกจากข้อมูลจริงของทีม
 - ขั้นตอนไม่มีคำสั่งลบ/truncate/reset และไม่แตะข้อมูลที่ไม่มีป้าย; รันซ้ำแล้วไม่ซ้ำ (seed เช็คว่ามีอยู่แล้วก่อนสร้าง)
 - Tests ใช้ DB แยก (H2 in-memory, PostgreSQL Testcontainers หรือ PostgreSQL ชั่วคราวที่มี disposable guard) ห้ามชี้ tests ไป Supabase กลาง
-- บัญชี demo มีรหัสเผยแพร่ใน README ใช้เฉพาะ H2 ในเครื่อง ไม่ใช้กับฐานกลาง/production
+- บัญชี H2 ในเครื่องและบัญชี `Demo...` สำหรับเว็บสาธิตออนไลน์แยกกันตามตารางใน README สคริปต์ local อนุญาตเฉพาะ loopback; บัญชีออนไลน์สร้างด้วย Manager ผ่านระบบจัดการผู้ใช้เดิมเฉพาะเว็บสาธิตที่ได้รับอนุญาต ไม่ใช้รหัสเผยแพร่กับบัญชีทีม/ระบบใช้งานจริง
 
 ## 1) Demo บน H2 (ไม่แตะฐานกลาง)
 ```powershell
@@ -17,6 +17,12 @@ cd code\backend
 หลัง backend พร้อม เปิด PowerShell อีกหน้าจาก repository root แล้วรัน `.\scripts\setup-demo-users.ps1` สคริปต์ใช้ Manager login และ API จัดการผู้ใช้เดิมสร้างบัญชี `Supervisor/Supervisor123`, `ServiceStaff/ServiceStaff123`, `KitchenStaff/KitchenStaff123` ดูตารางครบใน README หากใช้ port อื่นส่ง `-BaseUrl http://localhost:8081/api/v1` ได้ สคริปต์อนุญาตเฉพาะ localhost และตรวจบัญชีที่มีอยู่แทนการแก้หรือทับข้อมูล
 
 สร้างด้วย UI ได้เช่นกัน: login Manager → พนักงาน → กรอก username/password ตามตาราง, ชื่อแสดง `[TEST DATA]` ตาม role, ชื่อ `Demo`, นามสกุลตาม role แล้วเลือก role ที่ตรงกัน การสร้างต้องเป็น Manager; ไม่เพิ่ม role enum ใหม่และรหัสเก็บด้วย BCrypt ตามเดิม
+
+### บัญชีเว็บสาธิตออนไลน์
+
+บัญชี `DemoManager`, `DemoSupervisor`, `DemoServiceStaff` และ `DemoKitchenStaff` สำหรับ Render ดูรหัสและหน้าที่เข้าได้ใน [README](../README.md#บัญชีสำหรับทดลองเว็บ-demo-ออนไลน์) และ [หลักฐานตรวจออนไลน์](testing/online-demo-accounts-2026-10-11.md) การเตรียมบัญชีใช้หน้า Manager → พนักงาน ตรวจทั้งรายชื่อปัจจุบันและบัญชีที่เก็บออกก่อนสร้าง ไม่เปลี่ยนรหัส/role หรือเปิดคืนบัญชีเดิมเมื่อชื่อชนกัน ให้เลือกชื่อทดลองใหม่แทน
+
+ไม่มี startup seeder สำหรับเว็บออนไลน์ และห้ามรัน tests ที่ลบ/reset ฐานไปยัง Render/Supabase กลาง การตรวจบัญชีออนไลน์ใช้ login → me → อ่านหน้าตามสิทธิ์ → logout → ตรวจว่า me กลับเป็น 401 เท่านั้น ไม่ต้องเปิดรอบ รับชำระ ปิดรอบ หรือปรับสต๊อกเพื่อพิสูจน์ว่าบัญชีใช้ได้
 
 ## 2) Provision Manager คนแรกบนฐานจริง (bootstrap admin)
 1. ตั้ง env ชั่วคราว: `BOOTSTRAP_ADMIN_ENABLED=true`, `BOOTSTRAP_ADMIN_USERNAME`, `BOOTSTRAP_ADMIN_PASSWORD` (ตั้งเอง ไม่ commit), optional `BOOTSTRAP_ADMIN_DISPLAY_NAME`, `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_FIRST_NAME`, `BOOTSTRAP_ADMIN_LAST_NAME`

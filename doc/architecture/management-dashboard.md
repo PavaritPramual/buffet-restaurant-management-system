@@ -27,4 +27,4 @@ CI สร้าง `buffet_test_dashboard_ci` ใน PostgreSQL service ชั�
 
 Frontend `/admin` เปิด Dashboard เป็นหน้าแรกสำหรับสอง role ใช้ AdminShell, session expiry, Axios credentials, tokens และส่วนประกอบเดิม รองรับ loading/error/retry/empty, รีเฟรชและเปลี่ยนช่วงวันที่ พร้อมละทิ้ง response จากช่วงเก่า สถานะปัจจุบันมีเวลาอัปเดตแสดงแยกจากยอดตามช่วงวันที่
 
-บัญชีทดลองสร้างผ่าน Manager และ API เดิมด้วย `scripts/setup-demo-users.ps1` บน local demo เท่านั้น ไม่ทำ provisioning บน shared database ใน startup และไม่เพิ่ม role enum
+บัญชี H2 สร้างผ่าน Manager และ API เดิมด้วย `scripts/setup-demo-users.ps1` ซึ่งอนุญาตเฉพาะ loopback ส่วนบัญชี `Demo...` ของเว็บสาธิตออนไลน์สร้างผ่านหน้า Manager → พนักงาน หลังตรวจบัญชีเดิม รายละเอียดอยู่ใน README และ [ผลตรวจออนไลน์](../testing/online-demo-accounts-2026-10-11.md) ไม่ทำ provisioning/reset บน shared database ใน startup และไม่เพิ่ม role enum

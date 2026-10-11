@@ -1,0 +1,35 @@
+{
+  "checkedAtUtc": "2026-10-11T09:12:11.7822761Z",
+  "userCount": 14,
+  "archivedCount": 0,
+  "demoUsers": [
+    {
+      "id": 19,
+      "username": "DemoKitchenStaff",
+      "role": "KITCHEN_STAFF",
+      "active": true,
+      "archivedAt": null
+    },
+    {
+      "id": 16,
+      "username": "DemoManager",
+      "role": "MANAGER",
+      "active": true,
+      "archivedAt": null
+    },
+    {
+      "id": 18,
+      "username": "DemoServiceStaff",
+      "role": "SERVICE_STAFF",
+      "active": true,
+      "archivedAt": null
+    },
+    {
+      "id": 17,
+      "username": "DemoSupervisor",
+      "role": "SUPERVISOR",
+      "active": true,
+      "archivedAt": null
+    }
+  ]
+}

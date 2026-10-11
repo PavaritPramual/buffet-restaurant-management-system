@@ -8,6 +8,27 @@
 
 [เปิดเว็บ](https://buffet-restaurant-management.onrender.com/) · [Swagger UI](https://buffet-restaurant-management.onrender.com/swagger-ui.html) · [ติดตั้ง](#installation--setup) · [เอกสารส่งงาน](#documentation-and-submission-index)
 
+## บัญชีสำหรับทดลองเว็บ demo ออนไลน์
+
+เปิด [เว็บ demo ออนไลน์](https://buffet-restaurant-management.onrender.com/) แล้วเลือกเข้าสู่ระบบพนักงาน ใช้ตัวพิมพ์เล็ก/ใหญ่ตามตาราง ไม่ต้องติดตั้งโปรแกรมหรือรันสคริปต์ในเครื่อง
+
+| Role | Username | Password | หน้าแรกบนเว็บออนไลน์ |
+|---|---|---|---|
+| MANAGER | `DemoManager` | `DemoManager123` | `/admin/stock` |
+| SUPERVISOR | `DemoSupervisor` | `DemoSupervisor123` | `/admin/stock` |
+| SERVICE_STAFF | `DemoServiceStaff` | `DemoServiceStaff123` | `/staff/tables` |
+| KITCHEN_STAFF | `DemoKitchenStaff` | `DemoKitchenStaff123` | `/kitchen` |
+
+บัญชีเหล่านี้แยกจากบัญชีทีม สร้างโดย Manager ผ่านระบบจัดการผู้ใช้เดิมสำหรับเว็บสาธิตของรายวิชา รหัสเผยแพร่เพื่อให้ผู้เข้าชมลองใช้งานร่วมกัน ข้อมูลที่ทดลองเพิ่มให้ใส่ `[TEST DATA]` ในชื่อ/เหตุผล และออกจากระบบก่อนเปลี่ยน role ดู [ผลตรวจออนไลน์และรุ่นที่ deploy](doc/testing/online-demo-accounts-2026-10-11.md) ส่วนบัญชี H2 ในเครื่องอยู่ในหัวข้อ [ทดลองในเครื่องด้วย H2 แยก](#ทดลองในเครื่องด้วย-h2-แยก)
+
+**สถานะตรวจ 11 ตุลาคม 2026:** ทั้งสี่บัญชี login/me/logout และเข้าหน้าตาม role ได้จริงบนเว็บออนไลน์ แต่ Dashboard ของ PR #56 ยังรอ deploy; รุ่นที่ตรวจยังเปิด `/admin/stock` และ `GET /api/v1/dashboard` ตอบ 404 ต้องยืนยัน commit ที่ขึ้น Live และตรวจซ้ำหลัง deploy ก่อนเปลี่ยนหน้าแรกสอง role เป็น `/admin/dashboard`
+
+**ทดลองเป็น Customer:** Customer ไม่มี username/password
+
+1. เข้า `DemoServiceStaff` → โต๊ะ → เลือกโต๊ะว่าง → เปิดรอบกินพร้อมแพ็กเกจ น้ำซุป และจำนวนผู้ใหญ่/เด็ก
+2. เปิด QR ของรอบนั้น แล้วใช้โทรศัพท์สแกน หรือเปิดลิงก์ลูกค้าจาก QR เพื่อดูเมนู สั่งอาหารและดูสถานะ QR แลกสิทธิ์ได้ครั้งเดียว; หากใช้เครื่องถัดไปให้พนักงานออก QR ใหม่จากรอบเดิม
+3. เข้า `DemoKitchenStaff` เพื่อรับงาน/เริ่มเตรียม/พร้อมเสิร์ฟ แล้วใช้ `DemoServiceStaff` ยืนยันเสิร์ฟ เมื่อ Customer ขอคิดบิลแล้วจะสั่งเพิ่มไม่ได้ พนักงานบันทึกผลรับชำระและกดปิดรอบแยกเพื่อคืนโต๊ะ การสาธิตไม่รับเงินจริงและไม่เชื่อม Payment Gateway
+
 > **เอกสารส่ง Final — อัปเดต 10 ตุลาคม 2026** ตรวจโค้ดที่รวมใน `develop` รุ่น `097ad12` (PR #49/#52/#53 merge แล้ว) หลักฐาน public UAT ของสูตรสต๊อกตรวจบน Render รุ่น `af2b45b`; การรับรอง deployed commit รุ่นส่งและ release เข้า `main` ต้องอ้างหลักฐานรอบสุดท้าย
 
 ![หน้าลูกค้าดูยอดบิลและเมนูหลังขอคิดบิล บน Render ในรอบ UAT](img/readme/customer-bill-public.png)
@@ -216,7 +237,7 @@ Demo ใช้ H2 memory และ seed ของ `DemoDataSeeder` ไม่ช�
 | SERVICE_STAFF | `ServiceStaff` | `ServiceStaff123` | `/staff/tables` |
 | KITCHEN_STAFF | `KitchenStaff` | `KitchenStaff123` | `/kitchen` |
 
-ใช้ตัวพิมพ์เล็ก/ใหญ่ตามตาราง Customer ไม่มี username/password ให้พนักงานบริการเปิดโต๊ะและใช้ QR ของรอบนั้น บัญชี demo ใช้รหัสที่เผยแพร่เพื่อทดลอง จึงไม่ใช้กับฐานกลาง/production ดู [คู่มือ setup](doc/setup-demo-data.md) สำหรับ bootstrap บนฐานจริง
+ใช้ตัวพิมพ์เล็ก/ใหญ่ตามตาราง Customer ไม่มี username/password ให้พนักงานบริการเปิดโต๊ะและใช้ QR ของรอบนั้น บัญชีในตารางนี้ใช้เฉพาะ H2 ในเครื่อง สคริปต์ไม่สร้างบัญชีบน Render หรือฐานกลาง สำหรับเว็บออนไลน์ให้ใช้บัญชี `Demo...` ที่ระบุไว้ด้านบน ส่วนระบบใช้งานจริงให้กำหนดรหัสส่วนตัวตาม [คู่มือ setup](doc/setup-demo-data.md)
 
 เปิดอีก terminal จาก `code/frontend`:
 
