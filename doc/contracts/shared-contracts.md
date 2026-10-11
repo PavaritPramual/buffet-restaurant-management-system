@@ -211,3 +211,9 @@ Manager POST/PUT `/api/v1/menu-items` accepts additive `automaticStockDeduction`
 `StockTransactionResponse` adds nullable `orderId`; `transactionType` gains CONSUMPTION with negative quantityDelta. Manager/Supervisor history access remains; Kitchen receives no generic Stock endpoint privileges. Stock unit cannot change while a recipe/snapshot refers to it. Referenced Stock is archived rather than hard-deleted.
 
 [Design and course criteria](../architecture/menu-stock-consumption.md) · [V19 dictionary](../database/menu-stock-consumption-v19.md)
+
+## Management Dashboard
+
+`GET /api/v1/dashboard?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD` returns `DashboardResponse` for MANAGER / SUPERVISOR via the existing staff session cookie. Both dates are inclusive in Asia/Bangkok (default today); invalid, future or ranges longer than 366 days return 400. No login returns 401, other roles return 403. Authorization is enforced at the service boundary; no role header is trusted.
+
+`sales` contains PAID revenue, bill count, average bill, zero-filled daily revenue and CASH/QR/CARD breakdown by payment time. `visits` contains opened sessions/adults/children and orders within the selected dates. `operations` and `stock` are current snapshots independent of dates; `generatedAt` identifies retrieval time. `popularItems` uses order-item name/quantity snapshots (top 5); `stock.lowItems` returns at most 10 active, non-archived items at/below threshold. Full field definitions: [Dashboard design](../architecture/management-dashboard.md). Reporting does not grant payment, session-command or fulfillment permissions and does not modify existing DTOs/enums/schema.

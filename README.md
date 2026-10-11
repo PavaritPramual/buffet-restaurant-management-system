@@ -53,8 +53,10 @@
 | Customer | แลก QR รับ cookie, ดูเมนูตามแพ็กเกจ, สั่งและดูสถานะ, ขอคิดบิลและดูยอด/ผลชำระ |
 | SERVICE_STAFF | เปิดโต๊ะและแสดง QR, ยืนยันเสิร์ฟ, ดูบิล/บันทึกรับชำระ และกดปิดรอบ |
 | KITCHEN_STAFF | อ่านออเดอร์และเปลี่ยน RECEIVED → PREPARING → READY |
-| MANAGER | จัดการโต๊ะ แพ็กเกจ น้ำซุป เมนู/หมวดหมู่ ผู้ใช้/Profile และรายการสต๊อก รวมลบหรือเก็บออกตามเงื่อนไขประวัติ |
-| SUPERVISOR | ดูสต๊อก/ประวัติ รับเข้าและปรับยอดตามสิทธิ์ ไม่ได้รับสิทธิ์ครัว เปิดโต๊ะหรือรับชำระ |
+| MANAGER | ดู Dashboard; จัดการโต๊ะ แพ็กเกจ น้ำซุป เมนู/หมวดหมู่ ผู้ใช้/Profile และรายการสต๊อก รวมลบหรือเก็บออกตามเงื่อนไขประวัติ |
+| SUPERVISOR | ดู Dashboard และสต๊อก/ประวัติ รับเข้าและปรับยอดตามสิทธิ์ ไม่ได้รับสิทธิ์ครัว เปิดโต๊ะหรือรับชำระ |
+
+**Dashboard สำหรับ Manager / Supervisor:** หลัง login เข้า `/admin/dashboard` เป็นหน้าแรก เลือกวันนี้, 7 วัน, 30 วัน หรือกำหนดช่วงไม่เกิน 366 วันตามเวลาไทย ดูรายได้สุทธิที่รับชำระแล้ว จำนวนบิล ค่าเฉลี่ยต่อบิล รายได้รายวัน ช่องทาง CASH/QR/CARD จำนวนรอบ/ลูกค้า/ออเดอร์ และเมนูที่สั่งมากที่สุด พร้อมสถานะโต๊ะ คิวครัว/เสิร์ฟ บิลรอชำระ รอบชำระแล้วรอปิด และสต๊อกที่ถึงจุดเตือน/ขาดเป้าหมาย รายได้อ้าง `Payment.PAID` ตามวันรับชำระ ไม่คำนวณราคาย้อนจากเมนูหรือแพ็กเกจปัจจุบัน ส่วนสถานะร้านและสต๊อกแสดงข้อมูลปัจจุบันทุกช่วงวันที่ ดู [นิยามและสถาปัตยกรรม Dashboard](doc/architecture/management-dashboard.md)
 
 **Flow หลัก:** เปิดโต๊ะ → QR → สั่งอาหาร → ครัว → เสิร์ฟ → ขอคิดบิล → รับชำระ → กดปิดรอบ → โต๊ะว่าง
 
@@ -197,7 +199,24 @@ Copy-Item code/frontend/.env.example code/frontend/.env
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=demo" "-Dspring-boot.run.arguments=--spring.config.import= --app.menu.admin-access-provider=session --app.ordering.session-provider=database --app.fulfillment.access-provider=session"
 ```
 
-Demo ใช้ H2 memory และ seed ของ `DemoDataSeeder` ไม่ชี้ Supabase; restart แล้วข้อมูลหาย บัญชี demo ดู [คู่มือ](doc/setup-demo-data.md) สร้าง SERVICE_STAFF/KITCHEN_STAFF ผ่าน Manager ก่อนลองทุก role คำสั่งนี้เปลี่ยน fixture defaults ของสามโมดูลให้ใช้ session/database จริง ไม่ใช้การรัน demo profile เปล่าเป็นหลักฐาน integration
+Demo ใช้ H2 memory และ seed ของ `DemoDataSeeder` ไม่ชี้ Supabase; restart แล้วข้อมูลหาย ระบบสร้าง Manager เริ่มต้น แล้วให้ Manager สร้างบัญชี role อื่นผ่าน API จัดการผู้ใช้เดิม คำสั่งนี้เปลี่ยน fixture defaults ของสามโมดูลให้ใช้ session/database จริง ไม่ใช้การรัน demo profile เปล่าเป็นหลักฐาน integration
+
+จาก repository root เปิดอีก PowerShell หลัง backend พร้อม แล้วรัน:
+
+```powershell
+.\scripts\setup-demo-users.ps1
+```
+
+สคริปต์ login เป็น Manager แล้วเรียก `POST /api/v1/admin/users` สร้างบัญชีทดลองที่ยังไม่มี รันซ้ำจะตรวจบัญชีและรหัสเดิม ไม่เปลี่ยนรหัส/role หรือเปิดบัญชีที่ถูกปิดไว้ หากพบข้อมูลไม่ตรงจะหยุดแจ้งข้อผิดพลาด บัญชีต่อไปนี้ใช้ได้ **หลังรันสคริปต์สำเร็จบน demo ในเครื่องเท่านั้น** ไม่ใช่บัญชีเว็บออนไลน์:
+
+| Role | Username | Password | หน้าแรก |
+|---|---|---|---|
+| MANAGER | `Manager` | `Manager123` | `/admin/dashboard` |
+| SUPERVISOR | `Supervisor` | `Supervisor123` | `/admin/dashboard` |
+| SERVICE_STAFF | `ServiceStaff` | `ServiceStaff123` | `/staff/tables` |
+| KITCHEN_STAFF | `KitchenStaff` | `KitchenStaff123` | `/kitchen` |
+
+ใช้ตัวพิมพ์เล็ก/ใหญ่ตามตาราง Customer ไม่มี username/password ให้พนักงานบริการเปิดโต๊ะและใช้ QR ของรอบนั้น บัญชี demo ใช้รหัสที่เผยแพร่เพื่อทดลอง จึงไม่ใช้กับฐานกลาง/production ดู [คู่มือ setup](doc/setup-demo-data.md) สำหรับ bootstrap บนฐานจริง
 
 เปิดอีก terminal จาก `code/frontend`:
 

@@ -51,6 +51,8 @@ jobs:
           PAYMENT_TEST_PG_URL: jdbc:postgresql://127.0.0.1:15432/buffet_test_payment_ci
           PAYMENT_TEST_PG_USER: buffet_backend_test
           PAYMENT_TEST_PG_PASSWORD: ci-disposable-only
+          DASHBOARD_TEST_PG_URL: jdbc:postgresql://127.0.0.1:15432/buffet_test_dashboard_ci
+          DASHBOARD_TEST_PG_PASSWORD: ci-disposable-only
         run: mvn --batch-mode --no-transfer-progress verify
       - name: Preserve test reports
         if: always()

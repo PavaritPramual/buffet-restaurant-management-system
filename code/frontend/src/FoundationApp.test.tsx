@@ -12,6 +12,7 @@ vi.mock('./features/admin/api', async () => ({
 }))
 vi.mock('./DesignSystemPage', () => ({ default: () => <p>Design demo</p> }))
 vi.mock('./features/admin/StockPage', () => ({ default: () => <p>Stock home</p> }))
+vi.mock('./features/admin/DashboardPage', () => ({ default: () => <p>Dashboard home</p> }))
 vi.mock('./features/staff-tables/StaffTablesPage', () => ({ default: () => <p>Staff home</p> }))
 vi.mock('./features/fulfillment/KitchenBoardPage', () => ({ default: () => <p>Kitchen home</p> }))
 afterEach(() => { cleanup(); vi.resetAllMocks(); vi.unstubAllEnvs() })
@@ -25,7 +26,7 @@ it.each(['/', '/unknown', '/dev/ui'])('routes signed-out production visitors fro
   expect(screen.queryByText('Design demo')).toBeNull()
 })
 it.each([
-  ['MANAGER', 'Stock home'], ['SUPERVISOR', 'Stock home'],
+  ['MANAGER', 'Dashboard home'], ['SUPERVISOR', 'Dashboard home'],
   ['SERVICE_STAFF', 'Staff home'], ['KITCHEN_STAFF', 'Kitchen home'],
 ] as const)('opens the %s role home from root and removes it on expiry', async (role, home) => {
   vi.mocked(authApi.current).mockResolvedValue({ ...user, role })
@@ -43,6 +44,7 @@ it.each(['MANAGER', 'SUPERVISOR', 'SERVICE_STAFF', 'KITCHEN_STAFF'] as const)('l
   fireEvent.click(logout)
   await screen.findByRole('heading', { name: 'เข้าสู่ระบบ' })
   expect(screen.queryByText('Stock home')).toBeNull()
+  expect(screen.queryByText('Dashboard home')).toBeNull()
   expect(screen.queryByText('Staff home')).toBeNull()
   expect(screen.queryByText('Kitchen home')).toBeNull()
 })
