@@ -26,7 +26,7 @@ async function main() {
       assert(response.ok(), `${endpoint}: ${response.status()} ${await response.text()}`)
       return response.json()
     }
-    await post('/auth/login', { username: 'admin', password: 'admin123' })
+    await post('/auth/login', { username: 'Manager', password: 'Manager123' })
     const buffetPackage = await post('/buffet-packages', { name: 'ชุดทดสอบ Step 2', price: 299, description: 'Isolated browser data' })
     const premium = await post('/buffet-packages', { name: 'แพ็กเกจอื่น', price: 499 })
     const soup = await post('/soups', { name: 'น้ำซุปทดสอบ' })

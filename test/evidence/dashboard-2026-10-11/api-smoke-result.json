@@ -1,0 +1,13 @@
+{
+  "roles": [
+    "MANAGER",
+    "SUPERVISOR",
+    "SERVICE_STAFF",
+    "KITCHEN_STAFF"
+  ],
+  "environment": "local H2 demo, real session cookies and existing commands",
+  "bills": 2,
+  "result": "PASS",
+  "average": 873.25,
+  "revenue": 1746.5
+}

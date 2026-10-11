@@ -8,3 +8,5 @@ CREATE DATABASE buffet_test_menu_ci;
 COMMENT ON DATABASE buffet_test_menu_ci IS 'buffet-disposable-test-only';
 CREATE DATABASE buffet_test_dining_ci;
 COMMENT ON DATABASE buffet_test_dining_ci IS 'buffet-disposable-test-only';
+CREATE DATABASE buffet_test_dashboard_ci;
+COMMENT ON DATABASE buffet_test_dashboard_ci IS 'buffet-disposable-test-only';

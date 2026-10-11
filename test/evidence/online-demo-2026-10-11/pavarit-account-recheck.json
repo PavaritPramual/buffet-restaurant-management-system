@@ -1,0 +1,71 @@
+{
+  "reviewedHead": "3f0ab5350a9eef67761ecbd7bd9a6a6d5484ae50",
+  "results": [
+    {
+      "reads": {
+        "/dashboard": 404,
+        "/admin/users": 200,
+        "/orders/ready": 403,
+        "/stock": 200,
+        "/orders/incoming": 403
+      },
+      "afterLogout": 401,
+      "meMatches": true,
+      "me": 200,
+      "logout": 204,
+      "username": "DemoManager",
+      "identityMatches": true,
+      "login": 200
+    },
+    {
+      "reads": {
+        "/dashboard": 404,
+        "/admin/users": 403,
+        "/orders/ready": 403,
+        "/stock": 200,
+        "/orders/incoming": 403
+      },
+      "afterLogout": 401,
+      "meMatches": true,
+      "me": 200,
+      "logout": 204,
+      "username": "DemoSupervisor",
+      "identityMatches": true,
+      "login": 200
+    },
+    {
+      "reads": {
+        "/dashboard": 404,
+        "/admin/users": 403,
+        "/orders/ready": 200,
+        "/stock": 403,
+        "/orders/incoming": 403
+      },
+      "afterLogout": 401,
+      "meMatches": true,
+      "me": 200,
+      "logout": 204,
+      "username": "DemoServiceStaff",
+      "identityMatches": true,
+      "login": 200
+    },
+    {
+      "reads": {
+        "/dashboard": 404,
+        "/admin/users": 403,
+        "/orders/ready": 403,
+        "/stock": 403,
+        "/orders/incoming": 200
+      },
+      "afterLogout": 401,
+      "meMatches": true,
+      "me": 200,
+      "logout": 204,
+      "username": "DemoKitchenStaff",
+      "identityMatches": true,
+      "login": 200
+    }
+  ],
+  "checkedAt": "2026-10-11T09:28:34.8463554+00:00",
+  "environment": "Render current deployment; Dashboard not deployed"
+}

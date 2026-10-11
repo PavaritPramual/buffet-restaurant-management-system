@@ -1,0 +1,102 @@
+{
+  "summary": {
+    "startDate": "2026-10-11",
+    "endDate": "2026-10-11",
+    "timeZone": "Asia/Bangkok",
+    "generatedAt": "2026-10-11T09:37:56.8229765Z",
+    "sales": {
+      "revenue": 1495.0,
+      "paidBills": 2,
+      "averageBill": 747.5,
+      "daily": [
+        {
+          "date": "2026-10-11",
+          "bills": 2,
+          "revenue": 1495.0
+        }
+      ],
+      "byMethod": [
+        {
+          "method": "CASH",
+          "bills": 1,
+          "revenue": 747.5
+        },
+        {
+          "method": "QR",
+          "bills": 1,
+          "revenue": 747.5
+        },
+        {
+          "method": "CARD",
+          "bills": 0,
+          "revenue": 0.0
+        }
+      ]
+    },
+    "visits": {
+      "openedSessions": 3,
+      "adults": 6,
+      "children": 3,
+      "orders": 3
+    },
+    "operations": {
+      "availableTables": 1,
+      "occupiedTables": 2,
+      "activeSessions": 2,
+      "activeGuests": 6,
+      "unpaidBillRequests": 1,
+      "paidAwaitingClose": 1,
+      "receivedOrders": 0,
+      "preparingOrders": 0,
+      "readyOrders": 0
+    },
+    "stock": {
+      "activeItems": 3,
+      "lowStockItems": 1,
+      "outOfStockItems": 0,
+      "belowTargetItems": 1,
+      "lowItems": [
+        {
+          "id": 1,
+          "name": "[TEST DATA] ข้าวหอมมะลิ",
+          "unit": "กก.",
+          "quantity": 1.0,
+          "threshold": 8.0,
+          "target": 15.0,
+          "shortfall": 14.0
+        }
+      ]
+    },
+    "popularItems": [
+      {
+        "menuItemId": 1,
+        "name": "Dashboard dish",
+        "servings": 6
+      }
+    ]
+  },
+  "checkedAt": "2026-10-11T09:37:56.9077825+00:00",
+  "result": "PASS",
+  "cases": [
+    {
+      "paid": true,
+      "order": 1,
+      "session": 1,
+      "closed": true
+    },
+    {
+      "paid": true,
+      "order": 2,
+      "session": 2,
+      "closed": false
+    },
+    {
+      "paid": false,
+      "order": 3,
+      "session": 3,
+      "closed": false
+    }
+  ],
+  "commit": "aabc88f",
+  "environment": "local H2 fresh memory; actual session/database providers"
+}

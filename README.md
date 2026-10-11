@@ -8,6 +8,29 @@
 
 [เปิดเว็บ](https://buffet-restaurant-management.onrender.com/) · [Swagger UI](https://buffet-restaurant-management.onrender.com/swagger-ui.html) · [ติดตั้ง](#installation--setup) · [เอกสารส่งงาน](#documentation-and-submission-index)
 
+## บัญชีสำหรับทดลองเว็บ demo ออนไลน์
+
+**เปิดลิงก์เข้าสู่ระบบในตาราง แล้วกรอก Username และ Password ได้เลย** บัญชีทั้งสี่ใช้ได้บนเว็บ Render จริง ไม่ต้องติดตั้งโปรแกรมหรือรันสคริปต์ในเครื่อง ใช้ตัวพิมพ์เล็ก/ใหญ่ตามตาราง
+
+| บัญชีและสิ่งที่ทดลองได้ | Username | Password | เข้าสู่ระบบ |
+|---|---|---|---|
+| ผู้จัดการ MANAGER — ข้อมูลร้าน เมนู ผู้ใช้และสต๊อก | `DemoManager` | `DemoManager123` | [หน้าผู้ดูแล](https://buffet-restaurant-management.onrender.com/admin) |
+| หัวหน้างาน SUPERVISOR — สต๊อก รับเข้าและปรับยอด | `DemoSupervisor` | `DemoSupervisor123` | [หน้าผู้ดูแล](https://buffet-restaurant-management.onrender.com/admin) |
+| พนักงานบริการ SERVICE_STAFF — เปิดโต๊ะ เสิร์ฟ รับชำระและปิดรอบ | `DemoServiceStaff` | `DemoServiceStaff123` | [หน้าโต๊ะ](https://buffet-restaurant-management.onrender.com/staff/tables) |
+| พนักงานครัว KITCHEN_STAFF — รับออเดอร์และเตรียมอาหาร | `DemoKitchenStaff` | `DemoKitchenStaff123` | [หน้าครัว](https://buffet-restaurant-management.onrender.com/kitchen) |
+
+บัญชีเหล่านี้แยกจากบัญชีทีม สร้างโดย Manager ผ่านระบบจัดการผู้ใช้เดิมสำหรับเว็บสาธิตของรายวิชา รหัสเผยแพร่เพื่อให้ผู้เข้าชมลองใช้งานร่วมกัน ข้อมูลที่ทดลองเพิ่มให้ใส่ `[TEST DATA]` ในชื่อ/เหตุผล และออกจากระบบก่อนเปลี่ยน role ดู [ผลตรวจออนไลน์และรุ่นที่ deploy](doc/testing/online-demo-accounts-2026-10-11.md) ส่วนบัญชี H2 ในเครื่องอยู่ในหัวข้อ [ทดลองในเครื่องด้วย H2 แยก](#ทดลองในเครื่องด้วย-h2-แยก)
+
+**สถานะตรวจ 11 ตุลาคม 2026:** ปวริศช์ตรวจบัญชีทั้งสี่ซ้ำบน Render แล้ว login/me/logout ผ่านและสิทธิ์อ่านข้อมูลตรง role บัญชีพร้อมทดลองบนรุ่นปัจจุบัน หน้าผู้ดูแล `/admin` จะพาไปหน้าสต๊อกในรุ่นที่ออนไลน์อยู่ และพาไป Dashboard เมื่อ deploy รุ่น PR #56 แล้ว ขณะตรวจ `GET /api/v1/dashboard` ยังตอบ 404 จึงยังไม่รับรอง Dashboard ออนไลน์ ดู [ผลตรวจและรายการตรวจหลัง deploy](doc/testing/online-demo-accounts-2026-10-11.md)
+
+**ทดลองเป็น Customer:** Customer ไม่มี username/password
+
+1. เข้า `DemoServiceStaff` → โต๊ะ → เลือกโต๊ะว่าง → เปิดรอบกินพร้อมแพ็กเกจ น้ำซุป และจำนวนผู้ใหญ่/เด็ก
+2. เปิด QR ของรอบนั้น แล้วใช้โทรศัพท์สแกน หรือเปิดลิงก์ลูกค้าจาก QR เพื่อดูเมนู สั่งอาหารและดูสถานะ QR แลกสิทธิ์ได้ครั้งเดียว; หากใช้เครื่องถัดไปให้พนักงานออก QR ใหม่จากรอบเดิม
+3. เข้า `DemoKitchenStaff` เพื่อรับงาน/เริ่มเตรียม/พร้อมเสิร์ฟ แล้วใช้ `DemoServiceStaff` ยืนยันเสิร์ฟ เมื่อ Customer ขอคิดบิลแล้วจะสั่งเพิ่มไม่ได้ พนักงานบันทึกผลรับชำระและกดปิดรอบแยกเพื่อคืนโต๊ะ การสาธิตไม่รับเงินจริงและไม่เชื่อม Payment Gateway
+
+หากลองหลาย role พร้อมกัน ให้ใช้คนละ browser หรือ browser profile เพื่อแยกบัญชีพนักงาน หากใช้แท็บใน browser เดียวกัน ให้ออกจากระบบก่อนเปลี่ยน role เพราะแท็บใช้ session ร่วมกัน Customer เปิดจากลิงก์ QR ของรอบที่ใช้งานอยู่เท่านั้น
+
 > **เอกสารส่ง Final — อัปเดต 10 ตุลาคม 2026** ตรวจโค้ดที่รวมใน `develop` รุ่น `097ad12` (PR #49/#52/#53 merge แล้ว) หลักฐาน public UAT ของสูตรสต๊อกตรวจบน Render รุ่น `af2b45b`; การรับรอง deployed commit รุ่นส่งและ release เข้า `main` ต้องอ้างหลักฐานรอบสุดท้าย
 
 ![หน้าลูกค้าดูยอดบิลและเมนูหลังขอคิดบิล บน Render ในรอบ UAT](img/readme/customer-bill-public.png)
@@ -53,8 +76,10 @@
 | Customer | แลก QR รับ cookie, ดูเมนูตามแพ็กเกจ, สั่งและดูสถานะ, ขอคิดบิลและดูยอด/ผลชำระ |
 | SERVICE_STAFF | เปิดโต๊ะและแสดง QR, ยืนยันเสิร์ฟ, ดูบิล/บันทึกรับชำระ และกดปิดรอบ |
 | KITCHEN_STAFF | อ่านออเดอร์และเปลี่ยน RECEIVED → PREPARING → READY |
-| MANAGER | จัดการโต๊ะ แพ็กเกจ น้ำซุป เมนู/หมวดหมู่ ผู้ใช้/Profile และรายการสต๊อก รวมลบหรือเก็บออกตามเงื่อนไขประวัติ |
-| SUPERVISOR | ดูสต๊อก/ประวัติ รับเข้าและปรับยอดตามสิทธิ์ ไม่ได้รับสิทธิ์ครัว เปิดโต๊ะหรือรับชำระ |
+| MANAGER | ดู Dashboard; จัดการโต๊ะ แพ็กเกจ น้ำซุป เมนู/หมวดหมู่ ผู้ใช้/Profile และรายการสต๊อก รวมลบหรือเก็บออกตามเงื่อนไขประวัติ |
+| SUPERVISOR | ดู Dashboard และสต๊อก/ประวัติ รับเข้าและปรับยอดตามสิทธิ์ ไม่ได้รับสิทธิ์ครัว เปิดโต๊ะหรือรับชำระ |
+
+**Dashboard สำหรับ Manager / Supervisor:** หลัง login เข้า `/admin/dashboard` เป็นหน้าแรก เลือกวันนี้, 7 วัน, 30 วัน หรือกำหนดช่วงไม่เกิน 366 วันตามเวลาไทย ดูรายได้สุทธิที่รับชำระแล้ว จำนวนบิล ค่าเฉลี่ยต่อบิล รายได้รายวัน ช่องทาง CASH/QR/CARD จำนวนรอบ/ลูกค้า/ออเดอร์ และเมนูที่สั่งมากที่สุด พร้อมสถานะโต๊ะ คิวครัว/เสิร์ฟ บิลรอชำระ รอบชำระแล้วรอปิด และสต๊อกที่ถึงจุดเตือน/ขาดเป้าหมาย รายได้อ้าง `Payment.PAID` ตามวันรับชำระ ไม่คำนวณราคาย้อนจากเมนูหรือแพ็กเกจปัจจุบัน ส่วนสถานะร้านและสต๊อกแสดงข้อมูลปัจจุบันทุกช่วงวันที่ ดู [นิยามและสถาปัตยกรรม Dashboard](doc/architecture/management-dashboard.md)
 
 **Flow หลัก:** เปิดโต๊ะ → QR → สั่งอาหาร → ครัว → เสิร์ฟ → ขอคิดบิล → รับชำระ → กดปิดรอบ → โต๊ะว่าง
 
@@ -197,7 +222,24 @@ Copy-Item code/frontend/.env.example code/frontend/.env
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=demo" "-Dspring-boot.run.arguments=--spring.config.import= --app.menu.admin-access-provider=session --app.ordering.session-provider=database --app.fulfillment.access-provider=session"
 ```
 
-Demo ใช้ H2 memory และ seed ของ `DemoDataSeeder` ไม่ชี้ Supabase; restart แล้วข้อมูลหาย บัญชี demo ดู [คู่มือ](doc/setup-demo-data.md) สร้าง SERVICE_STAFF/KITCHEN_STAFF ผ่าน Manager ก่อนลองทุก role คำสั่งนี้เปลี่ยน fixture defaults ของสามโมดูลให้ใช้ session/database จริง ไม่ใช้การรัน demo profile เปล่าเป็นหลักฐาน integration
+Demo ใช้ H2 memory และ seed ของ `DemoDataSeeder` ไม่ชี้ Supabase; restart แล้วข้อมูลหาย ระบบสร้าง Manager เริ่มต้น แล้วให้ Manager สร้างบัญชี role อื่นผ่าน API จัดการผู้ใช้เดิม คำสั่งนี้เปลี่ยน fixture defaults ของสามโมดูลให้ใช้ session/database จริง ไม่ใช้การรัน demo profile เปล่าเป็นหลักฐาน integration
+
+จาก repository root เปิดอีก PowerShell หลัง backend พร้อม แล้วรัน:
+
+```powershell
+.\scripts\setup-demo-users.ps1
+```
+
+สคริปต์ login เป็น Manager แล้วเรียก `POST /api/v1/admin/users` สร้างบัญชีทดลองที่ยังไม่มี รันซ้ำจะตรวจบัญชีและรหัสเดิม ไม่เปลี่ยนรหัส/role หรือเปิดบัญชีที่ถูกปิดไว้ หากพบข้อมูลไม่ตรงจะหยุดแจ้งข้อผิดพลาด บัญชีต่อไปนี้ใช้ได้ **หลังรันสคริปต์สำเร็จบน demo ในเครื่องเท่านั้น** ไม่ใช่บัญชีเว็บออนไลน์:
+
+| Role | Username | Password | หน้าแรก |
+|---|---|---|---|
+| MANAGER | `Manager` | `Manager123` | `/admin/dashboard` |
+| SUPERVISOR | `Supervisor` | `Supervisor123` | `/admin/dashboard` |
+| SERVICE_STAFF | `ServiceStaff` | `ServiceStaff123` | `/staff/tables` |
+| KITCHEN_STAFF | `KitchenStaff` | `KitchenStaff123` | `/kitchen` |
+
+ใช้ตัวพิมพ์เล็ก/ใหญ่ตามตาราง Customer ไม่มี username/password ให้พนักงานบริการเปิดโต๊ะและใช้ QR ของรอบนั้น บัญชีในตารางนี้ใช้เฉพาะ H2 ในเครื่อง สคริปต์ไม่สร้างบัญชีบน Render หรือฐานกลาง สำหรับเว็บออนไลน์ให้ใช้บัญชี `Demo...` ที่ระบุไว้ด้านบน ส่วนระบบใช้งานจริงให้กำหนดรหัสส่วนตัวตาม [คู่มือ setup](doc/setup-demo-data.md)
 
 เปิดอีก terminal จาก `code/frontend`:
 
